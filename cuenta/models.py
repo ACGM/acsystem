@@ -12,9 +12,11 @@ class Cuentas(models.Model):
 	origen_choices = (('D','Debito'),('C','Credito'),)
 
 	#Campos Base
-	codigo = models.PositiveIntegerField(verbose_name="Codigo Cuenta", null=False, default=False, blank=False)
+	codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, default=False, blank=False)
 	descripcion = models.CharField(max_length=255, verbose_name="Descripcion", blank=False, null=False)
 	origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
+	#Para Identificar si es una cuenta Control
+	control =models.BooleanField(default=False)
 	cuentaControl = models.PositiveIntegerField(default=False, verbose_name="Cuenta Control", null=True, blank=True)
 
 	def __unicode__(self):
@@ -26,7 +28,7 @@ class Cuentas(models.Model):
 class Auxiliares(models.Model):
   #auxiliares Contables
 
-  codigo = models.PositiveIntegerField(verbose_name="Codigo Auxiliar", null=False, default=False, blank=False)
+  codigo = models.PositiveIntegerField(verbose_name="Código Auxiliar", null=False, default=False, blank=False)
   descripcion = models.CharField(max_length=200,verbose_name="Descripcion", blank=False, null=False)
   cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=False, blank=False)
 
