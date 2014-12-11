@@ -3,6 +3,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from cuenta.models import Cuentas
+
 import datetime
 
 
@@ -45,7 +47,7 @@ class Departamento(models.Model):
 
 
 # Representantes
-class Representatne(models.Model):
+class Representante(models.Model):
 
 	nombre = models.CharField(max_length=150)
 
@@ -281,7 +283,7 @@ class TipoNCGlobal(models.Model):
 
 	tipo = models.CharField(max_length=1, choices=tipo_choices, default='')
 	descripcion = models.CharField(max_length=150)
-	cuenta = models.ForeignKey(CuentaContable)
+	cuenta = models.ForeignKey(Cuentas)
 
 
 # Bancos
@@ -324,7 +326,7 @@ class Periodo(models.Model):
 		)
 
 	mes = models.CharField(max_length=2, choices=mes_choices, default='01')
-	agno = models.CharField("Año", max_length=4)
+	agno = models.CharField("Agno", max_length=4)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	def __unicode__(self):
@@ -343,27 +345,15 @@ class Empresa(models.Model):
 		return '%s' % (self.nombre)
 
 
-# Cargos
-class Cargo(models.Model):
-
-	descripcion = models.CharField(max_length=100)
-
-	def __unicode__(self):
-		return '%s' % (self.descripcion)
-
-	class Meta:
-		ordering = ['descripcion']
-
-
 # Cobradores
 class Cobrador(models.Model):
 
-	codigo = models.ForeignKey(EmpleadoCoop)
+	usuario = models.CharField(max_length=10)
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s' % (self.user)
+		return '%s' % (self.usuario)
 
 	class Meta:
-		ordering = ['codigo']
+		ordering = ['usuario']

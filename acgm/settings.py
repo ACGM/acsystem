@@ -37,10 +37,20 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'acgm',
+    'activofijo',
     'administracion',
-    'inventario',
+    'ahorro',
+    'conciliacion',
+    'contabilidad',
+    'cuenta',
+    'cxp',
     'facturacion',
     'fondoscajas',
+    'inventario',
+    'nominacoop',
+    'prestamos',
+    'reciboingreso',
+
 )
 
 MIDDLEWARE_CLASSES = (

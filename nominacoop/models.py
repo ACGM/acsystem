@@ -1,8 +1,33 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import Cargo, Departamento, Empresa, Socio
+from administracion.models import Empresa, CoBeneficiario, Socio
 from prestamos.models import MaestraPrestamo, CuotasPrestamo
+
+
+class DepartamentoCoop(models.Model):
+
+	descripcion = models.CharField(max_length=150)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
+
+
+# Cargos en la cooperativa para empleados
+class CargoCoop(models.Model):
+
+	descripcion = models.CharField(max_length=100)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
 
 
 # Empleado Cooperativa
@@ -29,9 +54,9 @@ class EmpleadoCoop(models.Model):
 	dependencias = models.PositiveIntegerField(null=True, blank=True)
 	fechaIngreso = models.DateField("Fecha de Ingreso", auto_now=True)
 	empresa = models.ForeignKey(Empresa)
-	departamento = models.ForeignKey(Departamento)
+	departamento = models.ForeignKey(DepartamentoCoop)
 	tipoContrato = models.CharField("Tipo de Contrato", max_length=1, choices=tipo_empleado_choices, default='F')
-	cargo = models.ForeignKey(Cargo)
+	cargo = models.ForeignKey(CargoCoop)
 	tipoCobro = models.CharField("Tipo de Cobro", max_length=1, choices=tipo_empleado_choices, default='Q')
 	tipoPago = models.CharField("Tipo de Pago", max_length=1, choices=tipo_pago_choices, default='B')
 	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=12, decimal_places=2)
@@ -112,7 +137,7 @@ class CuotasPrestamosEmpresa(models.Model):
 
 
 # Cuotas Ahorros para Nomina Empresa
-class CuotasPrestamosEmpresa(models.Model):
+class CuotasAhorrosEmpresa(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),)
 

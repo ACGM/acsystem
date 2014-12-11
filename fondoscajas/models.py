@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import CuentaContable
+from cuenta.models import Cuentas
 
 import datetime
 
@@ -27,8 +27,8 @@ class Fondo(models.Model):
 class ConceptoDesembolso(models.Model):
 
 	descripcion = models.CharField(max_length=255)
-	cuentaDebito = models.ForeignKey(CuentaContable, related_name='+')
-	cuentaCredito = models.ForeignKey(CuentaContable, related_name='+')
+	cuentaDebito = models.ForeignKey(Cuentas, related_name='+')
+	cuentaCredito = models.ForeignKey(Cuentas, related_name='+')
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
