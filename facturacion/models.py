@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 from administracion.models import Producto, Socio, CategoriaPrestamo
 
@@ -12,20 +12,23 @@ class Factura(models.Model):
 	facturas_choices = (('A','Activa'),('I','Inactiva'),('N','Anulada'))
 	terminos_choices = (('CO','Contado'),('CR','Credito'),)
 
-	no_factura = models.IntegerField()
+	noFactura = models.IntegerField(unique=True)
 	fecha = models.DateTimeField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=facturas_choices, default='A')
-	descrp_anulacion = models.CharField(max_length=255, blank=True)
+	descrpAnulacion = models.CharField(max_length=255, blank=True)
 	socio = models.ForeignKey(Socio)
-	orden_compra = models.CharField(max_length=20, blank=True)
+	ordenCompra = models.CharField(max_length=20, blank=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
 	impresa = models.IntegerField(default=0)
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return u'%i' % (self.no_factura)
+
+	class Meta:
+		ordering = ['-noFactura']
 
 
 # Detalle de la Factura
@@ -33,14 +36,14 @@ class Detalle(models.Model):
 
 	factura = models.ForeignKey(Factura)	
 	producto = models.ForeignKey(Producto)
-	porcentaje_descuento = models.DecimalField(max_digits=6, decimal_places=2,blank=True, default=0)
+	porcentajeDescuento = models.DecimalField(max_digits=6, decimal_places=2,blank=True, default=0)
 	cantidad = models.PositiveIntegerField()
 	precio = models.PositiveIntegerField()
 
 	def _get_total(self):
 		return '%i' % ((self.cantidad * self.precio) - descuento)
 
-	importe_valor = property(_get_total)
+	importeValor = property(_get_total)
 
 	def __unicode__(self):
 		return u"%s %s" % (self.producto, (self.cantidad * self.precio))
@@ -54,15 +57,22 @@ class OrdenDespachoSuperCoop(models.Model):
 	forma_pago_choices = (('Q','Quincenal'),('M','Mensual'),)
 	quincenas_choices = (('1','1ra Quincena'),('2','2da Quincena'),)
 
+	noSolicitud = models.IntegerField()
 	categoria = models.ForeignKey(CategoriaPrestamo)
 	oficial = models.ForeignKey(User)
-	pagar_port = models.CharField(max_length=2, choices=pagar_por_choices, default='EM')
-	forma_pago = models.CharField(max_length=1, choices=forma_pago_choices, default='Q')
-	tasa_interes_anual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-	tasa_interes_mensual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+	pagarPor = models.CharField(max_length=2, choices=pagar_por_choices, default='EM')
+	formaPago = models.CharField(max_length=1, choices=forma_pago_choices, default='Q')
+	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 	quincena = models.IntegerField(choices=quincenas_choices, default='1', blank=True)
 	cuotas = models.IntegerField(default=2)
-	valor_cuotas = models.DecimalField(max_digits=12, decimal_places=2)
+	valorCuotas = models.DecimalField(max_digits=12, decimal_places=2)
 	estatus = models.CharField(max_length=1, choices=orden_choices, default='A')
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
+	def __unicode__(self):
+		return '%i' % (self.no_solicitud)
+
+	class Meta:
+		ordering =['noSolicitud']

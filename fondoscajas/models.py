@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 from administracion.models import CuentaContable
 
@@ -17,13 +19,22 @@ class Fondo(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
 
+	class Meta:
+		ordering = ['descripcion']
+
 
 # Conceptos de Desembolsos
 class ConceptoDesembolso(models.Model):
 
 	descripcion = models.CharField(max_length=255)
-	cuenta_debito = models.ForeignKey(CuentaContable)
-	cuenta_credito = models.ForeignKey(CuentaContable)
+	cuentaDebito = models.ForeignKey(CuentaContable, related_name='+')
+	cuentaCredito = models.ForeignKey(CuentaContable, related_name='+')
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
 
 
 # Desembolso Cabecera
@@ -33,16 +44,17 @@ class DesembolsoH(models.Model):
 
 	beneficiario = models.TextField()
 	monto = models.DecimalField(max_digits=12, decimal_places=2)
-	fecha = models.DateField(default=datetime.now())
+	fecha = models.DateField(auto_now=True)
 	estatus = models.CharField(max_length=1, default='A')
 	impreso = models.PositiveIntegerField(default=0)
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 
 # Desembolso Detalle
 class DesembolsoD(models.Model):
 
 	desembolso = models.ForeignKey(DesembolsoH)
-	concepto = models.ForeignKey()
+	concepto = models.ForeignKey(ConceptoDesembolso)
 	monto = models.DecimalField(max_digits=12, decimal_places=2)

@@ -1,47 +1,77 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 import datetime
 
 
-# Catalogo de Cuentas
-class CuentaContable(models.Model):
+# Localidades
+class Localidad(models.Model):
 
-	tipo_cuenta_choices = (('G','General'),('D','Detalle'),)
-	origen_choices = (('D','Debito'),('C','Credito'),)
-
-	codigo = models.CharField(max_length=15)
 	descripcion = models.CharField(max_length=150)
-	tipoCuenta = models.CharField(max_length=1, choices=tipo_cuenta_choices, default='G')
-	origen = models.CharField(max_length=1, choices=origen_choices)
-	cuentaControl = models.BooleanField(default=False)
-
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s - %s' % (self.codigo, self.descripcion)
+		return '%s' % (self.descripcion)
 
 	class Meta:
-		ordering = ['codigo']
+		ordering = ['descripcion']
+
+
+# Distritos
+class Distrito(models.Model):
+
+	descripcion = models.CharField(max_length=150)
+	localidad = models.ForeignKey(Localidad)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
+
+
+# Departamentos
+class Departamento(models.Model):
+
+	centroCosto = models.CharField("Centro de Costo", max_length=10)
+	descripcion = models.CharField(max_length=150)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
+
+
+# Representantes
+class Representatne(models.Model):
+
+	nombre = models.CharField(max_length=150)
+
+	def __unicode__(self):
+		return '%s' % (self.nombre)
+
+
+# Unidades de productos
+class Unidad(models.Model):
+
+	descripcion = models.CharField(max_length=20)
+	nota = models.TextField()
 
 
 # PRODUCTOS para registrarlos en la facturacion
 class Producto(models.Model):
 	
-	unidades_choices = (('UN','Unidad'),('CA','Caja'),)
-
 	codigo = models.CharField(max_length=10)
 	descripcion = models.CharField(max_length=150)
-	unidad = models.CharField(max_length=2, 
-								choices=unidades_choices, 
-								default=unidades_choices[0][0])
-	precio = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	unidad = models.ForeignKey(Unidad)
+	precio = models.DecimalField(max_digits=12, decimal_places=2)
 	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
-	foto = models.ImageField(upload_to='productos', blank=True)
+	foto = models.ImageField(upload_to='productos', blank=True, null=True)
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
@@ -81,28 +111,18 @@ class Suplidor(models.Model):
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s' % (self.nombre)
+		return '%s - %s' % (self.cedulaRNC, self.nombre)
 
 	class Meta:
 		ordering = ['nombre']
 
 
-# Auxiliares
-class Auxiliar(models.Model):
-
-	estatus_choices = (('A','Activo'),('I','Inactivo'))
-
-	codigo = models.CharField(max_length=10)
-	cuenta = models.ForeignKey(CuentaContable)
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
-
-
 # Socios de la cooperativa
-class Socio(model.Model):
+class Socio(models.Model):
 	
 	sexo_choices = (('M','Masculino'),('F','Femenino'),)
 	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
@@ -118,18 +138,28 @@ class Socio(model.Model):
 	ciudad = models.CharField(max_length=150, blank=True)
 	cedula = models.CharField(max_length=20, blank=True)
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
-	estado_civil = models.CharField(max_length=1, choices=estado_civil_choices, default='S')
-	pasaporte = models.CharField(max_length=20, blank=True)
-	carnet_numero = models.IntegerField()
-	fecha_ingreso_coop = models.DateField()
-	fecha_ingreso_empresa = models.DateField()
+	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
+	pasaporte = models.CharField("Pasaporte No.", max_length=20, blank=True)
+	carnetNumero = models.IntegerField("Carnet Numero")
+	fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
+	fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
 	correo = models.EmailField(blank=True)
 	departamento = models.ForeignKey(Departamento)
 	distrito = models.ForeignKey(Distrito)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
-	salario = models.DecimalField(max_length=12, decimal_places=2)
-	cuenta_bancaria = models.CharField(max_length=20, blank=True)
-	foto = models.ImageField(upload_to='administracion')
+	salario = models.DecimalField(max_digits=12, decimal_places=2)
+	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
+	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
+	nombreCompleto = models.CharField("Nombre Completo", max_length=200, editable=False)
+
+	user_log = models.ForeignKey(User)
+	datetime_server = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return '%i - %s %s' % (self.codigo,self.nombres,self.apellidos)
+
+	class Meta:
+		ordering = ['codigo']
 
 
 # Co-Beneficiarios del socio
@@ -147,6 +177,12 @@ class CoBeneficiario(models.Model):
 	celular = models.CharField(max_length=100)
 	parentesco = models.CharField(max_length=1, choices=parentesco_choices, default='O')
 
+	def __unicode__(self):
+		return '%s' % (self.nombre)
+
+	class Meta:
+		ordering = ['nombre']
+
 
 # Categorias de Prestamos
 class CategoriaPrestamo(models.Model):
@@ -154,15 +190,15 @@ class CategoriaPrestamo(models.Model):
 	tipo_choices = (('OD','Orden de Despacho'),('PR','Prestamo'),('SC','SuperCoop'),)
 
 	descripcion = models.CharField(max_length=150)
-	monto_desde = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
-	monto_hasta = models.DecimalField(max_length=12, decimal_places=2, blank=True)
+	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2, blank=True)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2, blank=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)
-	interes_anual_socio = models.DecimalField(max_digits=6, decimal_places=2)
-	interes_anual_empleado = models.DecimalField(max_digits=6, decimal_places=2)
-	interes_anual_directivo = models.DecimalField(max_digits=6, decimal_places=2)
+	interesAnualSocio = models.DecimalField("Intereses Anual Socio", max_digits=6, decimal_places=2)
+	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2)
+	interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo", max_digits=6, decimal_places=2)
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
@@ -171,73 +207,34 @@ class CategoriaPrestamo(models.Model):
 		ordering = ['descripcion']
 
 
-# Cuentas Contables
-class CuentaContable(models.Model):
-	
-	pass
-
-
-# Localidades
-class Localidad(models.Model):
-
-	descripcion = models.CharField(max_length=150)
-
-	def __unicode__(self):
-		return '%s' % (self.descripcion)
-
-
-# Distritos
-class Distrito(models.Model):
-
-	descripcion = models.CharField(max_length=150)
-	localidad = models.ForeignKey(Localidad)
-
-
-# Cobradores
-class Cobrador(models.Model):
-
-	codigo = models.ForeignKey(Empleado)
-	user = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
-
-# Departamentos
-class Departamento(models.Model):
-
-	centro_costo = models.CharField(max_length=10)
-	descripcion = models.CharField(max_length=150)
-
-
-# Representantes
-class Representatne(models.Model):
-
-	nombre = models.CharField(max_length=150)
-
-	def __unicode__(self):
-		return '%s' % (self.nombre)
-
-
 # Cuotas de montos segun Prestamos
 class CuotaPrestamo(models.Model):
 	
-	monto_desde = models.DecimalField(max_digits=12, decimal_places=2)
-	monto_hasta = models.DecimalField(max_digits=12, decimal_places=2)
-	cantidad_quincenas = models.PositiveIntegerField()
-	cantidad_meses = models.PositiveIntegerField()
+	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2)
+	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
+	cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
 
 	user_log = models.ForeignKey(User)
 	datetime_server = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ['-montoDesde']
 
 
 # Cuotas de montos segun Ordenes de Despacho
-class CuotaPrestamo(models.Model):
+class CuotaOrdenes(models.Model):
 
-	monto_desde = models.DecimalField(max_digits=12, decimal_places=2)
-	monto_hasta = models.DecimalField(max_digits=12, decimal_places=2)
-	cantidad_quincenas = models.PositiveIntegerField()
-	cantidad_meses = models.PositiveIntegerField()
+	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2)
+	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
+	cantidadMeses = models.PositiveIntegerField("Cnatidad de Meses")
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ['-montoDesde']
 
 
 # Opciones
@@ -248,22 +245,33 @@ class Opcion(models.Model):
 	descripcion = models.CharField(max_length=80)
 	tipo = models.CharField(max_length=1, choices=tipo_choices, default='P')
 
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
+
 
 # Perfiles
 class Perfil(models.Model):
 
-	opcion = models.CharField(max_length=50)
-	perfil_cod = models.CharField(max_length=10)
+	perfilCod = models.CharField("Codigo Perfil", max_length=10, unique=True)
+	opcion = models.ForeignKey(Opcion)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.perfilCod, self.opcion)
+
+	class Meta:
+		ordering = ['perfilCod']
 
 
 # Autorizadores
 class Autorizador(models.Model):
 
-	user = models.ForeignKey(User)
+	usuario = models.ForeignKey(User)
 	perfil = models.ForeignKey(Perfil)
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 
 # Tipos de Notas de Credito Globales
@@ -282,12 +290,24 @@ class Banco(models.Model):
 	codigo = models.CharField(max_length=25)
 	nombre = models.CharField(max_length=100)
 
+	def __unicode__(self):
+		return '%s - %s' % (self.codigo,self.nombre)
+
+	class Meta:
+		ordering = ['nombre']
+
 
 # Tipos de Documentos
 class TipoDocumento(models.Model):
 
 	codigo = models.CharField(max_length=4)
 	descripcion = models.CharField(max_length=150)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.codigo,self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
 
 
 # Periodos (Fiscales)
@@ -304,16 +324,23 @@ class Periodo(models.Model):
 		)
 
 	mes = models.CharField(max_length=2, choices=mes_choices, default='01')
-	agno = models.CharField(max_length=4)
+	agno = models.CharField("Año", max_length=4)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
+	def __unicode__(self):
+		return '%s%s' % (self.mes,self.agno)
 
-# RECURSOS HUMANOS DE LA COOPERATIVA
+	class Meta:
+		ordering = ['-agno']
+
 
 # Empresas
 class Empresa(models.Model):
 
 	nombre = models.CharField(max_length=100)
+
+	def __unicode__(self):
+		return '%s' % (self.nombre)
 
 
 # Cargos
@@ -321,85 +348,22 @@ class Cargo(models.Model):
 
 	descripcion = models.CharField(max_length=100)
 
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
 
-# Empleado Cooperativa
-class EmpleadoCoop(models.Model):
-
-	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
-	sexo_choices = (('M','Masculino'),('F','Femenino'),)
-	tipo_empleado_choices = (('F','Fijo'),('T','Temporal'),)
-	tipo_cobro_choices = (('Q','Quincenal'),('M','Mensual'),)
-	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
-
-	codigo = models.CharField(max_length=5)
-	nombres = models.CharField(max_length=80)
-	apellidos = models.CharField(max_length=100)
-	cedula = models.CharField(max_length=20)
-	direccion = models.TextField(blank=True)
-	sector = models.CharField(max_length=100, blank=True)
-	ciudad = models.CharField(max_length=80, blank=True)
-	telefono = models.CharField(max_length=50, blank=True)
-	fechaNac = models.DateField(blank=True)
-	lugarNac = models.CharField(max_length=100, blank=True)
-	estadoCivil = models.CharField(max_length=1, choices=estado_civil_choices, default='S')
-	sexo = modelf.CharField(max_length=1, choices=sexo_choices, default='M')
-	dependencias = models.PositiveIntegerField(blank=True)
-	fechaIngreso = models.DateField(default=datetime.now())
-	empresa = models.ForeignKey(Empresa)
-	departamento = models.ForeignKey(Departamento)
-	tipoContrato = models.CharField(max_length=1, choices=tipo_empleado_choices, default='F')
-	cargo = models.ForeignKey(Cargo)
-	tipoCobro = models.CharField(max_length=1, choices=tipo_empleado_choices, default='Q')
-	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
-	sueldoActual = models.DecimalField(max_digits=12, decimal_places=2)
-	sueldoAnterior = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
-	activo = models.BooleanField(default=True)
-	fechaSalida = models.DateField(blank=True)
+	class Meta:
+		ordering = ['descripcion']
 
 
-# Tipos de nominas
-class TipoNomina(models.Model):
+# Cobradores
+class Cobrador(models.Model):
 
-	descripcion = models.CharField(max_length=50)
-
-
-# Cabecera Nomina de Cooperativa
-class NominaCoopH(models.Model):
-
-	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
-	estatus_choices = (('P','Procesada'),('E','En proceso'),)
-
-	fechaNomina = models.DateField(default=datetime.now())
-	fechaPago = models.DateField(default=datetime.now())
-	empleados = models.IntegerField()
-	valorNomina = models.DecimalField(max_digits=12, decimal_places=2)
-	tipoNomina = models.ForeignKey(TipoNomina)
-	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
-	nota = models.TextField(blank=True)
-
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
-
-
-# Detalle Nomina de Cooperativa
-class NominaCoopD(models.Model):
-
-	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
-	estatus_choices = (('P','Procesada'),('E','En proceso'),)
-
-	fecha = models.DateField(auto_now_add)
-	fechaNomina = models.DateField(default=datetime.now())
+	codigo = models.ForeignKey(EmpleadoCoop)
 	userLog = models.ForeignKey(User)
-	empleado = models.ForeignKey(Empleado)
-	salario = models.DecimalField(max_digits=12, decimal_places=2)
-	afp = models.DecimalField(max_digits=12, decimal_places=2)
-	ars = models.DecimalField(max_digits=12, decimal_places=2)
-	cafeteria = models.DecimalField(max_digits=12, decimal_places=2)
-	vacaciones = models.DecimalField(max_digits=12, decimal_places=2)
-	otrosIngresos = models.DecimalField(max_digits=12, decimal_places=2)
-	descAhorros = models.DecimalField(max_digits=12, decimal_places=2)
-	descPrestamos = models.DecimalField(max_digits=12, decimal_places=2)
-	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
-	
+	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return '%s' % (self.user)
+
+	class Meta:
+		ordering = ['codigo']

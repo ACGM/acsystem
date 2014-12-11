@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 from administracion.models import Producto
 
@@ -10,6 +12,12 @@ from datetime import timedelta, datetime
 class Almacen(models.Model):
 
 	descripcion = models.CharField(max_length=100)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ['descripcion']
 
 
 # Cabecera del Inventario
@@ -23,21 +31,24 @@ class InventarioH(models.Model):
 	orden = models.CharField(max_length=30)
 	factura = models.CharField(max_length=30)
 	
-	dias_plazo = models.IntegerField(choices=dias_plazo_choices,
+	diasPlazo = models.IntegerField(choices=dias_plazo_choices,
 									default=dias_plazo_choices[0][0])
 
-	tipo_accion = models.CharField(max_length=1, 
+	tipoAccion = models.CharField(max_length=1, 
 								choices=tipo_accion_choices, 
 								default=tipo_accion_choices[0][0],
 								verbose_name="Tipo de Accion")
 
-	fecha_vencimiento = models.DateField(default=fecha+timedelta(days=dias_plazo))
 	nota = models.TextField(blank=True)
 	ncf = models.CharField(max_length=25, blank=True)
-	descripcion_salida = models.CharField(max_length=255, blank=True, verbose_name="Descripción de Salida")
+	descripcionSalida = models.CharField(max_length=255, blank=True, verbose_name="Descripción de Salida")
 
-	usr_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def _get_fecha_vencimiento(self):
+		return  (self.fecha+timedelta(days=self.diasPlazo))
+	fechaVencimiento = property(_get_fecha_vencimiento)
 
 
 # Detalle del Inventario
@@ -46,9 +57,13 @@ class InventarioD(models.Model):
 	inventario = models.ForeignKey(InventarioH)
 	producto = models.ForeignKey(Producto)
 	almacen = models.ForeignKey(Almacen)
-	cantidad_teorico = models.PositiveIntegerField()
-	cantidad_fisico = models.PositiveIntegerField()
+	cantidadTeorico = models.PositiveIntegerField()
+	cantidadFisico = models.PositiveIntegerField()
 	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+
+	def save(self, *args, **kwargs):
+		
+		super(InventarioD, self).save(*args, **kwargs)
 
 
 # Movimiento de productos del inventario
@@ -85,3 +100,6 @@ class Existencia(models.Model):
 
 	def __unicode__(self):
 		return '%s - %i' % (self.producto,self.cantidad)
+
+	class Meta:
+		ordering = ['producto']

@@ -36,6 +36,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'acgm',
+    'administracion',
+    'inventario',
+    'facturacion',
+    'fondoscajas',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -66,7 +71,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-do'
 
 TIME_ZONE = 'UTC'
 
