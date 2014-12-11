@@ -36,6 +36,7 @@ class DiarioGeneral(models.Model):
 	"""docstring for DiarioGeneral"""
 	fecha=models.DateTimeField()
 	cuenta=models.ForeignKey(Cuentas, verbose_name="Cuenta", null=true, blank=true)
+	referencia=models.PositiveIntegerField(verbose_name="Ref", blank=false, null=false, default=false)
 	auxiliar=models.ForeignKey(Auxiliares, verbose_name="Aux", null=true, blank=true)
 	tipoDoc=CharField(max_length=3, default=false, blank=false, null=false verbose_name="Tipo de Doc")
 	debito=DecimalField(max_digits=18, decimal_places=2, verbose_name="Debito")
