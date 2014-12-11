@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cuenta.models import Cuentas
+from cuenta.models import Cuentas, Auxiliares
 
 import datetime
 
@@ -18,6 +18,7 @@ class Localidad(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name_plural = 'Localidades'
 
 
 # Distritos
@@ -101,7 +102,7 @@ class Suplidor(models.Model):
 	clase_choices = (('N','Normal'),('S','SuperCoop'))
 
 	tipoIdentificacion = models.CharField(max_length=1, choices=tipoIdentificacion_choices, default='C')
-	cedulaRNC = models.CharField(max_length=25)
+	cedulaRNC = models.CharField(unique=True, max_length=25)
 	nombre = models.CharField(max_length=150)
 	direccion = models.TextField(blank=True)
 	sector = models.CharField(max_length=100, blank=True)
@@ -112,6 +113,7 @@ class Suplidor(models.Model):
 	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True)
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
+	auxiliar = models.ForeignKey(Auxiliares, null=True)
 
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -160,6 +162,12 @@ class Socio(models.Model):
 	def __unicode__(self):
 		return '%i - %s %s' % (self.codigo,self.nombres,self.apellidos)
 
+	
+	def save(self, *args, **kwargs):
+		self.nombreCompleto = self.nombres + ' ' + self.apellidos
+
+		super(Socio, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['codigo']
 
@@ -171,12 +179,12 @@ class CoBeneficiario(models.Model):
 
 	socio = models.ForeignKey(Socio)
 	nombre = models.CharField(max_length=150)
-	direccion = models.TextField()
-	sector = models.CharField(max_length=150)
-	ciudad = models.CharField(max_length=100)
-	cedula = models.CharField(max_length=15)
-	telefono = models.CharField(max_length=100)
-	celular = models.CharField(max_length=100)
+	direccion = models.TextField(null=True, blank=True)
+	sector = models.CharField(max_length=150, null=True, blank=True)
+	ciudad = models.CharField(max_length=100, null=True, blank=True)
+	cedula = models.CharField(max_length=15, null=True, blank=True)
+	telefono = models.CharField(max_length=100, null=True, blank=True)
+	celular = models.CharField(max_length=100, null=True, blank=True)
 	parentesco = models.CharField(max_length=1, choices=parentesco_choices, default='O')
 
 	def __unicode__(self):
@@ -184,6 +192,8 @@ class CoBeneficiario(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
+		verbose_name = 'Co-Beneficiario'
+		verbose_name_plural = 'Co-Beneficiarios'
 
 
 # Categorias de Prestamos
@@ -195,9 +205,9 @@ class CategoriaPrestamo(models.Model):
 	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2, blank=True)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2, blank=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)
-	interesAnualSocio = models.DecimalField("Intereses Anual Socio", max_digits=6, decimal_places=2)
-	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2)
-	interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo", max_digits=6, decimal_places=2)
+	interesAnualSocio = models.DecimalField("Intereses Anual Socio", max_digits=6, decimal_places=2, null=True, blank=True)
+	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2, null=True, blank=True)
+	interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo", max_digits=6, decimal_places=2, null=True, blank=True)
 
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -207,6 +217,8 @@ class CategoriaPrestamo(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name = 'Categoria de Prestamo'
+		verbose_name_plural = 'Categorias de Prestamos'
 
 
 # Cuotas de montos segun Prestamos
@@ -217,11 +229,13 @@ class CuotaPrestamo(models.Model):
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
 	cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
 
-	user_log = models.ForeignKey(User)
-	datetime_server = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(User, editable=False)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		ordering = ['-montoDesde']
+		verbose_name = 'Cuota de Prestamo'
+		verbose_name_plural = 'Cuotas de Prestamos'
 
 
 # Cuotas de montos segun Ordenes de Despacho
