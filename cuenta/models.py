@@ -7,7 +7,7 @@ class Cuentas(models.Model):
 	"""docstring for Cuentas"""
 	
 	#Origenes de cuentas
-	origen_choices = (('D','Debito'),('o','Credito'),)
+	origen_choices = (('D','Debito'),('C','Credito'),)
 
 	#Campos Base
 	codigo=models.PositiveIntegerField(verbose_name="Codigo Cuenta", null=false, default=false, blank=false)
@@ -19,6 +19,10 @@ class Cuentas(models.Model):
 		super(Cuentas, self).__init__()
 		self.arg = arg
 
+	def __unicode__(self):
+		return '%s-%s'(self.codigo,self.descripcion)
+
+	class Meta: ordering=['codigo']
 
 class Auxiliares(models.Model):
   #auxiliares Contables
