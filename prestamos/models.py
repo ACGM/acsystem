@@ -29,14 +29,14 @@ class SolicitudPrestamo(models.Model):
 	fechaSolicitud = models.DateField(auto_now=True)
 
 	socio = models.ForeignKey(Socio)
-	salarioSocio = models.DecimalField(max_digits=12, decimal_places=2)
+	salarioSocio = models.DecimalField(max_digits=18, decimal_places=2)
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
 	autorizadoPor = models.ForeignKey(User)
 
-	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
-	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
+	montoSolicitado = models.DecimalField(max_digits=18, decimal_places=2)
+	valorGarantizado = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	netoDesembolsar = models.DecimalField(max_digits=18, decimal_places=2)
 	observacion = models.TextField()
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	fechaParaDescuento = models.DateField()
@@ -46,7 +46,7 @@ class SolicitudPrestamo(models.Model):
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
 	cantidadCuotas = models.IntegerField()
-	valorCuotasCapital = models.DecimalField(max_digits=12, decimal_places=2)
+	valorCuotasCapital = models.DecimalField(max_digits=18, decimal_places=2)
 	fechaAprobacion = models.DateField(null=True, blank=True)
 	fechaRechazo = models.DateField(null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
@@ -66,15 +66,15 @@ class SolicitudOrdenDespachoH(models.Model):
 	fechaSolicitud = models.DateField(auto_now=True)
 
 	socio = models.ForeignKey(Socio)
-	salarioSocio = models.DecimalField(max_digits=12, decimal_places=2)
+	salarioSocio = models.DecimalField(max_digits=18, decimal_places=2)
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
 	autorizadoPor = models.ForeignKey(User)
 
 	suplidor = models.ForeignKey(Suplidor)
-	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
-	valorGarantizdo = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
+	montoSolicitado = models.DecimalField(max_digits=18, decimal_places=2)
+	valorGarantizdo = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	netoDesembolsar = models.DecimalField(max_digits=18, decimal_places=2)
 	observacion = models.TextField()
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	fechaParaDescuento = models.DateField()
@@ -84,7 +84,7 @@ class SolicitudOrdenDespachoH(models.Model):
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
 	cantidadCuotas = models.IntegerField()
-	valorCuotasCapital = models.DecimalField(max_digits=12, decimal_places=2)
+	valorCuotasCapital = models.DecimalField(max_digits=18, decimal_places=2)
 	fechaAprobacion = models.DateField(null=True, blank=True)
 	fechaRechazo = models.DateField(null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
@@ -118,19 +118,20 @@ class MaestraPrestamo(models.Model):
 	oficial = models.ForeignKey(User)
 	distrito = models.ForeignKey(Distrito)
 
-	montoInicial = models.DecimalField(max_digits=12, decimal_places=2)
-	tasaInteresAnual = models.DecimalField(max_digits=12, decimal_places=2)
-	tasaInteresMensual = models.DecimalField(max_digits=12, decimal_places=2)
-	pagoPrestamoAnterior = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	montoInicial = models.DecimalField(max_digits=18, decimal_places=2)
+	tasaInteresAnual = models.DecimalField(max_digits=18, decimal_places=2)
+	tasaInteresMensual = models.DecimalField(max_digits=18, decimal_places=2)
+	pagoPrestamoAnterior = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
 	cantidadCuotas = models.PositiveIntegerField()
-	montoCuotas = models.DecimalField(max_digits=12, decimal_places=2)
+	montoCuotaQ1 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	montoCuotaQ2 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
 	fechaDesembolso = models.DateField()
 	fechaEntrega = models.DateField()
 	chequeNo = models.ForeignKey(Cheque)
 	tipoPago = models.CharField(max_length=1, choices=tipoPago_choices, default='Q')
 	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)	
-	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	valorGarantizado = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	balance = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
 
 	posteado = models.BooleanField(default=False)
 	posteadoFecha = models.DateField(auto_now=True, null=True, blank=True)
@@ -146,7 +147,7 @@ class PrestamoUnificado(models.Model):
 
 	prestamoPrincipal = models.ForeignKey(SolicitudPrestamo, related_name='+')
 	prestamoUnificado = models.ForeignKey(MaestraPrestamo, related_name='+')
-	capitalUnificado = models.DecimalField(max_digits=12, decimal_places=2)
+	capitalUnificado = models.DecimalField(max_digits=18, decimal_places=2)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 
@@ -156,8 +157,8 @@ class CuotasPrestamo(models.Model):
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),('N','Nota de Credito'),)
 
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
 	fechaPago = models.DateField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
@@ -170,8 +171,8 @@ class NotaDeCreditoPrestamo(models.Model):
 	fecha = models.DateField(auto_now=True)
 	aplicadoACuota = models.ForeignKey(CuotasPrestamo)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
 	concepto = models.TextField()
 
 	posteado = models.BooleanField(default=False)
@@ -188,8 +189,8 @@ class NotaDeCreditoEspecial(models.Model):
 
 	fecha = models.DateField(auto_now=True)
 	ordenDespacho = models.ForeignKey(SolicitudOrdenDespachoH)
-	totalMontoOrden = models.DecimalField(max_digits=12, decimal_places=2)
-	montoConsumido = models.DecimalField(max_digits=12, decimal_places=2)
+	totalMontoOrden = models.DecimalField(max_digits=18, decimal_places=2)
+	montoConsumido = models.DecimalField(max_digits=18, decimal_places=2)
 	nota = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	
@@ -207,8 +208,8 @@ class NotaDeDebitoPrestamo(models.Model):
 
 	fecha = models.DateField(auto_now=True)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
@@ -226,7 +227,7 @@ class DesembolsoElectronico(models.Model):
 
 	fecha = models.DateField(auto_now_add=True)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	monto = models.DecimalField(max_digits=12, decimal_places=2)
+	monto = models.DecimalField(max_digits=18, decimal_places=2)
 	banco = models.ForeignKey(Banco)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 

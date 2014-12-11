@@ -66,7 +66,7 @@ class OrdenDespachoSuperCoop(models.Model):
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 	quincena = models.IntegerField(choices=quincenas_choices, default='1', blank=True)
 	cuotas = models.IntegerField(default=2)
-	valorCuotas = models.DecimalField(max_digits=12, decimal_places=2)
+	valorCuotas = models.DecimalField(max_digits=18, decimal_places=2)
 	estatus = models.CharField(max_length=1, choices=orden_choices, default='A')
 	
 	datetimeServer = models.DateTimeField(auto_now_add=True)

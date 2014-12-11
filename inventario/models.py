@@ -59,7 +59,7 @@ class InventarioD(models.Model):
 	almacen = models.ForeignKey(Almacen)
 	cantidadTeorico = models.PositiveIntegerField()
 	cantidadFisico = models.PositiveIntegerField()
-	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
 
 	def save(self, *args, **kwargs):
 		

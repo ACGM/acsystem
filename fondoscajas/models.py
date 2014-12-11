@@ -43,7 +43,7 @@ class DesembolsoH(models.Model):
 	estatus_choices = (('A','Activo'),('N','Anulado'),)
 
 	beneficiario = models.TextField()
-	monto = models.DecimalField(max_digits=12, decimal_places=2)
+	monto = models.DecimalField(max_digits=18, decimal_places=2)
 	fecha = models.DateField(auto_now=True)
 	estatus = models.CharField(max_length=1, default='A')
 	impreso = models.PositiveIntegerField(default=0)
@@ -57,4 +57,4 @@ class DesembolsoD(models.Model):
 
 	desembolso = models.ForeignKey(DesembolsoH)
 	concepto = models.ForeignKey(ConceptoDesembolso)
-	monto = models.DecimalField(max_digits=12, decimal_places=2)
+	monto = models.DecimalField(max_digits=18, decimal_places=2)

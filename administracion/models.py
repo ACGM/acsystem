@@ -357,3 +357,12 @@ class Cobrador(models.Model):
 
 	class Meta:
 		ordering = ['usuario']
+
+
+# Cuotas de Ahorros de Socios
+class CuotaAhorroSocio(models.Model):
+
+	socio = models.ForeignKey(Socio)
+	cuotaAhorroQ1 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ2 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	

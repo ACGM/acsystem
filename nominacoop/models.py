@@ -59,8 +59,8 @@ class EmpleadoCoop(models.Model):
 	cargo = models.ForeignKey(CargoCoop)
 	tipoCobro = models.CharField("Tipo de Cobro", max_length=1, choices=tipo_empleado_choices, default='Q')
 	tipoPago = models.CharField("Tipo de Pago", max_length=1, choices=tipo_pago_choices, default='B')
-	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=12, decimal_places=2)
-	sueldoAnterior = models.DecimalField("Sueldo Anterior", max_digits=12, decimal_places=2, blank=True)
+	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=18, decimal_places=2)
+	sueldoAnterior = models.DecimalField("Sueldo Anterior", max_digits=18, decimal_places=2, blank=True)
 	activo = models.BooleanField(default=True)
 	fechaSalida = models.DateField("Fecha de Salida", null=True, blank=True)
 
@@ -82,14 +82,16 @@ class NominaCoopH(models.Model):
 
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 	estatus_choices = (('P','Procesada'),('E','En proceso'),)
+	quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'),)
 
 	fechaNomina = models.DateField(auto_now=True)
 	fechaPago = models.DateField(auto_now=True)
 	empleados = models.IntegerField()
-	valorNomina = models.DecimalField(max_digits=12, decimal_places=2)
+	valorNomina = models.DecimalField(max_digits=18, decimal_places=2)
 	tipoNomina = models.ForeignKey(TipoNomina)
 	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
+	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)
 	nota = models.TextField(blank=True)
 
 	posteada = models.BooleanField(default=False)
@@ -105,19 +107,19 @@ class NominaCoopD(models.Model):
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 	estatus_choices = (('P','Procesada'),('E','En proceso'),)
 
-	fecha = models.DateField(auto_now_add=True)
+	nomina = models.ForeignKey(NominaCoopH)
 	fechaNomina = models.DateField(auto_now=True)
 	userLog = models.ForeignKey(User)
 	empleado = models.ForeignKey(EmpleadoCoop)
-	salario = models.DecimalField(max_digits=12, decimal_places=2)
-	isr = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	afp = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	ars = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	cafeteria = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	vacaciones = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	otrosIngresos = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	descAhorros = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
-	descPrestamos = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
+	salario = models.DecimalField(max_digits=18, decimal_places=2)
+	isr = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	afp = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	ars = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	cafeteria = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	vacaciones = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	otrosIngresos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	descAhorros = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
+	descPrestamos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
 	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
@@ -130,8 +132,8 @@ class CuotasPrestamosEmpresa(models.Model):
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	cuota = models.ForeignKey(CuotasPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
 	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
@@ -144,6 +146,6 @@ class CuotasAhorrosEmpresa(models.Model):
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	cuota = models.ForeignKey(CuotasPrestamo)
-	valorAhorro = models.DecimalField(max_digits=12, decimal_places=2)
+	valorAhorro = models.DecimalField(max_digits=18, decimal_places=2)
 	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
