@@ -5,7 +5,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Cooperativa</title>
+	<title>{% block title %} {% endblock title%}</title>
 	<!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'> -->
 	<link rel="stylesheet" type="text/css" href={% static "css/estilos.css" %}>
 
@@ -13,22 +13,33 @@
 <body>
 	<nav class="nav-menu">
 		<ul class="ul-menu">
-			<li class="menu-item"> <a class="menu-item menu-opcion" href="#">Ahorros</a> </li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Prestamos</a> </li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Activos Fijos</a> </li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Contabilidad</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Recibos de Ingresos</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Desembolsos</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Inventario</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Facturacion</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Conciliacion</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Nomina</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">CxP</a></li>
-			<li class="menu-item"> <a class="menu-item menu-opcion"href="#">Administracion</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Ahorros</a> </li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Prestamos</a> </li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Contabilidad</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Desembolsos</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Inventario</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Facturacion</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Conciliacion</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Nomina</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">CxP</a></li>
+			<li class="menu-item"> <a class="menu-opcion" href="#">Administracion</a></li>
 		</ul>
 	</nav>
-	
-	<nav> COOPERATIVA MENU </nav>
+
+	<header class="header">
+		<figure class="content-logo">
+			<img class="logo" src="../static/images/logoCoop.png" alt="">
+		</figure>
+		<p class="titleCoop"> Cooperativa de Ahorros, Creditos y Servicios Multiples, INC.</p>
+		<p class="titleCoop titleCoop2"> de los Empleados de Industrias Nacionales</p>
+		
+	</header>
+
+	{% block content %}
+
+	{% endblock content %}
 	
 </body>
 </html>
