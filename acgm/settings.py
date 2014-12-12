@@ -36,6 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mockups',
+    'django_extensions',
     'acgm',
     'activofijo',
     'administracion',

@@ -60,7 +60,14 @@ class Representante(models.Model):
 class Unidad(models.Model):
 
 	descripcion = models.CharField(max_length=20)
-	nota = models.TextField()
+	nota = models.TextField(null=True, blank=True)
+
+	def __unicode__(self):
+		return self.descripcion
+
+	class Meta:
+		verbose_name = 'Unidad'
+		verbose_name_plural = 'Unidades'
 
 
 # PRODUCTOS para registrarlos en la facturacion
@@ -93,6 +100,8 @@ class TipoSuplidor(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name = 'Tipo de Suplidor'
+		verbose_name_plural = 'Tipos de Suplidores'
 
 
 # Suplidores/Proveedores registrados
@@ -123,6 +132,7 @@ class Suplidor(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
+		verbose_name_plural = 'Suplidores'
 
 
 # Socios de la cooperativa
@@ -251,6 +261,8 @@ class CuotaOrdenes(models.Model):
 
 	class Meta:
 		ordering = ['-montoDesde']
+		verbose_name = 'Cuota de Ordenes'
+		verbose_name_plural = 'Cuotas de Ordenes'
 
 
 # Opciones
@@ -266,6 +278,7 @@ class Opcion(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name_plural = 'Opciones'
 
 
 # Perfiles
@@ -279,6 +292,7 @@ class Perfil(models.Model):
 
 	class Meta:
 		ordering = ['perfilCod']
+		verbose_name_plural = 'Perfiles'
 
 
 # Autorizadores
@@ -288,6 +302,10 @@ class Autorizador(models.Model):
 	perfil = models.ForeignKey(Perfil)
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ['usuario']
+		verbose_name_plural = 'Autorizadores'
 
 
 # Tipos de Notas de Credito Globales
@@ -371,12 +389,17 @@ class Cobrador(models.Model):
 
 	class Meta:
 		ordering = ['usuario']
+		verbose_name_plural = 'Cobradores'
 
 
 # Cuotas de Ahorros de Socios
 class CuotaAhorroSocio(models.Model):
 
 	socio = models.ForeignKey(Socio)
-	cuotaAhorroQ1 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	cuotaAhorroQ2 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=18, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=18, decimal_places=2, null=True, blank=True)
 	
+	class Meta:
+		ordering = ['socio']
+		verbose_name = 'Cuota Ahorro Socio'
+		verbose_name_plural = 'Cuotas Ahorros Socios'
