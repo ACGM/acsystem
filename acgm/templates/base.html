@@ -9,8 +9,10 @@
 	<!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'> -->
 	<link rel="stylesheet" type="text/css" href={% static "css/estilos.css" %}>
 
+	<link rel="shortcut icon" type="image/png" href={% static "images/logoCoop.png" %} />
+
 </head>
-<body>
+<body ng-app="Menu">
 
 	<header class="header">
 		<figure class="content-logo">
@@ -25,31 +27,37 @@
 		</div>
 
 	</header>
-
-	<nav class="nav-menu">
+	<nav class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
-			<li class="menu-item"> <a class="menu-opcion" href="#">Ahorros</a> </li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Prestamos</a> </li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Contabilidad</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Desembolsos</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Inventario</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Facturacion</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Conciliacion</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Nomina</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">CxP</a></li>
-			<li class="menu-item"> <a class="menu-opcion" href="#">Administracion</a></li>
+			<li class="menu-item" id="menu1"> <a class="menu-opcion" ng-click="setMenu(1);" href="#">Ahorros</a> </li>
+			<li class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="setMenu(2);" href="#">Prestamos</a> </li>
+			<li class="menu-item" id="menu3"> <a class="menu-opcion" ng-click="setMenu(3);" href="#">Activos Fijos</a> </li>
+			<li class="menu-item" id="menu4"> <a class="menu-opcion" ng-click="setMenu(4);" href="#">Contabilidad</a></li>
+			<li class="menu-item" id="menu5"> <a class="menu-opcion" ng-click="setMenu(5);" href="#">Recibos de Ingresos</a></li>
+			<li class="menu-item" id="menu6"> <a class="menu-opcion" ng-click="setMenu(6);" href="#">Desembolsos</a></li>
+			<li class="menu-item" id="menu7"> <a class="menu-opcion" ng-click="setMenu(7);" href="#">Inventario</a></li>
+			<li class="menu-item" id="menu8"> <a class="menu-opcion" ng-click="setMenu(8);" href="#">Facturacion</a></li>
+			<li class="menu-item" id="menu9"> <a class="menu-opcion" ng-click="setMenu(9);" href="#">Conciliacion</a></li>
+			<li class="menu-item" id="menu10"> <a class="menu-opcion" ng-click="setMenu(10);" href="#">Nomina</a></li>
+			<li class="menu-item" id="menu11"> <a class="menu-opcion" ng-click="setMenu(11);" href="#">CxP</a></li>
+			<li class="menu-item" id="menu12"> <a class="menu-opcion" ng-click="setMenu(12);" href="#">Administracion</a></li>
 		</ul>
 	</nav>
-
 
 	{% block content %}
 
 	{% endblock content %}
 	
 	<footer class="footer">
+ Angular Integrado: [[9+9 ]]
+		
 		<div class="copyright"> Copyright Yeison Segura y Rafael Mercedes </div>
+
 	</footer>
+
+	<script type="text/javascript" src={% static "lib/angular.min.js" %} ></script>
+	<script type="text/javascript" src={% static "lib/jquery-1.11.1.min.js" %} ></script>
+	<script type="text/javascript" src={% static "js/app.js" %} ></script>
+
 </body>
 </html>
