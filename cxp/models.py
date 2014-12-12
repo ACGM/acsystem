@@ -7,10 +7,10 @@ class OrdenCompra(models.Model):
 	suplidor=models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
 	socio=models.ForeignKey(Socio, null=False, blank=False, default=False, verbose_name="Socio")
 	orden=models.PositiveIntegerField(null=False, blank=False, verbose_name="# Orden")
-	fecha=models.DateField([auto_now=False, auto_now_add=False], verbose_name="Fecha")
+	fecha=models.DateField(verbose_name="Fecha")
 	monto=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
 	cuotas=models.PositiveIntegerField(null=False, blank=False, verbose_name="Cuotas")
-	montocuotas=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=false)
+	montocuotas=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
 
 	def __unicode__(self):
 		return '%s-%s'(self.suplidor,self.orden,self.fecha)
@@ -36,10 +36,16 @@ class DetalleCuentasOrden(models.Model):
 class CxpSuperCoop(models.Model):
 	suplidor=models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
 	factura=models.CharField(max_length=10, default=False, null=False, blank=False, verbose_name="# Factura")
-	fecha=models.DateField([auto_now=False, auto_now_add=False], verbose_name="Fecha")	
-	concepto=models.CharField(max_length=255, null=False, blank=False, default=False verbose_name="Concepto")
+	fecha=models.DateField(verbose_name="Fecha")	
+	concepto=models.CharField(max_length=255, null=False, blank=False, default=False, verbose_name="Concepto")
 	monto=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Monto")
 	descuento=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Desc")
+
+	def __unicode__(self):
+		return '%s-%s'(self.suplidor,self.factura,self.fecha)
+
+	class Meta: 
+		ordering = ['suplidor','fecha']
 
 #Cuentas Afectadas en el registro de Cxp SuperCoop
 class CxpSuperCoopDetalleCuentas(models.Model):
