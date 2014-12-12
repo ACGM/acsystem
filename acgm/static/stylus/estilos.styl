@@ -1,0 +1,46 @@
+@import 'nib/vendor'
+@import 'nib/gradients'
+@import '../css/normalize.css'
+
+vendor-prefixes = o ms webkit moz
+
+verde = #53B222
+mamey = #FF500A
+
+body
+	font-size 16px
+	background lightgreen
+	font-family "Arial", "serif"
+
+.nav-menu
+	background green
+
+.ul-menu
+	padding 0
+	margin 0
+	
+.menu-item
+	display inline-block
+	margin 0
+	padding 0
+	
+	&:hover
+		background mamey
+		color white
+		border-bottom 2px solid black
+		cursor pointer
+	&:last-child
+		color yellow
+		font-weight 500
+		float right
+
+	&.menu-opcion
+		color lightgreen
+		border-bottom 2px solid transparent
+		
+		padding .3em .5em
+		margin 0
+		transition .3s
+		text-decoration none
+	
+		
