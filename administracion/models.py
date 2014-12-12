@@ -76,8 +76,8 @@ class Producto(models.Model):
 	codigo = models.CharField(max_length=10)
 	descripcion = models.CharField(max_length=150)
 	unidad = models.ForeignKey(Unidad)
-	precio = models.DecimalField(max_digits=12, decimal_places=2)
-	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	precio = models.DecimalField(max_digits=18, decimal_places=2)
+	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
 	foto = models.ImageField(upload_to='productos', blank=True, null=True)
 
 	userLog = models.ForeignKey(User)
@@ -161,7 +161,7 @@ class Socio(models.Model):
 	departamento = models.ForeignKey(Departamento)
 	distrito = models.ForeignKey(Distrito)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
-	salario = models.DecimalField(max_digits=12, decimal_places=2)
+	salario = models.DecimalField(max_digits=18, decimal_places=2)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=200, editable=False)
@@ -212,8 +212,8 @@ class CategoriaPrestamo(models.Model):
 	tipo_choices = (('OD','Orden de Despacho'),('PR','Prestamo'),('SC','SuperCoop'),)
 
 	descripcion = models.CharField(max_length=150)
-	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2, blank=True)
-	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2, blank=True)
+	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)
 	interesAnualSocio = models.DecimalField("Intereses Anual Socio", max_digits=6, decimal_places=2, null=True, blank=True)
 	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2, null=True, blank=True)
@@ -234,8 +234,8 @@ class CategoriaPrestamo(models.Model):
 # Cuotas de montos segun Prestamos
 class CuotaPrestamo(models.Model):
 	
-	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2)
-	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2)
+	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2)
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
 	cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
 
@@ -251,8 +251,8 @@ class CuotaPrestamo(models.Model):
 # Cuotas de montos segun Ordenes de Despacho
 class CuotaOrdenes(models.Model):
 
-	montoDesde = models.DecimalField("Monto Desde", max_digits=12, decimal_places=2)
-	montoHasta = models.DecimalField("Monto Hasta", max_digits=12, decimal_places=2)
+	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2)
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
 	cantidadMeses = models.PositiveIntegerField("Cnatidad de Meses")
 
@@ -335,7 +335,7 @@ class Banco(models.Model):
 class TipoDocumento(models.Model):
 
 	codigo = models.CharField(max_length=4)
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=50)
 
 	def __unicode__(self):
 		return '%s - %s' % (self.codigo,self.descripcion)
@@ -392,13 +392,31 @@ class Cobrador(models.Model):
 		verbose_name_plural = 'Cobradores'
 
 
+# Asociacion de Documentos con Cuentas
+class DocumentoCuentas(models.Model):
+
+	accion_choices = (('D','Debito'),('C','Credito'))
+
+	documento = models.ForeignKey(TipoDocumento)
+	cuenta = models.ForeignKey(Cuentas)
+	accion = models.CharField(max_length=1, choices=accion_choices)
+
+	def __unicode__(self):
+		return '%s - %s (%s)' % (self.documento, self.cuenta, self.accion)
+
+	class Meta:
+		ordering = ['documento','cuenta']
+		verbose_name = 'Documento relacionado a Cuentas'
+		verbose_name_plural = 'Documentos relacionados a Cuentas'
+	
+
 # Cuotas de Ahorros de Socios
 class CuotaAhorroSocio(models.Model):
 
 	socio = models.ForeignKey(Socio)
 	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=18, decimal_places=2, null=True, blank=True)
 	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=18, decimal_places=2, null=True, blank=True)
-	
+
 	class Meta:
 		ordering = ['socio']
 		verbose_name = 'Cuota Ahorro Socio'

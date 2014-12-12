@@ -13,14 +13,14 @@ class Cuentas(models.Model):
 
 	#Campos Base
 	codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, default=False, blank=False)
-	descripcion = models.CharField(max_length=255, verbose_name="Descripcion", blank=False, null=False)
+	descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
 	origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
 	#Para Identificar si es una cuenta Control
 	control =models.BooleanField(default=False)
 	cuentaControl = models.PositiveIntegerField(default=False, verbose_name="Cuenta Control", null=True, blank=True)
 
 	def __unicode__(self):
-		return '%s-%s'(self.codigo,self.descripcion)
+		return '%s-%s' % (self.codigo,self.descripcion)
 
 	class Meta: 
 		ordering = ['codigo']

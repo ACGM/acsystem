@@ -4,7 +4,8 @@ from administracion.models import Localidad, Distrito, Departamento, Representan
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
-								 TipoDocumento, Periodo, Empresa, Cobrador, CuotaAhorroSocio
+								 TipoDocumento, Periodo, Empresa, Cobrador, CuotaAhorroSocio, \
+								 DocumentoCuentas
 
 
 @admin.register(Localidad)
@@ -130,3 +131,8 @@ class CuotaAhorroSocioAdmin(admin.ModelAdmin):
 	list_display = ['socio','cuotaAhorroQ1','cuotaAhorroQ2']
 	list_editable = ('cuotaAhorroQ1','cuotaAhorroQ2')
 	search_fields = ('socio',)
+
+@admin.register(DocumentoCuentas)
+class DocumentoCuentas(admin.ModelAdmin):
+	list_display = ['documento','cuenta','accion']
+	list_editable = ('cuenta','accion')
