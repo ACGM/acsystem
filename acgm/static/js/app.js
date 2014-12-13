@@ -13,11 +13,13 @@
 
   app.controller('MenuController', function ($scope) {
     
-    // $scope.saluda = "HOLA"
+    $scope.menu = "0";
 
     $scope.setMenu = function($op) {
-      $('#menu' + $op + ' a').addClass('OpcionSeleccionada');
-      $sib = $('#menu' + $op).siblings();
+      $scope.menu = $op;
+
+      $('#menu' + $scope.menu + ' a').addClass('OpcionSeleccionada');
+      $sib = $('#menu' + $scope.menu).siblings();
       $sib.find(' a').removeClass('OpcionSeleccionada')
     };
 

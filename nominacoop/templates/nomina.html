@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %} Desembolsos {% endblock title %}
+
+{% block content %}
+
+	<div class="Nomina" ng-app="Nomina">
+		
+		<div class="nomina-menu">
+			Generar Nomina de la Cooperativa
+
+			<a class="DownArrow" href="#"></a>
+
+		</div>
+		
+		<div class="genera-nomina">
+			<ul> 
+				<li><p class="fecha-nomina">Fecha de la Nomina:</p></li>
+				<li><input class="fecha-nomina-t" type="text" name="fechaNomina" id="fechaNomina"/></li>
+			</ul>
+
+			<ul>
+				<li><p class="tipo-nomina">Tipo de Nomina</p></li>
+				<li><input class="tipo-nomina-t" type="text" name="tipoNomina" id="tipoNomina"/></li>
+			</ul>
+			
+			<p>Nota:</p>
+			<textarea id="Nota"> </textarea>
+
+			<button class="Boton"> Generar Nomina </button>
+		</div>
+
+		<div class="nomina-menu nomina-consultar">
+			Consultar Nominas
+
+			<a class="DownArrow" href="#"></a>
+
+		</div>
+
+		<div class="nominas">
+			<p class="nomina-sel">Nomina</p>
+			<input type="text" name="nominaSel" id="nominaSel"/>
+
+			<ul class="nomina-sel-header">
+				<li>Estatus</li>
+				<li>Fecha</li>
+				<li>Empleados</li>
+				<li>Valor</li>
+				<li>Tipo Nomina</li>
+				<li>Quincena</li>
+				<li>Tipo Pago</li>
+				<li>Generar Archivo</li>
+				<li>Eliminar</li>
+				<li>Ver Archivo</li>
+			</ul>
+
+			<ul class="nomina-sel-header nomina-sel-detail">
+				<li>Estatus</li>
+				<li>Fecha</li>
+				<li>Empleados</li>
+				<li>Valor</li>
+				<li>Tipo Nomina</li>
+				<li>Quincena</li>
+				<li>Tipo Pago</li>
+				<li>Generar Archivo</li>
+				<li>Eliminar</li>
+				<li>Ver Archivo</li>
+			</ul>
+		</div>
+
+	</div>
+
+	<div class="nomina-menu nomina-detalle">
+		Detalles de Nomina
+
+		<a class="DownArrow" href="#"></a>
+
+	</div>
+
+{% endblock content %}
