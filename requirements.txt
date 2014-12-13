@@ -2,3 +2,6 @@ Django==1.7.1
 Pillow==2.6.1
 wsgiref==0.1.2
 django-mockups==0.4.8
+djangorestframework==3.0.1
+Markdown==2.5.2
+django-filter==0.9.1
