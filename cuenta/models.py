@@ -12,7 +12,7 @@ class Cuentas(models.Model):
 	origen_choices = (('D','Debito'),('C','Credito'),)
 
 	#Campos Base
-	codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False)
+	codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)
 	descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
 	origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
 	#Para Identificar si es una cuenta Control
@@ -28,12 +28,12 @@ class Cuentas(models.Model):
 class Auxiliares(models.Model):
   #auxiliares Contables
 
-  codigo = models.PositiveIntegerField(verbose_name="Código Auxiliar", null=False,blank=False)
+  codigo = models.PositiveIntegerField(verbose_name="Código Auxiliar", null=False,blank=False, unique=True)
   descripcion = models.CharField(max_length=200,verbose_name="Descripcion", blank=False, null=False)
   cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=False, blank=False)
 
   def __unicode__(self):
-  	return '%s-%s' % (self.codigo,self.descripcion,self.cuenta)
+  	return '%s-%s' % (self.codigo,self.descripcion)
 
   class Meta: 
   	ordering = ['codigo']
@@ -50,7 +50,7 @@ class DiarioGeneral(models.Model):
 	Credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")
 
 	def __unicode__(self):
-		return '%s-%s' % (self.fecha,self.cuenta,self.auxiliar,self.referencia,self.tipoDoc)
+		return '%s-%s' % (self.fecha,self.cuenta,self.auxiliar)
 
 	class Meta:
 		ordering=['fecha']
