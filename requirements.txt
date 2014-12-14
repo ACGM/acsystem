@@ -5,3 +5,4 @@ django-mockups==0.4.8
 djangorestframework==3.0.1
 Markdown==2.5.2
 django-filter==0.9.1
+django-extensions==1.4.8
