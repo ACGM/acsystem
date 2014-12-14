@@ -9,7 +9,6 @@
 		url('../fonts/icomoon.woff?huggz6') format('woff'),
 		url('../fonts/icomoon.ttf?huggz6') format('truetype'),
 		url('../fonts/icomoon.svg?huggz6#icomoon') format('svg');
-	
 	src:url('../fonts2/icomoon.eot?huggz6');
 	src:url('../fonts2/icomoon.eot?#iefixhuggz6') format('embedded-opentype'),
 		url('../fonts2/icomoon.woff?huggz6') format('woff'),
@@ -204,62 +203,95 @@
 }
 
 //FONTS2 RAFAEL
-.icon-document:before {
-	content: "\e613";
-}
-.icon-uniE601:before {
-	content: "\e601";
-}
-.icon-banknote:before {
-	content: "\e604";
+.icon-save:before {
+	content: "\e89c";
 }
 .icon-archivo:before {
-	content: "\e612";
+	content: "\e912";
 }
 .icon-home:before {
-	content: "\e603";
+	content: "\e903";
 }
 .icon-pencil:before {
-	content: "\e605";
+	content: "\e905";
 }
 .icon-profile:before {
-	content: "\e606";
+	content: "\e906";
 }
 .icon-file:before {
-	content: "\e611";
+	content: "\e911";
 }
 .icon-coin:before {
-	content: "\e607";
+	content: "\e907";
 }
 .icon-credit:before {
-	content: "\e608";
+	content: "\e908";
 }
 .icon-user:before {
-	content: "\e609";
+	content: "\e909";
 }
 .icon-spinner:before {
-	content: "\e602";
+	content: "\e902";
 }
 .icon-cog:before {
-	content: "\e60a";
+	content: "\e90a";
 }
 .icon-download:before {
-	content: "\e60b";
+	content: "\e90b";
 }
 .icon-delete:before {
-	content: "\e600";
+	content: "\e900";
 }
 .icon-arrow-up:before {
-	content: "\e60c";
+	content: "\e90c";
 }
 .icon-arrow-down:before {
-	content: "\e60d";
+	content: "\e90d";
 }
-.icon-printer:before {
-	content: "\e610";
+.icon-document:before {
+	content: "\e913";
+}
+.icon-uniE601:before {
+	content: "\e901";
 }
 .icon-banknote:before {
-	content: "\e604";
+	content: "\e904";
+}
+.icon-profile:before {
+	content: "\e906";
+}
+.icon-file:before {
+	content: "\e911";
+}
+.icon-coin:before {
+	content: "\e907";
+}
+.icon-credit:before {
+	content: "\e908";
+}
+.icon-user:before {
+	content: "\e909";
+}
+.icon-spinner:before {
+	content: "\e902";
+}
+.icon-cog:before {
+	content: "\e90a";
+}
+.icon-download:before {
+	content: "\e90b";
+}
+.icon-delete:before {
+	content: "\e900";
+}
+.icon-arrow-up:before {
+	content: "\e90c";
+}
+.icon-arrow-down:before {
+	content: "\e90d";
+}
+.icon-printer:before {
+	content: "\e99a";
 }
 .icon-logout:before {
 	content: "\e60e";
@@ -278,11 +310,24 @@ verdeSubMenu = #6ABF40
 rojoOscuro = #A81E1A
 mamey = #E5442D
 amarillo = #FFF676
+verdeMuyOscuro = #132B14
 
 body
 	font-family "Arial", "serif"
 	font-size 16px
 
+footer
+	background verdeMuyOscuro
+	color white
+	border-top 1.5px solid verdeSubMenu
+	bottom 0
+	left 0
+	right 0
+	height 2em
+	position absolute
+	// width 100%
+	
+	
 // CLASES GENERICAS
 
 .Boton
@@ -299,6 +344,45 @@ body
 		background mamey
 		border-bottom .3em solid rojoOscuro
 		transform
+
+.sub-menu
+	background verdeSubMenu
+	padding .2em 0 .2em .4em 
+	color verde
+	border-top 1px solid verde
+	border-bottom 1px solid verde
+
+//FIN CLASES GENERICAS
+
+//CLASE PARA TOOLTIPs
+// .tooltip
+// 	display inline
+// 	position relative
+// 	&:hover
+// 		&:after
+// 			bottom 26px
+// 			content attr(tip)
+// 			left 2%
+// 			position absolute
+// 			z-index 98
+// 			background mamey
+// 			border-radius 5px
+// 			color white
+// 			font-family Georgia
+// 			font-size 16px
+// 			padding 5px 15px
+// 			text-align center
+// 			width 12em
+// 		&:before
+// 			bottom 20px
+// 			content ""
+// 			left -12%
+// 			position absolute
+// 			z-index 99
+// 			border solid
+// 			border-color mamey transparent
+// 			border-width 6px 6px 0 6px
+//FIN CLASE PARA TOOLTIPs
 
 //Fecha hacia abajo
 .DownArrow
@@ -323,8 +407,8 @@ body
 	
 .nav-menu
 	background verde
-	padding .25em 0
 	overflow hidden
+	padding .25em 0
 
 .ul-menu
 	padding 0
@@ -351,15 +435,15 @@ body
 		// border-bottom 2px solid black
 
 .header
-	padding 0 
 	background amarillo
-	overflow hidden
 	display block
+	overflow hidden
+	padding 0 
 	
 .content-logo
+	float left
 	margin 0 0 0 .5em
 	padding 0
-	float left
 
 .logo
 	margin .25em 0 0 .3em
@@ -377,24 +461,13 @@ body
 		
 .usuario
 	float right
-	top 0
 	margin 1.4em 1em 0 0
-
-.footer
-	width 100%
-	height 3.5em
-	background gray
-	color white
-	position relative
-	bottom 0
-	border-top 1px solid black
-	box-shadow rgba(0,0,0,.7) 2px 2px 2px 3px black
-	margin-top 4em
+	top 0
 
 .copyright
-	text-align center
-	line-height 4em
 	font-size .8em
+	line-height 4em
+	text-align center
 
 .OpcionSeleccionada
 	background mamey
@@ -405,19 +478,12 @@ body
 	background transparent
 	
 
-// MODULO DE NOMINA
-.nomina-menu
-	background verdeSubMenu
-	padding .2em 0 .2em .4em 
-	color verde
-	border-top 1px solid verde
-	border-bottom 1px solid verde
-
+// MODULO DE NOMINA  **********************************
 .genera-nomina
 	position relative
 	& ul
-		list-style none
 		display inline-block
+		list-style none
 		margin 0
 		padding 0 0 0 0
 
@@ -435,38 +501,38 @@ body
 	margin 1em 0 0 1em
 	
 .nomina-nota-t
-	padding .3em 0 0 .3em
-	margin 0 0 1em 1em
-	width 22em
 	height 4em
+	margin 0 0 1em 1em
+	padding .3em 0 0 .3em
+	width 22em
 	
 .boton-genera-nomina
 	height 4em
-	padding 0 1em
-	margin-top 10em
 	margin-left 2em
+	margin-top 10em
+	padding 0 1em
 	position absolute
 	top -4em
 
 .nomina-sel
+	display inline-block
 	margin 1em 0 0 1em
 	padding 0
-	display inline-block
 	
 .consultar-nominas-table
 	margin 1em 0 1em 1em
 	
 .nomina-sel-header
+	background verdeClarito
 	border 1px solid black
 	color white
-	background verdeClarito
 	& td 
 		border 1px solid black
 		padding .4em
 	
 	&.nomina-sel-detail
-		color rojoOscuro	
 		background white
+		color rojoOscuro	
 	
 	.icon-delete-nomina
 		&:before
@@ -477,12 +543,12 @@ body
 
 .listado-empleados-panel
 	border 1px solid gray	
+	box-shadow rgba(0,0,0,0,0.7) 1px 1px 1px black
 	display inline-block
 	height 11.8em
 	margin 1em .3em 0 1em	
 	overflow scroll
 	width 15.5em
-	box-shadow rgba(0,0,0,0,0.7) 1px 1px 1px black
 	
 .empleados-table
 	border 1px solid black
@@ -507,9 +573,9 @@ body
 	position absolute
 
 .detalle-empleado-title
-	display block
 	background verdeClarito
 	color white
+	display block
 	margin-bottom .4em
 	padding .2em 0 .2em .2em
 	
@@ -522,8 +588,10 @@ body
 
 .boton-desglose-empleado
 	height 3em
-	width 7em
-	margin 0 .4em 0 .8em
+	margin 0 .4em 0 .7em
+	width 8em
+	&:before
+		margin .4em
 
 .title-ingresos
 	background blue
@@ -540,3 +608,67 @@ body
 
 .egreso-field
 	padding 0 0 0 .5em
+// FIN MODULO DE NOMINA  **********************************
+
+// MODULO DE INVENTARIO  **********************************
+.menu-entrada-inventario-listado
+	position absolute
+	right 4em
+.nuevo
+	background transparent
+	border 0
+	cursor pointer
+	margin-bottom 1.5em
+	outline none
+	padding 0
+	
+	&:before
+		color white
+		font-size 1.2em
+		font-weight bold
+
+.listado-reg-inventario
+	margin 1em 0 0 1em
+	
+.listado-entrada-inventario-table
+	margin 1em 0 1em 0
+	border 1px solid black
+
+.listado-entrada-inventario-header
+	background verdeClarito
+	color white
+	& td
+		&:first-child
+			padding 0 .8em
+			
+		border 1px solid black
+		padding .16em .4em
+		
+.listado-entrada-inventario-detail
+	& td
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(3),&:nth-child(6),&:nth-child(8)
+			text-align right
+			padding 0 .3em
+		&:nth-child(4),&:nth-child(5),&:nth-child(7)
+			padding 0 .5em
+		
+		&:last-child
+			text-align center
+			
+.imprimir-inventario
+	color verde
+
+.boton-postear-inventario
+	height 2.5em
+	width 8em
+	margin-bottom 1em
+
+.menu-entrada-inventario
+	position relative
+	top 3em
+
+.data-entry-inventario-header
+	display inline-block

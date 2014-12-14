@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %} Desembolsos {% endblock title %}
+
+{% block content %}
+
+</style>
+
+
+	<div class="Inventario" ng-app="cooperativa">
+		
+		<div class="sub-menu" ng-controller="EntradaInventario">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva entrada de Inventario"></button>
+			</div>
+				Listado Entradas de Inventario
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="listado-reg-inventario">
+			<span> Documento No. </span>
+			<input type="text" id="DocumentoNo">
+
+			<table class="listado-entrada-inventario-table">
+				<tr class="listado-entrada-inventario-header">
+					<td><input type="checkbox"> </td>
+					<td>Estatus</td>
+					<td>Doc. No.</td>
+					<td>Fecha</td>
+					<td>NCF</td>
+					<td>Factura No.</td>
+					<td>Suplidor</td>
+					<td>Total</td>
+					<td>Imprimir</td>
+				</tr>
+
+				<tr class="listado-entrada-inventario-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td>0002344</td>
+					<td>08/12/2014</td>
+					<td>A00029993849983722</td>
+					<td>0003766</td>
+					<td>Jose Rafael Montero Nolasco</td>
+					<td>43,500.66</td>
+					<td><span class="icon-printer imprimir-inventario"></span> </td>
+				</tr>
+				<tr class="listado-entrada-inventario-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td>0002344</td>
+					<td>08/12/2014</td>
+					<td>A00029993849983722</td>
+					<td>0003766</td>
+					<td>Jose Rafael Montero Nolasco</td>
+					<td>43,500.66</td>
+					<td><span class="icon-printer imprimir-inventario"></span> </td>
+				</tr>
+				<tr class="listado-entrada-inventario-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td>0002344</td>
+					<td>08/12/2014</td>
+					<td>A00029993849983722</td>
+					<td>0003766</td>
+					<td>Jose Rafael Montero Nolasco</td>
+					<td>43,500.66</td>
+					<td><span class="icon-printer imprimir-inventario"></span> </td>
+				</tr>
+				<tr class="listado-entrada-inventario-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td>0002344</td>
+					<td>08/12/2014</td>
+					<td>A00029993849983722</td>
+					<td>0003766</td>
+					<td>Jose Rafael Montero Nolasco</td>
+					<td>43,500.66</td>
+					<td><span class="icon-printer imprimir-inventario"></span> </td>
+				</tr>								
+			</table>
+
+			<button class="Boton boton-postear-inventario"> Postear</button>
+		</section>
+
+		<!--ENTRADA DE INVENTARIO-->
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario">
+				
+			</div>
+				Entrada de Inventario
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="data-entry-inventario">
+			<div class="data-entrey-inventario-header">
+				<span>Entrada No.</span>
+				<input type="text">
+
+				<span>Orden No.</span>
+				<input type="text">
+
+				<span>Fecha</span>
+				<input type="text">		
+				
+				<span>Suplidor</span>
+				<input type="text">		
+
+			</div>
+
+
+		</section>
+
+
+		
+		</div>
+
+		
+	</div>
+
+
+
+{% endblock content %}
