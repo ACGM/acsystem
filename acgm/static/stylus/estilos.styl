@@ -5,7 +5,8 @@
 vendor-prefixes = o ms webkit moz
 
 verde = #084C0B
-verdeClarito = #2BC42D
+verdeClarito = #2BA92D
+verdeSubMenu = #6ABF40
 rojoOscuro = #A81E1A
 mamey = #E5442D
 amarillo = #FFF676
@@ -75,7 +76,7 @@ body
 	margin 0
 	padding .29em .5em
 	text-decoration none
-	transition .4s
+	transition .3s
 	
 	&:hover
 		background mamey
@@ -113,7 +114,7 @@ body
 
 .footer
 	width 100%
-	height 4em
+	height 3.5em
 	background gray
 	position absolute
 	bottom 0
@@ -136,7 +137,7 @@ body
 
 // MODULO DE NOMINA
 .nomina-menu
-	background lightgreen
+	background verdeSubMenu
 	padding .2em 0 .2em .4em 
 	color verde
 	border-top 1px solid verde
@@ -146,6 +147,14 @@ body
 	& ul
 		list-style none
 		display inline-block
+
+.boton-genera-nomina
+	height 3em
+	padding 0 1em
+	float left
+	margin-top -7em
+	margin-left 22em
+	position absolute
 		
 .nomina-sel-header
 	margin 0

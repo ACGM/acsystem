@@ -4,19 +4,19 @@
 
 {% block content %}
 
-	<div class="Nomina" ng-app="Nomina">
+	<div class="Nomina" ng-app="cooperativa">
 		
-		<div class="nomina-menu">
+		<div class="nomina-menu" ng-controller="GeneraNominaCtrl">
 			Generar Nomina de la Cooperativa
 
-			<a class="DownArrow" href="#"></a>
+			<a ng-click="mostrarGN();" class="DownArrow" href="#"></a>
 
 		</div>
-		
-		<div class="genera-nomina">
+[[mostrar]]
+		<div class="genera-nomina" ng-init="mostrar=true">
 			<ul> 
 				<li><p class="fecha-nomina">Fecha de la Nomina:</p></li>
-				<li><input class="fecha-nomina-t" type="text" name="fechaNomina" id="fechaNomina"/></li>
+				<li><input ngModelCtrl="datepicker" class="fecha-nomina-t" type="text" name="fechaNomina" id="fechaNomina"/></li>
 			</ul>
 
 			<ul>
@@ -27,7 +27,7 @@
 			<p>Nota:</p>
 			<textarea id="Nota"> </textarea>
 
-			<button class="Boton"> Generar Nomina </button>
+			<button class="Boton boton-genera-nomina"> Generar Nomina </button>
 		</div>
 
 		<div class="nomina-menu nomina-consultar">

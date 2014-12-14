@@ -1,8 +1,11 @@
 (function () {
 
-  var app = angular.module('Menu', [])
+  var app = angular.module('cooperativa', [
+    'cooperativa.menu',
+    'cooperativa.nomina'
+    ]);
 
-	.config(function($interpolateProvider,$httpProvider){
+	app.config(function($interpolateProvider,$httpProvider){
   	  $interpolateProvider.startSymbol('[[').endSymbol(']]');
 
       $httpProvider.defaults.xsrfCookieName = 'csrftoken';
@@ -23,6 +26,36 @@
       $sib.find(' a').removeClass('OpcionSeleccionada')
     };
 
+  });
+
+  app.controller('GNominaCtrl', function ($scope) {
+    
+    $scope.gNomina = "";
+
+    $scope.GeneraNomina = function() {
+      $scope.gNomina = !$scope.gNomina;
+
+    };
+
+  });
+
+  app.directive('datepicker', function() {
+    return {
+        restrict: 'A',
+        require : 'ngModel',
+        link : function (scope, element, attrs, ngModelCtrl) {
+            $(function(){
+                element.datepicker({
+                    dateFormat:'dd/mm/yy',
+                    onSelect:function (date) {
+                        scope.$apply(function () {
+                            ngModelCtrl.$setViewValue(date);
+                        });
+                    }
+                });
+            });
+        }
+    }
   });
 
 })();

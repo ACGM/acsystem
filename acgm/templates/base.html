@@ -8,11 +8,12 @@
 	<title>{% block title %} {% endblock title%}</title>
 	<!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'> -->
 	<link rel="stylesheet" type="text/css" href={% static "css/estilos.css" %}>
+	<link rel="stylesheet" type="text/css" href={% static "css/jquery-ui.css" %}>
 
 	<link rel="shortcut icon" type="image/png" href={% static "images/logoCoop.png" %} />
 
 </head>
-<body ng-app="Menu">
+<body ng-app="cooperativa">
 
 	<header class="header">
 		<figure class="content-logo">
@@ -57,7 +58,9 @@
 
 	<script type="text/javascript" src={% static "lib/angular.min.js" %} ></script>
 	<script type="text/javascript" src={% static "lib/jquery-1.11.1.min.js" %} ></script>
+	<script type="text/javascript" src={% static "lib/jquery-ui.min.js" %} ></script>
 	<script type="text/javascript" src={% static "js/app.js" %} ></script>
+	<script type="text/javascript" src={% static "js/menu.js" %} ></script>
 	<script type="text/javascript" src={% static "js/nomina.js" %} ></script>
 
 
