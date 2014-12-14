@@ -9,6 +9,13 @@
 		url('../fonts/icomoon.woff?huggz6') format('woff'),
 		url('../fonts/icomoon.ttf?huggz6') format('truetype'),
 		url('../fonts/icomoon.svg?huggz6#icomoon') format('svg');
+	
+	src:url('../fonts2/icomoon.eot?huggz6');
+	src:url('../fonts2/icomoon.eot?#iefixhuggz6') format('embedded-opentype'),
+		url('../fonts2/icomoon.woff?huggz6') format('woff'),
+		url('../fonts2/icomoon.ttf?huggz6') format('truetype'),
+		url('../fonts2/icomoon.svg?huggz6#icomoon') format('svg');
+		
 	font-weight: normal;
 	font-style: normal;
 }
@@ -196,6 +203,71 @@
 	content: "\e637";
 }
 
+//FONTS2 RAFAEL
+.icon-document:before {
+	content: "\e613";
+}
+.icon-uniE601:before {
+	content: "\e601";
+}
+.icon-banknote:before {
+	content: "\e604";
+}
+.icon-archivo:before {
+	content: "\e612";
+}
+.icon-home:before {
+	content: "\e603";
+}
+.icon-pencil:before {
+	content: "\e605";
+}
+.icon-profile:before {
+	content: "\e606";
+}
+.icon-file:before {
+	content: "\e611";
+}
+.icon-coin:before {
+	content: "\e607";
+}
+.icon-credit:before {
+	content: "\e608";
+}
+.icon-user:before {
+	content: "\e609";
+}
+.icon-spinner:before {
+	content: "\e602";
+}
+.icon-cog:before {
+	content: "\e60a";
+}
+.icon-download:before {
+	content: "\e60b";
+}
+.icon-delete:before {
+	content: "\e600";
+}
+.icon-arrow-up:before {
+	content: "\e60c";
+}
+.icon-arrow-down:before {
+	content: "\e60d";
+}
+.icon-printer:before {
+	content: "\e610";
+}
+.icon-banknote:before {
+	content: "\e604";
+}
+.icon-logout:before {
+	content: "\e60e";
+}
+.icon-help:before {
+	content: "\e60f";
+}
+//FIN FONTS2
 
 
 vendor-prefixes = o ms webkit moz
@@ -343,35 +415,85 @@ body
 	& ul
 		list-style none
 		display inline-block
+		margin 0
+		padding 0 0 0 0
+		position relative
 
+.fecha-nomina,.tipo-nomina
+	margin 1em 0 .2em 1em
+
+.fecha-nomina-t
+	margin 0 0 0 1em
+	
+.tipo-nomina-t
+	margin 0 0 0 1em
+	width 10em
+
+.nomina-nota
+	margin 1em 0 0 1em
+	
+.nomina-nota-t
+	padding .3em 0 0 .3em
+	margin 0 0 0 1em
+	width 22em
+	height 4em
+	
 .boton-genera-nomina
-	height 3em
+	height 4em
 	padding 0 1em
-	float left
-	margin-top -7em
-	margin-left 22em
-	position absolute
-		
-.nomina-sel-header
-	margin 0
+	margin-top 1em
+	margin-left 2em
+	position relative
+	top -4em
+
+.nomina-sel
+	margin 1em 0 0 1em
 	padding 0
-	& li 
-		display block
-		float left
+	display inline-block
+	
+.consultar-nominas-table
+	margin 1em 0 1em 1em
+	
+.nomina-sel-header
+	border 1px solid black
+	color white
+	background verdeClarito
+	& td 
 		border 1px solid black
-		padding .1em .3em
-		background green
-		color white
-		
+		padding .4em
+	
 	&.nomina-sel-detail
-		color rojoOscuro
-		display inline-block
+		color rojoOscuro	
+		background white
+	
+	.icon-delete-nomina
+		&:before
+			font-size 1.2em
+	.icon-archivo-nomina
+		&:before
+			font-size 1.2em
+
+.listado-empleados
+	height 8em
+	width 15.5em
+	overflow scroll
+	display inline-block
+	
+.empleados-table
+	display
+	border 1px solid black
+	margin 1em 0 0 1em
+	& td
+		border 1px solid black
+		padding .3em
 		
-		& li 
-			margin 0
-			padding 0
-			padding .1em .3em
-			background white
-			color rojoOscuro
-			
-			
+.empleados-listado-header
+	background verdeClarito
+	color white
+
+.detalle-empleado
+	display inline-block
+	// background red
+	position relative
+.detalle-desglose
+	display block
