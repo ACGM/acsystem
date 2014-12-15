@@ -21,8 +21,8 @@
 			<span> Documento No. </span>
 			<input type="text" id="DocumentoNo">
 
-			<table class="listado-entrada-inventario-table">
-				<tr class="listado-entrada-inventario-header">
+			<table class="listado-table">
+				<tr class="listado-table-header">
 					<td><input type="checkbox"> </td>
 					<td>Estatus</td>
 					<td>Doc. No.</td>
@@ -85,30 +85,153 @@
 
 		<!--ENTRADA DE INVENTARIO-->
 		<div class="sub-menu">	
-			<div class="menu-entrada-inventario">
-				
-			</div>
+	
 				Entrada de Inventario
 			<a class="DownArrow" href="#"></a>
 		</div>
 
-		<section class="data-entry-inventario">
-			<div class="data-entrey-inventario-header">
-				<span>Entrada No.</span>
-				<input type="text">
-
-				<span>Orden No.</span>
-				<input type="text">
-
-				<span>Fecha</span>
-				<input type="text">		
+		<section class="data-entry-section">
+			<div class="data-entry-inventario-header">
 				
-				<span>Suplidor</span>
-				<input type="text">		
+				<table class="data-entry-header-table">
+					<tr>
+						<td>Suplidor</td>
+						<td> <input type="text"> </td>
+						<td>Entrada No.</td>
+						<td> <input type="text"> </td>
+					</tr>
+					<tr>
+						<td>Factura No.</td>
+						<td> <input type="text"> </td>
+						<td>Orden No.</td>
+						<td> <input type="text"> </td>
+					</tr>
+					<tr>
+						<td>NCF</td>
+						<td> <input type="text"> </td>
+						<td>Fecha</td>
+						<td> <input type="text"> </td>
+					</tr>
+					<tr>
+						<td>Condicion</td>
+						<td> 
+							<select name="condicion" id="condicion">
+								<option value="Contado">Contado</option>
+								<option value="Credito">Credito</option>
+							</select>
+						</td>
+						<td>Dias Plazo</td>
+						<td> 
+							<select name="diasPlazo" id="DiasPlazo">
+								<option value="30">30</option>
+								<option value="60">60</option>
+								<option value="90">90</option>
+								<option value="120">120</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Nota</td>
+						<td> <textarea name="nota" id="nota" cols="30" rows="2"></textarea> </td>
+						<td>Vence</td>
+						<td> <input type="text"> </td>
+					</tr>
+
+				</table>
+
+				<div class="producto-find">
+					<span>Producto</span>
+					<input type="text">
+
+					<span>Almacen</span>
+					<select name="almacen" id="almacen">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+					</select>	
+				</div>
+				
+
+				<section class="productos-section">
+					<table class="productos-table">
+						<tr class="productos-table-header">
+							<td>Codigo</td>
+							<td>Descripcion</td>
+							<td>Unidad</td>
+							<td>Cantidad</td>
+							<td>Costo</td>
+							<td>Subtotal</td>
+							<td>Eliminar</td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>
+						<tr class="productos-table-detail">
+							<td>AC001</td>
+							<td>Aceite Crisol 120oz del bueno</td>
+							<td>Unidad</td>
+							<td>2</td>
+							<td>500</td>
+							<td>1,000</td>
+							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+						</tr>											
+					</table>
+
+					<div class="totales-section">
+						<ul class="totales-ul">
+							<li><span>SubTotal</span> <input type="text"></li>
+							<li><span>ITBIS</span> <input type="text"></li>
+							<li><span>Total</span> <input type="text"></li>
+						</ul>
+					</div>
+
+					<button class="icon-save Boton boton-guarda-inventario">Guardar</button>
+				</section>
 
 			</div>
-
-
 		</section>
 
 

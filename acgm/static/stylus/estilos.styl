@@ -352,6 +352,29 @@ footer
 	border-top 1px solid verde
 	border-bottom 1px solid verde
 
+.listado-table
+	margin 1em 0 1em 0
+	border 1px solid black
+
+.listado-table-header
+	background verdeClarito
+	color white
+	& td
+		&:first-child
+			padding 0 .8em
+			
+		border 1px solid black
+		padding .16em .4em
+
+.data-entry-section
+	margin 1em 0 0 1em 
+
+.icon-eliminar
+	text-decoration none
+	color red
+	&:hover
+		color mamey
+	
 //FIN CLASES GENERICAS
 
 //CLASE PARA TOOLTIPs
@@ -629,20 +652,6 @@ footer
 
 .listado-reg-inventario
 	margin 1em 0 0 1em
-	
-.listado-entrada-inventario-table
-	margin 1em 0 1em 0
-	border 1px solid black
-
-.listado-entrada-inventario-header
-	background verdeClarito
-	color white
-	& td
-		&:first-child
-			padding 0 .8em
-			
-		border 1px solid black
-		padding .16em .4em
 		
 .listado-entrada-inventario-detail
 	& td
@@ -666,9 +675,107 @@ footer
 	width 8em
 	margin-bottom 1em
 
-.menu-entrada-inventario
-	position relative
-	top 3em
-
+.data-entry-inventario
+	margin 1em 0 0 1em 
+	
 .data-entry-inventario-header
 	display inline-block
+
+.data-entry-header-table
+	
+	& tr
+		& td
+			padding .15em 0 .1em
+		&:nth-child(1),&:nth-child(2),&:nth-child(3),&:nth-child(4),&:nth-child(5)
+			& td
+				&:nth-child(3)
+					padding-left .5em
+.producto-find
+	margin-top .6em
+
+.productos-section
+	margin 1em 0 0 0
+	position relative
+	overflow hidden
+	
+.productos-table
+	border 1px solid black
+	width 100%
+
+.productos-table-header
+	border 1px solid black
+	background verdeClarito
+	color white
+	& td
+		padding 0.2em
+		border 1px solid black
+.productos-table-detail
+	& td
+		border 1px solid black
+		padding 0.1em 0.3em
+		&:nth-child(4),&:nth-child(5),&:nth-child(6)
+			text-align right
+		&:last-child
+			text-align center
+			
+.eliminar-entrada-producto
+	border 0
+	background transparent
+	color red
+
+.totales-ul
+	text-align right
+	display block
+	list-style none
+	position relative
+	right 0
+
+.boton-guarda-inventario
+	height 2.5em
+	width 7em
+	float right
+	margin-bottom 3em
+	&:before
+		margin-right .4em
+
+//MODULO DE FACTURACION
+
+.listado-reg-facturas
+	margin 1em 0 0 1em
+
+.listado-facturas-detail
+	& td
+		padding .15em 0
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(3),&:nth-child(6),&:nth-child(8)
+			text-align right
+			padding 0 .3em
+		&:nth-child(4),&:nth-child(5),&:nth-child(7)
+			padding 0 .5em
+		
+		&:nth-child(9),&:nth-child(10)
+			text-align center			
+
+.imprimir-factura
+	text-decoration none
+	color verde
+	&:hover
+		color mamey
+			
+.boton-postear-factura
+	height 2.5em
+	width 8em
+	margin-bottom 1em
+
+
+.data-entry-factura-header
+	display inline-block
+
+.data-entry-header-table
+	& tr
+		& td
+			&:nth-child(even)
+				padding-left .4em
+
