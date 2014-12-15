@@ -343,8 +343,7 @@ footer
 	&:hover
 		background mamey
 		border-bottom .3em solid rojoOscuro
-		transform
-
+		
 .sub-menu
 	background verdeSubMenu
 	padding .2em 0 .2em .4em 
@@ -367,14 +366,28 @@ footer
 		padding .16em .4em
 
 .data-entry-section
-	margin 1em 0 0 1em 
+	margin 1em 0 0 1em
 
 .icon-eliminar
 	text-decoration none
 	color red
 	&:hover
 		color mamey
-	
+
+.icon-buscar
+	text-decoration none
+	color blue
+	font-size 1.2em
+	&:hover
+		color mamey
+
+.icon-imprimir
+	text-decoration none
+	color verde
+	font-size 1.2em
+	&:hover
+		color mamey
+		
 //FIN CLASES GENERICAS
 
 //CLASE PARA TOOLTIPs
@@ -779,3 +792,111 @@ footer
 			&:nth-child(even)
 				padding-left .4em
 
+
+
+//MODULO DE PRESTAMOS
+//*******************************************
+
+//SECCION MAESTRA DE PRESTAMOS
+.listado-reg-prestamos
+	margin 1em
+	display inline-block
+
+.busqueda-by-field
+	display block
+	
+.by-prestamo
+	display inline-block
+	
+.by-socio
+	margin-left 5em
+	display inline-block
+
+.listado-prestamos-detail
+	& td
+		padding .15em .15em
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(7)
+			text-align right
+			padding 0 .3em
+		
+		&:nth-child(9),&:nth-child(10)
+			text-align center			
+			
+
+.botones-acciones-prestamos
+	float left
+	& button
+		float left
+		margin 0 1em 0 0
+		
+.boton-generar-solicitud-cheque,.boton-postear-prestamos,.boton-postear-prestamos-od
+	height 3.2em
+	width 11em
+	margin-bottom 3em
+	&:before
+		margin-right .4em
+
+//SECCION NOTA DE DEBITO
+.menu-entrada-nd-listado
+	position absolute
+	right 4em
+
+.listado-reg-nd
+	margin 1em 0 0 1em
+	display inline-block
+	position relative
+
+.filtro-posteadas
+	display inline-block
+	position absolute
+	right 0
+	
+.listado-nd-detail
+	& td
+		padding .1em .15em .1em .1em
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(7),&:nth-child(8)
+			text-align right
+			padding 0 .3em
+		
+		&:nth-child(9),&:nth-child(10),&:nth-child(11)
+			text-align center
+
+.nd-sec 
+	display inline-block
+	position relative
+	
+.prestamo-field
+	border 1px solid lightgray
+	padding .1em
+	display inline-block
+	& input
+		border none
+		outline none
+		padding 0
+		margin 0
+		width 7em
+	& a
+		padding-top -.6em
+		float right
+
+.concepto-field
+	display block
+	margin .4em 0 0 0
+
+.boton-guarda-nd,.boton-cancelar-nd
+	height 2.5em
+	width 7em
+	margin-bottom 3em
+	&:before
+		margin-right .4em
+		
+.botones-acciones
+	position absolute
+	display block
+	right 0 

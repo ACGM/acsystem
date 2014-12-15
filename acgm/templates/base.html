@@ -17,7 +17,7 @@
 
 	<header class="header">
 		<figure class="content-logo">
-			<img class="logo" src="../static/images/logoCoop.png" alt="">
+			<img class="logo" src={% static "images/logoCoop.png" %} alt="">
 		</figure>
 
 		<div class="usuario"> login </div>
@@ -31,7 +31,7 @@
 	<nav class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" ng-click="setMenu(1);" href="#">Ahorros</a> </li>
-			<li class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="setMenu(2);" href="#">Prestamos</a> </li>
+			<li class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="setMenu(2);" href="/prestamos/maestra/">Prestamos</a> </li>
 			<li class="menu-item" id="menu3"> <a class="menu-opcion" ng-click="setMenu(3);" href="#">Activos Fijos</a> </li>
 			<li class="menu-item" id="menu4"> <a class="menu-opcion" ng-click="setMenu(4);" href="#">Contabilidad</a></li>
 			<li class="menu-item" id="menu5"> <a class="menu-opcion" ng-click="setMenu(5);" href="#">Recibos de Ingresos</a></li>
