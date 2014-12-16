@@ -7,7 +7,7 @@ from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
 from inventario.views import InventarioView
 from facturacion.views import FacturacionView
-from prestamos.views import NotaDeDebitoView, MaestraPrestamosView
+from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota de Debito'),
+    url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota de Credito'),
     url(r'^prestamos/maestra/$', MaestraPrestamosView.as_view(), name='Maestra Prestamos'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/',include(router.urls)),

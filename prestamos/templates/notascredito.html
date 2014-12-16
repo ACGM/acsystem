@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %} Notas de Credito {% endblock title %}
+
+{% block content %}
+
+</style>
+
+
+	<div class="NotasDeCredito" ng-app="cooperativa">
+		
+		<div class="sub-menu" ng-controller="notasDeCredito">	
+			<div class="menu-entrada-nc-listado">
+				<button class="nuevo icon-file" title="Nueva Nota de Credito"></button>
+			</div>
+				Listado de Notas de Credito
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="listado-reg-nd">
+			<span> Prestamo No. </span>
+			<input type="text" id="PrestamoNo">
+			<span>Socio</span>
+			<input type="text">
+
+			<div class="filtro-posteadas">
+				<span>Posteadas</span>
+				<select name="posteadas" id="posteadas">
+					<option value="Todas">Todas</option>
+					<option value="Si">Si</option>
+					<option value="No">No</option>
+				</select>
+			</div>
+
+			<table class="listado-table">
+				<tr class="listado-table-nc-header">
+					<td><input type="checkbox"> </td>
+					<td>Estatus</td>
+					<td>Numero</td>
+					<td>Fecha</td>
+					<td>Aplicado A</td>
+					<td>Prestamo</td>
+					<td>Socio</td>
+					<td>Capital</td>
+					<td>Interes</td>
+					<td>Imprimir</td>
+					<td>Eliminar</td>
+				</tr>
+
+				<tr class="listado-nc-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>00094773</td>
+					<td>00094432</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-nc-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>00094773</td>
+					<td>00094432</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-nc-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>00094773</td>
+					<td>00094432</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-nc-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>00094773</td>
+					<td>00094432</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-nc-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>00094773</td>
+					<td>00094432</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+										
+			</table>
+
+			<button class="Boton boton-postear-nc"> Postear</button>
+		</section>
+
+		<!--DETALLE NC-->
+		<div class="sub-menu">	
+				Detalle Nota de Credito
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="nc-sec data-entry-section">
+			<table class="data-entry-header-table-nc">
+				<tr>
+					<td>Numero del Credito</td>
+					<td> <input type="text"> </td>
+				</tr>
+				<tr>
+					<td>Fecha</td>
+					<td> <input type="text"> </td>
+				</tr>
+				<tr>
+					<td>Prestamo No.</td>
+					<td> 
+						<div class="prestamo-field"> 
+							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+						</div>  
+					</td>
+				</tr>
+				<tr>
+					<td>Aplicado a Cta. Cap/Int</td>
+					<td> 
+						<div class="prestamo-field"> 
+							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+						</div>  
+					</td>
+				</tr>
+				<tr>
+					<td>Valor de Capital</td>
+					<td><input type="text"></td>
+				</tr>
+				<tr>
+					<td>Valor de Interes</td>
+					<td><input type="text"></td>
+				</tr>
+			</table>
+
+			<span class="concepto-field">Concepto</span>
+
+			<textarea name="concepto" id="concepto" cols="47" rows="4"></textarea>
+
+			<div class="botones-acciones">
+				<button class="icon-save Boton boton-guarda-nd">Guardar</button>
+				<button class="icon-spinner Boton boton-cancelar-nd">Cancelar</button>
+				
+			</div>
+		</section>
+				
+	</div>
+
+
+{% endblock content %}
