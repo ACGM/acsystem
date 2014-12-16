@@ -115,23 +115,130 @@
 		<section class="data-detalle-section">
 			<div class="data-detalle-prestamo-header">
 				
-				<div class="data-detalle-prestamo-1">
-					<span>Prestamo</span>
-					<span><input type="text"></span>
-					<span>Categoria</span>
-					<span><input type="text"></span>
+				<div class="data-detalle-prestamo">
+					<span class="prestamo-prestamo-field">Prestamo No.</span>
+					<span class="prestamo-categoria-field">Categoria</span>
+					<span class="prestamo-representante-field">Representante</span>
 				</div>
 				
-				<div class="data-detalle-prestamo-2">
-					<span>Socio</span>
-					<span><input type="text"></span>
-					<span><input type="text"></span>
-					<span>Cedula</span>
-					<span><input type="text"></span>
+				<div class="data-detalle-prestamo">
+					<span><input class="prestamo-prestamo-field-t" type="text"></span>
+					<span><input class="prestamo-categoria-field-t" type="text"></span>
+					<span><input class="prestamo-representanteCod-field-t" type="text"></span>
+					<span><input class="prestamo-representanteDescrp-field-t" type="text"></span>
 				</div>
 				
+				<div class="data-detalle-prestamo">
+					<span class="prestamo-codigo-field">Codigo</span>
+					<span class="prestamo-socio-field">Nombre Socio</span>
+					<span class="prestamo-cedula-field">Cedula</span>
+					<span class="prestamo-pagarPor-field">Pagar por</span>
+				</div>
+
+				<div class="data-detalle-prestamo">
+					<span><input class="prestamo-codigo-field-t" type="text"></span>
+					<span><input class="prestamo-socio-field-t" type="text"></span>
+					<span><input class="prestamo-cedula-field-t" type="text"></span>
+					<span><input class="prestamo-pagarPor-field-t" type="text"></span>
+				</div>
+
+				<div class="data-detalle-prestamo">
+					<span class="prestamo-oficial-field">Oficial</span>
+					<span class="prestamo-distrito-field">Distrito</span>
+				</div>
+				
+				<div class="data-detalle-prestamo">
+					<span><input class="prestamo-oficial-field-t" type="text"></span>
+					<span><input class="prestamo-distrito-field-t" type="text"></span>
+				</div>
+
 			</div>
 		</section>
+
+		<section class="mas-datos-prestamo-sec">
+			<div class="datos-prestamo">
+				<div class="datos-prestamo-title">
+					<span>Mas datos del prestamo</span>
+				</div>
+
+				<table class="datos-prestamo-table">
+					<tr>
+						<td>Monto Prestamo</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Tasa de Interes Anual</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Tasa de Interes Mensual</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Pago Prestamo Anterior</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Cantidad Cuotas</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Monto de Cuotas</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Tipo de Tabla</td>
+						<td class="tipo-tabla-field">
+							<input type="radio"> Quincenal
+							<input type="radio"> Mensual
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+			<div class="garante">
+				<div class="garante-title">
+					Garante
+				</div>
+
+				<table class="garante-table">
+					<tr>
+						<td>Fecha de Desembolso</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Fecha de Entrega</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Fecha de Vencimiento</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Solicitud No.</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Cheque No.</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Valor de la Garantia</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Balance a la fecha</td>
+						<td><input class="prestamo-balance-actual" type="text"></td>
+					</tr>					
+				</table>
+				
+			</div>
+
+			<button class="icon-save Boton boton-guarda-cambios">Guardar Cambios</button>
+
+		</section>
+
 
 		
 	</div>

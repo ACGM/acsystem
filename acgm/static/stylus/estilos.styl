@@ -314,7 +314,7 @@ verdeMuyOscuro = #132B14
 
 body
 	font-family "Arial", "serif"
-	font-size 16px
+	font-size 14px
 
 footer
 	background verdeMuyOscuro
@@ -450,19 +450,23 @@ footer
 	padding 0
 	margin 0
 	// border-bottom 2px solid transparent
-
+		
 .menu-item
 	display block
 	float left	
-
+	border-right 1px solid lightgray
+	
 	&:last-child a
 		color amarillo
-	 	font-weight 300
- 							
+		font-weight 300
+		
+	&:last-child
+		border-right none	
+
 .menu-opcion
 	color white
 	margin 0
-	padding .29em .5em
+	padding .29em .4em
 	text-decoration none
 	transition .3s
 	
@@ -846,12 +850,127 @@ footer
 	&:before
 		margin-right .4em
 
-.data-detalle-prestamo-1
+.data-detalle-prestamo-header
+	margin 1em
+
+.data-detalle-prestamo
 	display block
 	
+.prestamo-prestamo-field-t
+	margin-top .2em
+	width 5.7em
+
+.prestamo-categoria-field
+	margin-left .8em
+
+.prestamo-categoria-field-t
+	margin-left .85em
+	width 27em
+
+.prestamo-representante-field
+	margin-left 23.1em
+
+.prestamo-representanteCod-field-t
+	width 3em
+
+.prestamo-representanteDescrp-field-t
+	width 18em
+	margin-bottom .6em
+
+.prestamo-codigo-field-t
+	width 5.7em
+	
+.prestamo-socio-field
+	margin-left 3.85em
+	
+.prestamo-socio-field-t
+	width 20em
+	margin-left .8em
+	margin-top .2em
+	margin-bottom .8em
+
+.prestamo-cedula-field
+	margin-left 14em
+
+.prestamo-cedula-field-t
+	width 8em
+
+.prestamo-pagarPor-field
+	margin-left 7.2em
+	
+.prestamo-pagarPor-field-t
+	margin-left 2.1em
+	width 18em
+	
+.prestamo-oficial-field-t
+	width 27.1em
+
+.prestamo-distrito-field
+	margin-left 24.8em
+
+.prestamo-distrito-field-t
+	margin-left .15em
+	width 28.6em
 
 
-//SECCION NOTA DE DEBITO
+
+.mas-datos-prestamo-sec
+	margin 1em 0 0 1em
+	width 78%
+	
+.datos-prestamo
+	display inline-block
+	width 49%
+	border 1px solid lightgray
+	
+.datos-prestamo-title
+	background verdeClarito
+	padding .24em .2em
+	color white
+
+.datos-prestamo-table
+	width 100%
+	margin .3em 0 0 0
+	& tr
+		& td
+			padding .2em .3em
+			width 45%
+			&:nth-child(even)
+				text-align right
+.tipo-tabla-field
+	height 1.55em
+	
+.garante
+	display inline-block
+	width 49%
+	border 1px solid lightgray
+		
+
+.garante-title
+	background verdeClarito
+	padding .24em .2em
+	color white
+
+.garante-table
+	width 100%
+	margin .3em 0 0 0
+	& tr
+		& td
+			padding .2em .3em
+			width 45%
+			&:nth-child(even)
+				text-align right
+
+.boton-guarda-cambios
+	display block
+	margin 1em 0 2em 0 
+	float right
+	height 3.5em
+	padding 0 .8em
+	&:before
+		padding-right .4em
+
+// SECCION NOTA DE DEBITO
 .menu-entrada-nd-listado
 	position absolute
 	right 4em
