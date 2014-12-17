@@ -19,3 +19,9 @@ class NotaDeCreditoView(TemplateView):
 class MaestraPrestamosView(TemplateView):
 
 	template_name = 'maestraprestamos.html'
+
+
+#Vista para Desembolso Electronico de Prestamos
+class DesembolsoPrestamosView(TemplateView):
+
+	template_name = 'desembolsoelectronico.html'

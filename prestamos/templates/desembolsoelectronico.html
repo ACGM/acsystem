@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %} Desembolso Eletronico {% endblock title %}
+
+{% block content %}
+
+</style>
+
+
+	<div class="DesembolsoPrestamos" ng-app="cooperativa">
+		
+		<div class="sub-menu" ng-controller="desembolsoPrestamos">	
+
+				Prestamos para generar desembolsos electronicos
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="listado-reg-prestamos">
+			<div class="busqueda-by-field">
+				<div class="by-prestamo">
+					<span> Prestamo No. </span>
+					<input type="text" id="PrestamoNo">		
+				</div>	
+				<div class="by-socio">
+					<span> Socio </span>
+					<input type="text" id="Socio">
+				</div>
+			</div>
+			
+
+			<table class="listado-table-desembolso">
+				<tr class="listado-table-header">
+					<td><input type="checkbox"> </td>
+					<td>Prestamo</td>
+					<td>Socio</td>
+					<td>Monto</td>
+					<td>Cuenta Banco</td>
+				</tr>
+
+				<tr class="listado-prestamos-detail">
+					<td><input type="checkbox"> </td>
+					<td>00036654</td>
+					<td>Rafael Mercedes Santana Perez Cuevas</td>
+					<td>550,000.56</td>
+					<td>722415091</td>
+				</tr>
+				<tr class="listado-prestamos-detail">
+					<td><input type="checkbox"> </td>
+					<td>00036654</td>
+					<td>Rafael Mercedes Santana Perez Cuevas</td>
+					<td>550,000.56</td>
+					<td>722415091</td>
+				</tr>
+				<tr class="listado-prestamos-detail">
+					<td><input type="checkbox"> </td>
+					<td>00036654</td>
+					<td>Rafael Mercedes Santana Perez Cuevas</td>
+					<td>550,000.56</td>
+					<td>722415091</td>
+				</tr>
+				<tr class="listado-prestamos-detail">
+					<td><input type="checkbox"> </td>
+					<td>00036654</td>
+					<td>Rafael Mercedes Santana Perez Cuevas</td>
+					<td>550,000.56</td>
+					<td>722415091</td>
+				</tr>
+				<tr class="listado-prestamos-detail">
+					<td><input type="checkbox"> </td>
+					<td>00036654</td>
+					<td>Rafael Mercedes Santana Perez Cuevas</td>
+					<td>550,000.56</td>
+					<td>722415091</td>
+				</tr>
+			</table>
+
+			<div class="botones-acciones-desembolso">
+				<button class="Boton boton-generar-desembolso"> Generar Desembolso</button>
+				<button class="Boton boton-preparar-archivo"> Preparar Archivo para Enviar</button>
+				<button class="Boton boton-recibido-conforme"> Recibido Conforme</button>	
+			</div>
+
+		</section>
+		
+	</div>
+
+{% endblock content %}
