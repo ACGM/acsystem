@@ -310,6 +310,7 @@ verdeSubMenu = #6ABF40
 rojoOscuro = #A81E1A
 mamey = #E5442D
 amarillo = #FFF676
+amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
 
 body
@@ -378,8 +379,11 @@ footer
 	text-decoration none
 	color blue
 	font-size 1.2em
+	transition .3s
+	padding-left .15em
+	outline none
 	&:hover
-		color mamey
+		font-weight bold
 
 .icon-imprimir
 	text-decoration none
@@ -503,6 +507,10 @@ footer
 	float right
 	margin 1.4em 1em 0 0
 	top 0
+	&:before
+		display block
+		font-size 2em
+		color verdeMuyOscuro
 
 .copyright
 	font-size .8em
@@ -698,8 +706,7 @@ footer
 .data-entry-inventario-header
 	display inline-block
 
-.data-entry-header-table-nd
-	
+.data-entry-header-table	
 	& tr
 		& td
 			padding .15em 0 .1em
@@ -1011,7 +1018,16 @@ footer
 .nd-sec 
 	display inline-block
 	position relative
-	
+
+.data-entry-header-table-nd
+	& tr
+		& td
+			padding .15em 0 .1em
+		&:nth-child(1),&:nth-child(2),&:nth-child(3),&:nth-child(4),&:nth-child(5)			
+			& td								
+				&:nth-child(2)
+					padding-left .5em
+					
 .prestamo-field
 	border 1px solid lightgray
 	padding .1em
@@ -1150,4 +1166,213 @@ footer
 	padding .5em 1em
 	&:before
 		margin-right .4em
+
+//SOLICITUD DE PRESTAMO
+.menu-entrada-sp-listado
+	position absolute
+	right 4em
+
+.listado-reg-sp
+	margin 1em 0 0 1em
+	display inline-block
+	position relative
+
+.listado-sp-detail
+	& td
+		padding .1em .15em .1em .1em
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(7),&:nth-child(8)
+			text-align right
+			padding 0 .3em
 		
+		&:nth-child(9),&:nth-child(10)
+			text-align center
+
+.sp-field
+	text-decoration none
+	color verde
+	&:hover
+		color mamey
+		font-weight bold
+
+.botones-acciones-solicitud-prestamo-listado
+	float left
+
+.boton-aprobar-sp
+	height 3em
+	width 8em
+	margin-bottom 1em
+	margin-right 1em
+	padding .5em 1em
+	&:before
+		margin-right .4em
+
+.boton-rechazar-sp
+	height 3em
+	width 8em
+	margin-bottom 1em
+	padding .5em 1em
+	&:before
+		margin-right .4em
+
+
+.sub-menu-sp
+	background amarilloOscuro
+	color white
+	display block
+	margin 1em 0 .5em 0
+	padding .2em .5em
+
+.sp-header-table-solicitante
+	display inline-block
+	float left
+	margin-left .6em
+	margin-right 1em
+	& tr
+		& td
+			&:first-child
+				padding-right .4em
+				padding-bottom .5em
+			&:nth-child(2)
+				padding-bottom .25em
+
+.codigo-empleado-field,.codigo-socio-field
+	border 1px solid lightgray
+	padding .1em
+	display inline-block
+	& input
+		border none
+		outline none
+		padding .05em 0 0 .1em
+		margin 0
+		width 4.4em
+	& a
+		padding-top -.6em
+		float right
+
+.cod-repr
+	width 2em
+	
+.sp-header-table-solicitante2
+	& tr
+		& td
+			&:first-child
+				padding-right .4em
+				padding-bottom .5em
+			&:nth-child(2)
+				padding-bottom .25em
+
+.datos-prestamo-content
+	display block
+	overflow hidden
+	width 85%
+	
+.monto-field
+	font-size 1.5em
+	color mamey
+	text-align right
+	width 6em
+	font-weight bold
+	background amarillo
+	border 1px solid amarilloOscuro
+	padding .1em .2em .1em 0 
+	border-radius 3px 3px 3px 3px 
+	float left
+
+.ayuda-monto-solicitar
+	font-size 2em
+	color verde
+	float left
+	margin-top .04em
+	margin-left .05em
+	&:hover
+		color verdeClarito
+		cursor pointer
+		
+.fecha-prestamo
+	display block
+	float right
+	margin-right .1em
+
+.fecha-solicitud-field
+	display block
+	font-size .8em
+	text-align right
+	font-weight bold
+
+.fecha-solicitud-field-t
+	width 5.5em
+	text-align right
+
+.datos-prestamo-1
+	margin-left 1em
+	display inline-block
+	float left
+	width 48%
+
+.datos-prestamo-1-table
+	width 100%
+	& tr
+		&:nth-child(1)
+			& td
+				padding-bottom .5em
+		&:nth-child(2)
+			& td
+				background verdeClarito
+				padding .28em .2em
+				color amarillo
+		&:nth-child(3)
+			& td
+				padding-top .4em
+		&:nth-child(3),&:nth-child(4),&:nth-child(5),&:nth-child(6)
+			& td
+				&:nth-child(even)
+					padding-bottom .3em
+					text-align right
+		&:nth-child(7)
+			& td
+				&:first-child
+					font-weight bold
+				&:last-child
+					text-align right
+		&:nth-child(8)
+			& td
+				padding .4em 0 0 0
+		
+		&:nth-child(10)			
+			& td
+				padding .5em 0 
+
+.boton-guardar-solicitud
+	height 2.5em
+	width 8em
+	float left
+	margin-bottom 3em
+	&:before
+		margin-right .4em
+
+.boton-cancelar-solicitud
+	height 2.5em
+	width 8em
+	float right
+	margin-bottom 3em
+	&:before
+		margin-right .4em
+			
+.monto-desembolsar-field
+	font-size 1.5em
+	color verdeMuyOscuro
+	width 7.15em
+	font-weight bold
+	background lightgreen
+	border 1px solid verde
+	padding .06em .2em .06em 0 
+	border-radius 0px 0px 0px 0px 
+
+.datos-prestamo-2
+	float left
+	border 1px solid mamey
+	width 48%
+	margin-left 1em
