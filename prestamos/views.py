@@ -15,6 +15,12 @@ class NotaDeCreditoView(TemplateView):
 	template_name = 'notascredito.html'
 
 
+#Vista para Notas de Credito Especiales
+class NotaDeCreditoEspView(TemplateView):
+
+	template_name = 'notacreditoespecial.html'
+
+
 #Vista para Maestra de Prestamos
 class MaestraPrestamosView(TemplateView):
 

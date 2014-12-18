@@ -4,18 +4,20 @@
 
 {% block content %}
 
-	<div class="NotaCreditoEspecial" ng-app="cooperativa">
+	<div class="NotaCreditoEspecial">
 		
-		<div class="sub-menu" ng-controller="solicitudPrestamo">	
-			<div class="menu-entrada-sp-listado">
-				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo"></button>
+		<div class="sub-menu" ng-controller="NotaCreditoEspecial">	
+			<div class="menu-entrada-nce-listado">
+				<button class="nuevo icon-file" title="Nueva Nota de Credito Especial"></button>
 			</div>
 				Listado de Solicitudes de Prestamos
 			<a class="DownArrow" href="#"></a>
 		</div>
 
-		<section class="listado-reg-sp">
+		<section class="listado-reg-nce">
 			<span>Socio</span>
+			<input type="text">
+			<span class="prestamo-field-nce">Prestamo</span>
 			<input type="text">
 
 			<div class="filtro-posteadas">
@@ -28,98 +30,92 @@
 			</div>
 
 			<table class="listado-table">
-				<tr class="listado-table-nc-header">
+				<tr class="listado-table-nce-header">
 					<td><input type="checkbox"> </td>
 					<td>Estatus</td>
-					<td>Solicitud #</td>
+					<td>Numero</td>
 					<td>Fecha</td>
-					<td>Codigo</td>
+					<td>Prestamo</td>
 					<td>Socio</td>
-					<td>Solicitado</td>
-					<td>Desembolsar</td>
+					<td>Valor Prestamo</td>
+					<td>Valor Ahorro</td>
+					<td>Val. CxP</td>
 					<td>Imprimir</td>
 					<td>Eliminar</td>
 				</tr>
-
-				<tr class="listado-sp-detail">
+				<tr class="listado-nce-detail">
 					<td><input type="checkbox"> </td>
 					<td class="icon-coin"></td>
 					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
 					<td>08/12/2014</td>
-					<td>241099</td>
+					<td>00007344</td>
 					<td>Rafael Mercedes Santana Perez</td>
 					<td>8,948.45</td>
+					<td>4,240.54</td>
 					<td>1,240.54</td>
 					<td><a class="icon-printer icon-imprimir" href=""></a></td>
 					<td><a class="icon-delete icon-eliminar" href=""></a></td>
 				</tr>
-				<tr class="listado-sp-detail">
+				<tr class="listado-nce-detail">
 					<td><input type="checkbox"> </td>
 					<td class="icon-coin"></td>
 					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
 					<td>08/12/2014</td>
-					<td>241099</td>
+					<td>00007344</td>
 					<td>Rafael Mercedes Santana Perez</td>
 					<td>8,948.45</td>
+					<td>4,240.54</td>
 					<td>1,240.54</td>
 					<td><a class="icon-printer icon-imprimir" href=""></a></td>
 					<td><a class="icon-delete icon-eliminar" href=""></a></td>
 				</tr>
-				<tr class="listado-sp-detail">
+				<tr class="listado-nce-detail">
 					<td><input type="checkbox"> </td>
 					<td class="icon-coin"></td>
 					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
 					<td>08/12/2014</td>
-					<td>241099</td>
+					<td>00007344</td>
 					<td>Rafael Mercedes Santana Perez</td>
 					<td>8,948.45</td>
+					<td>4,240.54</td>
 					<td>1,240.54</td>
 					<td><a class="icon-printer icon-imprimir" href=""></a></td>
 					<td><a class="icon-delete icon-eliminar" href=""></a></td>
 				</tr>
-				<tr class="listado-sp-detail">
+				<tr class="listado-nce-detail">
 					<td><input type="checkbox"> </td>
 					<td class="icon-coin"></td>
 					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
 					<td>08/12/2014</td>
-					<td>241099</td>
+					<td>00007344</td>
 					<td>Rafael Mercedes Santana Perez</td>
 					<td>8,948.45</td>
+					<td>4,240.54</td>
 					<td>1,240.54</td>
 					<td><a class="icon-printer icon-imprimir" href=""></a></td>
 					<td><a class="icon-delete icon-eliminar" href=""></a></td>
 				</tr>
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-
 										
 			</table>
 
 			<div class="botones-acciones-solicitud-prestamo-listado">
-				<button class="Boton boton-aprobar-sp"> Aprobar</button>
-				<button class="Boton boton-rechazar-sp"> Rechazar</button>
+				<button class="Boton boton-aprobar-sp"> Postear</button>
+				<button class="Boton boton-rechazar-sp"> Anular</button>
 				
 			</div>
 		</section>
 
-		<!--DETALLE NC-->
+		<!--DETALLE NCE-->
 		<div class="sub-menu">	
-				Solicitud de Prestamo
-			<a class="DownArrow" href="#"></a>
+				Nota de Credito
 		</div>
 
-		<section class="data-entry-section-sp">
-			<div class="sub-menu-sp">	
+		<section class="nce-section-1">
+			<div class="nce-sub-1">	
+				<span>Numero</span>
+				<input type="text">
+				<span>Fecha</span>
+				<input type="text">
 				Datos del Solicitante
 			</div>
 

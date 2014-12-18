@@ -940,7 +940,7 @@ footer
 	border 1px solid lightgray
 	
 .datos-prestamo-title
-	background verdeClarito
+	background amarilloOscuro
 	padding .24em .2em
 	color white
 
@@ -963,7 +963,7 @@ footer
 		
 
 .garante-title
-	background verdeClarito
+	background amarilloOscuro
 	padding .24em .2em
 	color white
 
@@ -1480,4 +1480,39 @@ footer
 	margin-bottom 3em
 	&:before
 		margin-right .4em
-	
+
+//NOTA DE CREDITO ESPECIAL
+.menu-entrada-nce-listado
+	position absolute
+	right 4em
+
+.listado-reg-nce
+	margin 1em 0 0 1em
+	display inline-block
+	position relative
+
+.prestamo-field-nce
+	margin-left 2em
+
+.listado-table-nce-header
+	background verdeClarito
+	color white
+	& td
+		&:first-child
+			padding 0 .8em
+			
+		border 1px solid black
+		padding .16em .4em
+
+.listado-nce-detail
+	& td
+		padding .1em .15em .1em .1em
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(7),&:nth-child(8),&:nth-child(9)
+			text-align right
+			padding 0 .3em
+		
+		&:nth-child(10),&:nth-child(11)
+			text-align center

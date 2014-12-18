@@ -8,7 +8,7 @@ from nominacoop.views import NominaView
 from inventario.views import InventarioView, TransferenciaInvView
 from facturacion.views import FacturacionView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
-                            DesembolsoPrestamosView, SolicitudPrestamoView
+                            DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -40,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota de Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota de Credito'),
+    url(r'^prestamos/nce/$', NotaDeCreditoEspView.as_view(), name='Nota de Credito Especial'),
     url(r'^prestamos/maestra/$', MaestraPrestamosView.as_view(), name='Maestra Prestamos'),
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud de Prestamo'),
