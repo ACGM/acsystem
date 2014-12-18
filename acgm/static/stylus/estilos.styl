@@ -1331,13 +1331,13 @@ footer
 				&:nth-child(even)
 					padding-bottom .3em
 					text-align right
-		&:nth-child(7)
+		&:nth-child(7) //Monto Desembolsar
 			& td
 				&:first-child
 					font-weight bold
 				&:last-child
 					text-align right
-		&:nth-child(8)
+		&:nth-child(8) 
 			& td
 				padding .4em 0 0 0
 		
@@ -1345,6 +1345,9 @@ footer
 			& td
 				padding .5em 0 
 
+.nota-field
+	width 98%
+	
 .boton-guardar-solicitud
 	height 2.5em
 	width 8em
@@ -1370,9 +1373,81 @@ footer
 	border 1px solid verde
 	padding .06em .2em .06em 0 
 	border-radius 0px 0px 0px 0px 
+	text-align right
 
 .datos-prestamo-2
 	float left
-	border 1px solid mamey
 	width 48%
 	margin-left 1em
+	
+.datos-prestamo-2-table
+	width 100%
+	margin-bottom .4em
+	& tr
+		&:nth-child(1)
+			& td
+				&:nth-child(2)
+					width 65%
+					padding-bottom .2em
+
+.categoria-prestamo-field
+	width 98%
+
+.fecha-descuento-field
+	width 6em
+
+.unificar-prestamos-sec
+	border 1px solid lightgray
+	display inline-block
+	
+
+.unificar-prestamos-title
+	display block
+	background mamey
+	color amarillo
+	padding .1em 0 .15em .3em
+
+.unificar-prestamos-table
+	float left
+	margin .2em 0 .2em .2em
+	border 1px solid black
+	& tr
+		&:first-child
+			background gray
+			color white
+		& td
+			
+			border 1px solid black
+			padding .3em .3em
+
+.boton-unificar-prestamos
+	height 2.5em
+	width 7em
+	margin .3em .3em 0 .5em
+	float right
+	&:before
+		margin-right .4em
+
+
+.otros-datos
+	padding .3em 0 .2em 0
+
+.descontar
+	margin 0 .1em .4em 0
+	display block
+	
+.descuento-mensual
+	display inline-block
+	margin-left 1em
+
+.otros-datos-info
+	margin-bottom .4em
+
+.otros-datos-info-table
+	& tr
+		& td
+			&:first-child
+				padding-right .5em
+			&:last-child
+				padding-bottom .3em
+			

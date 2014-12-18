@@ -4,9 +4,6 @@
 
 {% block content %}
 
-</style>
-
-
 	<div class="SolicitudPrestamo" ng-app="cooperativa">
 		
 		<div class="sub-menu" ng-controller="solicitudPrestamo">	
@@ -222,13 +219,13 @@
 							<td colspan="2">Nota/Observacion</td>
 						</tr>
 						<tr>
-							<td colspan="3"><textarea name="nota" id="" cols="66" rows="4"></textarea></td>
+							<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9"></textarea></td>
 						</tr>
 
 						<tr>
 							<td colspan="2">
 								<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
-								<button class="Boton icon-spinner boton-cancelar-solicitud">Cancelar</button>
+								<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
 							</td>
 						</tr>
 
@@ -236,19 +233,37 @@
 				</div>
 
 				<div class="datos-prestamo-2">
-					<table>
+					<table class="datos-prestamo-2-table">
 						<tr>
 							<td>Categoria Prestamo</td>
-							<td><input type="text"></td>
+							<td><input type="text" class="categoria-prestamo-field"></td>
 						</tr>
 						<tr>
 							<td>Fecha para descuento</td>
-							<td><input type="text"></td>
+							<td><input type="text" class="fecha-descuento-field"></td>
 						</tr>
 					</table>
 
-					<div class="unificar-prestamo-sec">
-						<table>
+					<div class="descontar">
+						<span>Descontar</span>
+						<select name="descontar" id="descontar">
+							<option value="Quincenal">Quincenal</option>
+							<option value="Mensual">Mensual</option>
+						</select>
+						
+						<div class="descuento-mensual">
+							<input type="radio"> 1ra
+							<input type="radio"> 2da								
+						</div>
+
+					</div>
+
+
+					<div class="unificar-prestamos-sec">
+						<div class="unificar-prestamos-title">
+							Unificar Prestamos
+						</div>
+						<table class="unificar-prestamos-table">
 							<tr>
 								<td><input type="checkbox"></td>
 								<td>Prestamo</td>
@@ -259,10 +274,65 @@
 								<td>00048875</td>
 								<td>20,500.56</td>
 							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+														<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
 						</table>
-						<button class="Boton">Unificar</button>
+						<button class="Boton boton-unificar-prestamos">Unificar</button>
 						
 					</div>
+
+					<div class="otros-datos">
+						
+
+						<div class="otros-datos-info">
+							<table class="otros-datos-info-table">
+								<tr>
+									<td>Tasa de interes anual</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Tasa de interes mensual</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Cantidad de cuotas</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Valor de Cuotas capital</td>
+									<td><input type="text"></td>
+								</tr>
+
+								<tr>
+									<td>Fecha Aprobacion</td>
+									<td><input type="text"></td>
+								</tr>
+								
+								<tr>
+									<td>Fecha Rechazo</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Prestamo #</td>
+									<td><input type="text"></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
 				</div>
 
 			</div> 
