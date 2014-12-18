@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %} Nota de Credito Especial {% endblock title %}
+
+{% block content %}
+
+	<div class="NotaCreditoEspecial" ng-app="cooperativa">
+		
+		<div class="sub-menu" ng-controller="solicitudPrestamo">	
+			<div class="menu-entrada-sp-listado">
+				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo"></button>
+			</div>
+				Listado de Solicitudes de Prestamos
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="listado-reg-sp">
+			<span>Socio</span>
+			<input type="text">
+
+			<div class="filtro-posteadas">
+				<span>Posteadas</span>
+				<select name="posteadas" id="posteadas">
+					<option value="Todas">Todas</option>
+					<option value="Si">Si</option>
+					<option value="No">No</option>
+				</select>
+			</div>
+
+			<table class="listado-table">
+				<tr class="listado-table-nc-header">
+					<td><input type="checkbox"> </td>
+					<td>Estatus</td>
+					<td>Solicitud #</td>
+					<td>Fecha</td>
+					<td>Codigo</td>
+					<td>Socio</td>
+					<td>Solicitado</td>
+					<td>Desembolsar</td>
+					<td>Imprimir</td>
+					<td>Eliminar</td>
+				</tr>
+
+				<tr class="listado-sp-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>241099</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-sp-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>241099</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-sp-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>241099</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-sp-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>241099</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+				<tr class="listado-sp-detail">
+					<td><input type="checkbox"> </td>
+					<td class="icon-coin"></td>
+					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
+					<td>08/12/2014</td>
+					<td>241099</td>
+					<td>Rafael Mercedes Santana Perez</td>
+					<td>8,948.45</td>
+					<td>1,240.54</td>
+					<td><a class="icon-printer icon-imprimir" href=""></a></td>
+					<td><a class="icon-delete icon-eliminar" href=""></a></td>
+				</tr>
+
+										
+			</table>
+
+			<div class="botones-acciones-solicitud-prestamo-listado">
+				<button class="Boton boton-aprobar-sp"> Aprobar</button>
+				<button class="Boton boton-rechazar-sp"> Rechazar</button>
+				
+			</div>
+		</section>
+
+		<!--DETALLE NC-->
+		<div class="sub-menu">	
+				Solicitud de Prestamo
+			<a class="DownArrow" href="#"></a>
+		</div>
+
+		<section class="data-entry-section-sp">
+			<div class="sub-menu-sp">	
+				Datos del Solicitante
+			</div>
+
+			<table class="sp-header-table-solicitante">
+				<tr>
+					<td>Codigo de empleado</td>
+					<td>
+						<div class="codigo-empleado-field"> 
+							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>Codigo del socio</td>
+					<td> 
+						<div class="codigo-socio-field"> 
+							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>Representante</td>
+					<td><input class="cod-repr" type="text"> <input class="descrp-repr" type="text"></td>
+				</tr>
+				<tr>
+					<td>Auxiliar</td>
+					<td><input type="text"></td>
+				</tr>
+			</table>
+
+			<table class="sp-header-table-solicitante2">
+				<tr>
+					<td>Cedula</td>
+					<td><input type="text"></td>
+				</tr>
+				<tr>
+					<td>Salario</td>
+					<td><input type="text"></td>
+				</tr>
+				<tr>
+					<td>Cobrador</td>
+					<td><input type="text"></td>
+				</tr>
+				<tr>
+					<td>Autorizado por</td>
+					<td><input type="text"></td>
+				</tr>
+			</table>
+
+		</section>
+
+		<section class="sp-datos-prestamo">
+			<div class="sub-menu-sp">	
+				Datos del Prestamo
+			</div>
+
+			<div class="datos-prestamo-content">
+
+				<div class="datos-prestamo-1">
+					<table class="datos-prestamo-1-table">
+						<tr>
+							<td>
+								<input type="text" class="monto-field">
+								<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
+							</td>
+							<td>
+								<div class="fecha-prestamo">
+									<span class="fecha-solicitud-field">Fecha Solicitud</span>
+									<input class="fecha-solicitud-field-t" type="text">
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">Disponible para garantia</td>
+						</tr>
+						<tr>
+							<td>Ahorros Capitalizados</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Deudas Prestamos</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Prestaciones Laborales</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Valor garantizado</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Neto a desembolsar</td>
+							<td><input class="monto-desembolsar-field" type="text"></td>
+						</tr>
+						<tr>
+							<td colspan="2">Nota/Observacion</td>
+						</tr>
+						<tr>
+							<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9"></textarea></td>
+						</tr>
+
+						<tr>
+							<td colspan="2">
+								<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
+								<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div class="datos-prestamo-2">
+					<table class="datos-prestamo-2-table">
+						<tr>
+							<td>Categoria Prestamo</td>
+							<td><input type="text" class="categoria-prestamo-field"></td>
+						</tr>
+						<tr>
+							<td>Fecha para descuento</td>
+							<td><input type="text" class="fecha-descuento-field"></td>
+						</tr>
+					</table>
+
+					<div class="descontar">
+						<span>Descontar</span>
+						<select name="descontar" id="descontar">
+							<option value="Quincenal">Quincenal</option>
+							<option value="Mensual">Mensual</option>
+						</select>
+						
+						<div class="descuento-mensual">
+							<input type="radio"> 1ra
+							<input type="radio"> 2da								
+						</div>
+
+					</div>
+
+
+					<div class="unificar-prestamos-sec">
+						<div class="unificar-prestamos-title">
+							Unificar Prestamos
+						</div>
+						<table class="unificar-prestamos-table">
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>Prestamo</td>
+								<td>Capital</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+														<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>00048875</td>
+								<td>20,500.56</td>
+							</tr>
+						</table>
+						<button class="Boton boton-unificar-prestamos">Unificar</button>
+						
+					</div>
+
+					<div class="otros-datos">
+						
+
+						<div class="otros-datos-info">
+							<table class="otros-datos-info-table">
+								<tr>
+									<td>Tasa de interes anual</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Tasa de interes mensual</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Cantidad de cuotas</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Valor de Cuotas capital</td>
+									<td><input type="text"></td>
+								</tr>
+
+								<tr>
+									<td>Fecha Aprobacion</td>
+									<td><input type="text"></td>
+								</tr>
+								
+								<tr>
+									<td>Fecha Rechazo</td>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td>Prestamo #</td>
+									<td><input type="text"></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
+
+			</div> 
+		</section>				
+	</div>
+
+
+{% endblock content %}

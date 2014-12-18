@@ -4,207 +4,116 @@
 
 {% block content %}
 
-</style>
-
-
 	<div class="TransferenciaInv">
 		
-		<div class="sub-menu" ng-controller="transferenciaInv">	
-				Listado de Transferencias Realizadas
-			<a class="DownArrow" href="#"></a>
-		</div>
+		<div class="conteo-fisico">
+			
+			<!--CONTEO FISICO-->
+			<div class="sub-menu">	
+					Conteo Fisico
+				<a class="DownArrow" href="#"></a>
+			</div>
 
-		<section class="listado-reg-transferencias">
-			<span> Factura No. </span>
-			<input type="text" id="FacturaNo">
+			<section class="data-entry-section">
+				<div class="data-entry-transf-header">
+					
+					<table class="data-entry-header-table">
+						<tr>
+							<td>Numero</td>
+							<td> <input type="text"> </td>
+							<td>Fecha</td>
+							<td> <input type="text"> </td>
 
-			<table class="listado-table">
-				<tr class="listado-table-header">
-					<td><input type="checkbox"> </td>
-					<td>Estatus</td>
-					<td>Factura</td>
-					<td>Orden C.</td>
-					<td>Prestamo</td>
-					<td>NCF</td>
-					<td>Socio</td>
-					<td>Valor</td>
-					<td>Imprimir</td>
-					<td>Eliminar</td>
-				</tr>
-
-				<tr class="listado-transferencias-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>0003234</td>
-					<td>0045596</td>
-					<td>A00203948588570031</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-transferencias-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>0003234</td>
-					<td>0045596</td>
-					<td>A00203948588570031</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-transferencias-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>0003234</td>
-					<td>0045596</td>
-					<td>A00203948588570031</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-transferencias-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>0003234</td>
-					<td>0045596</td>
-					<td>A00203948588570031</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-transferencias-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>0003234</td>
-					<td>0045596</td>
-					<td>A00203948588570031</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>								
-			</table>
-
-		</section>
-
-		<!--CONTEO FISICO-->
-		<div class="sub-menu">	
-				Conteo Fisico
-			<a class="DownArrow" href="#"></a>
-		</div>
-
-		<section class="data-entry-section">
-			<div class="data-entry-transf-header">
-				
-				<table class="data-entry-header-table">
-					<tr>
-						<td>Numero</td>
-						<td> <input type="text"> </td>
-						<td>Fecha</td>
-						<td> <input type="text"> </td>
-
-					</tr>
-					<tr>
-						<td>Almacen</td>
-						<td>
-							<select name="almacen" id="almacen">
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-							</select>
-						</td>
-						<td>Nota</td>
-						<td> <input type="text"> </td>
-						
-					</tr>
-				</table>
-
-				<div class="producto-find">
-					<span>Producto</span>
-					<input type="text">
-	
-				</div>
-				
-
-				<section class="productos-section-transf">
-					<table class="productos-table-transf">
-						<tr class="productos-table-header-transf">
-							<td>Codigo</td>
-							<td>Descripcion</td>
+						</tr>
+						<tr>
 							<td>Almacen</td>
-							<td>Cantidad</td>
-							<td>Teorico</td>
-							<td>Diferencia</td>
-							<td>Eliminar</td>
+							<td>
+								<select name="almacen" id="almacen">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>
+							</td>
+							<td>Nota</td>
+							<td> <input type="text"> </td>
+							
 						</tr>
-						<tr class="productos-table-detail">
-							<td>AC003</td>
-							<td>Aceite Crisol 20 oz. del bueno</td>
-							<td>2</td>
-							<td>500</td>
-							<td>400</td>
-							<td>100</td>
-							<td><a class="icon-delete icon-eliminar" href=""></a></td>
-						</tr>		
-						<tr class="productos-table-detail">
-							<td>AC003</td>
-							<td>Aceite Crisol 20 oz. del bueno</td>
-							<td>2</td>
-							<td>500</td>
-							<td>400</td>
-							<td>100</td>
-							<td><a class="icon-delete icon-eliminar" href=""></a></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC003</td>
-							<td>Aceite Crisol 20 oz. del bueno</td>
-							<td>2</td>
-							<td>500</td>
-							<td>400</td>
-							<td>100</td>
-							<td><a class="icon-delete icon-eliminar" href=""></a></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC003</td>
-							<td>Aceite Crisol 20 oz. del bueno</td>
-							<td>2</td>
-							<td>500</td>
-							<td>400</td>
-							<td>100</td>
-							<td><a class="icon-delete icon-eliminar" href=""></a></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC003</td>
-							<td>Aceite Crisol 20 oz. del bueno</td>
-							<td>2</td>
-							<td>500</td>
-							<td>400</td>
-							<td>100</td>
-							<td><a class="icon-delete icon-eliminar" href=""></a></td>
-						</tr>		
 					</table>
 
-
-					<button class="icon-save Boton boton-guarda-transf">Guardar</button>
-				</section>
-
-			</div>
-		</section>
-
-
+					<div class="producto-find">
+						<span>Producto</span>
+						<input type="text">
 		
-		</div>
+					</div>
+					
 
+					<section class="productos-section-transf">
+						<table class="productos-table-transf">
+							<tr class="productos-table-header-transf">
+								<td>Codigo</td>
+								<td>Descripcion</td>
+								<td>Almacen</td>
+								<td>Cantidad</td>
+								<td>Teorico</td>
+								<td>Diferencia</td>
+								<td>Eliminar</td>
+							</tr>
+							<tr class="productos-table-detail">
+								<td>AC003</td>
+								<td>Aceite Crisol 20 oz. del bueno</td>
+								<td>2</td>
+								<td><input type="text" value="500" class="text-field-num-table"></td>
+								<td><input type="text" value="400" class="text-field-num-table"></td>
+								<td>100</td>
+								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							</tr>		
+							<tr class="productos-table-detail">
+								<td>AC003</td>
+								<td>Aceite Crisol 20 oz. del bueno</td>
+								<td>2</td>
+								<td><input type="text" value="500" class="text-field-num-table"></td>
+								<td><input type="text" value="400" class="text-field-num-table"></td>
+								<td>100</td>
+								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							</tr>		
+							<tr class="productos-table-detail">
+								<td>AC003</td>
+								<td>Aceite Crisol 20 oz. del bueno</td>
+								<td>2</td>
+								<td><input type="text" value="500" class="text-field-num-table"></td>
+								<td><input type="text" value="400" class="text-field-num-table"></td>
+								<td>100</td>
+								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							</tr>		
+							<tr class="productos-table-detail">
+								<td>AC003</td>
+								<td>Aceite Crisol 20 oz. del bueno</td>
+								<td>2</td>
+								<td><input type="text" value="500" class="text-field-num-table"></td>
+								<td><input type="text" value="400" class="text-field-num-table"></td>
+								<td>100</td>
+								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							</tr>		
+							<tr class="productos-table-detail">
+								<td>AC003</td>
+								<td>Aceite Crisol 20 oz. del bueno</td>
+								<td>2</td>
+								<td><input type="text" value="500" class="text-field-num-table"></td>
+								<td><input type="text" value="400" class="text-field-num-table"></td>
+								<td>100</td>
+								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							</tr>		
+						</table>
+
+
+						<button class="icon-save Boton boton-guarda-transf">Guardar</button>
+					</section>
+
+				</div>
+			</section>
+
+		</div>
 		
 	</div>
 
