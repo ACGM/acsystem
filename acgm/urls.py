@@ -5,7 +5,7 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
-from inventario.views import InventarioView
+from inventario.views import InventarioView, TransferenciaInvView
 from facturacion.views import FacturacionView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView
@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
+    url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='Transferencia Inventario'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota de Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota de Credito'),
