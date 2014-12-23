@@ -110,229 +110,154 @@
 				Nota de Credito
 		</div>
 
-		<section class="nce-section-1">
-			<div class="nce-sub-1">	
-				<span>Numero</span>
+		<div class="detalle-nce-sec">
+			
+			<section class="nce-section-1">
+				<div class="nce-sub-1">	
+					<span>Numero</span>
+					<input type="text">
+					<span>Fecha</span>
+					<input type="text">
+				</div>
+				
+				<div class="nce-sub-2">
+					<span>Socio</span>
+					<input type="text">
+				</div>
+
+				<div class="nce-table">
+					<table class="nce-table-1">
+						<tr>
+							<td>Capital</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Interes</td>
+							<td><input type="text"></td>
+						</tr>
+					</table>
+
+					<span>Balance Pendiente</span>
+					<table class="nce-table-2">
+						<tr>
+							<td>Capital</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Interes</td>
+							<td><input type="text"></td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="nce-detalle-sec">
+					<span class="nce-detalle-span">Detalle</span>
+					<input type="text">
+				</div>
+
+				<table class="nce-table-cuotas">
+					<tr class="nce-header-table-cuotas">
+						<td>Cuota</td>
+						<td>Tipo</td>
+						<td>Fecha</td>
+						<td>Val.</td>
+						<td>Capital</td>
+						<td>Interes</td>
+						<td>Total</td>
+					</tr>
+					<tr class="nce-detail-table-cuotas">
+						<td>1</td>
+						<td>CT</td>
+						<td>08/12/2014</td>
+						<td>2,300</td>
+						<td>1,500</td>
+						<td>800</td>
+						<td>2,300</td>					
+					</tr>
+					<tr class="nce-detail-table-cuotas">
+						<td>1</td>
+						<td>CT</td>
+						<td>08/12/2014</td>
+						<td>2,300</td>
+						<td>1,500</td>
+						<td>800</td>
+						<td>2,300</td>					
+					</tr>
+					<tr class="nce-detail-table-cuotas">
+						<td>1</td>
+						<td>CT</td>
+						<td>08/12/2014</td>
+						<td>2,300</td>
+						<td>1,500</td>
+						<td>800</td>
+						<td>2,300</td>					
+					</tr>
+					<tr class="nce-detail-table-cuotas">
+						<td>1</td>
+						<td>CT</td>
+						<td>08/12/2014</td>
+						<td>2,300</td>
+						<td>1,500</td>
+						<td>800</td>
+						<td>2,300</td>					
+					</tr>
+				</table>
+
+			</section>
+			
+			<section class="nce-section-2">
+				
+				<table>
+					<tr>
+						<td>Orden No.</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Total Monto Orden</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Monto de la Orden consumido por el socio</td>
+						<td><input type="text"></td>
+					</tr>
+				</table>
+				
+				<hr>
+
+				<span><h3>Cuentas por Pagar</h3> </span>
+				<span>Suplidor</span>
 				<input type="text">
-				<span>Fecha</span>
 				<input type="text">
-				Datos del Solicitante
-			</div>
+				
+				<table>
+					<tr>
+						<td>Valor Pendiente</td>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<td>Valor a Acreditar</td>
+						<td><input type="text"></td>
+					</tr>
+				</table>
+				
+				<hr>
 
-			<table class="sp-header-table-solicitante">
-				<tr>
-					<td>Codigo de empleado</td>
-					<td>
-						<div class="codigo-empleado-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Codigo del socio</td>
-					<td> 
-						<div class="codigo-socio-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Representante</td>
-					<td><input class="cod-repr" type="text"> <input class="descrp-repr" type="text"></td>
-				</tr>
-				<tr>
-					<td>Auxiliar</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
+				<span><h3>Ahorros</h3></span>
 
-			<table class="sp-header-table-solicitante2">
-				<tr>
-					<td>Cedula</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Salario</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Cobrador</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Autorizado por</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
-
+				<table>
+					<tr>
+						<td>Valor Ahorros</td>
+						<td><input type="text"></td>
+					</tr>
+				</table>
+				
+			</section>
+		</div>
+	
+		<section class="acciones-botones">
+			<button class="Boton boton-guardar-nce">Guardar</button>
 		</section>
-
-		<section class="sp-datos-prestamo">
-			<div class="sub-menu-sp">	
-				Datos del Prestamo
-			</div>
-
-			<div class="datos-prestamo-content">
-
-				<div class="datos-prestamo-1">
-					<table class="datos-prestamo-1-table">
-						<tr>
-							<td>
-								<input type="text" class="monto-field">
-								<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
-							</td>
-							<td>
-								<div class="fecha-prestamo">
-									<span class="fecha-solicitud-field">Fecha Solicitud</span>
-									<input class="fecha-solicitud-field-t" type="text">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">Disponible para garantia</td>
-						</tr>
-						<tr>
-							<td>Ahorros Capitalizados</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Deudas Prestamos</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Prestaciones Laborales</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Valor garantizado</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Neto a desembolsar</td>
-							<td><input class="monto-desembolsar-field" type="text"></td>
-						</tr>
-						<tr>
-							<td colspan="2">Nota/Observacion</td>
-						</tr>
-						<tr>
-							<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9"></textarea></td>
-						</tr>
-
-						<tr>
-							<td colspan="2">
-								<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
-								<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
-							</td>
-						</tr>
-
-					</table>
-				</div>
-
-				<div class="datos-prestamo-2">
-					<table class="datos-prestamo-2-table">
-						<tr>
-							<td>Categoria Prestamo</td>
-							<td><input type="text" class="categoria-prestamo-field"></td>
-						</tr>
-						<tr>
-							<td>Fecha para descuento</td>
-							<td><input type="text" class="fecha-descuento-field"></td>
-						</tr>
-					</table>
-
-					<div class="descontar">
-						<span>Descontar</span>
-						<select name="descontar" id="descontar">
-							<option value="Quincenal">Quincenal</option>
-							<option value="Mensual">Mensual</option>
-						</select>
-						
-						<div class="descuento-mensual">
-							<input type="radio"> 1ra
-							<input type="radio"> 2da								
-						</div>
-
-					</div>
-
-
-					<div class="unificar-prestamos-sec">
-						<div class="unificar-prestamos-title">
-							Unificar Prestamos
-						</div>
-						<table class="unificar-prestamos-table">
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>Prestamo</td>
-								<td>Capital</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-														<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-						</table>
-						<button class="Boton boton-unificar-prestamos">Unificar</button>
-						
-					</div>
-
-					<div class="otros-datos">
-						
-
-						<div class="otros-datos-info">
-							<table class="otros-datos-info-table">
-								<tr>
-									<td>Tasa de interes anual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Tasa de interes mensual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Cantidad de cuotas</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Valor de Cuotas capital</td>
-									<td><input type="text"></td>
-								</tr>
-
-								<tr>
-									<td>Fecha Aprobacion</td>
-									<td><input type="text"></td>
-								</tr>
-								
-								<tr>
-									<td>Fecha Rechazo</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Prestamo #</td>
-									<td><input type="text"></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-
-				</div>
-
-			</div> 
-		</section>				
+				
 	</div>
 
 
