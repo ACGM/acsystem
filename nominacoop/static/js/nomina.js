@@ -3,7 +3,6 @@
   angular.module('cooperativa.nomina', [])
     
 
-
     .controller('GeneraNominaCtrl', ['$scope', function ($scope) {
       $scope.showGN = true;
 
