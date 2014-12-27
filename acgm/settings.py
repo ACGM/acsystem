@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+USE_THOUSAND_SEPARATOR = True
 
 # Application definition
 
@@ -84,7 +85,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'es-do'
+LANGUAGE_CODE = 'es-DO'
 
 TIME_ZONE = 'UTC'
 

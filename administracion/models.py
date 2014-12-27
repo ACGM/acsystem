@@ -77,7 +77,7 @@ class Producto(models.Model):
 	descripcion = models.CharField(max_length=150)
 	unidad = models.ForeignKey(Unidad)
 	precio = models.DecimalField(max_digits=18, decimal_places=2)
-	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
+	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
 	foto = models.ImageField(upload_to='productos', blank=True, null=True)
 
 	userLog = models.ForeignKey(User)
@@ -128,7 +128,7 @@ class Suplidor(models.Model):
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s - %s' % (self.cedulaRNC, self.nombre)
+		return '%s' % (self.nombre)
 
 	class Meta:
 		ordering = ['nombre']

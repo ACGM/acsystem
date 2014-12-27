@@ -3,7 +3,8 @@
   var app = angular.module('cooperativa', [
     'cooperativa.menu',
     'cooperativa.nomina',
-    'cooperativa.facturacion'
+    'cooperativa.facturacion',
+    'cooperativa.inventario'
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){

@@ -2,8 +2,9 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
-from administracion.models import Producto
+from administracion.models import Producto, Suplidor
 
 from datetime import timedelta, datetime
 
@@ -23,46 +24,100 @@ class Almacen(models.Model):
 # Cabecera del Inventario
 class InventarioH(models.Model):
 
-	tipo_accion_choices = (('E','Entrada'),('S','Salida'),)
 	dias_plazo_choices = (('30','30'),('60','60'), ('120','120'),)
+	posteo_choices = (('N','NO'),('S','SI'))
 
 	fecha = models.DateField(default=datetime.now)
-	almacen = models.ForeignKey(Almacen)
-	orden = models.CharField(max_length=30)
-	factura = models.CharField(max_length=30)
+	orden = models.CharField(max_length=30, blank=True, null=True)
+	factura = models.CharField(max_length=30, blank=True, null=True)
 	
-	diasPlazo = models.IntegerField(choices=dias_plazo_choices,
+	diasPlazo = models.CharField("Dias de Plazo", max_length=3, choices=dias_plazo_choices,
 									default=dias_plazo_choices[0][0])
 
-	tipoAccion = models.CharField(max_length=1, 
-								choices=tipo_accion_choices, 
-								default=tipo_accion_choices[0][0],
-								verbose_name="Tipo de Accion")
-
 	nota = models.TextField(blank=True)
-	ncf = models.CharField(max_length=25, blank=True)
-	descripcionSalida = models.CharField(max_length=255, blank=True, verbose_name="Descripción de Salida")
-
+	ncf = models.CharField("NCF", max_length=25, blank=True)
+	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True)
+	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
+	suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		verbose_name = 'Inventario Cabecera'
+		verbose_name_plural = 'Inventario Cabecera'
 
 	def _get_fecha_vencimiento(self):
 		return  (self.fecha+timedelta(days=self.diasPlazo))
 	fechaVencimiento = property(_get_fecha_vencimiento)
 
+	@property
+	def totalGeneral(self):
+		total = InventarioD.objects.filter(inventario_id=self.id).aggregate(total=Sum('costo'))['total']
+		if total == None:
+			total = 0
+
+		return '$%s' % str(format(total,',.2f'))
+
+	def __unicode__(self):
+		return '%i' % (self.id)
 
 # Detalle del Inventario
 class InventarioD(models.Model):
+
+	tipo_accion_choices = (('E','Entrada'),('S','Salida'),)
 
 	inventario = models.ForeignKey(InventarioH)
 	producto = models.ForeignKey(Producto)
 	almacen = models.ForeignKey(Almacen)
 	cantidadTeorico = models.PositiveIntegerField()
-	cantidadFisico = models.PositiveIntegerField()
-	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
+	cantidadFisico = models.PositiveIntegerField(null=True, blank=True)
+	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+	tipoAccion = models.CharField(max_length=1, 
+								choices=tipo_accion_choices, 
+								default='E',
+								verbose_name="Tipo de Accion")
+
+	class Meta:
+		verbose_name = 'Inventario Detalle'
+		verbose_name_plural = 'Inventario Detalle'
+
+	def __unicode__(self):
+		return '%i' % (self.id)
 
 	def save(self, *args, **kwargs):
 		
+		# Actualizar la existencia del producto 
+		try:
+			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
+			
+			if self.tipoAccion == 'S':
+				exist.cantidad -= self.cantidadTeorico
+			else:
+				exist.cantidad = int(exist.cantidad) + self.cantidadTeorico
+
+			exist.cantidad -= self.cantidadTeorico
+			exist.save()
+		except Existencia.DoesNotExist:
+			existencia = Existencia()
+			existencia.producto = self.producto
+			
+			if self.tipoAccion == 'S':
+				existencia.cantidad = -self.cantidadTeorico
+			else:
+				existencia.cantidad = self.cantidadTeorico
+			
+			existencia.almacen = self.almacen
+			existencia.tipo_mov = self.tipoAccion
+			existencia.save()
+
+		# Guardar el movimiento del producto
+		mov = Movimiento()
+		mov.producto = self.producto
+		mov.cantidad = self.cantidadTeorico
+		mov.almacen = self.almacen
+		mov.tipo_mov = self.tipoAccion
+		mov.save()
+
 		super(InventarioD, self).save(*args, **kwargs)
 
 
@@ -80,11 +135,10 @@ class Movimiento(models.Model):
 								default=tipo_mov_choices[0][0],
 								verbose_name="Tipo de Movimiento")
 	
-	usr_log = models.ForeignKey(User)
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s - %i (%s)' % (self.producto,self.cantidad,self.tipo_mov)
+		return '%s - %i (%s) - Almacen: %s' % (self.producto,self.cantidad,self.tipo_mov,self.almacen)
 
 	class Meta:
 		ordering = ['producto']
