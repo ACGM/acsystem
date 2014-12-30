@@ -13,10 +13,10 @@
 					<button class="nuevo icon-file" title="Nueva entrada de Inventario"></button>
 				</div>
 					Listado Entradas de Inventario
-				<a class="DownArrow" href="#" ng-click="toggleLEI()"></a>
+				<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
 			</div>
 
-		<div class="Listado-Entrada-Inventario" ng-show="showLEI" ng-init="listadoEntradas()">
+		<div id="prueba" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas()" >
 			
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span>
@@ -67,7 +67,7 @@
 				<button class="Boton boton-postear-inventario" ng-click=""> Postear</button>
 			</section>
 		</div>
-		[[entradasSeleccionadas]]
+		<!-- [[entradasSeleccionadas]] -->
 
 		<!--ENTRADA DE INVENTARIO-->
 		<div class="sub-menu">	

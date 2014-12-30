@@ -4,7 +4,7 @@
     'cooperativa.menu',
     'cooperativa.nomina',
     'cooperativa.facturacion',
-    'cooperativa.inventario'
+    'cooperativa.inventario',
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){

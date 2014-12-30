@@ -1,6 +1,6 @@
 (function () {
 
-  angular.module('cooperativa.inventario', [])
+  angular.module('cooperativa.inventario',['ngAnimate'])
 
     .filter('posteo', function() {
       return function (input) {
@@ -125,6 +125,7 @@
       $scope.reg = [];
       $scope.valoresChk = [];
       $scope.Fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      $scope.ArrowLEI = 'UpArrow';
 
       $scope.regAll = false;
 
@@ -161,7 +162,10 @@
 
         InventarioService.guardarEI(dataH,dataD).then(function (data) {
           console.log(data);
+          $scope.listadoEntradas();
+
         });
+
 
       }
 
@@ -275,6 +279,12 @@
       // Mostrar/Ocultar panel de Listado de Entrada Inventario
       $scope.toggleLEI = function() {
         $scope.showLEI = !$scope.showLEI;
+
+        if($scope.showLEI === true) {
+          $scope.ArrowLEI = 'UpArrow';
+        } else {
+          $scope.ArrowLEI = 'DownArrow';
+        }
       }
 
 
