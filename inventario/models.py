@@ -36,7 +36,7 @@ class InventarioH(models.Model):
 
 	nota = models.TextField(blank=True)
 	ncf = models.CharField("NCF", max_length=25, blank=True)
-	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True)
+	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
 	userLog = models.ForeignKey(User)

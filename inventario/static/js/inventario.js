@@ -15,6 +15,21 @@
 
     .factory('InventarioService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
+      //Guardar Entrada Inventario
+      function guardarEI(dataH, dataD) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
       //Llenar el listado de entradas de inventario
       function all() {
         var deferred = $q.defer();
@@ -32,6 +47,18 @@
         var deferred = $q.defer();
 
         $http.get('/api/suplidor/?format=json')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Listado de productos
+      function productos() {
+        var deferred = $q.defer();
+
+        $http.get('/api/producto/?format=json')
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -81,28 +108,114 @@
         all: all,
         byPosteo: byPosteo,
         byNoDoc: byNoDoc,
-        suplidores: suplidores
+        suplidores: suplidores,
+        productos: productos,
+        guardarEI: guardarEI
       };
 
     }])
 
-
-    .controller('ListadoEntradaInvCtrl', ['$scope','$http', 'InventarioService', function ($scope, $http, InventarioService) {
+    //****************************************************
+    //CONTROLLERS                                        *
+    //****************************************************
+    .controller('ListadoEntradaInvCtrl', ['$scope','$http', '$filter', 'InventarioService', function ($scope, $http, $filter, InventarioService) {
       $scope.showLEI = true;
       $scope.entradas = {};
       $scope.entradasSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
+      $scope.Fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
       $scope.regAll = false;
 
-      //Traer suplidores
-      $scope.getSuplidor = function(suplidor) {
-        InventarioService.suplidores().then(function (data) {
-          $scope.suplidores = data;
+      //Guardar Entrada Inventario
+      $scope.guardarEI = function() {
+        // var fechaP = $scope.Fecha.split('/');
+        // var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
+        // var fechaVP = $scope.venceFecha.split('/');
+        // var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];
+        
+        var dataH = new Object();
+        dataH.suplidor = $scope.idSuplidor;
+        dataH.factura = $scope.factura;
+        dataH.orden = $scope.ordenNo;
+        dataH.ncf = $scope.ncf;
+        dataH.fecha = '2014-12-30';
+        dataH.condicion = $scope.condicion;
+        dataH.diasPlazo = $scope.venceDias;
+        dataH.nota = $scope.nota;
+        dataH.vence = '2014-12-30';
+        dataH.userlog = 'coop';
+
+        console.log(dataH);
+
+        var dataD = [];
+
+        var detalle = {codigo: 'AC01', precio: '200'}
+        dataD.push(detalle);
+        var detalle2 = {codigo: 'AC02', precio: '600'}
+        dataD.push(detalle2);
+        var detalle3 = {codigo: 'AC03', precio: '240'}
+        dataD.push(detalle3);
+
+        InventarioService.guardarEI(dataH,dataD).then(function (data) {
+          console.log(data);
         });
 
+      }
+
+      //Traer suplidores
+      $scope.getSuplidor = function(suplidor) {
+        if(suplidor != undefined) {
+          InventarioService.suplidores().then(function (data) {
+            $scope.suplidores = data.filter(function (registro) {
+              return registro.id == suplidor;
+            });
+
+            if($scope.suplidores.length > 0) {
+              $scope.suplidorNombre = $scope.suplidores[0].nombre;
+            }
+
+          });
+        } else {
+          InventarioService.suplidores().then(function (data) {
+            $scope.suplidores = data;
+
+          });
+        }
+      }
+
+      //Traer productos
+      $scope.getProducto = function(suplidor) {
+        if(suplidor != undefined) {
+          InventarioService.suplidores().then(function (data) {
+            $scope.suplidores = data.filter(function (registro) {
+              return registro.id == suplidor;
+            });
+
+            if($scope.suplidores.length > 0) {
+              $scope.suplidorNombre = $scope.suplidores[0].nombre;
+            }
+
+          });
+        } else {
+          InventarioService.suplidores().then(function (data) {
+            $scope.suplidores = data;
+
+          });
+        }
+      }
+
+      //Calcula Fecha Vence
+      $scope.venceFecha = function() {
+        var fechaP = $scope.Fecha.split('/');
+        var today = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
+        var nextDate = new Date();
+
+        nextDate.setDate(today.getDate()+parseInt($scope.venceDias));
+
+        $scope.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
       }
 
       //Listado de todas las entradas de inventario

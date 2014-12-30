@@ -1,41 +1,36 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets, serializers
-# Create your views here.
 
-from .models import Suplidor, TipoSuplidor ,Socio, Departamento
+from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
+						SocioSerializer, DepartamentoSerializer
 
-class SuplidorTipoSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=TipoSuplidor
-		fields=('descripcion',)
+from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento
+
+
+class ProductoViewSet(viewsets.ModelViewSet):
+	queryset=Producto.objects.all()
+	serializer_class=ProductoSerializer
+
 
 class SuplidorTipoViewSet(viewsets.ModelViewSet):
 	queryset=TipoSuplidor.objects.all()
 	serializer_class=SuplidorTipoSerializer
 
-class SuplidorSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=Suplidor
-		fields=('cedulaRNC','nombre', 'tipoSuplidor')
 
 class SuplidorViewSet(viewsets.ModelViewSet):
 	queryset=Suplidor.objects.all()
 	serializer_class=SuplidorSerializer
 
-class SocioSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=Socio
-		fields=('codigo','nombres','apellidos','departamento')
 
 class SocioViewSet(viewsets.ModelViewSet):
 	queryset=Socio.objects.all()
 	serializer_class=SocioSerializer
 
-class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=Departamento
-		fields=('centroCosto', 'descripcion')
+
+class DepartamentoViewSet(viewsets.ModelViewSet):
+	queryset=Departamento.objects.all()
+	serializer_class=DepartamentoSerializer
 
 class DepartamentoViewSet(viewsets.ModelViewSet):
 	queryset=Departamento.objects.all()
