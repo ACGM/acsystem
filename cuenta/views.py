@@ -1,12 +1,8 @@
 from django.shortcuts import render
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets
 
-from cuenta.models import Cuentas,Auxiliares
-
-class CuentasSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=Cuentas
-		fields=('codigo','descripcion','origen')
+from .models import Cuentas,Auxiliares,DiarioGeneral
+from .serializers import CuentasSerializer, AuxiliarSerualizer, DiarioSerializer
 
 
 class CuentasViewSet(viewsets.ModelViewSet):
@@ -14,12 +10,11 @@ class CuentasViewSet(viewsets.ModelViewSet):
 	serializer_class=CuentasSerializer
 
 
-class AuxiliarSerualizer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model=Auxiliares
-		fields=('codigo','descripcion','cuenta')
-
 class AuxiliarViewSet(viewsets.ModelViewSet):
 	queryset=Auxiliares.objects.all()
 	serializer_class=AuxiliarSerualizer
+
+class DiarioViewSet(viewsets.ModelViewSet):
+	queryset=DiarioGeneral.objects.all()
+	serializer_class=DiarioSerializer
 	

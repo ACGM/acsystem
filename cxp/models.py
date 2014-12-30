@@ -1,6 +1,6 @@
 from django.db import models
 from administracion.models import Suplidor, Socio
-from cuenta.models import Cuentas, Auxiliares
+from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
 
 #Detalle de articulos y precio del mismo de la Orden
 class DetalleOrden(models.Model):
@@ -13,19 +13,6 @@ class DetalleOrden(models.Model):
 	class Meta:
 		ordering = ['articulo']
 
-#Detalle de las cuentas afectadas en la orden
-class DetalleCuentasOrden(models.Model):
-	cuenta=models.ForeignKey(Cuentas,null=True, blank=True, verbose_name="Cuenta")
-	auxiliar=models.ForeignKey(Auxiliares, null=True, blank=True, verbose_name="Cuenta")
-	debito=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Debito")
-	credito=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Credito")
-
-	def __unicode__(self):
-		return self.pk
-
-	class Meta:
-		ordering=['cuenta','auxiliar']
-
 #Registro de ordenes de compra a Socio
 class OrdenCompra(models.Model):
 	suplidor=models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
@@ -35,8 +22,8 @@ class OrdenCompra(models.Model):
 	monto=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
 	cuotas=models.PositiveIntegerField(null=False, blank=False, verbose_name="Cuotas")
 	montocuotas=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
-	detalleOrden=models.ForeignKey(DetalleOrden, verbose_name="Detalle de Orden")
-	detalleCuentas=models.ForeignKey(DetalleCuentasOrden, verbose_name="Detalle Cuentas")
+	detalleOrden=models.ManyToManyField(DetalleOrden,related_name='detalle_ref', verbose_name="Detalle de Orden")
+	detalleCuentas=models.ManyToManyField(DiarioGeneral, related_name="diario_ref", verbose_name='Detalle Cuentas')
 
 	def __unicode__(self):
 		return self.orden
@@ -44,20 +31,6 @@ class OrdenCompra(models.Model):
 	class Meta: 
 		ordering = ['suplidor','fecha']
 
-
-
-#Cuentas Afectadas en el registro de Cxp SuperCoop
-class CxpSuperCoopDetalleCuentas(models.Model):
-	cuenta=models.ForeignKey(Cuentas,null=True, blank=True, verbose_name="Cuenta")
-	auxiliar=models.ForeignKey(Auxiliares, null=True, blank=True, verbose_name="Cuenta")
-	debito=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Debito")
-	credito=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Credito")
-
-	def __unicode__(self):
-		return self.pk
-
-	class Meta:
-		ordering=['cuenta','auxiliar']
 
 #Cuenta por pagar a suplidor de SuperCoop
 class CxpSuperCoop(models.Model):
@@ -67,7 +40,7 @@ class CxpSuperCoop(models.Model):
 	concepto=models.CharField(max_length=255, null=False, blank=False, default=False, verbose_name="Concepto")
 	monto=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Monto")
 	descuento=models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False, verbose_name="Desc")
-	detalleCuentas=models.ForeignKey(CxpSuperCoopDetalleCuentas, verbose_name="Cuentas")
+	detalleCuentas=models.ManyToManyField(DiarioGeneral, related_name="diario_super_ref", verbose_name='Detalle Cuentas')    
 
 	def __unicode__(self):
 		return self.concepto

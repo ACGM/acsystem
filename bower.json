@@ -1,0 +1,19 @@
+{
+  "name": "acsystem",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ACGM/acsystem",
+  "authors": [
+    "Yeison Segura <yeisp1011@gmail.com>",
+    "Rafael Mercedes <rmersant@gmail.com>"
+  ],
+  "description": "Systema para cooperativa empresarial",
+  "main": "app.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
