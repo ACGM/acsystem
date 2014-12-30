@@ -8,7 +8,7 @@ from .models import Suplidor, TipoSuplidor ,Socio, Departamento
 class SuplidorTipoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model=TipoSuplidor
-		fields=('descripcion')
+		fields=('descripcion',)
 
 class SuplidorTipoViewSet(viewsets.ModelViewSet):
 	queryset=TipoSuplidor.objects.all()

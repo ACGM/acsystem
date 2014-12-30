@@ -30,7 +30,7 @@ router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
 router.register(r'socio',SocioViewSet)
 router.register(r'departamento', DepartamentoViewSet)
-# router.register(r'inventario', ListadoEntradasInvView.as_view())
+router.register(r'inventario', ListadoEntradasInvView)
 
 
 urlpatterns = patterns('',
@@ -49,8 +49,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud de Prestamo'),
     
-    url(r'^api/inventario/(?P<posteo>[\w])/$', ListadoEntradasInvView.as_view()),
-    url(r'^api/inventario/$', ListadoEntradasInvView.as_view()),
+    # url(r'^api/inventario/$', ListadoEntradasInvView),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/',include(router.urls)),

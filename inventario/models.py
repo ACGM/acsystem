@@ -29,7 +29,7 @@ class InventarioH(models.Model):
 
 	fecha = models.DateField(default=datetime.now)
 	orden = models.CharField(max_length=30, blank=True, null=True)
-	factura = models.CharField(max_length=30, blank=True, null=True)
+	factura = models.CharField(max_length=12, blank=True, null=True)
 	
 	diasPlazo = models.CharField("Dias de Plazo", max_length=3, choices=dias_plazo_choices,
 									default=dias_plazo_choices[0][0])

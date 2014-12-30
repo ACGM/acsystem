@@ -5,6 +5,7 @@
 {% block content %}
 
 
+
 	<div class="Inventario" ng-controller="ListadoEntradaInvCtrl">
 		
 			<div class="sub-menu">	
@@ -15,42 +16,58 @@
 				<a class="DownArrow" href="#" ng-click="toggleLEI()"></a>
 			</div>
 
-		<div class="Listado-Entrada-Inventario" ng-show="showLEI">
+		<div class="Listado-Entrada-Inventario" ng-show="showLEI" ng-init="listadoEntradas()">
 			
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span>
-				<input type="text" id="DocumentoNo">
+				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc">
+				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas()">Ver todos</a>
+				
+				<div class="posteo-ei">
+					<span>Posteadas</span>
+					<select name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
+						<option value="*">TODOS</option>
+						<option value="S">SI</option>
+						<option value="N">NO</option>
+					</select>
+				</div>
 
-				<table class="listado-table">
-					<tr class="listado-table-header">
-						<td><input type="checkbox" ng-click="seleccion()" ng-model="entradas[1].posteo"> </td>
-						<td>Estatus</td>
-						<td>Doc. No.</td>
-						<td>Fecha</td>
-						<td>NCF</td>
-						<td>Factura No.</td>
-						<td>Suplidor</td>
-						<td>Total</td>
-						<td>Imprimir</td>
-					</tr>
+				<section class="registrosPanel">
+					
+					<table class="listado-table-ei" id="table-ei-listado">
+						<tr class="listado-table-header-ei">
+							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()" > </td>
+							<td>Estatus</td>
+							<td>Doc. No.</td>
+							<td>Fecha</td>
+							<td>NCF</td>
+							<td>Factura No.</td>
+							<td>Suplidor</td>
+							<td>Total</td>
+							<td>Imprimir</td>
+						</tr>
 
-					<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail">
-						<td><input type="checkbox" name="c[[entrada.id]]" ng-model="entrada[[entrada.id]]"> </td>
-						<td class="icon-coin posteo-[[entrada.posteo]]"></td>
-						<td>[[entrada.id]]</td>
-						<td>[[entrada.fecha]]</td>
-						<td>[[entrada.ncf]]</td>
-						<td>[[entrada.factura]]</td>
-						<td>[[entrada.suplidor]]</td>
-						<td>[[entrada.totalGeneral]]</td>
-						<td><span class="icon-printer imprimir-inventario"></span> </td>
-					</tr>								
-				</table>
+						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail">
+							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
+							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
+							<td>[[entrada.id | numberFixedLen: 8]]</td>
+							<td>[[entrada.fecha | date: 'dd-MM-yyyy']]</td>
+							<td>[[entrada.ncf]]</td>
+							<td>[[entrada.factura]]</td>
+							<td>[[entrada.suplidor]]</td>
+							<td>[[entrada.totalGeneral]]</td>
+							<td><span class="icon-printer imprimir-inventario"></span> </td>
+							
+						</tr>								
+					</table>
 
-				<button class="Boton boton-postear-inventario"> Postear</button>
+				</section>
+
+				<button class="Boton boton-postear-inventario" ng-click=""> Postear</button>
 			</section>
 		</div>
-		
+		[[entradasSeleccionadas]]
 
 		<!--ENTRADA DE INVENTARIO-->
 		<div class="sub-menu">	
@@ -61,10 +78,17 @@
 		<section class="data-entry-section">
 			<div class="data-entry-inventario-header">
 				
+				<div ng-init="getSuplidor()">
+					<ul ng-repeat="suplidor in suplidores">
+						<li>[[suplidor]]</li>
+					</ul>
+					
+				</div>
+
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Suplidor</td>
-						<td> <input type="text"> </td>
+						<td> <input type="text" class="id-suplidor-ei"> <input type="text" class="nombre-suplidor-ei"> </td>
 						<td>Entrada No.</td>
 						<td> <input type="text"> </td>
 					</tr>
@@ -76,7 +100,7 @@
 					</tr>
 					<tr>
 						<td>NCF</td>
-						<td> <input type="text"> </td>
+						<td> <input type="text" class="ncf-ei"> </td>
 						<td>Fecha</td>
 						<td> <input type="text"> </td>
 					</tr>
@@ -100,7 +124,7 @@
 					</tr>
 					<tr>
 						<td>Nota</td>
-						<td> <textarea name="nota" id="nota" cols="30" rows="2"></textarea> </td>
+						<td> <textarea name="nota" id="nota" cols="43" rows="2"></textarea> </td>
 						<td>Vence</td>
 						<td> <input type="text"> </td>
 					</tr>
@@ -201,14 +225,9 @@
 
 			</div>
 		</section>
-
-
 		
 		</div>
-
 		
 	</div>
-
-
 
 {% endblock content %}

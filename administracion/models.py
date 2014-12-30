@@ -119,7 +119,7 @@ class Suplidor(models.Model):
 	contacto = models.CharField(max_length=150, blank=True)
 	telefono = models.CharField(max_length=50, blank=True)
 	fax = models.CharField(max_length=50, blank=True)
-	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True)
+	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=0)
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 	auxiliar = models.ForeignKey(Auxiliares, null=True)

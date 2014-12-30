@@ -21,16 +21,7 @@ class TransferenciaInvView(TemplateView):
 
 
 # Listado de Entradas de inventario
-class ListadoEntradasInvView(APIView):
+class ListadoEntradasInvView(viewsets.ModelViewSet):
 
-	serialized = EntradasInventarioSerializer
-
-	def get(self, request, posteo=None, format=None):
-		if posteo != None:
-			listado = InventarioH.objects.filter(posteo=posteo).order_by('-id')
-		else:
-			listado = InventarioH.objects.all().order_by('-id')
-
-		response = self.serialized(listado, many=True)
-		
-		return Response(response.data)
+	queryset = InventarioH.objects.all() #.order_by('-id')
+	serializer_class = EntradasInventarioSerializer
