@@ -101,7 +101,7 @@
 						<td>NCF</td>
 						<td> <input type="text" class="ncf-ei" ng-model="dataH.ncf"> </td>
 						<td>Fecha</td>
-						<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()"> </td>
+						<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" datepicker> </td>
 					</tr>
 					<tr>
 						<td>Condicion</td>
@@ -153,7 +153,7 @@
 
 						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
 							<td>[[prod.codigo]]</td>
-							<td><a href="#" class="select-producto" ng-click="addProducto(prod)"> [[prod.descripcion]] </a></td>
+							<td><a href="javascript: return false" class="select-producto" ng-click="addProducto(prod)"> [[prod.descripcion]] </a></td>
 							<td>[[prod.costo]]</td>
 						</tr>
 
@@ -181,9 +181,9 @@
 							<td>[[item.codigo]]</td>
 							<td>[[item.descripcion]]</td>
 							<td>[[item.unidad]]</td>
-							<td><input type="text" ng-model="item.cantidad"></td>
+							<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad"></td>
 							<td>[[item.costo]]</td>
-							<td>[[item.cantidad * item.costo]]</td>
+							<td>[[item.cantidad | number: 000 * item.costo]]</td>
 							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
 						</tr>
 						

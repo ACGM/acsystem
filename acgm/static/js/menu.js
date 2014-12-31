@@ -11,5 +11,9 @@
 		      $sib = $('#menu' + $scope.menu).siblings();
 		      $sib.find(' a').removeClass('OpcionSeleccionada')
 		    }
+
+		    $scope.ShowSubMenuP = function() {
+		    	$scope.SubMPrestamo = !$scope.SubMPrestamo;
+		    }
 		}]);
 })();

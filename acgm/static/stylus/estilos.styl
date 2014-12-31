@@ -307,6 +307,7 @@ vendor-prefixes = o ms webkit moz
 verde = #084C0B
 verdeClarito = #2BA92D
 verdeSubMenu = #6ABF40
+verdeSuave = #94E698
 rojoOscuro = #A81E1A
 mamey = #FF5A13
 amarillo = #FFF676
@@ -470,14 +471,14 @@ footer
 	right 0
 	width 0
 
-// FIN CLASES GENERICAS
-
 .cssSlideUp
 	transition .4s linear all
 	height 32em
 	overflow hidden
 	&.ng-hide
 		height 0
+// FIN CLASES GENERICAS
+
 	
 // PAGINA PRINCIPAL
 .headerP
@@ -565,6 +566,31 @@ footer
 .OpcionNoSeleccionada
 	background transparent
 	
+
+//SUB MENU PRESTAMOS
+.sub-menu-prestamos	
+	position absolute
+	z-index 800
+	background verde
+	list-style none
+	margin 1.5em 0 0 1em
+	padding 0
+	
+	& li
+		&:first-child
+			padding-top .5em
+		&:last-child
+			padding-bottom .5em
+	
+	& a 
+		text-decoration none
+		padding .2em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+		
 
 // MODULO DE NOMINA  **********************************
 .genera-nomina

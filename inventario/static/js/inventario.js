@@ -187,6 +187,7 @@
 
       //Nueva Entrada de Inventario
       $scope.nuevaEntrada = function(usuario) {
+        $scope.productos = [];
         $scope.showLEI = false;
         $scope.ArrowLEI = 'DownArrow';
 
@@ -240,7 +241,7 @@
       $scope.getProducto = function() {
         $scope.tableProducto = true;
 
-        if(typeof($scope.producto) != undefined) {
+        if($scope.producto != undefined) {
 
           InventarioService.productos().then(function (data) {
 
@@ -264,16 +265,17 @@
 
           });
         }
+
       }
 
 
       //Agregar Producto
       $scope.addProducto = function(Prod) {
-        console.log(Prod);
         index = $scope.productos.indexOf(Prod);
-        console.log(index);
-
         $scope.dataD.push(Prod);
+        $scope.tableProducto = false;
+
+        console.log($scope.dataD);
 
       }
 
