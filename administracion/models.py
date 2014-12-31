@@ -74,7 +74,7 @@ class Unidad(models.Model):
 class Producto(models.Model):
 	
 	codigo = models.CharField(max_length=10)
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=80)
 	unidad = models.ForeignKey(Unidad)
 	precio = models.DecimalField(max_digits=18, decimal_places=2)
 	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
@@ -112,7 +112,7 @@ class Suplidor(models.Model):
 
 	tipoIdentificacion = models.CharField(max_length=1, choices=tipoIdentificacion_choices, default='C')
 	cedulaRNC = models.CharField(unique=True, max_length=25)
-	nombre = models.CharField(max_length=150)
+	nombre = models.CharField(max_length=80)
 	direccion = models.TextField(blank=True)
 	sector = models.CharField(max_length=100, blank=True)
 	ciudad = models.CharField(max_length=100, blank=True)

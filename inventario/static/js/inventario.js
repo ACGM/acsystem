@@ -1,4 +1,4 @@
-(function () {
+(function (_) {
 
   angular.module('cooperativa.inventario',['ngAnimate'])
 
@@ -12,6 +12,7 @@
         return input;
       }
     })    
+
 
     .factory('InventarioService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
@@ -69,7 +70,6 @@
       //Buscar un numero de documento en especifico.
       function byNoDoc(NoDoc) {
         var deferred = $q.defer();
-
         all().then(function (data) {
           var result = data.filter(function (documento) {
             return documento.id == NoDoc;
@@ -115,39 +115,52 @@
 
     }])
 
+
+
+
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
     .controller('ListadoEntradaInvCtrl', ['$scope','$http', '$filter', 'InventarioService', function ($scope, $http, $filter, InventarioService) {
       $scope.showLEI = true;
+      $scope.regAll = false;
+      $scope.tableProducto = false;
+
+      $scope.item = {};
       $scope.entradas = {};
+
       $scope.entradasSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
-      $scope.Fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      $scope.dataD = [];
+
+      $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLEI = 'UpArrow';
 
-      $scope.regAll = false;
+      
+
 
       //Guardar Entrada Inventario
       $scope.guardarEI = function() {
-        // var fechaP = $scope.Fecha.split('/');
-        // var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
+        debugger;
+        var fechaP = $scope.dataH.fecha.split('/');
+        var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-        // var fechaVP = $scope.venceFecha.split('/');
-        // var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];
+        var fechaVP = $scope.dataH.fechaVence.split('/');
+        var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];
         
         var dataH = new Object();
-        dataH.suplidor = $scope.idSuplidor;
-        dataH.factura = $scope.factura;
-        dataH.orden = $scope.ordenNo;
-        dataH.ncf = $scope.ncf;
-        dataH.fecha = '2014-12-30';
-        dataH.condicion = $scope.condicion;
-        dataH.diasPlazo = $scope.venceDias;
-        dataH.nota = $scope.nota;
-        dataH.vence = '2014-12-30';
-        dataH.userlog = 'coop';
+
+        dataH.suplidor = $scope.dataH.idSuplidor;
+        dataH.factura = $scope.dataH.factura;
+        dataH.orden = $scope.dataH.ordenNo;
+        dataH.ncf = $scope.dataH.ncf;
+        dataH.fecha = fechaFormatted;
+        dataH.condicion = $scope.dataH.condicion;
+        dataH.diasPlazo = $scope.dataH.venceDias;
+        dataH.nota = $scope.dataH.nota;
+        dataH.vence = fechaVFormatted;
+        dataH.userlog = $scope.dataH.usuario;
 
         console.log(dataH);
 
@@ -164,10 +177,42 @@
           console.log(data);
           $scope.listadoEntradas();
 
+          $scope.toggleLEI();
+          $scope.dataH = {};
+
         });
 
-
       }
+
+
+      //Nueva Entrada de Inventario
+      $scope.nuevaEntrada = function(usuario) {
+        $scope.showLEI = false;
+        $scope.ArrowLEI = 'DownArrow';
+
+        $scope.dataH = {};
+        $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+        $scope.focusSuplidor = true;
+        $scope.dataH.usuario = usuario;
+      }
+
+
+      //Calcula Fecha Vence
+      $scope.venceFecha = function() {
+        var fechaP = $scope.dataH.fecha.split('/');
+        var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
+
+        if ($scope.dataH.venceDias != undefined && fechaF != 'Invalid Date') {
+          var nextDate = new Date();
+          nextDate.setDate(fechaF.getDate()+parseInt($scope.dataH.venceDias));
+
+          $scope.dataH.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
+        } else {
+          $scope.dataH.fechaVence = '';
+        }
+      }
+
 
       //Traer suplidores
       $scope.getSuplidor = function(suplidor) {
@@ -178,7 +223,7 @@
             });
 
             if($scope.suplidores.length > 0) {
-              $scope.suplidorNombre = $scope.suplidores[0].nombre;
+              $scope.dataH.suplidorNombre = $scope.suplidores[0].nombre;
             }
 
           });
@@ -189,39 +234,50 @@
           });
         }
       }
+
 
       //Traer productos
-      $scope.getProducto = function(suplidor) {
-        if(suplidor != undefined) {
-          InventarioService.suplidores().then(function (data) {
-            $scope.suplidores = data.filter(function (registro) {
-              return registro.id == suplidor;
+      $scope.getProducto = function() {
+        $scope.tableProducto = true;
+
+        if(typeof($scope.producto) != undefined) {
+
+          InventarioService.productos().then(function (data) {
+
+            $scope.productos = data.filter(function (registro) {
+              return $filter('lowercase')(registro.descripcion.substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
             });
 
-            if($scope.suplidores.length > 0) {
-              $scope.suplidorNombre = $scope.suplidores[0].nombre;
+            if($scope.productos.length > 0){
+              $scope.tableProducto = true;
+              $scope.productoNoExiste = '';
+            } else {
+              $scope.tableProducto = false;
+              $scope.productoNoExiste = 'No existe el producto.'
             }
 
           });
-        } else {
-          InventarioService.suplidores().then(function (data) {
-            $scope.suplidores = data;
+        } 
+        else {
+          InventarioService.productos().then(function (data) {
+            $scope.productos = data;
 
           });
         }
       }
 
-      //Calcula Fecha Vence
-      $scope.venceFecha = function() {
-        var fechaP = $scope.Fecha.split('/');
-        var today = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
-        var nextDate = new Date();
 
-        nextDate.setDate(today.getDate()+parseInt($scope.venceDias));
+      //Agregar Producto
+      $scope.addProducto = function(Prod) {
+        console.log(Prod);
+        index = $scope.productos.indexOf(Prod);
+        console.log(index);
 
-        $scope.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
+        $scope.dataD.push(Prod);
+
       }
 
+      
       //Listado de todas las entradas de inventario
       $scope.listadoEntradas = function() {
         $scope.entradasSeleccionadas = [];
@@ -244,6 +300,7 @@
         });
       }
 
+
       //Buscar una entrada de inventario en especifico
       $scope.filtrarPorNoDoc = function(NoDoc) {
         InventarioService.byNoDoc(NoDoc).then(function (data) {
@@ -251,8 +308,22 @@
 
           if(data.length > 0) {
             $scope.verTodos = '';
+            $scope.NoFoundDoc = '';
           }
-        });
+        }, 
+          (function () {
+            $scope.NoFoundDoc = 'No se encontró el documento #' + NoDoc;
+          }
+        ));
+
+      }
+
+
+      //Buscar Documento por ENTER
+      $scope.buscarDoc = function($event, NoDoc) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorNoDoc(NoDoc);
+        }
       }
 
       //Filtrar las entradas de inventario por posteo (SI/NO)
@@ -273,6 +344,28 @@
           $scope.listadoEntradas();
 
         }        
+      }
+
+
+      //Visualizar Documento (Entrada de Inventario Existente - desglose)
+      $scope.visualizarDoc = function(NoDoc) {
+        InventarioService.byNoDoc(NoDoc).then(function (data) {
+          $scope.DocView = data[0];
+
+          // dataH.diasPlazo = $scope.venceDias;
+          // dataH.nota = $scope.nota;
+          // dataH.vence = '2014-12-30';
+          // dataH.userlog = 'coop';
+
+          // $scope.idSuplidor = $scope.DocView.suplidor;
+          $scope.factura = $scope.DocView.factura;
+          // $scope.ordenNo = $scope.DocView.orden;
+          // $scope.ncf = $scope.DocView.ncf;
+          // $scope.fecha = $scope.DocView.fecha;
+          // $scope.condicion = $scope.DocView.condicion;
+          // $scope.diasPlazo = $scope.DocView.diasPlazo;
+          $scope.toggleLEI();
+        });
       }
 
 
@@ -341,4 +434,4 @@
 
     }]);
 
-})();
+})(_);

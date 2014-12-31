@@ -4,13 +4,11 @@
 
 {% block content %}
 
-
-
 	<div class="Inventario" ng-controller="ListadoEntradaInvCtrl">
 		
 			<div class="sub-menu">	
 				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva entrada de Inventario"></button>
+					<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
 				</div>
 					Listado Entradas de Inventario
 				<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
@@ -20,8 +18,9 @@
 			
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span>
-				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc">
+				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc" ng-keypress="buscarDoc($event, NoDoc)">
 				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
+				<span class="error-ei"> [[NoFoundDoc]]</span>
 				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas()">Ver todos</a>
 				
 				<div class="posteo-ei">
@@ -51,7 +50,7 @@
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
 							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
-							<td>[[entrada.id | numberFixedLen: 8]]</td>
+							<td> <a href="#" class="sp-field" ng-click="visualizarDoc(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd-MM-yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
@@ -78,43 +77,43 @@
 		<section class="data-entry-section">
 			<div class="data-entry-inventario-header">
 				
-				<div ng-init="getSuplidor()">
+				<!-- <div ng-init="getSuplidor()">
 					<ul ng-repeat="suplidor in suplidores">
 						<li>[[suplidor]]</li>
 					</ul>
 					
-				</div>
-
+				</div> -->
+				
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Suplidor</td>
-						<td> <input type="text" class="id-suplidor-ei" ng-model="idSuplidor" ng-blur="getSuplidor(idSuplidor)"> <input type="text" class="nombre-suplidor-ei" ng-model="suplidorNombre"> </td>
+						<td> <input type="text" class="id-suplidor-ei" ng-model="dataH.idSuplidor" ng-focus="[[focusSuplidor]]" ng-blur="getSuplidor(dataH.idSuplidor)"> <input type="text" class="nombre-suplidor-ei" ng-model="dataH.suplidorNombre"> </td>
 						<td>Entrada No.</td>
 						<td> <input type="text" ng-disabled="true"> </td>
 					</tr>
 					<tr>
 						<td>Factura No.</td>
-						<td> <input type="text" ng-model="factura"> </td>
+						<td> <input type="text" ng-model="dataH.factura"> </td>
 						<td>Orden No.</td>
-						<td> <input type="text" ng-model="ordenNo"> </td>
+						<td> <input type="text" ng-model="dataH.ordenNo"> </td>
 					</tr>
 					<tr>
 						<td>NCF</td>
-						<td> <input type="text" class="ncf-ei" ng-model="ncf"> </td>
+						<td> <input type="text" class="ncf-ei" ng-model="dataH.ncf"> </td>
 						<td>Fecha</td>
-						<td> <input type="text" ng-model="Fecha" ng-blur="venceFecha()"> </td>
+						<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()"> </td>
 					</tr>
 					<tr>
 						<td>Condicion</td>
 						<td> 
-							<select name="condicion" id="condicion" ng-model="condicion">
+							<select name="condicion" id="condicion" ng-model="dataH.condicion">
 								<option value="Contado">Contado</option>
 								<option value="Credito">Credito</option>
 							</select>
 						</td>
 						<td>Dias Plazo</td>
 						<td> 
-							<select name="diasPlazo" id="DiasPlazo" ng-model="venceDias" ng-change="venceFecha()">
+							<select name="diasPlazo" id="DiasPlazo" ng-model="dataH.venceDias" ng-change="venceFecha()">
 								<option value="30">30</option>
 								<option value="60">60</option>
 								<option value="90">90</option>
@@ -124,16 +123,17 @@
 					</tr>
 					<tr>
 						<td>Nota</td>
-						<td> <textarea name="nota" id="nota" cols="43" rows="2" ng-model="nota"></textarea> </td>
+						<td> <textarea name="nota" id="nota" cols="43" rows="2" ng-model="dataH.nota"></textarea> </td>
 						<td>Vence</td>
-						<td> <input type="text" disabled ng-model="fechaVence"> </td>
+						<td> <input type="text" disabled ng-model="dataH.fechaVence"> </td>
 					</tr>
 
 				</table>
 
 				<div class="producto-find">
 					<span>Producto</span>
-					<input type="text">
+					<input type="text" ng-model="producto" ng-keyup="getProducto()" ng-focus="tableProducto=false" ng-click="tableProducto=false">
+					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto()"></a> 
 
 					<span>Almacen</span>
 					<select name="almacen" id="almacen">
@@ -142,6 +142,27 @@
 						<option value="3">3</option>
 						<option value="4">4</option>
 					</select>	
+
+					<table class="productos-table-search" ng-show="tableProducto">
+						<tr class="productos-table-header">
+							<td>Codigo</td>
+							<td>Descripcion</td>
+							<td>Costo</td>
+							
+						</tr>
+
+						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
+							<td>[[prod.codigo]]</td>
+							<td><a href="#" class="select-producto" ng-click="addProducto(prod)"> [[prod.descripcion]] </a></td>
+							<td>[[prod.costo]]</td>
+						</tr>
+
+					</table>
+
+
+
+					<span class="error-ei"> [[productoNoExiste]]</span>
+
 				</div>
 				
 
@@ -156,60 +177,16 @@
 							<td>Subtotal</td>
 							<td>Eliminar</td>
 						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
+						<tr class="productos-table-detail" ng-repeat="item in dataD">
+							<td>[[item.codigo]]</td>
+							<td>[[item.descripcion]]</td>
+							<td>[[item.unidad]]</td>
+							<td><input type="text" ng-model="item.cantidad"></td>
+							<td>[[item.costo]]</td>
+							<td>[[item.cantidad * item.costo]]</td>
 							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
 						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
-						</tr>
-						<tr class="productos-table-detail">
-							<td>AC001</td>
-							<td>Aceite Crisol 120oz del bueno</td>
-							<td>Unidad</td>
-							<td>2</td>
-							<td>500</td>
-							<td>1,000</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
-						</tr>											
+						
 					</table>
 
 					<div class="totales-section">

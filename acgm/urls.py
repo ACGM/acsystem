@@ -11,21 +11,19 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamo
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
 
 #ViewSets (API)
-<<<<<<< HEAD
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
-=======
+
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, DetalleCuentaViewSet
+from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet
 
 #APIView (API)
 from inventario.views import ListadoEntradasInvView
->>>>>>> master
 
 admin.site.site_header = 'COOPERATIVA'
 
@@ -47,15 +45,14 @@ router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
 router.register(r'socio',SocioViewSet)
 router.register(r'departamento', DepartamentoViewSet)
-<<<<<<< HEAD
+
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)
 router.register(r'cheques',ChequesConsViewSet)
 router.register(r'notas_Conciliacion',NotasConsViewSet)
-=======
+
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'producto', ProductoViewSet)
->>>>>>> master
 
 
 urlpatterns = patterns('',

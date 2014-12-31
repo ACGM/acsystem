@@ -308,7 +308,7 @@ verde = #084C0B
 verdeClarito = #2BA92D
 verdeSubMenu = #6ABF40
 rojoOscuro = #A81E1A
-mamey = #FF6513
+mamey = #FF5A13
 amarillo = #FFF676
 amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
@@ -722,6 +722,10 @@ footer
 .doc-no-ei
 	width 5em
 
+.error-ei
+	color red
+	font-weight bold
+	
 .ver-todos-ei
 	display none
 
@@ -747,8 +751,26 @@ footer
 		&:first-child
 			padding 0 .4em
 			text-align center
+			width 1em
+		&:nth-child(2)
+			width 2em
+		&:nth-child(3)
+			width 3em
+		&:nth-child(4)
+			width 5em
+		&:nth-child(5)
+			width 11em
 		&:nth-child(6) //CAMPO FACTURA
 			width 3em
+		&:nth-child(7)
+			width 24em
+		&:nth-child(8)
+			width 5em
+			text-align center
+		&:nth-child(9)
+			width 2em
+			text-align center
+			
 			
 		border 1px solid black
 		padding .16em .4em
@@ -801,7 +823,37 @@ footer
 
 .producto-find
 	margin-top .6em
+	position relative
 
+	
+.productos-table-search	
+	border 1px solid black
+	width 100%
+	position relative
+	z-index 100
+	
+	
+.productos-table-detail-search
+	
+	& td
+		border 1px solid black
+		background lightyellow
+		
+		&:nth-child(1), &:nth-child(3)
+			padding 0.1em 0.3em
+		&:nth-child(3)
+			text-align right
+			
+.select-producto
+	text-decoration none
+	color black
+	display block	
+	padding .2em 0 .2em .2em
+		
+	&:hover
+		background mamey
+		color white
+		
 .productos-section
 	margin 1em 0 0 0
 	position relative
@@ -818,6 +870,7 @@ footer
 	& td
 		padding 0.2em
 		border 1px solid black
+
 .productos-table-detail
 	& td
 		border 1px solid black
