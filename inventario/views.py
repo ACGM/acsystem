@@ -7,9 +7,9 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import InventarioH, InventarioD
+from .models import InventarioH, InventarioD, Almacen
 from administracion.models import Suplidor
-from .serializers import EntradasInventarioSerializer
+from .serializers import EntradasInventarioSerializer, AlmacenesSerializer
 
 import json
 import math
@@ -59,3 +59,10 @@ class ListadoEntradasInvView(viewsets.ModelViewSet):
 
 	queryset = InventarioH.objects.all()
 	serializer_class = EntradasInventarioSerializer
+
+
+# Listado de Almacenes
+class ListadoAlmacenesView(viewsets.ModelViewSet):
+
+	queryset = Almacen.objects.all()
+	serializer_class = AlmacenesSerializer

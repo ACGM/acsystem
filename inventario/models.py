@@ -12,7 +12,7 @@ from datetime import timedelta, datetime
 # Almacenes disponibles
 class Almacen(models.Model):
 
-	descripcion = models.CharField(max_length=100)
+	descripcion = models.CharField(max_length=20)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)

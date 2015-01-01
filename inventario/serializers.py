@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Existencia, InventarioH, InventarioD
+from .models import Existencia, InventarioH, InventarioD, Almacen
 from administracion.models import Suplidor
 
 # Listado de Entradas de Inventario
@@ -12,5 +12,9 @@ class EntradasInventarioSerializer(serializers.ModelSerializer):
 		fields = ('id','posteo','fecha','ncf','factura','suplidor','totalGeneral')
 		ordering = ('-id',)
 
-	# def to_representation(self, obj):
-		# return '%s' % obj.suplidor
+
+# Listado de Almacenes
+class AlmacenesSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Almacen

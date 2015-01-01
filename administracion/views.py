@@ -9,7 +9,7 @@ from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
-	queryset=Producto.objects.all()
+	queryset=Producto.objects.all().order_by('descripcion')
 	serializer_class=ProductoSerializer
 
 

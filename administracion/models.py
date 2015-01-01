@@ -74,7 +74,7 @@ class Unidad(models.Model):
 class Producto(models.Model):
 	
 	codigo = models.CharField(max_length=10)
-	descripcion = models.CharField(max_length=80)
+	descripcion = models.CharField(max_length=70)
 	unidad = models.ForeignKey(Unidad)
 	precio = models.DecimalField(max_digits=18, decimal_places=2)
 	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)

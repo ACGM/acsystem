@@ -17,10 +17,10 @@
     .factory('InventarioService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       //Guardar Entrada Inventario
-      function guardarEI(dataH, dataD) {
+      function guardarEI(dataH, dataD, almacen) {
         var deferred = $q.defer();
 
-        $http.post('/inventario/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
+        $http.post('/inventario/', JSON.stringify({'cabecera': dataH, 'detalle': dataD, 'almacen': almacen})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -48,6 +48,18 @@
         var deferred = $q.defer();
 
         $http.get('/api/suplidor/?format=json')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Listado de almacenes
+      function almacenes() {
+        var deferred = $q.defer();
+
+        $http.get('/api/almacenes/?format=json')
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -110,7 +122,8 @@
         byNoDoc: byNoDoc,
         suplidores: suplidores,
         productos: productos,
-        guardarEI: guardarEI
+        guardarEI: guardarEI,
+        almacenes: almacenes
       };
 
     }])
@@ -142,7 +155,6 @@
 
       //Guardar Entrada Inventario
       $scope.guardarEI = function() {
-        debugger;
         var fechaP = $scope.dataH.fecha.split('/');
         var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
@@ -162,19 +174,8 @@
         dataH.vence = fechaVFormatted;
         dataH.userlog = $scope.dataH.usuario;
 
-        console.log(dataH);
 
-        var dataD = [];
-
-        var detalle = {codigo: 'AC01', precio: '200'}
-        dataD.push(detalle);
-        var detalle2 = {codigo: 'AC02', precio: '600'}
-        dataD.push(detalle2);
-        var detalle3 = {codigo: 'AC03', precio: '240'}
-        dataD.push(detalle3);
-
-        InventarioService.guardarEI(dataH,dataD).then(function (data) {
-          console.log(data);
+        InventarioService.guardarEI(dataH,$scope.dataD,$scope.almacen).then(function (data) {
           $scope.listadoEntradas();
 
           $scope.toggleLEI();
@@ -182,6 +183,26 @@
 
         });
 
+      }
+
+      $scope.calculaTotales = function() {
+        var total = 0;
+        var subtotal = 0;
+
+        $scope.dataD.forEach(function (item) {
+          total += (item.cantidad * item.costo);
+        });
+
+        $scope.subtotal = $filter('number')(total, 2);
+        $scope.total = $filter('number')(total, 2);
+      }
+
+      //Eliminar producto de la lista de entradas
+      $scope.delProducto = function(prod) {
+        index = $scope.dataD.indexOf(prod);
+        console.log(index);
+
+        $scope.dataD.splice($scope.dataD[index],1);
       }
 
 
@@ -237,8 +258,18 @@
       }
 
 
+      //Traer almacenes
+      $scope.getAlmacenes = function() {
+        InventarioService.almacenes().then(function (data) {
+          $scope.almacenes = data;
+        });
+      }
+
+
       //Traer productos
-      $scope.getProducto = function() {
+      $scope.getProducto = function($event) {
+        $event.preventDefault();
+
         $scope.tableProducto = true;
 
         if($scope.producto != undefined) {
@@ -254,7 +285,7 @@
               $scope.productoNoExiste = '';
             } else {
               $scope.tableProducto = false;
-              $scope.productoNoExiste = 'No existe el producto.'
+              $scope.productoNoExiste = 'No existe el producto'
             }
 
           });
@@ -270,7 +301,9 @@
 
 
       //Agregar Producto
-      $scope.addProducto = function(Prod) {
+      $scope.addProducto = function($event,Prod) {
+        $event.preventDefault();
+
         index = $scope.productos.indexOf(Prod);
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;

@@ -77,13 +77,6 @@
 		<section class="data-entry-section">
 			<div class="data-entry-inventario-header">
 				
-				<!-- <div ng-init="getSuplidor()">
-					<ul ng-repeat="suplidor in suplidores">
-						<li>[[suplidor]]</li>
-					</ul>
-					
-				</div> -->
-				
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Suplidor</td>
@@ -132,15 +125,12 @@
 
 				<div class="producto-find">
 					<span>Producto</span>
-					<input type="text" ng-model="producto" ng-keyup="getProducto()" ng-focus="tableProducto=false" ng-click="tableProducto=false">
-					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto()"></a> 
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false">
+					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
 
 					<span>Almacen</span>
-					<select name="almacen" id="almacen">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
+					<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()">
+						<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
 					</select>	
 
 					<table class="productos-table-search" ng-show="tableProducto">
@@ -153,7 +143,7 @@
 
 						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
 							<td>[[prod.codigo]]</td>
-							<td><a href="javascript: return false" class="select-producto" ng-click="addProducto(prod)"> [[prod.descripcion]] </a></td>
+							<td><a href="#" class="select-producto" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
 							<td>[[prod.costo]]</td>
 						</tr>
 
@@ -181,19 +171,19 @@
 							<td>[[item.codigo]]</td>
 							<td>[[item.descripcion]]</td>
 							<td>[[item.unidad]]</td>
-							<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad"></td>
-							<td>[[item.costo]]</td>
-							<td>[[item.cantidad | number: 000 * item.costo]]</td>
-							<td><button class="icon-delete eliminar-entrada-producto"></button></td>
+							<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei"></td>
+							<td>[[item.costo | number: 2]]</td>
+							<td>[[item.cantidad * item.costo | number: 2]]</td>
+							<td><button class="icon-delete eliminar-entrada-producto" ng-click="delProducto(item)"></button></td>
 						</tr>
 						
 					</table>
 
 					<div class="totales-section">
 						<ul class="totales-ul">
-							<li><span>SubTotal</span> <input type="text"></li>
-							<li><span>ITBIS</span> <input type="text"></li>
-							<li><span>Total</span> <input type="text"></li>
+							<li><span>SubTotal</span> <input type="text" class="subtotal-field" ng-model="subtotal" readonly></li>
+							<li><span>ITBIS</span> <input type="text" class="subtotal-field" readonly></li>
+							<li><span>Total</span> <input type="text" class="total-field" ng-model="total" readonly></li>
 						</ul>
 					</div>
 

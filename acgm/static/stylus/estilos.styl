@@ -857,6 +857,9 @@ footer
 	width 100%
 	position relative
 	z-index 100
+	& tr
+		&:first-child
+			text-align center
 	
 	
 .productos-table-detail-search
@@ -869,7 +872,7 @@ footer
 			padding 0.1em 0.3em
 		&:nth-child(3)
 			text-align right
-			
+		
 .select-producto
 	text-decoration none
 	color black
@@ -905,11 +908,24 @@ footer
 			text-align right
 		&:last-child
 			text-align center
+
+.cantidad-input-ei
+	outline none
+	border none
+	padding 0
+	margin 0
+	text-align right
+	width 5em
 			
 .eliminar-entrada-producto
 	border 0
 	background transparent
 	color red
+	transition .3s
+	outline none
+	&:hover
+		text-shadow 2px 2px 2px lightgray
+		transform scale(1.3,1.3)
 
 .totales-ul
 	text-align right
@@ -918,6 +934,12 @@ footer
 	position relative
 	right 0
 
+.subtotal-field, .total-field
+	max-width 5em
+	font-size 1.4em
+	text-align right
+	font-weight bold
+	color verde
 .boton-guarda-inventario
 	height 2.5em
 	width 7em

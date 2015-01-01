@@ -23,7 +23,7 @@ from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoView
                                 SuplidorTipoViewSet, ProductoViewSet
 
 #APIView (API)
-from inventario.views import ListadoEntradasInvView
+from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
 
 admin.site.site_header = 'COOPERATIVA'
 
@@ -52,6 +52,7 @@ router.register(r'cheques',ChequesConsViewSet)
 router.register(r'notas_Conciliacion',NotasConsViewSet)
 
 router.register(r'inventario', ListadoEntradasInvView)
+router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'producto', ProductoViewSet)
 
 
