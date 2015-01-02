@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView
@@ -8,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import InventarioH, InventarioD, Almacen
-from administracion.models import Suplidor
+from administracion.models import Suplidor, Producto
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer
 
 import json
@@ -19,12 +20,15 @@ class InventarioView(TemplateView):
 
 	template_name = 'inventario.html'
 
+	# @login_required
 	def post(self, request, *args, **kwargs):
 
 		try:
 			data = json.loads(request.body)
 
 			dataH = data['cabecera']
+			dataD = data['detalle']
+			almacen = data['almacen']
 
 
 			suplidor = Suplidor.objects.get(id = int(dataH['suplidor']))
@@ -42,7 +46,17 @@ class InventarioView(TemplateView):
 			invH.userLog = usuario
 			invH.save()
 
-			return HttpResponse("TODO CORRECTO")
+
+			for i in dataD:
+				invD = InventarioD()
+				invD.inventario = invH
+				invD.producto = Producto.objects.get(id=i['id'])
+				invD.almacen = Almacen.objects.get(id=almacen)
+				invD.cantidadTeorico = i['cantidad']
+				invD.costo = float(i['costo'])
+				invD.save()
+
+			return HttpResponse('1')
 
 		except Exception as e:
 			return HttpResponse(e)

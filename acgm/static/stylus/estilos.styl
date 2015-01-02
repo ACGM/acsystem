@@ -413,7 +413,10 @@ footer
 	font-size 1.2em
 	&:hover
 		color mamey
-		
+
+.input-disabled
+	background lightgray
+	border 1px solid gray
 //FIN CLASES GENERICAS
 
 //CLASE PARA TOOLTIPs
@@ -477,9 +480,45 @@ footer
 	overflow hidden
 	&.ng-hide
 		height 0
+
+.cssSlideUpError
+	background #FFCDBF
+	border-bottom 1px solid rojoOscuro
+	color red
+	height 4em
+	left 0
+	overflow hidden
+	padding .3em 0 0 .3em
+	position fixed
+	right 0
+	top 0
+	transition .3s linear all
+	
+	&.ng-hide
+		height 0
+		
+.cerrarError
+	text-decoration none
+	background rojoOscuro
+	color white
+	border-radius 50%
+	padding .3em .6em
+	float right
+	margin 0 .2em 0 0
+
+.
+		
 // FIN CLASES GENERICAS
 
+// CLASES PREDEFINIDAS DE ANGULARJS
+.ng-invalid
+	background red !important
+	border 2px solid blue
 	
+// FIN CLASES DE ANGULARJS
+
+
+
 // PAGINA PRINCIPAL
 .headerP
 	display block
@@ -740,6 +779,9 @@ footer
 		color white
 		font-size 1.2em
 		font-weight bold
+		
+	&:hover
+		transform scale(1.2,1.2)
 
 .listado-reg-inventario
 	margin 1em 0 0 1em
@@ -847,6 +889,13 @@ footer
 .ncf-ei
 	width 16em
 
+.almacen-field-ei
+	margin-left 3em
+	display inline-block
+	float right
+	& select
+		background lightyellow
+	
 .producto-find
 	margin-top .6em
 	position relative

@@ -135,6 +135,7 @@
     //CONTROLLERS                                        *
     //****************************************************
     .controller('ListadoEntradaInvCtrl', ['$scope','$http', '$filter', 'InventarioService', function ($scope, $http, $filter, InventarioService) {
+      $scope.errorShow = false;
       $scope.showLEI = true;
       $scope.regAll = false;
       $scope.tableProducto = false;
@@ -151,38 +152,64 @@
       $scope.ArrowLEI = 'UpArrow';
 
       
-
-
       //Guardar Entrada Inventario
       $scope.guardarEI = function() {
-        var fechaP = $scope.dataH.fecha.split('/');
-        var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
+        try {
 
-        var fechaVP = $scope.dataH.fechaVence.split('/');
-        var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];
-        
-        var dataH = new Object();
+          var fechaP = $scope.dataH.fecha.split('/');
+          var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-        dataH.suplidor = $scope.dataH.idSuplidor;
-        dataH.factura = $scope.dataH.factura;
-        dataH.orden = $scope.dataH.ordenNo;
-        dataH.ncf = $scope.dataH.ncf;
-        dataH.fecha = fechaFormatted;
-        dataH.condicion = $scope.dataH.condicion;
-        dataH.diasPlazo = $scope.dataH.venceDias;
-        dataH.nota = $scope.dataH.nota;
-        dataH.vence = fechaVFormatted;
-        dataH.userlog = $scope.dataH.usuario;
+          if ($scope.dataH.fechaVence != undefined) {
+            var fechaVP = $scope.dataH.fechaVence.split('/');
+            var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];  
+          }
+          
+          
+          var dataH = new Object();
 
+          dataH.suplidor = $scope.dataH.idSuplidor;
+          dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : '';
+          dataH.orden = $scope.dataH.ordenNo != undefined? $scope.dataH.ordenNo : '';
+          dataH.ncf = $scope.dataH.ncf != undefined? $scope.dataH.ncf : '';
+          dataH.fecha = fechaFormatted;
+          dataH.condicion = $scope.dataH.condicion;
+          dataH.diasPlazo = $scope.dataH.venceDias != undefined? $scope.dataH.venceDias : '';
+          dataH.nota = $scope.dataH.nota != undefined? $scope.dataH.nota : '';
+          dataH.vence = fechaVFormatted != undefined? fechaVFormatted: '';
+          dataH.userlog = $scope.dataH.usuario;
 
-        InventarioService.guardarEI(dataH,$scope.dataD,$scope.almacen).then(function (data) {
-          $scope.listadoEntradas();
+          if ($scope.dataD.length == 0) {
+            throw "Debe agregar un producto al menos.";
+          }
 
-          $scope.toggleLEI();
-          $scope.dataH = {};
+          InventarioService.guardarEI(dataH,$scope.dataD,$scope.almacen).then(function (data) {
+            if (data != '1') {
+              throw data;
+            } else {
+              $scope.errorShow = false;
+              $scope.listadoEntradas();
 
-        });
+              $scope.toggleLEI();
+              $scope.dataH = {};
+              $scope.dataD = [];
+              $scope.almacen = '';
+              $scope.subtotal = '';
+              $scope.total = '';
+            }
 
+          },
+          (function () {
+            $scope.errorMsg = 'Hubo un error. Contacte al administrador del sistema.';
+            $scope.toggleError();
+          }
+          ));
+        }
+
+        catch (e) {
+          console.log('ERROR:'+ e);
+          $scope.errorMsg = e;
+          $scope.errorShow = true;
+        }
       }
 
       $scope.calculaTotales = function() {
@@ -307,9 +334,6 @@
         index = $scope.productos.indexOf(Prod);
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
-
-        console.log($scope.dataD);
-
       }
 
       
@@ -415,6 +439,11 @@
         }
       }
 
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
@@ -469,4 +498,4 @@
 
     }]);
 
-})(_);
+})(_);  

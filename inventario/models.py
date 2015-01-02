@@ -32,10 +32,10 @@ class InventarioH(models.Model):
 	factura = models.CharField(max_length=12, blank=True, null=True)
 	
 	diasPlazo = models.CharField("Dias de Plazo", max_length=3, choices=dias_plazo_choices,
-									default=dias_plazo_choices[0][0])
+									default=dias_plazo_choices[0][0], null=True, blank=True)
 
-	nota = models.TextField(blank=True)
-	ncf = models.CharField("NCF", max_length=25, blank=True)
+	nota = models.TextField(blank=True, null=True)
+	ncf = models.CharField("NCF", max_length=25, blank=True, null=True)
 	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
@@ -47,12 +47,19 @@ class InventarioH(models.Model):
 		verbose_name_plural = 'Inventario Cabecera'
 
 	def _get_fecha_vencimiento(self):
-		return  (self.fecha+timedelta(days=self.diasPlazo))
+		if(self.diasPlazo != None):
+			return  (self.fecha+timedelta(days=self.diasPlazo))
+		else:
+			return ''
 	fechaVencimiento = property(_get_fecha_vencimiento)
 
 	@property
 	def totalGeneral(self):
-		total = InventarioD.objects.filter(inventario_id=self.id).aggregate(total=Sum('costo'))['total']
+		total = 0
+		for n in InventarioD.objects.filter(inventario_id=self.id).values('costo','cantidadTeorico'):
+			total += n['costo'] * n['cantidadTeorico']
+		#total = (InventarioD.objects.filter(inventario_id=self.id).aggregate(total=Sum('costo')))['total'] * InventarioD.objects.filter(inventario_id=self.id).values('cantidadTeorico')
+		
 		if total == None:
 			total = 0
 
@@ -91,11 +98,11 @@ class InventarioD(models.Model):
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
 			if self.tipoAccion == 'S':
-				exist.cantidad -= self.cantidadTeorico
+				exist.cantidad -= int(self.cantidadTeorico)
 			else:
-				exist.cantidad = int(exist.cantidad) + self.cantidadTeorico
+				exist.cantidad = int(exist.cantidad) + int(self.cantidadTeorico)
 
-			exist.cantidad -= self.cantidadTeorico
+			exist.cantidad -= int(self.cantidadTeorico)
 			exist.save()
 		except Existencia.DoesNotExist:
 			existencia = Existencia()

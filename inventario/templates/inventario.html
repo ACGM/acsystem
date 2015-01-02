@@ -4,7 +4,13 @@
 
 {% block content %}
 
+
 	<div class="Inventario" ng-controller="ListadoEntradaInvCtrl">
+		
+		<div class="cssSlideUpError" ng-show="errorShow">
+			[[errorMsg]]
+			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
+		</div>
 		
 			<div class="sub-menu">	
 				<div class="menu-entrada-inventario-listado">
@@ -74,15 +80,15 @@
 				Entrada de Inventario
 		</div>
 
-		<section class="data-entry-section">
-			<div class="data-entry-inventario-header">
+		<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" role="form" ng-submit="EntradaInventarioForm.$valid && guardarEI()" novalidate>
+			<div>
 				
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Suplidor</td>
-						<td> <input type="text" class="id-suplidor-ei" ng-model="dataH.idSuplidor" ng-focus="[[focusSuplidor]]" ng-blur="getSuplidor(dataH.idSuplidor)"> <input type="text" class="nombre-suplidor-ei" ng-model="dataH.suplidorNombre"> </td>
+						<td> <input type="text" class="id-suplidor-ei" ng-model="dataH.idSuplidor" ng-focus="[[focusSuplidor]]" ng-blur="getSuplidor(dataH.idSuplidor)" required> <input type="text" class="nombre-suplidor-ei" ng-model="dataH.suplidorNombre"> </td>
 						<td>Entrada No.</td>
-						<td> <input type="text" ng-disabled="true"> </td>
+						<td> <input class="input-disabled" type="text" ng-disabled="true"> </td>
 					</tr>
 					<tr>
 						<td>Factura No.</td>
@@ -94,12 +100,12 @@
 						<td>NCF</td>
 						<td> <input type="text" class="ncf-ei" ng-model="dataH.ncf"> </td>
 						<td>Fecha</td>
-						<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" datepicker> </td>
+						<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" datepicker required> </td>
 					</tr>
 					<tr>
 						<td>Condicion</td>
 						<td> 
-							<select name="condicion" id="condicion" ng-model="dataH.condicion">
+							<select name="condicion" id="condicion" ng-model="dataH.condicion" required>
 								<option value="Contado">Contado</option>
 								<option value="Credito">Credito</option>
 							</select>
@@ -125,13 +131,16 @@
 
 				<div class="producto-find">
 					<span>Producto</span>
-					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false">
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;">
 					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
 
-					<span>Almacen</span>
-					<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()">
-						<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
-					</select>	
+					<div class="almacen-field-ei">
+						<span>Almacen</span>
+						<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+							<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+						</select>	
+						
+					</div>
 
 					<table class="productos-table-search" ng-show="tableProducto">
 						<tr class="productos-table-header">
@@ -171,7 +180,7 @@
 							<td>[[item.codigo]]</td>
 							<td>[[item.descripcion]]</td>
 							<td>[[item.unidad]]</td>
-							<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei"></td>
+							<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required></td>
 							<td>[[item.costo | number: 2]]</td>
 							<td>[[item.cantidad * item.costo | number: 2]]</td>
 							<td><button class="icon-delete eliminar-entrada-producto" ng-click="delProducto(item)"></button></td>
@@ -187,11 +196,12 @@
 						</ul>
 					</div>
 
-					<button class="icon-save Boton boton-guarda-inventario" ng-click="guardarEI()">Guardar</button>
+					<button class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="[[!EntradaInventarioForm.$valid]]">Guardar</button>
 				</section>
+				EL FORMULARIO ES : [[EntradaInventarioForm.$valid]]
 
 			</div>
-		</section>
+		</form>
 		
 		</div>
 		
