@@ -511,9 +511,11 @@ footer
 // FIN CLASES GENERICAS
 
 // CLASES PREDEFINIDAS DE ANGULARJS
-.ng-invalid
-	background red !important
-	border 2px solid blue
+
+.EntradaInventarioForm
+	&.ng-invalid
+		background red !important
+		border 2px solid blue
 	
 // FIN CLASES DE ANGULARJS
 
@@ -886,6 +888,34 @@ footer
 .nombre-suplidor-ei
 	width 16em
 
+.content-suplidores-table
+	position relative
+	
+.suplidores-table-search	
+	border 1px solid black
+	width 100%
+	position absolute
+	// float left
+	top 2em
+	left 5.7em
+	z-index 100
+	& tr
+		&:first-child
+			text-align center
+	
+	
+.suplidores-table-detail-search
+	
+	& td
+		border 1px solid black
+		background lightyellow
+		
+		&:nth-child(1), &:nth-child(2)
+			padding 0.1em 0.3em
+		&:nth-child(3)
+			text-align left
+			
+
 .ncf-ei
 	width 16em
 
@@ -896,11 +926,13 @@ footer
 	& select
 		background lightyellow
 	
-.producto-find
-	margin-top .6em
+.producto-find-ei
+	margin 1em 0
 	position relative
 
-	
+.producto-field-ei
+	width 16em	
+
 .productos-table-search	
 	border 1px solid black
 	width 100%

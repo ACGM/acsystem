@@ -155,6 +155,10 @@
       //Guardar Entrada Inventario
       $scope.guardarEI = function() {
         try {
+          if (!$scope.EntradaInventarioForm.$valid) {
+            debugger;
+            throw "Verifique que todos los campos esten completados correctamente.";
+          }
 
           var fechaP = $scope.dataH.fecha.split('/');
           var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
@@ -242,7 +246,6 @@
         $scope.dataH = {};
         $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
-        $scope.focusSuplidor = true;
         $scope.dataH.usuario = usuario;
       }
 
@@ -262,34 +265,41 @@
         }
       }
 
+      //Traer almacenes
+      $scope.getAlmacenes = function() {
+        InventarioService.almacenes().then(function (data) {
+          $scope.almacenes = data;
+        });
+      }
+
 
       //Traer suplidores
-      $scope.getSuplidor = function(suplidor) {
-        if(suplidor != undefined) {
+      $scope.getSuplidor = function($event) {
+        $event.preventDefault();
+
+        $scope.tableSuplidor = true;
+
+        if($scope.dataH.suplidorNombre != undefined) {
           InventarioService.suplidores().then(function (data) {
             $scope.suplidores = data.filter(function (registro) {
-              return registro.id == suplidor;
+              return $filter('lowercase')(registro.nombre
+                          .substring(0,$scope.dataH.suplidorNombre.length)) == $filter('lowercase')($scope.dataH.suplidorNombre);
             });
 
             if($scope.suplidores.length > 0) {
-              $scope.dataH.suplidorNombre = $scope.suplidores[0].nombre;
+              $scope.tableSuplidor = true;
+              $scope.suplidorNoExiste = '';
+            } else {
+              $scope.tableSuplidor = false;
+              $scope.suplidorNoExiste = 'No existe el suplidor';
             }
 
           });
         } else {
           InventarioService.suplidores().then(function (data) {
             $scope.suplidores = data;
-
           });
         }
-      }
-
-
-      //Traer almacenes
-      $scope.getAlmacenes = function() {
-        InventarioService.almacenes().then(function (data) {
-          $scope.almacenes = data;
-        });
       }
 
 
@@ -300,11 +310,10 @@
         $scope.tableProducto = true;
 
         if($scope.producto != undefined) {
-
           InventarioService.productos().then(function (data) {
-
             $scope.productos = data.filter(function (registro) {
-              return $filter('lowercase')(registro.descripcion.substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
+              return $filter('lowercase')(registro.descripcion
+                                  .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
             });
 
             if($scope.productos.length > 0){
@@ -316,22 +325,27 @@
             }
 
           });
-        } 
-        else {
+        } else {
           InventarioService.productos().then(function (data) {
             $scope.productos = data;
-
           });
         }
-
       }
 
 
-      //Agregar Producto
-      $scope.addProducto = function($event,Prod) {
+      //Seleccionar Suplidor
+      $scope.selSuplidor = function($event, supl) {
         $event.preventDefault();
 
-        index = $scope.productos.indexOf(Prod);
+        $scope.dataH.idSuplidor = supl.id;
+        $scope.dataH.suplidorNombre = supl.nombre;
+        $scope.tableSuplidor = false;
+      }
+
+      //Agregar Producto
+      $scope.addProducto = function($event, Prod) {
+        $event.preventDefault();
+
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
       }

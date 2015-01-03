@@ -23,7 +23,7 @@
 		<div id="prueba" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas()" >
 			
 			<section class="listado-reg-inventario">
-				<span> Documento No. </span>
+				<span> Documento No. </span> 
 				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc" ng-keypress="buscarDoc($event, NoDoc)">
 				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
 				<span class="error-ei"> [[NoFoundDoc]]</span>
@@ -53,7 +53,7 @@
 							<td>Imprimir</td>
 						</tr>
 
-						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail">
+						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
 							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
 							<td> <a href="#" class="sp-field" ng-click="visualizarDoc(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
@@ -64,6 +64,10 @@
 							<td>[[entrada.totalGeneral]]</td>
 							<td><span class="icon-printer imprimir-inventario"></span> </td>
 							
+						</tr>
+
+						<tr>
+							<td colspan="9"> Cantidad de Registros: [[entradas.length]]  </td>
 						</tr>								
 					</table>
 
@@ -80,13 +84,36 @@
 				Entrada de Inventario
 		</div>
 
-		<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" role="form" ng-submit="EntradaInventarioForm.$valid && guardarEI()" novalidate>
+		<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" role="form" ng-submit="guardarEI()" novalidate>
 			<div>
-				
+				<div class="content-suplidores-table">
+					<table class="suplidores-table-search" ng-show="tableSuplidor">
+						<tr class="productos-table-header">
+							<td>Id</td>
+							<td>Cedula o RNC</td>
+							<td>Nombre</td>
+						</tr>
+						<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
+							<td>[[supl.id]]</td>
+							<td>[[supl.cedulaRNC]]</td>
+							<td><a href="#" class="select-producto" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
+						</tr>
+					</table>
+				</div>
+
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Suplidor</td>
-						<td> <input type="text" class="id-suplidor-ei" ng-model="dataH.idSuplidor" ng-focus="[[focusSuplidor]]" ng-blur="getSuplidor(dataH.idSuplidor)" required> <input type="text" class="nombre-suplidor-ei" ng-model="dataH.suplidorNombre"> </td>
+						<td> <input type="text" class="input-disabled id-suplidor-ei" ng-model="dataH.idSuplidor" required readonly> 
+							<input type="text" class="nombre-suplidor-ei" ng-model="dataH.suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSuplidor=false" ng-click="tableSuplidor=false; errorShow=false;"> 
+							
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="getSuplidor($event)"></a> 
+
+						</td>
+
+					<span class="error-ei"> [[suplidorNoExiste]]</span>
+
+						
 						<td>Entrada No.</td>
 						<td> <input class="input-disabled" type="text" ng-disabled="true"> </td>
 					</tr>
@@ -129,9 +156,9 @@
 
 				</table>
 
-				<div class="producto-find">
+				<div class="producto-find-ei">
 					<span>Producto</span>
-					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;">
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
 					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
 
 					<div class="almacen-field-ei">
@@ -147,19 +174,13 @@
 							<td>Codigo</td>
 							<td>Descripcion</td>
 							<td>Costo</td>
-							
 						</tr>
-
 						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
 							<td>[[prod.codigo]]</td>
 							<td><a href="#" class="select-producto" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
 							<td>[[prod.costo]]</td>
 						</tr>
-
 					</table>
-
-
-
 					<span class="error-ei"> [[productoNoExiste]]</span>
 
 				</div>
