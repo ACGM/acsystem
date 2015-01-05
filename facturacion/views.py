@@ -2,6 +2,12 @@ from django.shortcuts import render
 
 from django.views.generic import TemplateView
 
+from rest_framework import viewsets, serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from .serializers import ListadoFacturasSerializer
+from .models import Factura
 
 class FacturacionView(TemplateView):
 
@@ -11,5 +17,5 @@ class FacturacionView(TemplateView):
 # Listado de Facturas registradas
 class ListadoEntradasInvView(viewsets.ModelViewSet):
 
-	queryset = InventarioH.objects.all()
-	serializer_class = EntradasInventarioSerializer
+	queryset = Factura.objects.all()
+	serializer_class = ListadoFacturasSerializer

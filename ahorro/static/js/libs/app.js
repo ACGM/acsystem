@@ -14,7 +14,7 @@
 	//########################
 	//#		Services         # 
 	//########################
-	.factory('ahorroService',['$http','$q','$filter','$windows'],function($http,$q,$filter,$windows){
+	.factory('ahorroService',['$http','$q','$filter','$windows', function($http,$q,$filter,$windows){
 			//================================================================
 			//Servicio para Manejo del api de ahorro de socio
 			function allAhorro(){
@@ -158,9 +158,14 @@
 			maestraABySocio:maestraABySocio,
 			maestraAByBeneficiario:maestraAByBeneficiario
 		}
-	})
+	}])
 	//########################
 	//		Controller       #
 	//########################     
-	.controller('ahorroController',['$scope','$routeParams','ahorroService',function($scope,$routeParams, ahorroService){}])
-})();
+	.controller('ahorroController',['$scope','$routeParams','ahorroService', function($scope,$routeParams, ahorroService){
+		$scope.hola = 'HOLA YEI';
+
+
+	}]);
+	
+})(_);

@@ -5,7 +5,7 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
-from inventario.views import InventarioView, TransferenciaInvView, getEntradaInventarioById, EntradaInventarioById
+from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
 from facturacion.views import FacturacionView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
