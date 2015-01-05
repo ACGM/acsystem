@@ -159,23 +159,8 @@
 			maestraAByBeneficiario:maestraAByBeneficiario
 		}
 	})
-/*
-	//#########################
-	//		Directives        #
-	//#########################
-	.directive('maestraAhorro',function(){
-    		return{
-    			restrict:'E',
-    			templateUrl: 'ahorro/templates/partials/maestra.html'
-    		};
-    	})
- */
 	//########################
 	//		Controller       #
 	//########################     
-	.controller('ahorroController',['$scope','$routeParams','ahorroService',function($scope,$routeParams, ahorroService){
-		
-		$scope.errorShow = false;	
-
-	}])
+	.controller('ahorroController',['$scope','$routeParams','ahorroService',function($scope,$routeParams, ahorroService){}])
 })();
