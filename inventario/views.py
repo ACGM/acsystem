@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.generic import TemplateView, ListView
+from django.http import HttpResponse, JsonResponse
+from django.views.generic import TemplateView, ListView, DetailView
 
 from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
@@ -10,10 +10,63 @@ from rest_framework.response import Response
 
 from .models import InventarioH, InventarioD, Almacen
 from administracion.models import Suplidor, Producto
-from .serializers import EntradasInventarioSerializer, AlmacenesSerializer
+from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer
 
 import json
 import math
+
+
+class EntradaInventarioById(ListView):
+
+	queryset = InventarioH.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		
+		self.object_list = self.get_queryset().filter(id=10482)
+
+
+		format = self.request.GET.get('format')
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for inventario in self.object_list:
+			data.append({
+				'id': inventario.id,
+				'idsuplidor': inventario.suplidor.id,
+				'suplidor': inventario.suplidor.nombre,
+				'factura': inventario.factura,
+				'orden': inventario.orden,
+				'ncf': inventario.ncf,
+				'fecha': inventario.fecha,
+				'condicion': inventario.condicion,
+				'diasPlazo': inventario.diasPlazo,
+				'nota': inventario.nota,
+				'productos': [ 
+					{	'productoId': prod.producto.codigo,
+						'productoDescrp': prod.producto.descripcion,
+						'unidad': prod.producto.unidad.descripcion,
+						'cantidad': prod.cantidadTeorico,
+						'costo': prod.costo,
+					} 
+					for prod in InventarioD.objects.filter(inventario=inventario.id)]
+				})
+
+		return JsonResponse(data, safe=False)
+
+
+def getEntradaInventarioById(request, doc):
+
+	queryset = InventarioH.objects.all()
+	serializer_class = EntradaInventarioByIdSerializer
+
+	return HttpResponse({'object' : queryset})
+
 
 
 class InventarioView(TemplateView):
@@ -42,6 +95,7 @@ class InventarioView(TemplateView):
 			invH.diasPlazo = dataH['diasPlazo']
 			invH.nota = dataH['nota']
 			invH.ncf = dataH['ncf']
+			invH.condicion = dataH['condicion']
 			invH.suplidor = suplidor
 			invH.userLog = usuario
 			invH.save()

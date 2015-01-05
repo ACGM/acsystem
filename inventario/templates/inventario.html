@@ -133,8 +133,8 @@
 						<td>Condicion</td>
 						<td> 
 							<select name="condicion" id="condicion" ng-model="dataH.condicion" required>
-								<option value="Contado">Contado</option>
-								<option value="Credito">Credito</option>
+								<option value="CO">Contado</option>
+								<option value="CR">Credito</option>
 							</select>
 						</td>
 						<td>Dias Plazo</td>
@@ -219,7 +219,6 @@
 
 					<button class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="[[!EntradaInventarioForm.$valid]]">Guardar</button>
 				</section>
-				EL FORMULARIO ES : [[EntradaInventarioForm.$valid]]
 
 			</div>
 		</form>

@@ -26,6 +26,7 @@ class InventarioH(models.Model):
 
 	dias_plazo_choices = (('30','30'),('60','60'), ('120','120'),)
 	posteo_choices = (('N','NO'),('S','SI'))
+	condicion_choices = (('CO','Contado'),('CR','Credito'),)
 
 	fecha = models.DateField(default=datetime.now)
 	orden = models.CharField(max_length=30, blank=True, null=True)
@@ -38,6 +39,8 @@ class InventarioH(models.Model):
 	ncf = models.CharField("NCF", max_length=25, blank=True, null=True)
 	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
+	condicion = models.CharField(max_length=2, choices=condicion_choices, default='CO')
+
 	suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
