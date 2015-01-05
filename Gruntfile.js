@@ -2,13 +2,13 @@ module.exports = function(grunt){
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		uglify:{
-			options:{
-				banner:'/**/\n'
+		meta:{
+				banner:'/* Archivos minificados para aplicacion de cooperativa, fecha de ultimo building <%= grunt.template.today() %> */\n'
 			},
-			build: {
-				src: 'acgm/static/js/*.js',
-				dest: 'allApp.js'
+		uglify:{
+			ahorro: {
+				src: ['<banner>','ahorro/static/js/libs/*.js'],
+				dest: 'ahorro/static/js/ahorro.js'
 			}
 		}
 	});
@@ -17,5 +17,6 @@ module.exports = function(grunt){
 grunt.loadNpmTasks('grunt-contrib-uglify');
 
 grunt.registerTask('default',['uglify']);
+//grunt.registerTask('ahorros',['ahorroMod'])
 
 };

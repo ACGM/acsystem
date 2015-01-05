@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} Ahorro {% endblock title %}
+
+{% block content %}
+	<!-- Visualizar Ahorros-->
+	<div class="ahorro" ng-controller="ahorroController">
+		<div class="cssSlideUpError" ng-show="errorShow">
+			[[errorMsg]]
+			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
+		</div>
+
+	</div>
+
+{% endblock content %}
