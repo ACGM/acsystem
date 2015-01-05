@@ -21,8 +21,9 @@ class EntradaInventarioById(ListView):
 	queryset = InventarioH.objects.all()
 
 	def get(self, request, *args, **kwargs):
+		NoDoc = self.request.GET.get('nodoc')
 		
-		self.object_list = self.get_queryset().filter(id=10482)
+		self.object_list = self.get_queryset().filter(id=NoDoc)
 
 
 		format = self.request.GET.get('format')
@@ -38,8 +39,8 @@ class EntradaInventarioById(ListView):
 		for inventario in self.object_list:
 			data.append({
 				'id': inventario.id,
-				'idsuplidor': inventario.suplidor.id,
-				'suplidor': inventario.suplidor.nombre,
+				'suplidorId': inventario.suplidor.id,
+				'suplidorName': inventario.suplidor.nombre,
 				'factura': inventario.factura,
 				'orden': inventario.orden,
 				'ncf': inventario.ncf,
@@ -48,11 +49,12 @@ class EntradaInventarioById(ListView):
 				'diasPlazo': inventario.diasPlazo,
 				'nota': inventario.nota,
 				'productos': [ 
-					{	'productoId': prod.producto.codigo,
-						'productoDescrp': prod.producto.descripcion,
+					{	'codigo': prod.producto.codigo,
+						'descripcion': prod.producto.descripcion,
 						'unidad': prod.producto.unidad.descripcion,
 						'cantidad': prod.cantidadTeorico,
 						'costo': prod.costo,
+						'almacen': prod.almacen.id,
 					} 
 					for prod in InventarioD.objects.filter(inventario=inventario.id)]
 				})

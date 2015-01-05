@@ -65,7 +65,7 @@ urlpatterns = patterns('',
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     
-    url(r'^inventario/(?P<doc>[\d\-]+)/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
