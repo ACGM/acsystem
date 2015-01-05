@@ -9,6 +9,7 @@ from inventario.views import InventarioView, TransferenciaInvView, getEntradaInv
 from facturacion.views import FacturacionView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
+from ahorro.views import AhorroView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet
@@ -75,6 +76,8 @@ urlpatterns = patterns('',
     url(r'^prestamos/maestra/$', MaestraPrestamosView.as_view(), name='Maestra_Prestamos'),
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
+    #Ahorro
+    url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/',include(router.urls)),
