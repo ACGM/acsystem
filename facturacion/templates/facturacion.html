@@ -4,26 +4,49 @@
 
 {% block content %}
 
-	<div class="facturas">
+	<div class="facturas" ng-controller="ListadoFacturasCtrl">
 
-		<div class="Facturacion" ng-controller="ListadoFacturasCtrl">
+		
+		<div class="cssSlideUpError" ng-show="errorShow">
+			[[errorMsg]]
+			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
+		</div>
+
+
 			
 			<div class="sub-menu">	
 				<div class="menu-entrada-inventario-listado">
 					<button class="nuevo icon-file" title="Nueva factura"></button>
 				</div>
 					Listado de Facturas
-				<a class="DownArrow" href="#" ng-click="toggleLF()"></a>
+				<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
 			</div>
+			
+		<div class="facturacion cssSlideUp" ng-show="showLF" ng-init="listadoFacturas()">
 
-			<section class="listado-reg-facturas" ng-show="showLF">
+			<section class="listado-reg-facturas">
 				<span> Factura No. </span>
-				<input type="text" id="FacturaNo">
+				<input type="text" id="FacturaNo" class="doc-no-ei" ng-model="NoFact" ng-keypress="buscarFact($event, NoFact)">
+				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoFact(NoFact)"></a>
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoFacturas()">Ver todos</a>
 
-				<table class="listado-table">
+				<div class="posteo-ei">
+					<span>Posteadas</span>
+					<select name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
+						<option value="*">TODOS</option>
+						<option value="S">SI</option>
+						<option value="N">NO</option>
+					</select>
+				</div>
+
+			<section class="registrosPanel">
+
+				<table class="listado-table" id="table-lf-listado">
 					<tr class="listado-table-header">
-						<td><input type="checkbox"> </td>
+						<td><input type="checkbox" ng-model-"regAll" ng-click="seleccionAll()"> </td>
 						<td>Estatus</td>
+						<td>Fecha</td>
 						<td>Factura</td>
 						<td>Orden C.</td>
 						<td>Prestamo</td>
@@ -34,69 +57,25 @@
 						<td>Eliminar</td>
 					</tr>
 
-					<tr class="listado-facturas-detail">
-						<td><input type="checkbox"> </td>
-						<td class="icon-coin"></td>
-						<td>0002344</td>
-						<td>0003234</td>
-						<td>0045596</td>
-						<td>A00203948588570031</td>
-						<td>Jose Rafael Montero Nolasco</td>
-						<td>43,500.66</td>
+					<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
+						<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
+						<td class="icon-coin posteo-[[factura.posteo]]"></td>
+						<td>[[factura.fecha]]</td>
+						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.id)"> [[factura.id | numberFixedLen: 8]] </a></td>
+						<td>[[factura.orden]]</td>
+						<td>[[factura.prestamo]]</td>
+						<td>[[factura.ncf]]</td>
+						<td>[[factura.socio]]</td>
+						<td>[[factura.valor]]</td>
 						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
 						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
 					</tr>
-					<tr class="listado-facturas-detail">
-						<td><input type="checkbox"> </td>
-						<td class="icon-coin"></td>
-						<td>0002344</td>
-						<td>0003234</td>
-						<td>0045596</td>
-						<td>A00203948588570031</td>
-						<td>Jose Rafael Montero Nolasco</td>
-						<td>43,500.66</td>
-						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-					</tr>
-					<tr class="listado-facturas-detail">
-						<td><input type="checkbox"> </td>
-						<td class="icon-coin"></td>
-						<td>0002344</td>
-						<td>0003234</td>
-						<td>0045596</td>
-						<td>A00203948588570031</td>
-						<td>Jose Rafael Montero Nolasco</td>
-						<td>43,500.66</td>
-						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-					</tr>
-					<tr class="listado-facturas-detail">
-						<td><input type="checkbox"> </td>
-						<td class="icon-coin"></td>
-						<td>0002344</td>
-						<td>0003234</td>
-						<td>0045596</td>
-						<td>A00203948588570031</td>
-						<td>Jose Rafael Montero Nolasco</td>
-						<td>43,500.66</td>
-						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-					</tr>
-					<tr class="listado-facturas-detail">
-						<td><input type="checkbox"> </td>
-						<td class="icon-coin"></td>
-						<td>0002344</td>
-						<td>0003234</td>
-						<td>0045596</td>
-						<td>A00203948588570031</td>
-						<td>Jose Rafael Montero Nolasco</td>
-						<td>43,500.66</td>
-						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-					</tr>								
+								
 				</table>
 
-				<button class="Boton boton-postear-factura"> Postear</button>
+			</section>
+
+			<button class="Boton boton-postear-factura"> Postear</button>
 			</section>
 		
 		</div>

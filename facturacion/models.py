@@ -16,7 +16,7 @@ class Factura(models.Model):
 	fecha = models.DateTimeField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=facturas_choices, default='A')
 	descrpAnulacion = models.CharField(max_length=255, blank=True)
-	socio = models.ForeignKey(Socio)
+	socio = models.ForeignKey(Socio, null=True)
 	ordenCompra = models.CharField(max_length=20, blank=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
 	impresa = models.IntegerField(default=0)

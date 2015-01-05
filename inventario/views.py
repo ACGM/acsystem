@@ -16,6 +16,7 @@ import json
 import math
 
 
+# Retornar un documento con todo su detalle 
 class EntradaInventarioById(ListView):
 
 	queryset = InventarioH.objects.all()
@@ -62,15 +63,7 @@ class EntradaInventarioById(ListView):
 		return JsonResponse(data, safe=False)
 
 
-def getEntradaInventarioById(request, doc):
-
-	queryset = InventarioH.objects.all()
-	serializer_class = EntradaInventarioByIdSerializer
-
-	return HttpResponse({'object' : queryset})
-
-
-
+# Entrada de Inventario
 class InventarioView(TemplateView):
 
 	template_name = 'inventario.html'
@@ -119,6 +112,7 @@ class InventarioView(TemplateView):
 
 
 
+# Transferencia de Inventario
 class TransferenciaInvView(TemplateView):
 
 	template_name = 'transferenciainv.html'

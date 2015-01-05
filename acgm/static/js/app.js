@@ -31,7 +31,18 @@
       }
       return num;
     };
-  })
+  });
+
+  app.filter('posteo', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('N', false)
+                .replace('S', true);
+        return input;
+      }
+  });
 
   app.directive('datepicker', function() {
     return {
