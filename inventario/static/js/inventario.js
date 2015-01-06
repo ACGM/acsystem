@@ -2,18 +2,6 @@
 
   angular.module('cooperativa.inventario',['ngAnimate'])
 
-    .filter('posteo', function() {
-      return function (input) {
-        if (!input) return "";
-
-        input = input
-                .replace('N', false)
-                .replace('S', true);
-        return input;
-      }
-    })    
-
-
     .factory('InventarioService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       //Guardar Entrada Inventario
@@ -149,7 +137,7 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope','$http', '$filter', 'InventarioService', function ($scope, $http, $filter, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', 'InventarioService', function ($scope, $filter, InventarioService) {
       $scope.errorShow = false;
       $scope.showLEI = true;
       $scope.regAll = false;
@@ -167,6 +155,77 @@
       $scope.ArrowLEI = 'UpArrow';
 
       
+       //Listado de todas las entradas de inventario
+      $scope.listadoEntradas = function() {
+        $scope.entradasSeleccionadas = [];
+        $scope.valoresChk = [];
+        $scope.regAll = false;
+
+        InventarioService.all().then(function (data) {
+          $scope.entradas = data;
+
+          if(data.length > 0) {
+            $scope.verTodos = 'ver-todos-ei';
+
+            var i = 0;
+            data.forEach(function (data) {
+              $scope.valoresChk[i] = false;
+              i++;
+            });
+
+          }
+        });
+      }
+
+
+      //Buscar una entrada de inventario en especifico
+      $scope.filtrarPorNoDoc = function(NoDoc) {
+        try {
+          InventarioService.byNoDoc(NoDoc).then(function (data) {
+            $scope.entradas = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+          }, 
+            (function () {
+              $scope.NoFoundDoc = 'No se encontró el documento #' + NoDoc;
+            }
+          ));          
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+
+      //Buscar Documento por ENTER
+      $scope.buscarDoc = function($event, NoDoc) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorNoDoc(NoDoc);
+        }
+      }
+
+      //Filtrar las entradas de inventario por posteo (SI/NO)
+      $scope.filtrarPosteo = function() {
+        $scope.entradasSeleccionadas = [];
+        $scope.valoresChk = [];
+        $scope.regAll = false;
+
+        if($scope.posteof != '*') {
+          InventarioService.byPosteo($scope.posteof).then(function (data) {
+            $scope.entradas = data;
+
+            if(data.length > 0){
+              $scope.verTodos = '';
+            }
+        });
+        } else {
+          $scope.listadoEntradas();
+
+        }        
+      }
+
       //Guardar Entrada Inventario
       $scope.guardarEI = function() {
         try {
@@ -241,7 +300,7 @@
               $scope.errorShow = false;
 
               //completar los campos
-              $scope.dataH = {};
+              $scope.nuevaEntrada();
 
               $scope.dataH.entradaNo = $filter('numberFixedLen')(NoDoc, 8);
               $scope.dataH.idSuplidor = data[0]['suplidorId'];
@@ -319,7 +378,10 @@
         $scope.ArrowLEI = 'DownArrow';
         $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.dataH.usuario = usuario;
+        $scope.dataH.condicion = 'CO';
+
         $scope.disabledButton = 'Boton';
+
       }
 
 
@@ -424,78 +486,6 @@
       }
 
       
-      //Listado de todas las entradas de inventario
-      $scope.listadoEntradas = function() {
-        $scope.entradasSeleccionadas = [];
-        $scope.valoresChk = [];
-        $scope.regAll = false;
-
-        InventarioService.all().then(function (data) {
-          $scope.entradas = data.reverse();
-
-          if(data.length > 0) {
-            $scope.verTodos = 'ver-todos-ei';
-
-            var i = 0;
-            data.forEach(function (data) {
-              $scope.valoresChk[i] = false;
-              i++;
-            });
-
-          }
-        });
-      }
-
-
-      //Buscar una entrada de inventario en especifico
-      $scope.filtrarPorNoDoc = function(NoDoc) {
-        try {
-          InventarioService.byNoDoc(NoDoc).then(function (data) {
-            $scope.entradas = data;
-
-            if(data.length > 0) {
-              $scope.verTodos = '';
-              $scope.NoFoundDoc = '';
-            }
-          }, 
-            (function () {
-              $scope.NoFoundDoc = 'No se encontró el documento #' + NoDoc;
-            }
-          ));          
-        } catch (e) {
-          console.log(e);
-        }
-      }
-
-
-      //Buscar Documento por ENTER
-      $scope.buscarDoc = function($event, NoDoc) {
-        if($event.keyCode == 13) {
-          $scope.filtrarPorNoDoc(NoDoc);
-        }
-      }
-
-      //Filtrar las entradas de inventario por posteo (SI/NO)
-      $scope.filtrarPosteo = function() {
-        $scope.entradasSeleccionadas = [];
-        $scope.valoresChk = [];
-        $scope.regAll = false;
-
-        if($scope.posteof != '*') {
-          InventarioService.byPosteo($scope.posteof).then(function (data) {
-            $scope.entradas = data.reverse();
-
-            if(data.length > 0){
-              $scope.verTodos = '';
-            }
-        });
-        } else {
-          $scope.listadoEntradas();
-
-        }        
-      }
-
-
       // Mostrar/Ocultar panel de Listado de Entrada Inventario
       $scope.toggleLEI = function() {
         $scope.showLEI = !$scope.showLEI;
@@ -550,18 +540,6 @@
 
       $scope.postear = function(){
 
-      }
-
-    }])
-
-
-
-    .controller('EntradaInvCtrl', ['$scope', function ($scope) {
-      $scope.showEI = true;
-
-      // Mostrar/Ocultar panel de Entrada de Inventario
-      $scope.toggleEI = function() {
-        $scope.showEI = !$scope.showEI;
       }
 
     }]);

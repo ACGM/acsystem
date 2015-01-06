@@ -16,7 +16,7 @@
 			
 			<div class="sub-menu">	
 				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva factura"></button>
+					<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
 				</div>
 					Listado de Facturas
 				<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
@@ -42,15 +42,14 @@
 
 			<section class="registrosPanel">
 
-				<table class="listado-table" id="table-lf-listado">
-					<tr class="listado-table-header">
-						<td><input type="checkbox" ng-model-"regAll" ng-click="seleccionAll()"> </td>
+				<table class="listado-table-f" id="table-lf-listado">
+					<tr class="listado-table-header-f">
+						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
 						<td>Estatus</td>
 						<td>Fecha</td>
 						<td>Factura</td>
 						<td>Orden C.</td>
 						<td>Prestamo</td>
-						<td>NCF</td>
 						<td>Socio</td>
 						<td>Valor</td>
 						<td>Imprimir</td>
@@ -60,13 +59,12 @@
 					<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
 						<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
 						<td class="icon-coin posteo-[[factura.posteo]]"></td>
-						<td>[[factura.fecha]]</td>
-						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.id)"> [[factura.id | numberFixedLen: 8]] </a></td>
-						<td>[[factura.orden]]</td>
+						<td>[[factura.fecha | date: 'dd-MM-yyyy']]</td>
+						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.id)"> [[factura.noFactura | numberFixedLen: 8]] </a></td>
+						<td>[[factura.ordenCompra]]</td>
 						<td>[[factura.prestamo]]</td>
-						<td>[[factura.ncf]]</td>
 						<td>[[factura.socio]]</td>
-						<td>[[factura.valor]]</td>
+						<td>[[factura.totalGeneral]]</td>
 						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
 						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
 					</tr>
@@ -80,36 +78,64 @@
 		
 		</div>
 
-		<div class="detalle-factura" ng-controller="DetalleFacturaCtrl">
+		<div class="detalle-factura">
 			<!--DETALLE FACTURA-->
 			<div class="sub-menu">	
 					Detalle Factura
 			</div>
 
-			<section class="data-entry-section">
+			<form name="FacturaForm" class="data-entry-section" ng-submit="" novalidate>
 				<div class="data-entry-factura-header">
 					
 					<table class="data-entry-header-table">
 						<tr>
 							<td>Fecha</td>
-							<td> <input type="text" value="[[fecha | date: 'dd-MM-yyyy']]"> </td>
+							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd-MM-yyyy']]" datepicker required> </td>
 						</tr>
 						<tr>
 							<td>Terminos</td>
-							<td> <input type="text"> </td>
+							<td> 
+								<select name="condicion" id="condicion" ng-model="dataH.terminos" required>
+									<option value="CO" selected>Contado</option>
+									<option value="CR">Credito</option>
+								</select>
+							</td>
 						</tr>
 						<tr>
 							<td>Vendedor</td>
-							<td> <input type="text" value="{{user}}" readonly class="input-no-editable"> </td>
+							<td> <input type="text" ng-model="dataH.vendedor" readonly class="input-no-editable"> </td>
+						</tr>
+						<tr>
+							<td>Almacen</td>
+							<td> 
+								<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+									<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+								</select>	
+							</td>
 						</tr>
 					</table>
 
-					<div class="producto-find">
+					<div class="producto-find-ei">
 						<span>Producto</span>
-						<input type="text">
-		
+						<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
+
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
+
 					</div>
-					
+
+					<table class="productos-table-search" ng-show="tableProducto">
+						<tr class="productos-table-header">
+							<td>Codigo</td>
+							<td>Descripcion</td>
+							<td>Precio</td>
+						</tr>
+						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
+							<td>[[prod.codigo]]</td>
+							<td><a href="#" class="select-producto" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
+							<td>[[prod.precio]]</td>
+						</tr>
+					</table>
+					<span class="error-ei"> [[productoNoExiste]]</span>
 
 					<section class="productos-section">
 						<table class="productos-table">
@@ -131,51 +157,7 @@
 								<td>1,000</td>
 								<td><a class="icon-delete icon-eliminar" href=""></a></td>
 							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
+	
 						</table>
 
 						<div class="totales-section">
@@ -190,7 +172,7 @@
 					</section>
 
 				</div>
-			</section>
+			</form>
 
 
 			

@@ -9,7 +9,7 @@ class ListadoFacturasSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Factura
-		fields = ('id','posteo','fecha','ncf','noFactura','estatus','ordenCompra','impresa','totalGeneral')
+		fields = ('id','fecha','noFactura','estatus','ordenCompra','impresa','socio','posteo','totalGeneral')
 		ordering = ('-id',)
 
 

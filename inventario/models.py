@@ -48,6 +48,7 @@ class InventarioH(models.Model):
 	class Meta:
 		verbose_name = 'Inventario Cabecera'
 		verbose_name_plural = 'Inventario Cabecera'
+		ordering = ('-id',)
 
 	def _get_fecha_vencimiento(self):
 		if(self.diasPlazo != None):
@@ -105,7 +106,6 @@ class InventarioD(models.Model):
 			else:
 				exist.cantidad = int(exist.cantidad) + int(self.cantidadTeorico)
 
-			exist.cantidad -= int(self.cantidadTeorico)
 			exist.save()
 		except Existencia.DoesNotExist:
 			existencia = Existencia()
@@ -160,7 +160,7 @@ class Existencia(models.Model):
 	producto = models.ForeignKey(Producto)
 	cantidad = models.IntegerField()
 	almacen = models.ForeignKey(Almacen)
-	fecha = models.DateField(auto_now=True)
+	fecha = models.DateField(auto_now_add=True)
 
 	def __unicode__(self):
 		return '%s - %i' % (self.producto,self.cantidad)

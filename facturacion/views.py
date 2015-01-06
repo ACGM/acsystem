@@ -15,7 +15,7 @@ class FacturacionView(TemplateView):
 
 
 # Listado de Facturas registradas
-class ListadoEntradasInvView(viewsets.ModelViewSet):
+class ListadoFacturasViewSet(viewsets.ModelViewSet):
 
 	queryset = Factura.objects.all()
 	serializer_class = ListadoFacturasSerializer

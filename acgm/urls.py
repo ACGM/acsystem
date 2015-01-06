@@ -17,11 +17,12 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
-
+from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet
+
 
 #APIView (API)
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
@@ -52,10 +53,13 @@ router.register(r'Solicitud_Cheque',SolicitudViewSet)
 router.register(r'cheques',ChequesConsViewSet)
 router.register(r'notas_Conciliacion',NotasConsViewSet)
 
+#inventario
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'producto', ProductoViewSet)
 
+#facturacion
+router.register(r'facturas', ListadoFacturasViewSet)
 
 urlpatterns = patterns('',
 
