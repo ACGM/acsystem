@@ -4,14 +4,84 @@
 
 {% block content %}
 	<!-- Visualizar Ahorros-->
-	<div class="ahorro" ng-controller="ahorroController">
+	<div class="Ahorro" ng-controller="ahorroController">
 		<div class="cssSlideUpError" ng-show="errorShow">
 			[[errorMsg]]
 			<!-- <a href="" class="cerrarError" ng-click="toggleError()">X</a> -->
 		</div>
-
-			[[hola]]
-	
+		<div class="sub-menu">
+			Ahorros
+		</div>
+		<section class="Ahorro-main">
+			<section class="Ahorro-main-search">
+				<div class="Ahorro-main-search-box">
+					<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
+					<a href="#" class="icon-uniE601 icon-search" ng-click=""></a>
+				</div>
+			</section>
+		</section>
+		<section class="Ahorro-main-list">
+				<div class="registroPanel">
+					<table id='tabla-ahorros' class='listado-table-ei'>
+						<tr class="listado-table-header-ei">
+							<th>Registro</th>
+							<th>Socio</th>
+							<th>Balance</th>
+							<th>Disponible</th>
+							<th>Imprimir</th>
+						</tr>
+						<tr>
+							
+						</tr>
+					</table>
+				</div>
+			</section>
+		<section class="Ahorro-detalle">
+			<div class="sub-menu">
+				Ahorros - Detalle
+			</div>
+			<div class="Ahorro-detalle-header">
+				<table>
+					<tr>
+						<td class="items">Registro</td>
+						<td class="results"><input id="idAhorro" type="text"></td>
+					</tr>
+					<tr>
+						<td class="items">
+							Socio
+						</td>
+						<td class="results">
+							<input type="text" id="Socio">
+						</td>
+					</tr>
+					<tr>
+						<td class="items">Balance</td>
+						<td class="results"><input type="text" id="Balance"></td>
+					</tr>
+					<tr>
+						<td class="items">
+							Disponible
+						</td>
+						<td class="results"><input type="text" id="Disponible"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="Ahorro-detalle-cuentas">
+				<div class="registroPanel">
+					<table id="tabla-detalleCuentas" class="listado-table-ei">
+						<tr class="listado-table-header-ei">
+							<th>Cuenta</th>
+							<th>Auxiliar</th>
+							<th>Ref</th>
+							<th>Estatus</th>
+							<th>Debito</th>
+							<th>Credito</th>
+						</tr>
+						<tr></tr>
+					</table>
+				</div>
+			</div>
+		</section>
 
 	</div>
 

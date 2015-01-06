@@ -14,15 +14,28 @@
 	//########################
 	//#		Services         # 
 	//########################
-	.factory('ahorroService',['$http','$q','$filter','$windows', function($http,$q,$filter,$windows){
+	.factory('ahorroService',['$http','$q','$filter', function($http,$q,$filter){
 			//================================================================
-			//Servicio para Manejo del api de ahorro de socio
+			
+			function setAhorro(ahorro, cuentas){
+				var deferred =$q.defer()
+
+				$http.post('api/ahorro',JSON.stringify({'ahorro':ahorro,'cuentas':cuentas})
+					.success(function (data){
+						deferred.resolve(data)
+					}).error(function(data){
+						deferred.resolve(data);
+					});
+				return deferred.promises;		
+			}
+
+			//Servicio para obtener del api de ahorro de socio
 			function allAhorro(){
 				var deferred = $q.defer();
 				$http.get('api/ahorro')
 					.success(function(data){
 						deferred.resolve(data);
-					});
+					})
 				return deferred.promises;
 			}
 			//Filtro por Socio
@@ -162,9 +175,19 @@
 	//########################
 	//		Controller       #
 	//########################     
-	.controller('ahorroController',['$scope','$routeParams','ahorroService', function($scope,$routeParams, ahorroService){
-		$scope.hola = 'HOLA YEI';
+	.controller('ahorroController',['$scope','ahorroService', function($scope, ahorroService){
+		$scope.errorShow= false;
+		$scope.data={};
+		$scope.finder='';
 
+
+		ahorroService.allAhorro().then(function(data){
+			$scope.data=data
+		});
+
+		$scope.findAhorro =function(){
+			$scope.data=ahorroService.ahorroBySocio($scope.finder);
+		}
 
 	}]);
 	
