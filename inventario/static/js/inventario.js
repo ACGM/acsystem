@@ -245,6 +245,7 @@
           var dataH = new Object();
 
           dataH.suplidor = $scope.dataH.idSuplidor;
+          dataH.entradaNo = $scope.dataH.entradaNo != undefined? $scope.dataH.entradaNo : 0;
           dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : '';
           dataH.orden = $scope.dataH.ordenNo != undefined? $scope.dataH.ordenNo : '';
           dataH.ncf = $scope.dataH.ncf != undefined? $scope.dataH.ncf : '';
@@ -291,7 +292,7 @@
 
 
        // Visualizar Documento (Entrada de Inventario Existente - desglose)
-      $scope.DocFullById = function(NoDoc) {
+      $scope.DocFullById = function(NoDoc, usuario) {
         try {
           InventarioService.DocumentoById(NoDoc).then(function (data) {
 
@@ -312,6 +313,9 @@
               $scope.dataH.condicion = data[0]['condicion'];
               $scope.dataH.venceDias = data[0]['diasPlazo'];
               $scope.dataH.nota = data[0]['nota'];
+              $scope.dataH.posteo = data[0]['posteo'];
+              $scope.dataH.usuario = usuario;
+
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
@@ -356,7 +360,9 @@
 
 
       //Eliminar producto de la lista de entradas
-      $scope.delProducto = function(prod) {
+      $scope.delProducto = function($event, prod) {
+        $event.preventDefault();
+        
         index = $scope.dataD.indexOf(prod);
 
         $scope.dataD.splice($scope.dataD[index],1);
@@ -379,6 +385,7 @@
         $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.dataH.usuario = usuario;
         $scope.dataH.condicion = 'CO';
+        $scope.dataH.posteo = 'N';
 
         $scope.disabledButton = 'Boton';
 

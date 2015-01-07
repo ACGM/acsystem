@@ -160,10 +160,11 @@ class Existencia(models.Model):
 	producto = models.ForeignKey(Producto)
 	cantidad = models.IntegerField()
 	almacen = models.ForeignKey(Almacen)
-	fecha = models.DateField(auto_now_add=True)
+	fecha = models.DateField(auto_now=True)
 
 	def __unicode__(self):
 		return '%s - %i' % (self.producto,self.cantidad)
 
 	class Meta:
 		ordering = ['producto']
+		unique_together = ('producto','almacen')

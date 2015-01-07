@@ -56,7 +56,7 @@
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
 							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
-							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
+							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id, '{{user}}')"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd-MM-yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
@@ -205,8 +205,8 @@
 							<td>[[item.costo | number: 2]]</td>
 							<td>[[item.cantidad * item.costo | number: 2]]</td>
 							<td>
-								<button ng-if="dataH.entradaNo == undefined" class="icon-delete eliminar-entrada-producto" ng-click="delProducto(item)"></button>
-								<button ng-if="dataH.entradaNo != undefined" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
+								<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
+								<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
 							</td>
 						</tr>
 						
@@ -220,10 +220,9 @@
 						</ul>
 					</div>
 
-					<button ng-if="dataH.entradaNo == undefined" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="[[EntradaInventarioForm.$valid]]">Guardar</button>
+					<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="[[!EntradaInventarioForm.$valid]]">Guardar</button>
 
-					<button ng-if="dataH.entradaNo != undefined" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
-
+					<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
 				</section>
 			</div>
 		</form>
