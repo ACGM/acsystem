@@ -38,10 +38,10 @@ class Distrito(models.Model):
 class Departamento(models.Model):
 
 	centroCosto = models.CharField("Centro de Costo", max_length=10)
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=80)
 
 	def __unicode__(self):
-		return '%s' % (self.descripcion)
+		return '%s: %s' % (self.centroCosto, self.descripcion)
 
 	class Meta:
 		ordering = ['descripcion']

@@ -21,7 +21,7 @@ class Factura(models.Model):
 	estatus = models.CharField(max_length=1, choices=facturas_choices, default='A')
 	descrpAnulacion = models.CharField(max_length=150, blank=True)
 	socio = models.ForeignKey(Socio, null=True)
-	ordenCompra = models.CharField(max_length=20, blank=True)
+	ordenCompra = models.CharField(max_length=20, blank=True, null=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
 	impresa = models.IntegerField(default=0)
 
@@ -76,7 +76,7 @@ class Detalle(models.Model):
 		try:
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
-			exist.cantidad -= int(self.cantidadTeorico)
+			exist.cantidad -= int(self.cantidad)
 			exist.save()
 
 		except Existencia.DoesNotExist:

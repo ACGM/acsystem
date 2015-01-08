@@ -138,6 +138,8 @@
     //CONTROLLERS                                        *
     //****************************************************
     .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', 'InventarioService', function ($scope, $filter, InventarioService) {
+      
+      //Inicializacion de variables
       $scope.errorShow = false;
       $scope.showLEI = true;
       $scope.regAll = false;
@@ -177,7 +179,6 @@
         });
       }
 
-
       //Buscar una entrada de inventario en especifico
       $scope.filtrarPorNoDoc = function(NoDoc) {
         try {
@@ -194,10 +195,10 @@
             }
           ));          
         } catch (e) {
+          $scope.mostrarError(e);
           console.log(e);
         }
       }
-
 
       //Buscar Documento por ENTER
       $scope.buscarDoc = function($event, NoDoc) {
@@ -208,22 +209,33 @@
 
       //Filtrar las entradas de inventario por posteo (SI/NO)
       $scope.filtrarPosteo = function() {
-        $scope.entradasSeleccionadas = [];
-        $scope.valoresChk = [];
-        $scope.regAll = false;
+        try {
 
-        if($scope.posteof != '*') {
-          InventarioService.byPosteo($scope.posteof).then(function (data) {
-            $scope.entradas = data;
+          $scope.entradasSeleccionadas = [];
+          $scope.valoresChk = [];
+          $scope.regAll = false;
 
-            if(data.length > 0){
-              $scope.verTodos = '';
-            }
-        });
-        } else {
-          $scope.listadoEntradas();
+          if($scope.posteof != '*') {
+            InventarioService.byPosteo($scope.posteof).then(function (data) {
+              $scope.entradas = data;
 
-        }        
+              if(data.length > 0){
+                $scope.verTodos = '';
+              }
+            });
+          } else {
+            $scope.listadoEntradas();
+
+          }        
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+        
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
       }
 
       //Guardar Entrada Inventario
@@ -268,28 +280,21 @@
               $scope.listadoEntradas();
 
               $scope.toggleLEI();
-              $scope.dataH = {};
-              $scope.dataD = [];
-              $scope.almacen = '';
-              $scope.subtotal = '';
-              $scope.total = '';
+              $scope.nuevaEntrada();
+
             }
 
           },
           (function () {
-            $scope.errorMsg = 'Hubo un error. Contacte al administrador del sistema.';
-            $scope.toggleError();
+            $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
           }
           ));
         }
 
         catch (e) {
-          console.log('ERROR:'+ e);
-          $scope.errorMsg = e;
-          $scope.errorShow = true;
+          $scope.mostrarError(e);
         }
       }
-
 
        // Visualizar Documento (Entrada de Inventario Existente - desglose)
       $scope.DocFullById = function(NoDoc, usuario) {
@@ -331,43 +336,53 @@
 
           }, 
             (function () {
-              $scope.errorMsg = 'No pudo encontrar el desglose del documento #' + NoDoc;
-              $scope.errorShow = true;
+              $scope.mostrarError('No pudo encontrar el desglose del documento #' + NoDoc);
             }
           ));
         }
         catch (e) {
-          console.log(e);
+          $scope.mostrarError(e);
         }
 
         $scope.toggleLEI();
 
       }
 
-
       // Calcula los totales para los productos
       $scope.calculaTotales = function() {
-        var total = 0;
-        var subtotal = 0;
+        try {
+          var total = 0;
+          var subtotal = 0;
 
-        $scope.dataD.forEach(function (item) {
-          total += (item.cantidad * item.costo);
-        });
+          $scope.dataD.forEach(function (item) {
+            total += (item.cantidad * item.costo);
+          });
 
-        $scope.subtotal = $filter('number')(total, 2);
-        $scope.total = $filter('number')(total, 2);
+          $scope.subtotal = $filter('number')(total, 2);
+          $scope.total = $filter('number')(total, 2);
+
+        } catch (e) {
+          $scope.mostrarError(e);
+
+        }
+        
       }
-
 
       //Eliminar producto de la lista de entradas
       $scope.delProducto = function($event, prod) {
         $event.preventDefault();
         
-        index = $scope.dataD.indexOf(prod);
+        try {
+          index = $scope.dataD.indexOf(prod);
 
-        $scope.dataD.splice($scope.dataD[index],1);
+          $scope.dataD.splice($scope.dataD[index],1);
+
+          $scope.calculaTotales();
+          
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
       }
-
 
       //Nueva Entrada de Inventario
       $scope.nuevaEntrada = function(usuario) {
@@ -391,20 +406,24 @@
 
       }
 
-
       //Calcula Fecha Vence
       $scope.venceFecha = function() {
-        var fechaP = $scope.dataH.fecha.split('/');
-        var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
+        try {
+          var fechaP = $scope.dataH.fecha.split('/');
+          var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
 
-        if ($scope.dataH.venceDias != undefined && fechaF != 'Invalid Date') {
-          var nextDate = new Date();
-          nextDate.setDate(fechaF.getDate()+parseInt($scope.dataH.venceDias));
+          if ($scope.dataH.venceDias != undefined && fechaF != 'Invalid Date') {
+            var nextDate = new Date();
+            nextDate.setDate(fechaF.getDate()+parseInt($scope.dataH.venceDias));
 
-          $scope.dataH.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
-        } else {
-          $scope.dataH.fechaVence = '';
+            $scope.dataH.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
+          } else {
+            $scope.dataH.fechaVence = '';
+          }
+        } catch (e) {
+          $scope.mostrarError(e);
         }
+        
       }
 
       //Traer almacenes
@@ -443,7 +462,6 @@
           });
         }
       }
-
 
       //Traer productos
       $scope.getProducto = function($event) {
@@ -545,6 +563,7 @@
       }
 
 
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
 
       }

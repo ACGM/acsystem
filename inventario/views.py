@@ -8,9 +8,8 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import InventarioH, InventarioD, Almacen
+from .models import InventarioH, InventarioD, Almacen, Existencia
 from administracion.models import Suplidor, Producto
-from inventario.models import Existencia
 
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer
 
@@ -68,9 +67,14 @@ class EntradaInventarioById(ListView):
 
 # Eliminar producto del inventario
 def quitar_producto(self, idProd, iCantidad, iAlmacen):
-	exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-	exist.cantidad -= float(iCantidad)
-	exist.save()
+	try:
+
+		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
+		exist.cantidad -= float(iCantidad)
+		exist.save()
+	except Existencia.DoesNotExist:
+		return HttpResponse('No hay existencia para el producto ' + str(idProd))
+
 
 
 # Entrada de Inventario

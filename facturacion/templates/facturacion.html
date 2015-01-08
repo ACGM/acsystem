@@ -84,13 +84,48 @@
 					Detalle Factura
 			</div>
 
-			<form name="FacturaForm" class="data-entry-section" ng-submit="" novalidate>
+			<form name="FacturaForm" class="data-entry-section" ng-submit="guardarFactura()" novalidate>
 				<div class="data-entry-factura-header">
 					
+					<div class="content-socios-table">
+						<table class="socios-table-search" ng-show="tableSocio">
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
+							</tr>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td>[[s.codigo]]</td>
+								<td><a href="#" class="select-producto" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td>[[s.departamento]]</td>
+							</tr>
+						</table>
+					</div>
+	
+
 					<table class="data-entry-header-table">
+						<tr>
+							<td>Factura</td>
+							<td> <input type="text" ng-model="dataH.factura" class="input-no-editable" ng-disabled="true"> </td>
+						</tr>
 						<tr>
 							<td>Fecha</td>
 							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd-MM-yyyy']]" datepicker required> </td>
+						</tr>
+						<tr>
+							<td>Socio</td>
+							<td> <input type="text" ng-model="socioCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+								<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+
+								<a href="#" class="icon-uniE601 icon-buscar" ng-click="socioNombre=''; getSocio($event)"></a>
+								
+								<span class="error-ei"> [[socioNoExiste]]</span>
+
+							</td>
+						</tr>
+						<tr>
+							<td>Orden Compra</td>
+							<td> <input type="text" ng-model="dataH.orden" class="input-no-editable"> </td>
 						</tr>
 						<tr>
 							<td>Terminos</td>
@@ -108,7 +143,7 @@
 						<tr>
 							<td>Almacen</td>
 							<td> 
-								<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+								<select name="almacen" id="almacen" ng-model="dataH.almacen" ng-init="getAlmacenes()" required>
 									<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
 								</select>	
 							</td>
@@ -137,6 +172,7 @@
 					</table>
 					<span class="error-ei"> [[productoNoExiste]]</span>
 
+
 					<section class="productos-section">
 						<table class="productos-table">
 							<tr class="productos-table-header">
@@ -148,28 +184,36 @@
 								<td>Importe</td>
 								<td>Eliminar</td>
 							</tr>
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
+							<tr class="productos-table-detail" ng-repeat="item in dataD">
+								<td>[[item.codigo]]</td>
+								<td>[[item.descripcion]]</td>
+								<td>
+									<input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required>
+								</td>
+								<td>[[item.precio | number: 2]]</td>
+								<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" >%</td>
+								<td>[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
 								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+
 							</tr>		
 	
 						</table>
 
 						<div class="totales-section">
 							<ul class="totales-ul">
-								<li><span>SubTotal</span> <input type="text"></li>
-								<li><span>Descuento</span> <input type="text"></li>
-								<li><span>Total</span> <input type="text"></li>
+								<li><span>SubTotal</span> <input type="text" class="subtotal-field" ng-model="subtotal" readonly></li>
+								<li><span>Descuento</span> <input type="text" class="subtotal-field" ng-model="descuento" readonly></li>
+								<li><span>Total</span> <input type="text" class="total-field" ng-model="total" readonly></li>
 							</ul>
 						</div>
 
-						<button class="icon-save Boton boton-guarda-inventario">Guardar</button>
+					<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
+
+					<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
+
 					</section>
+
+					FORMULARIO: [[FacturaForm.$valid]]
 
 				</div>
 			</form>

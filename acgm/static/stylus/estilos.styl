@@ -308,6 +308,7 @@ verde = #084C0B
 verdeClarito = #2BA92D
 verdeSubMenu = #6ABF40
 verdeSuave = #94E698
+verdeMuySuave = #E1FFDD
 rojoOscuro = #A81E1A
 mamey = #FF5A13
 amarillo = #FFF676
@@ -345,7 +346,7 @@ footer
 .input-no-editable
 	background lightgray
 	border 1px solid gray
-	padding .2em .1em
+	padding .18em .1em
 	
 .text-field-num-table
 	outline none
@@ -851,7 +852,6 @@ footer
 			width 2em
 			text-align center
 			
-			
 		border 1px solid black
 		padding .16em .4em
 	
@@ -869,7 +869,12 @@ footer
 		
 		&:last-child
 			text-align center
-			
+	
+	// Para poner un color de fondo en cada registro de forma intercalada
+	// &:nth-child(even)
+	// 	background verdeMuySuave
+	
+
 .imprimir-inventario
 	color verde
 
@@ -905,7 +910,6 @@ footer
 	border 1px solid black
 	width 100%
 	position absolute
-	// float left
 	top 2em
 	left 5.7em
 	z-index 100
@@ -1099,6 +1103,46 @@ footer
 				padding-left .4em
 
 
+.content-socios-table
+	position relative
+		
+.socios-table-search	
+	border 1px solid black
+	position absolute
+	top 5.5em
+	left 6em
+	width 40em
+	z-index 100
+	& tr
+		&:first-child
+			text-align center
+
+.socios-table-header
+	border 1px solid black
+	background verdeClarito
+	color white
+	& td
+		padding 0.2em
+		border 1px solid black
+						
+.socios-table-detail-search
+	
+	& td
+		border 1px solid black
+		background lightyellow
+		
+		&:nth-child(1)
+			padding .1em .3em
+		&:nth-child(2)
+			margin .1em .2em
+			width 15em
+		&:nth-child(3)
+			padding .1em .3em
+			width 20em
+
+.codigo-socio-field-f
+	width 4em
+	height 1em
 
 //MODULO DE PRESTAMOS
 //*******************************************

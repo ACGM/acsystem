@@ -27,10 +27,11 @@ class SuplidorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SocioSerializer(serializers.HyperlinkedModelSerializer):
+	departamento = serializers.StringRelatedField(read_only=False)
 
 	class Meta:
-		model=Socio
-		fields=('codigo','nombres','apellidos','departamento')
+		model = Socio
+		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento')
 
 
 class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):
