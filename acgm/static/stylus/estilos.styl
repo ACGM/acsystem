@@ -428,6 +428,18 @@ footer
 .input-disabled
 	background lightgray
 	border 1px solid gray
+
+.select-item
+	text-decoration none
+	color black
+	display block	
+	padding .1em .2em
+	height 100%
+		
+	&:hover
+		background mamey
+		color white
+
 //FIN CLASES GENERICAS
 
 //CLASE PARA TOOLTIPs
@@ -504,6 +516,7 @@ footer
 	right 0
 	top 0
 	transition .3s linear all
+	z-index 9999
 	
 	&.ng-hide
 		height 0
@@ -963,20 +976,8 @@ footer
 		border 1px solid black
 		background lightyellow
 		
-		&:nth-child(1), &:nth-child(3)
-			padding 0.1em 0.3em
 		&:nth-child(3)
 			text-align right
-		
-.select-producto
-	text-decoration none
-	color black
-	display block	
-	padding .2em 0 .2em .2em
-		
-	&:hover
-		background mamey
-		color white
 		
 .productos-section
 	margin 1em 0 0 0
@@ -1131,18 +1132,39 @@ footer
 		border 1px solid black
 		background lightyellow
 		
-		&:nth-child(1)
-			padding .1em .3em
 		&:nth-child(2)
 			margin .1em .2em
 			width 15em
 		&:nth-child(3)
-			padding .1em .3em
 			width 20em
 
 .codigo-socio-field-f
 	width 4em
 	height 1em
+
+.factura-entry-div
+	float left
+	//sub modulo Orden Compra SUPER COOP
+.ordenCompra
+	float left
+	position relative
+	margin 1em 0 0 3em
+	border 1px solid mamey
+	padding .4em
+
+.table-orden-factura
+	& tr
+		& td
+			padding .12em .1em
+		
+	& tr
+		&:first-child
+			background mamey
+			color white
+			
+			& td
+				padding .1em 0 .1em .2em
+
 
 //MODULO DE PRESTAMOS
 //*******************************************
@@ -1461,7 +1483,7 @@ footer
 		
 .cuotas-select-nc
 	float right
-	margin 2em 15em 0 0 
+	margin 2em 15em 0 0
 
 .cuotas-select-nc-table
 	border 1px solid black

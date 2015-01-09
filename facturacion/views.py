@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.http import HttpResponse, JsonResponse
 
 
@@ -18,6 +18,48 @@ from inventario.models import Existencia, Almacen
 import json
 import math
 
+
+# Retornar una factura con todo su detalle
+class FacturaById(DetailView):
+
+	queryset = Factura.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoFact = self.request.GET.get('nofact')
+
+		self.object_list = self.get_queryset().filter(noFactura=NoFact)
+
+		format = self.request.GET.get('format')
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for factura in self.object_list:
+			data.append({
+				'noFactura': factura.noFactura,
+				'fecha': factura.fecha,
+				'socioCodigo': factura.socio.codigo,
+				'socioNombre': factura.socio.nombreCompleto,
+				'orden': factura.ordenCompra,
+				'terminos': factura.terminos,
+				'vendedor': factura.userLog.username,
+				'posteo': factura.posteo,
+				'productos': [ 
+					{	'codigo': prod.producto.codigo,
+						'descripcion': prod.producto.descripcion,
+						'cantidad': prod.cantidad,
+						'precio': prod.precio,
+						'descuento': prod.porcentajeDescuento,
+						'almacen': prod.almacen.id,
+					} 
+					for prod in Detalle.objects.filter(factura=factura)]
+				})
+		return JsonResponse(data, safe=False)
 
 # Eliminar producto de la factura
 def quitar_producto(self, idProd, iCantidad, iAlmacen):
@@ -56,7 +98,7 @@ class FacturacionView(TemplateView):
 				for item in dataD:
 					quitar_producto(self, item['codigo'], item['cantidad'], almacen)
 
-				detalle = Detalle.objects.filter(factura_nofactura = facturaNo).delete()
+				detalle = Detalle.objects.filter(factura = fact).delete()
 
 			else:
 				try:
@@ -80,7 +122,7 @@ class FacturacionView(TemplateView):
 				detalle.producto = Producto.objects.get(codigo = item['codigo'])
 				detalle.porcentajeDescuento = item['descuento']
 				detalle.cantidad = item['cantidad']
-				detalle.precio = float(item['costo'])
+				detalle.precio = float(item['precio'])
 				detalle.almacen = Almacen.objects.get(id=almacen)
 				detalle.save()
 

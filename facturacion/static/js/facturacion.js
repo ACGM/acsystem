@@ -51,18 +51,17 @@
 
 
       //Buscar un documento en especifico (Desglose)
-      // function DocumentoById(NoDoc) {
-      //   var deferred = $q.defer();
+      function DocumentoById(NoFact) {
+        var deferred = $q.defer();
+        var doc = NoFact != undefined? NoFact : 0;
 
-      //   var doc = NoDoc != undefined? NoDoc : 0;
+        $http.get('/facturajson/?nofact={NoFact}&format=json'.replace('{NoFact}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
 
-      //   $http.get('/inventariojson/?nodoc={NoDoc}&format=json'.replace('{NoDoc}', doc))
-      //     .success(function (data) {
-      //       deferred.resolve(data);
-      //     });
-
-      //   return deferred.promise;
-      // }
+        return deferred.promise;
+      }
 
       //Buscar un numero de documento en especifico en listado de documentos
       function byNoFact(NoFact) {
@@ -107,8 +106,8 @@
         byPosteo: byPosteo,
         byNoFact: byNoFact,
         socios: socios,
-        guardarFact: guardarFact
-        // DocumentoById: DocumentoById
+        guardarFact: guardarFact,
+        DocumentoById: DocumentoById
       };
 
     }])
@@ -117,10 +116,12 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoFacturasCtrl', ['$scope', '$filter', 'FacturacionService', 'InventarioService', 
-                                        function ($scope, $filter, FacturacionService, InventarioService) {
+    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService', 'InventarioService', 
+                                        function ($scope, $filter, $rootScope, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
+      $rootScope.mostrarOC = false;
+      $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLF = true;
       $scope.regAll = false;
@@ -137,6 +138,12 @@
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLF = 'UpArrow';
+
+      // Mostrar/Ocultar panel para llenar datos de orden de compra
+      $rootScope.ordenCompra = function() {
+        console.log($rootScope.mostrarOC);
+        $rootScope.mostrarOC = !$rootScope.mostrarOC;
+      }
 
       // Mostrar/Ocultar panel de Listado de Facturas
       $scope.toggleLF = function() {
@@ -203,8 +210,8 @@
               $scope.errorShow = false;
               $scope.listadoFacturas();
 
-              $scope.toggleLF();
               $scope.nuevaEntrada();
+              $scope.toggleLF();
             }
 
           },
@@ -212,9 +219,64 @@
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
           }
           ));
+
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      // Visualizar Documento (Factura Existente - desglose)
+      $scope.FactFullById = function(NoFact, usuario) {
+        try {
+          FacturacionService.DocumentoById(NoFact).then(function (data) {
+
+            if(data.length > 0) {
+              $scope.errorMsg = '';
+              $scope.errorShow = false;
+
+              //completar los campos
+              $scope.nuevaEntrada();
+
+              $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
+              $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+              $scope.socioCodigo = data[0]['socioCodigo'];
+              $scope.socioNombre = data[0]['socioNombre'];
+              $scope.dataH.orden = data[0]['orden'];
+              $scope.dataH.terminos = data[0]['terminos'];
+              $scope.dataH.vendedor = data[0]['vendedor'];
+              $scope.dataH.posteo = data[0]['posteo'];
+
+              data[0]['productos'].forEach(function (item) {
+                $scope.dataD.push(item);
+                $scope.dataH.almacen = item['almacen'];
+              })
+              $scope.calculaTotales();
+            }
+
+          }, 
+            (function () {
+              $scope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
+            }
+          ));
+        }
+        catch (e) {
+          $scope.mostrarError(e);
         }
 
-        catch (e) {
+        $scope.toggleLF();
+      }
+
+
+      //Eliminar producto de la lista de entradas
+      $scope.delProducto = function($event, prod) {
+        $event.preventDefault();
+        try {
+          $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
+
+          $scope.calculaTotales();
+          
+        } catch (e) {
           $scope.mostrarError(e);
         }
       }
@@ -273,6 +335,16 @@
         }
       }
 
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
@@ -420,14 +492,15 @@
           var total = 0;
           var subtotal = 0;
           var total_descuento = 0;
+          var descuento = 0;
 
           $scope.dataD.forEach(function (item) {
-            descuento = (item.descuento/100);
-            
-            if (descuento > 0) {
+            if (item.descuento != undefined && item.descuento > 0) {
+
+              descuento = (item.descuento/100);
               descuento = item.precio * descuento * item.cantidad;
             }
-
+            
             total += (item.cantidad * item.precio) - descuento;
             total_descuento += descuento;
 
@@ -444,6 +517,16 @@
       }
 
 
-    }]);
+    }])
+
+   .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService', 'InventarioService',
+                                      function ($scope, $filter, $rootScope, FacturacionService, InventarioService) {
+    
+      //Inicializacion de variables
+console.log($rootScope.mostrarOC);
+      $scope.showOC = $rootScope.mostrarOC;
+
+    }]);    
+   
 
 })(_);

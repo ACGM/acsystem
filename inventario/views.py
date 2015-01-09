@@ -27,7 +27,6 @@ class EntradaInventarioById(ListView):
 		
 		self.object_list = self.get_queryset().filter(id=NoDoc)
 
-
 		format = self.request.GET.get('format')
 		if format == 'json':
 			return self.json_to_response()
@@ -51,6 +50,7 @@ class EntradaInventarioById(ListView):
 				'diasPlazo': inventario.diasPlazo,
 				'nota': inventario.nota,
 				'posteo': inventario.posteo,
+				'usuario': inventario.userLog.username,
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,

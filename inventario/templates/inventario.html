@@ -56,7 +56,7 @@
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
 							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
-							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id, '{{user}}')"> [[entrada.id | numberFixedLen: 8]] </a> </td>
+							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd-MM-yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
@@ -85,6 +85,8 @@
 		</div>
 
 		<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="guardarEI()" novalidate>
+			<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong> </span>
+
 			<div>
 				<div class="content-suplidores-table">
 					<table class="suplidores-table-search" ng-show="tableSuplidor">
@@ -94,9 +96,9 @@
 							<td>Nombre</td>
 						</tr>
 						<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
-							<td>[[supl.id]]</td>
-							<td>[[supl.cedulaRNC]]</td>
-							<td><a href="#" class="select-producto" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.id]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
 						</tr>
 					</table>
 				</div>
@@ -151,7 +153,7 @@
 						<td>Nota</td>
 						<td> <textarea name="nota" id="nota" cols="43" rows="2" ng-model="dataH.nota"></textarea> </td>
 						<td>Vence</td>
-						<td> <input type="text" disabled ng-model="dataH.fechaVence"> </td>
+						<td> <input type="text" disabled ng-model="dataH.fechaVence"></td>
 					</tr>
 
 				</table>
@@ -176,9 +178,9 @@
 							<td>Costo</td>
 						</tr>
 						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
-							<td>[[prod.codigo]]</td>
-							<td><a href="#" class="select-producto" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
-							<td>[[prod.costo]]</td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.costo]] </a></td>
 						</tr>
 					</table>
 					<span class="error-ei"> [[productoNoExiste]]</span>
@@ -220,9 +222,11 @@
 						</ul>
 					</div>
 
-					<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="[[!EntradaInventarioForm.$valid]]">Guardar</button>
+					<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="!EntradaInventarioForm.$valid">Guardar</button>
 
 					<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
+
+					
 				</section>
 			</div>
 		</form>

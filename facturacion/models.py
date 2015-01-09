@@ -107,7 +107,7 @@ class OrdenDespachoSuperCoop(models.Model):
 	forma_pago_choices = (('Q','Quincenal'),('M','Mensual'),)
 	quincenas_choices = (('1','1ra Quincena'),('2','2da Quincena'),)
 
-	noSolicitud = models.IntegerField()
+	noSolicitud = models.AutoField(primary_key=True)
 	categoria = models.ForeignKey(CategoriaPrestamo)
 	oficial = models.ForeignKey(User)
 	pagarPor = models.CharField(max_length=2, choices=pagar_por_choices, default='EM')

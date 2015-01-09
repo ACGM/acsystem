@@ -6,7 +6,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
-from facturacion.views import FacturacionView
+from facturacion.views import FacturacionView, FacturaById
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
 from ahorro.views import AhorroView
@@ -70,6 +70,7 @@ urlpatterns = patterns('',
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),

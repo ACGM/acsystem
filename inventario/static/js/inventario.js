@@ -140,6 +140,7 @@
     .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', 'InventarioService', function ($scope, $filter, InventarioService) {
       
       //Inicializacion de variables
+      $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLEI = true;
       $scope.regAll = false;
@@ -279,9 +280,8 @@
               $scope.errorShow = false;
               $scope.listadoEntradas();
 
-              $scope.toggleLEI();
               $scope.nuevaEntrada();
-
+              $scope.toggleLEI();
             }
 
           },
@@ -297,7 +297,7 @@
       }
 
        // Visualizar Documento (Entrada de Inventario Existente - desglose)
-      $scope.DocFullById = function(NoDoc, usuario) {
+      $scope.DocFullById = function(NoDoc) {
         try {
           InventarioService.DocumentoById(NoDoc).then(function (data) {
 
@@ -319,8 +319,7 @@
               $scope.dataH.venceDias = data[0]['diasPlazo'];
               $scope.dataH.nota = data[0]['nota'];
               $scope.dataH.posteo = data[0]['posteo'];
-              $scope.dataH.usuario = usuario;
-
+              $scope.dataH.usuario = data[0]['usuario'];
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
@@ -373,9 +372,7 @@
         $event.preventDefault();
         
         try {
-          index = $scope.dataD.indexOf(prod);
-
-          $scope.dataD.splice($scope.dataD[index],1);
+          $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
 
           $scope.calculaTotales();
           
