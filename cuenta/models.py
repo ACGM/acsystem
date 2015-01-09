@@ -42,13 +42,16 @@ class TipoDocumento(models.Model):
 	tipoDoc=models.CharField(max_length=4, verbose_name='Tipo de Documento', blank=False, unique=True)
 	descripcion= models.CharField(max_length=100, verbose_name='Descripcion', blank=False)
 
+	def __unicode__(self):
+		return self.tipoDoc
+
 
 class DiarioGeneral(models.Model):
 	estatus_choicer=(('P','Posteada'),('R','Registrada'),('C','Cancelada'))
 
 	fecha = models.DateTimeField()
 	cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=True, blank=True)
-	referencia = models.PositiveIntegerField(verbose_name="Ref", blank=False, null=False)
+	referencia = models.CharField("Ref", max_length=30, blank=False, null=False)
 	auxiliar = models.ForeignKey(Auxiliares, verbose_name="Aux", null=True, blank=True)
 	tipoDoc = models.ForeignKey(TipoDocumento)
 	estatus =models.CharField(max_length=1, choices=estatus_choicer, default='R')
@@ -56,7 +59,8 @@ class DiarioGeneral(models.Model):
 	credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")
 
 	def __unicode__(self): 
-		return id
+		return str(id)
+
 
 	class Meta:
 		ordering=['fecha']

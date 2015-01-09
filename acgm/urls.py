@@ -9,10 +9,11 @@ from inventario.views import InventarioView, TransferenciaInvView, EntradaInvent
 from facturacion.views import FacturacionView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
-from ahorro.views import AhorroView
+
+from ahorro.views import AhorroView, MaestraAhorroView
 
 #ViewSets (API)
-from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet
+from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
@@ -21,7 +22,7 @@ from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsVi
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
-                                SuplidorTipoViewSet, ProductoViewSet
+                                SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
 
 #APIView (API)
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
@@ -33,6 +34,7 @@ router=routers.DefaultRouter()
 router.register(r'cuentas', CuentasViewSet)
 router.register(r'auxiliar', AuxiliarViewSet)
 router.register(r'diario', DiarioViewSet)
+router.register(r'tipoDocDiario',TipoDocViewSet)
 #CXP
 router.register(r'ordenCompra',OrdenViewSet)
 router.register(r'detalleOrder',DetalleOrderViewSet)
@@ -46,6 +48,7 @@ router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
 router.register(r'socio',SocioViewSet)
 router.register(r'departamento', DepartamentoViewSet)
+router.register(r'CoBeneficiario',CoBeneficiarioViewSet)
 
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)
@@ -78,6 +81,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
+    url(r'^ahorroJson/$', MaestraAhorroView.as_view(), name='ahorroSocio'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/',include(router.urls)),
