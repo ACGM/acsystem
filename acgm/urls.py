@@ -6,7 +6,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
-from facturacion.views import FacturacionView
+from facturacion.views import FacturacionView, FacturaById
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
 
@@ -18,11 +18,12 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
-
+from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
+
 
 #APIView (API)
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
@@ -55,10 +56,13 @@ router.register(r'Solicitud_Cheque',SolicitudViewSet)
 router.register(r'cheques',ChequesConsViewSet)
 router.register(r'notas_Conciliacion',NotasConsViewSet)
 
+#inventario
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'producto', ProductoViewSet)
 
+#facturacion
+router.register(r'facturas', ListadoFacturasViewSet)
 
 urlpatterns = patterns('',
 
@@ -69,6 +73,7 @@ urlpatterns = patterns('',
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),

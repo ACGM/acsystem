@@ -38,10 +38,10 @@ class Distrito(models.Model):
 class Departamento(models.Model):
 
 	centroCosto = models.CharField("Centro de Costo", max_length=10)
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=80)
 
 	def __unicode__(self):
-		return '%s' % (self.descripcion)
+		return '%s: %s' % (self.centroCosto, self.descripcion)
 
 	class Meta:
 		ordering = ['descripcion']
@@ -142,19 +142,19 @@ class Socio(models.Model):
 	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
 	estatus_choices = (('S','Socio'),('E','Empleado'),('I','Inactivo'),)
 
-	codigo = models.IntegerField()
-	nombres = models.CharField(max_length=100)
-	apellidos = models.CharField(max_length=100)
+	codigo = models.PositiveIntegerField()
+	nombres = models.CharField(max_length=40)
+	apellidos = models.CharField(max_length=40)
 	direccion = models.TextField(blank=True)
-	sector = models.CharField(max_length=150, blank=True)
-	telefono = models.CharField(max_length=150, blank=True)
-	celular = models.CharField(max_length=150, blank=True)
-	ciudad = models.CharField(max_length=150, blank=True)
+	sector = models.CharField(max_length=100, blank=True)
+	telefono = models.CharField(max_length=100, blank=True)
+	celular = models.CharField(max_length=80, blank=True)
+	ciudad = models.CharField(max_length=80, blank=True)
 	cedula = models.CharField(max_length=20, blank=True)
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
 	pasaporte = models.CharField("Pasaporte No.", max_length=20, blank=True)
-	carnetNumero = models.IntegerField("Carnet Numero")
+	carnetNumero = models.PositiveIntegerField("Carnet Numero")
 	fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
 	fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
 	correo = models.EmailField(blank=True)
@@ -170,7 +170,7 @@ class Socio(models.Model):
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%i - %s %s' % (self.codigo,self.nombres,self.apellidos)
+		return '%s' % (self.nombreCompleto)
 
 	
 	def save(self, *args, **kwargs):

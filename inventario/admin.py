@@ -11,8 +11,14 @@ class InventarioHAdmin(admin.ModelAdmin):
 class InventarioDAdmin(admin.ModelAdmin):
 	list_display = ['id','inventario','producto','almacen','cantidadTeorico','cantidadFisico','costo','tipoAccion']
 
+@admin.register(Existencia)
+class ExistenciaAdmin(admin.ModelAdmin):
+	list_display = ['producto', 'cantidad', 'almacen', 'fecha']
+	search_fields = ('producto', 'almacen')
 
-admin.site.register(Almacen)
+@admin.register(Almacen)
+class AlmacenAdmin(admin.ModelAdmin):
+	list_display = ['id', 'descripcion']
+	
 admin.site.register(Movimiento)
-admin.site.register(Existencia)
 

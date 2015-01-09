@@ -8,8 +8,9 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import InventarioH, InventarioD, Almacen
+from .models import InventarioH, InventarioD, Almacen, Existencia
 from administracion.models import Suplidor, Producto
+
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer
 
 import json
@@ -25,7 +26,6 @@ class EntradaInventarioById(ListView):
 		NoDoc = self.request.GET.get('nodoc')
 		
 		self.object_list = self.get_queryset().filter(id=NoDoc)
-
 
 		format = self.request.GET.get('format')
 		if format == 'json':
@@ -49,6 +49,8 @@ class EntradaInventarioById(ListView):
 				'condicion': inventario.condicion,
 				'diasPlazo': inventario.diasPlazo,
 				'nota': inventario.nota,
+				'posteo': inventario.posteo,
+				'usuario': inventario.userLog.username,
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -61,6 +63,18 @@ class EntradaInventarioById(ListView):
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+# Eliminar producto del inventario
+def quitar_producto(self, idProd, iCantidad, iAlmacen):
+	try:
+
+		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
+		exist.cantidad -= float(iCantidad)
+		exist.save()
+	except Existencia.DoesNotExist:
+		return HttpResponse('No hay existencia para el producto ' + str(idProd))
+
 
 
 # Entrada de Inventario
@@ -78,11 +92,20 @@ class InventarioView(TemplateView):
 			dataD = data['detalle']
 			almacen = data['almacen']
 
-
+			entradaNo = dataH['entradaNo']
 			suplidor = Suplidor.objects.get(id = int(dataH['suplidor']))
 			usuario = User.objects.get(username = dataH['userlog'])
 
-			invH = InventarioH()
+			if entradaNo > 0:
+				invH = InventarioH.objects.get(id = entradaNo)
+				
+				for item in dataD:
+					quitar_producto(self, item['codigo'], item['cantidad'], data['almacen'])
+
+				invD = InventarioD.objects.filter(inventario_id = invH.id).delete()
+
+			else:
+				invH = InventarioH()
 
 			invH.fecha = dataH['fecha']
 			invH.orden = dataH['orden']
@@ -96,13 +119,13 @@ class InventarioView(TemplateView):
 			invH.save()
 
 
-			for i in dataD:
+			for item in dataD:
 				invD = InventarioD()
 				invD.inventario = invH
-				invD.producto = Producto.objects.get(id=i['id'])
+				invD.producto = Producto.objects.get(codigo = item['codigo'])
 				invD.almacen = Almacen.objects.get(id=almacen)
-				invD.cantidadTeorico = i['cantidad']
-				invD.costo = float(i['costo'])
+				invD.cantidadTeorico = item['cantidad']
+				invD.costo = float(item['costo'])
 				invD.save()
 
 			return HttpResponse('1')

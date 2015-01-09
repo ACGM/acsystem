@@ -16,7 +16,7 @@
 			
 			<div class="sub-menu">	
 				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva factura"></button>
+					<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
 				</div>
 					Listado de Facturas
 				<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
@@ -42,15 +42,14 @@
 
 			<section class="registrosPanel">
 
-				<table class="listado-table" id="table-lf-listado">
-					<tr class="listado-table-header">
-						<td><input type="checkbox" ng-model-"regAll" ng-click="seleccionAll()"> </td>
+				<table class="listado-table-f" id="table-lf-listado">
+					<tr class="listado-table-header-f">
+						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
 						<td>Estatus</td>
 						<td>Fecha</td>
 						<td>Factura</td>
 						<td>Orden C.</td>
 						<td>Prestamo</td>
-						<td>NCF</td>
 						<td>Socio</td>
 						<td>Valor</td>
 						<td>Imprimir</td>
@@ -60,13 +59,12 @@
 					<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
 						<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
 						<td class="icon-coin posteo-[[factura.posteo]]"></td>
-						<td>[[factura.fecha]]</td>
-						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.id)"> [[factura.id | numberFixedLen: 8]] </a></td>
-						<td>[[factura.orden]]</td>
+						<td>[[factura.fecha | date: 'dd-MM-yyyy']]</td>
+						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.noFactura)"> [[factura.noFactura | numberFixedLen: 8]] </a></td>
+						<td>[[factura.ordenCompra]]</td>
 						<td>[[factura.prestamo]]</td>
-						<td>[[factura.ncf]]</td>
 						<td>[[factura.socio]]</td>
-						<td>[[factura.valor]]</td>
+						<td>[[factura.totalGeneral]]</td>
 						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
 						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
 					</tr>
@@ -80,36 +78,100 @@
 		
 		</div>
 
-		<div class="detalle-factura" ng-controller="DetalleFacturaCtrl">
+		<div class="detalle-factura">
 			<!--DETALLE FACTURA-->
 			<div class="sub-menu">	
 					Detalle Factura
 			</div>
 
-			<section class="data-entry-section">
+			<form name="FacturaForm" class="data-entry-section factura-entry-div" ng-submit="guardarFactura()" novalidate>
 				<div class="data-entry-factura-header">
 					
+					<div class="content-socios-table">
+						<table class="socios-table-search" ng-show="tableSocio">
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
+							</tr>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+							</tr>
+						</table>
+					</div>
+	
+
 					<table class="data-entry-header-table">
 						<tr>
+							<td>Factura</td>
+							<td> <input type="text" ng-model="dataH.factura" class="input-no-editable" ng-disabled="true"> </td>
+						</tr>
+						<tr>
 							<td>Fecha</td>
-							<td> <input type="text" value="[[fecha | date: 'dd-MM-yyyy']]"> </td>
+							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd-MM-yyyy']]" datepicker required> </td>
+						</tr>
+						<tr>
+							<td>Socio</td>
+							<td> <input type="text" ng-model="socioCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+								<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+
+								<a href="#" class="icon-uniE601 icon-buscar" ng-click="socioNombre=''; getSocio($event)"></a>
+								
+								<span class="error-ei"> [[socioNoExiste]]</span>
+
+							</td>
+						</tr>
+						<tr>
+							<td>Orden Compra</td>
+							<td> <input type="text" ng-model="dataH.orden" class="input-no-editable"> </td>
 						</tr>
 						<tr>
 							<td>Terminos</td>
-							<td> <input type="text"> </td>
+							<td> 
+								<select name="condicion" id="condicion" ng-model="dataH.terminos" ng-change="ordenCompra()" required>
+									<option value="CO" selected>Contado</option>
+									<option value="CR">Credito</option>
+								</select>
+							</td>
 						</tr>
 						<tr>
 							<td>Vendedor</td>
-							<td> <input type="text" value="{{user}}" readonly class="input-no-editable"> </td>
+							<td> <input type="text" ng-model="dataH.vendedor" readonly class="input-no-editable"> </td>
+						</tr>
+						<tr>
+							<td>Almacen</td>
+							<td> 
+								<select name="almacen" id="almacen" ng-model="dataH.almacen" ng-init="getAlmacenes()" required>
+									<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+								</select>	
+							</td>
 						</tr>
 					</table>
 
-					<div class="producto-find">
+					<div class="producto-find-ei">
 						<span>Producto</span>
-						<input type="text">
-		
+						<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
+
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
+
 					</div>
-					
+
+					<table class="productos-table-search" ng-show="tableProducto">
+						<tr class="productos-table-header">
+							<td>Codigo</td>
+							<td>Descripcion</td>
+							<td>Precio</td>
+						</tr>
+						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.precio]] </a></td>
+						</tr>
+					</table>
+					<span class="error-ei"> [[productoNoExiste]]</span>
+
 
 					<section class="productos-section">
 						<table class="productos-table">
@@ -122,79 +184,122 @@
 								<td>Importe</td>
 								<td>Eliminar</td>
 							</tr>
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
+							<tr class="productos-table-detail" ng-repeat="item in dataD">
+								<td>[[item.codigo]]</td>
+								<td>[[item.descripcion]]</td>
+								<td>
+									<input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required>
+								</td>
+								<td>[[item.precio | number: 2]]</td>
+								<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" >%</td>
+								<td>[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
+								<td>
+									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
+									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
+								</td>
+
 							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
-							<tr class="productos-table-detail">
-								<td>AC003</td>
-								<td>Aceite Crisol 20 oz. del bueno</td>
-								<td>2</td>
-								<td>500</td>
-								<td>0.00</td>
-								<td>1,000</td>
-								<td><a class="icon-delete icon-eliminar" href=""></a></td>
-							</tr>		
+	
 						</table>
 
 						<div class="totales-section">
 							<ul class="totales-ul">
-								<li><span>SubTotal</span> <input type="text"></li>
-								<li><span>Descuento</span> <input type="text"></li>
-								<li><span>Total</span> <input type="text"></li>
+								<li><span>SubTotal</span> <input type="text" class="subtotal-field" ng-model="subtotal" readonly></li>
+								<li><span>Descuento</span> <input type="text" class="subtotal-field" ng-model="descuento" readonly></li>
+								<li><span>Total</span> <input type="text" class="total-field" ng-model="total" readonly></li>
 							</ul>
 						</div>
 
-						<button class="icon-save Boton boton-guarda-inventario">Guardar</button>
+					<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="!FacturaForm.$valid">Guardar</button>
+
+					<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
+
 					</section>
 
 				</div>
-			</section>
+			</form>
 
-
-			
+			<div class="ordenCompra" ng-controller="OrdenSuperCoopCtrl">
+				<form name="OrdenForm" novalidate ng-show="$root.mostrarOC">
+					<div>
+						<table class="table-orden-factura">
+							<tr>
+								<td colspan="2"> <span>ORDEN DE COMPRA</span></td>
+							</tr>
+							<tr>
+								<td>Solicitud No.</td>
+								<td><input type="text" class="input-no-editable" readonly></td>
+							</tr>
+							<tr>
+								<td>Categoria</td>
+								<td colspan="2">
+									<input type="text" class="input-no-editable codigo-socio-field-f" readonly> 
+									<input type="text" class="input-no-editable" readonly>
+									
+								</td>
+							</tr>
+							<tr>
+								<td>Oficial</td>
+								<td><input type="text" class="input-no-editable"></td>
+								
+							</tr>
+							<tr>
+								<td>Pagar Por</td>
+								<td>
+									<select name="pagarpor" id="pagarpor">
+										<option value="EM">Empresa</option>
+										<option value="CA">Cajero</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Forma Pago</td>
+								<td>
+									<select name="formapago" id="formapago">
+										<option value="Q">Quincenal</option>
+										<option value="M">Mensual</option>
+									</select>
+								</td>
+								
+							</tr>
+							<tr>
+								<td>Quincena</td>
+								<td>
+									<select name="" id="">
+										<option value="1">1ra Quincena</option>
+										<option value="2">2da Quincena</option>
+									</select>
+								</td>
+								
+							</tr>
+							<tr>
+								<td>Tasa Interes Anual</td>
+								<td><input type="text" class="input-no-editable" readonly></td>
+							</tr>
+							<tr>
+								<td>Tasa Interes Mensual</td>
+								<td><input type="text" class="input-no-editable" readonly></td>
+							</tr>
+							<tr>
+								<td>Cuotas</td>
+								<td><input type="text" class="input-no-editable" readonly></td>
+							</tr>
+							<tr>
+								<td>Valor Cuotas</td>
+								<td><input type="text" class="input-no-editable" readonly></td>
+								
+							</tr>
+							
+						</table>
+					</div>
+					
+				</form>
+				
 			</div>
+
+
+			</div>
+
 	
 		</div>
 
