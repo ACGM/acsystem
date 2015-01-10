@@ -13,20 +13,11 @@ class ListadoFacturasSerializer(serializers.ModelSerializer):
 		ordering = ('-id',)
 
 
-# # Entrada de Inventario por ID
-# class EntradaInventarioByIdSerializer(serializers.ModelSerializer):
-# 	suplidor = serializers.StringRelatedField(read_only=True)
-# 	almacen = serializers.StringRelatedField(read_only=True)
+# Orden de Compra SUPERCOOP
+class ListadoCategoriaPrestamoSerializer(serializers.ModelSerializer):
 
-# 	class Meta:
-# 		model = InventarioH
-# 		field = ('id','fecha','ncf','factura','orden','condicion','suplidor', 'suplidor_id','diasPlazo','nota')
+	class Meta:
+		model = CategoriaPrestamo
+		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio', 'interesAnualEmpleado', 'interesAnualDirectivo')
+		ordering = ('id',)
 
-
-
-
-# # Listado de Almacenes
-# class AlmacenesSerializer(serializers.ModelSerializer):
-
-# 	class Meta:
-# 		model = Almacen

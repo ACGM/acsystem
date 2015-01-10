@@ -74,10 +74,10 @@ class Unidad(models.Model):
 class Producto(models.Model):
 	
 	codigo = models.CharField(max_length=10)
-	descripcion = models.CharField(max_length=70)
+	descripcion = models.CharField(max_length=50)
 	unidad = models.ForeignKey(Unidad)
-	precio = models.DecimalField(max_digits=18, decimal_places=2)
-	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+	precio = models.DecimalField(max_digits=12, decimal_places=2)
+	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	foto = models.ImageField(upload_to='productos', blank=True, null=True)
 
 	userLog = models.ForeignKey(User)
@@ -88,6 +88,7 @@ class Producto(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		unique_together = ('codigo',)
 
 
 # Tipo de suplidores
@@ -112,11 +113,11 @@ class Suplidor(models.Model):
 
 	tipoIdentificacion = models.CharField(max_length=1, choices=tipoIdentificacion_choices, default='C')
 	cedulaRNC = models.CharField(unique=True, max_length=25)
-	nombre = models.CharField(max_length=80)
+	nombre = models.CharField(max_length=60)
 	direccion = models.TextField(blank=True)
-	sector = models.CharField(max_length=100, blank=True)
-	ciudad = models.CharField(max_length=100, blank=True)
-	contacto = models.CharField(max_length=150, blank=True)
+	sector = models.CharField(max_length=40, blank=True)
+	ciudad = models.CharField(max_length=40, blank=True)
+	contacto = models.CharField(max_length=50, blank=True)
 	telefono = models.CharField(max_length=50, blank=True)
 	fax = models.CharField(max_length=50, blank=True)
 	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=0)
@@ -146,10 +147,10 @@ class Socio(models.Model):
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	direccion = models.TextField(blank=True)
-	sector = models.CharField(max_length=100, blank=True)
-	telefono = models.CharField(max_length=100, blank=True)
-	celular = models.CharField(max_length=80, blank=True)
-	ciudad = models.CharField(max_length=80, blank=True)
+	sector = models.CharField(max_length=40, blank=True)
+	telefono = models.CharField(max_length=40, blank=True)
+	celular = models.CharField(max_length=40, blank=True)
+	ciudad = models.CharField(max_length=40, blank=True)
 	cedula = models.CharField(max_length=20, blank=True)
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
@@ -164,7 +165,7 @@ class Socio(models.Model):
 	salario = models.DecimalField(max_digits=18, decimal_places=2)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
-	nombreCompleto = models.CharField("Nombre Completo", max_length=200, editable=False)
+	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
 	user_log = models.ForeignKey(User)
 	datetime_server = models.DateTimeField(auto_now_add=True)
@@ -188,13 +189,13 @@ class CoBeneficiario(models.Model):
 	parentesco_choices = (('C','Conyugue'), ('H','Hijo(a)'), ('T','Tio(a)'),('A','Abuelo(a)'), ('O','Otro'))
 
 	socio = models.ForeignKey(Socio)
-	nombre = models.CharField(max_length=150)
+	nombre = models.CharField(max_length=100)
 	direccion = models.TextField(null=True, blank=True)
-	sector = models.CharField(max_length=150, null=True, blank=True)
-	ciudad = models.CharField(max_length=100, null=True, blank=True)
+	sector = models.CharField(max_length=80, null=True, blank=True)
+	ciudad = models.CharField(max_length=80, null=True, blank=True)
 	cedula = models.CharField(max_length=15, null=True, blank=True)
-	telefono = models.CharField(max_length=100, null=True, blank=True)
-	celular = models.CharField(max_length=100, null=True, blank=True)
+	telefono = models.CharField(max_length=80, null=True, blank=True)
+	celular = models.CharField(max_length=80, null=True, blank=True)
 	parentesco = models.CharField(max_length=1, choices=parentesco_choices, default='O')
 
 	def __unicode__(self):
@@ -211,7 +212,7 @@ class CategoriaPrestamo(models.Model):
 	
 	tipo_choices = (('OD','Orden de Despacho'),('PR','Prestamo'),('SC','SuperCoop'),)
 
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=70)
 	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)

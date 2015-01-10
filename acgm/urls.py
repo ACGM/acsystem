@@ -6,7 +6,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView
 from nominacoop.views import NominaView
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
-from facturacion.views import FacturacionView, FacturaById
+from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
 from ahorro.views import AhorroView
@@ -17,7 +17,7 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
-from facturacion.views import ListadoFacturasViewSet
+from facturacion.views import ListadoFacturasViewSet, ListadoCategoriasPrestamosViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
@@ -60,6 +60,7 @@ router.register(r'producto', ProductoViewSet)
 
 #facturacion
 router.register(r'facturas', ListadoFacturasViewSet)
+router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
 
 urlpatterns = patterns('',
 
@@ -71,6 +72,8 @@ urlpatterns = patterns('',
     
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
+    url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
+    # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),

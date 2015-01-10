@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from django.http import HttpResponse, JsonResponse
 
 
@@ -9,14 +9,25 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import ListadoFacturasSerializer
+from .serializers import ListadoFacturasSerializer, ListadoCategoriaPrestamoSerializer
 
-from .models import Factura, Detalle
-from administracion.models import Producto, Socio
+from .models import Factura, Detalle, OrdenDespachoSuperCoop
+from administracion.models import Producto, Socio, CategoriaPrestamo
 from inventario.models import Existencia, Almacen
 
 import json
 import math
+
+
+# Eliminar producto de la factura
+def quitar_producto(self, idProd, iCantidad, iAlmacen):
+	try:
+
+		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
+		exist.cantidad -= float(iCantidad)
+		exist.save()
+	except Existencia.DoesNotExist:
+		return HttpResponse('No hay existencia para el producto ' + str(idProd))
 
 
 # Retornar una factura con todo su detalle
@@ -61,16 +72,6 @@ class FacturaById(DetailView):
 				})
 		return JsonResponse(data, safe=False)
 
-# Eliminar producto de la factura
-def quitar_producto(self, idProd, iCantidad, iAlmacen):
-	try:
-
-		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-		exist.cantidad -= float(iCantidad)
-		exist.save()
-	except Existencia.DoesNotExist:
-		return HttpResponse('No hay existencia para el producto ' + str(idProd))
-
 
 # Vista para presentar la pantalla de facturacion y a la vez contiene el POST para guardar la factura.
 class FacturacionView(TemplateView):
@@ -112,7 +113,6 @@ class FacturacionView(TemplateView):
 			fact.userLog = usuario
 
 			if socio != None: fact.socio = socio
-			# fact.ordenCompra =
 
 			fact.save()
 
@@ -126,7 +126,64 @@ class FacturacionView(TemplateView):
 				detalle.almacen = Almacen.objects.get(id=almacen)
 				detalle.save()
 
-			return HttpResponse('1')
+			return HttpResponse(fact.noFactura)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Vista para guardar la orden de despacho SUPERCOOP
+class OrdenDespachoSPView(View):
+
+	# template_name = 'facturacion.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			OrdenD = data['orden']
+
+			solicitud = OrdenD['solicitud']
+			categoriaP = OrdenD['categoriaPrestamo']
+			oficial = OrdenD['oficial']
+			pagarPor = OrdenD['pagarPor']
+			formaPago = OrdenD['formaPago']
+			tasaInteresAnual = OrdenD['tasaInteresAnual']
+			tasaInteresMensual = OrdenD['tasaInteresMensual']
+			quincena = OrdenD['quincena']
+			cantidadCuotas = OrdenD['cantidadCuotas']
+			valorCuotas = OrdenD['valorCuotas']
+
+			factura = OrdenD['factura']
+
+			if categoriaP != None:
+				CP = CategoriaPrestamo.objects.get(id=categoriaP)
+			if oficial != None:
+				oficial = User.objects.get(username = oficial)
+
+			if solicitud > 0:
+				ordenDespacho = OrdenDespachoSuperCoop.objects.get(noSolicitud = solicitud)
+			else:
+				ordenDespacho = OrdenDespachoSuperCoop()
+
+			ordenDespacho.categoria = CP
+			ordenDespacho.oficial = oficial
+			ordenDespacho.pagarPor = pagarPor
+			ordenDespacho.formaPago = formaPago
+			ordenDespacho.tasaInteresAnual = tasaInteresAnual
+			ordenDespacho.tasaInteresMensual = tasaInteresMensual
+			ordenDespacho.quincena = quincena
+			ordenDespacho.cuotas = cantidadCuotas
+			ordenDespacho.valorCuotas = valorCuotas
+
+			ordenDespacho.save()
+
+			fact = Factura.objects.get(noFactura=factura)
+			fact.ordenCompra = ordenDespacho.noSolicitud
+			fact.save()
+
+			return HttpResponse(ordenDespacho.noSolicitud)
 
 		except Exception as e:
 			return HttpResponse(e)
@@ -137,3 +194,11 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 
 	queryset = Factura.objects.all()
 	serializer_class = ListadoFacturasSerializer
+
+
+# Categorias de Prestamos
+class ListadoCategoriasPrestamosViewSet(viewsets.ModelViewSet):
+
+	queryset = CategoriaPrestamo.objects.all()
+	serializer_class = ListadoCategoriaPrestamoSerializer
+

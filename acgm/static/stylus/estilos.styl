@@ -343,18 +343,18 @@ footer
 	color green
 	
 
-.input-no-editable
+.input-no-editable //CLASE para darle apariencia de no editable a un campo de texto
 	background lightgray
 	border 1px solid gray
 	padding .18em .1em
 	
-.text-field-num-table
+.text-field-num-table //CLASE para darle formato a los campos numericos que estan dentro de tablas (por ej: campo cantidad en una tabla)
 	outline none
 	border none
 	text-align right
 	width 5em
 	
-.Boton
+.Boton //CLASE para darle formato a los botones
 	background verdeClarito
 	border 0
 	border-bottom .3em solid green
@@ -368,7 +368,7 @@ footer
 		background mamey
 		border-bottom .3em solid rojoOscuro
 
-.Boton-disabled
+.Boton-disabled //CLASE para darle apariencia deshabilitado a botones
 	background lightgray
 	border 0
 	border-bottom .3em solid gray
@@ -378,18 +378,18 @@ footer
 	transition .1s
 	outline none
 						
-.sub-menu
+.sub-menu //CLASE para darle formato a la subdivision en la pantalla. Ej: listado y la otra mitad el data entry.
 	background verdeSubMenu
 	padding .2em 0 .2em .4em 
 	color verde
 	border-top 1px solid verde
 	border-bottom 1px solid verde
 
-.listado-table
+.listado-table //CLASE para darle formato a las tablas 
 	margin 1em 0 1em 0
 	border 1px solid black
 
-.listado-table-header
+.listado-table-header //CLASE para darle formato a los header de las tablas
 	background verdeClarito
 	color white
 	& td
@@ -399,16 +399,16 @@ footer
 		border 1px solid black
 		padding .16em .4em
 
-.data-entry-section
+.data-entry-section //CLASE para dar margenes a los div de cada seccion
 	margin 1em 0 0 1em
 
-.icon-eliminar
+.icon-eliminar //CLASE con formato especifico para el boton de eliminar
 	text-decoration none
 	color red
 	&:hover
 		color mamey
 
-.icon-buscar
+.icon-buscar //CLASE con formato especifico para el boton de buscar 
 	text-decoration none
 	color blue
 	font-size 1.2em
@@ -418,18 +418,18 @@ footer
 	&:hover
 		font-weight bold
 
-.icon-imprimir
+.icon-imprimir //CLASE con formato para el icono de imprimir
 	text-decoration none
 	color verde
 	font-size 1.2em
 	&:hover
 		color mamey
 
-.input-disabled
+.input-disabled //CLASE para campo con apariencia de deshabilitado
 	background lightgray
 	border 1px solid gray
 
-.select-item
+.select-item //CLASE para campos seleccionables dentro de una tabla por ej: Socios (tabla emergente)
 	text-decoration none
 	color black
 	display block	
@@ -439,6 +439,13 @@ footer
 	&:hover
 		background mamey
 		color white
+
+.field-choices //CLASE para campos de tiene dropdown/combobox
+	background mamey
+	color white
+
+.field-short //CLASE para campos cortos
+	width 4em
 
 //FIN CLASES GENERICAS
 
@@ -503,6 +510,14 @@ footer
 	overflow hidden
 	&.ng-hide
 		height 0
+
+.cssFade
+	transition .5s
+	opacity 1
+	&.ng-hide
+		opacity 0
+		margin-left 30em
+	
 
 .cssSlideUpError
 	background #FFCDBF
@@ -851,7 +866,7 @@ footer
 		&:nth-child(3)
 			width 3em
 		&:nth-child(4)
-			width 5em
+			width 6em
 		&:nth-child(5)
 			width 11em
 		&:nth-child(6) //CAMPO FACTURA
@@ -1073,9 +1088,15 @@ footer
 		&:nth-child(3)
 			width 5.8em
 			padding-left .2em
+		&:nth-child(4)
+			width 3em
+		&:nth-child(5)
+			width 3.6em
 		&:nth-child(6),&:nth-child(8)
 			text-align right
 			padding 0 .3em
+		&:nth-child(7)
+			width 23em
 		&:nth-child(4),&:nth-child(5),&:nth-child(7)
 			padding 0 .3em
 		
@@ -1151,6 +1172,8 @@ footer
 	margin 1em 0 0 3em
 	border 1px solid mamey
 	padding .4em
+	border-radius 3px 3px 2px 2px
+	box-shadow 4px 4px 4px mamey
 
 .table-orden-factura
 	& tr
@@ -1161,9 +1184,21 @@ footer
 		&:first-child
 			background mamey
 			color white
-			
 			& td
-				padding .1em 0 .1em .2em
+				padding .2em 0 .2em .2em
+
+		&:nth-child(2)
+			& td
+				padding-top .6em
+		&:last-child
+			text-align center
+			
+
+.Boton-Orden-Compra
+	margin-top 1em
+	padding 1em 8em 2.3em 8em
+	&:before
+		padding-right .5em
 
 
 //MODULO DE PRESTAMOS

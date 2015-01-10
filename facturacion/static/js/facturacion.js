@@ -19,6 +19,20 @@
         return deferred.promise;
       }
 
+      //Guardar Orden de Compra
+      function guardarOrdenSC(Orden) {
+        var deferred = $q.defer();
+        $http.post('/ordenSuperCoop/', JSON.stringify({'orden': Orden})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
       //Llenar el listado de facturas
       function all() {
         var deferred = $q.defer();
@@ -29,6 +43,25 @@
               return item.posteo == "N" || item.posteo == "S";
 
             }));
+          });
+
+        return deferred.promise;
+      }
+
+      //Categorias de prestamos, si se pasa el parametro "cp" con valor es filtrada la informacion. 
+      function categoriasPrestamos(cp) {
+        var deferred = $q.defer();
+
+        $http.get('/api/categoriasPrestamos/?format=json')
+          .success(function (data) {
+            if (cp != undefined) {
+              deferred.resolve(data.filter( function(item) {
+                return item.descripcion == cp;
+
+              }));
+            } else {
+              deferred.resolve(data);
+            }
           });
 
         return deferred.promise;
@@ -107,7 +140,9 @@
         byNoFact: byNoFact,
         socios: socios,
         guardarFact: guardarFact,
-        DocumentoById: DocumentoById
+        DocumentoById: DocumentoById,
+        categoriasPrestamos: categoriasPrestamos,
+        guardarOrdenSC: guardarOrdenSC
       };
 
     }])
@@ -121,6 +156,8 @@
       
       //Inicializacion de variables
       $rootScope.mostrarOC = false;
+      $scope.disabledButton = 'Boton-disabled';
+      $scope.disabledButtonBool = true;
       $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLF = true;
@@ -139,12 +176,7 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLF = 'UpArrow';
 
-      // Mostrar/Ocultar panel para llenar datos de orden de compra
-      $rootScope.ordenCompra = function() {
-        console.log($rootScope.mostrarOC);
-        $rootScope.mostrarOC = !$rootScope.mostrarOC;
-      }
-
+      
       // Mostrar/Ocultar panel de Listado de Facturas
       $scope.toggleLF = function() {
         $scope.showLF = !$scope.showLF;
@@ -180,7 +212,9 @@
       }
 
       //Guardar Factura
-      $scope.guardarFactura = function() {
+      $scope.guardarFactura = function($event) {
+        $event.preventDefault();
+
         try {
           if (!$scope.FacturaForm.$valid) {
             throw "Verifique que todos los campos esten completados correctamente.";
@@ -204,16 +238,27 @@
           }
 
           FacturacionService.guardarFact(dataH,$scope.dataD).then(function (data) {
-            if (data != '1') {
-              throw data;
-            } else {
-              $scope.errorShow = false;
-              $scope.listadoFacturas();
+            $rootScope.factura = data;
+            $scope.dataH.factura = $filter('numberFixedLen')(data, 8)
 
-              $scope.nuevaEntrada();
-              $scope.toggleLF();
-            }
+            $scope.errorShow = false;
+            $scope.listadoFacturas();
 
+            //SI ES A CREDITO LA FACTURA SE DEBE CREAR UNA ORDEN DE DESPACHO SUPERRCOOP
+            if($scope.dataH.terminos == "CR") {
+
+              $scope.mostrarOrden(true);
+              $scope.disabledButton = 'Boton-disabled';
+              $scope.disabledButtonBool = true;
+              $scope.BotonOrden = 'BotonOrden';
+
+              $rootScope.total = $scope.total;
+              $rootScope.getCategoriaPrestamo($scope.dataH.vendedor);
+
+              } else {              
+                $scope.nuevaEntrada();
+                $scope.toggleLF();
+              }
           },
           (function () {
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -242,7 +287,7 @@
               $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
               $scope.socioCodigo = data[0]['socioCodigo'];
               $scope.socioNombre = data[0]['socioNombre'];
-              $scope.dataH.orden = data[0]['orden'];
+              $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
               $scope.dataH.terminos = data[0]['terminos'];
               $scope.dataH.vendedor = data[0]['vendedor'];
               $scope.dataH.posteo = data[0]['posteo'];
@@ -287,7 +332,6 @@
           $scope.almacenes = data;
         });
       }
-
 
       //Filtrar las facturas por posteo (SI/NO)
       $scope.filtrarPosteo = function() {
@@ -396,14 +440,17 @@
         $scope.dataD = [];
         $scope.productos = [];
 
+        $rootScope.mostrarOrden(false);
         $scope.showLF = false;
         $scope.ArrowLF = 'DownArrow';
+        $scope.BotonOrden = '';
         $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.dataH.vendedor = usuario;
         $scope.dataH.terminos = 'CO';
         $scope.dataH.posteo = 'N';
 
         $scope.disabledButton = 'Boton';
+        $scope.disabledButtonBool = false;
 
       }
 
@@ -472,8 +519,11 @@
         $event.preventDefault();
 
         Prod.descuento = 0;
+        Prod.cantidad = 1;
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
+
+        $scope.calculaTotales();
       }
 
       //Seleccionar Socio
@@ -500,13 +550,13 @@
               descuento = (item.descuento/100);
               descuento = item.precio * descuento * item.cantidad;
             }
-            
-            total += (item.cantidad * item.precio) - descuento;
+            subtotal += (item.cantidad * item.precio);
+            total = subtotal - descuento;
             total_descuento += descuento;
 
           });
 
-          $scope.subtotal = $filter('number')(total, 2);
+          $scope.subtotal = $filter('number')(subtotal, 2);
           $scope.total = $filter('number')(total, 2);
           $scope.descuento = $filter('number')(total_descuento, 2);
 
@@ -519,13 +569,77 @@
 
     }])
 
-   .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService', 'InventarioService',
-                                      function ($scope, $filter, $rootScope, FacturacionService, InventarioService) {
+   .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService',
+                                      function ($scope, $filter, $rootScope, FacturacionService) {
     
       //Inicializacion de variables
-console.log($rootScope.mostrarOC);
-      $scope.showOC = $rootScope.mostrarOC;
+      $scope.OC = {};
 
+      // Mostrar/Ocultar panel para llenar datos de orden de compra
+      $rootScope.mostrarOrden = function(valor) {
+        $scope.showOC = valor;
+      }
+
+      //Traer datos de Categoria de Prestamo SUPERCOOP.
+      $rootScope.getCategoriaPrestamo = function(oficial) {
+        FacturacionService.categoriasPrestamos("SUPERCOOP").then(function (data) {
+
+          $scope.OC.oficial = oficial;
+          $scope.OC.categoriaId = data[0]['id'];
+          $scope.OC.categoriaDescrp = data[0]['descripcion'];
+          $scope.OC.interesA = data[0]['interesAnualSocio'];
+          $scope.OC.interesM = parseFloat(data[0]['interesAnualSocio'])/12;
+          $scope.OC.pagarPor = 'EM';
+          $scope.OC.formaPago = 'Q';
+          $scope.OC.quincena = '1';
+          $scope.OC.cantidadCuotas = 2;
+          $scope.OC.valorCuotas = $filter('number')(parseFloat($rootScope.total.replace(',','')) /2, 2);
+
+        });
+      }
+
+      //Guardar Orden de Compra SUPERCOOP
+      $scope.guardarOrden = function($event) {
+        $event.preventDefault();
+
+        try {
+          // if (!$scope.FacturaForm.$valid) {
+          //   throw "Verifique que todos los campos esten completados correctamente.";
+          // }
+
+          var Orden = new Object();
+          Orden.solicitud = $scope.OC.solicitud != undefined? $scope.OC.solicitud : 0;
+          Orden.categoriaPrestamo = $scope.OC.categoriaId;
+          Orden.oficial = $scope.OC.oficial;
+          Orden.pagarPor = $scope.OC.pagarPor;
+          Orden.formaPago = $scope.OC.formaPago;
+          Orden.tasaInteresAnual = $scope.OC.interesA;
+          Orden.tasaInteresMensual = $scope.OC.interesA / 12;
+          Orden.quincena = parseInt($scope.OC.quincena);
+          Orden.cantidadCuotas = $scope.OC.cantidadCuotas;
+          Orden.valorCuotas = $scope.OC.valorCuotas.replace(',','');
+          Orden.factura = $rootScope.factura;
+
+          FacturacionService.guardarOrdenSC(Orden).then(function (data) {
+            if(angular.isNumber(parseInt(data))) {
+              $scope.OC.solicitud = $filter('numberFixedLen')(data, 8)
+            } else {
+              throw data;
+            }
+
+          },
+          (function () {
+            $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
+          }
+          ));
+
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      
     }]);    
    
 

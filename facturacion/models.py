@@ -126,3 +126,6 @@ class OrdenDespachoSuperCoop(models.Model):
 
 	class Meta:
 		ordering =['noSolicitud']
+		verbose_name = "Orden Despacho SuperCoop"
+		verbose_name_plural = "Ordenes Despacho SuperCoop"
+		
