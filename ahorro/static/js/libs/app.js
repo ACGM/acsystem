@@ -150,7 +150,7 @@
 				var deferred =$q.defer();
 				allMaestraAhorro().then(function (data){
 					var result = data.filter(function (MaestraAhorro){
-						return MaestraAhorro.beneficiario=beneficiario;
+						return MaestraAhorro.beneficiario==beneficiario;
 					});
 					if(result.length > 0){
 						deferred.resolve(result);

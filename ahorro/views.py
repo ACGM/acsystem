@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from datetime import datetime
+
 from django.views.generic import TemplateView, ListView, DetailView
 
 from rest_framework import viewsets
@@ -15,6 +17,89 @@ from .serializers import interesAhorroSerializer, maestraAhorroSerializer, Ahorr
 
 class MaestraAhorroView(ListView):
 	queryset=MaestraAhorro.objects.all()
+
+	def post(self,request,*args, **kwargs):
+		Ref= self.request.Get.get('Ref')
+
+		try:
+			dataAh=json.loads(request.body)
+			data=dataAh['maestra']
+			dataCuentas=data['cuentas']
+
+			maestraId=dataMaestra['id']
+
+			if maestraId > 0:
+				regMaestra=MaestraAhorro.objects.get(id=maestraId)
+				
+				ahorroE=AhorroSocio.objects.get(id=dataAr['id'])
+
+				balanceAnt = regMaestra.monto 
+				balanceArE = ahorroE.balance
+				
+				dispoArE = ahorroE.disponible
+				montoArE = data['monto']
+				
+				if Ref == 'RT' or Ref =='PR':
+					balanceArE = balanceArE + balanceAnt
+					balanceArE = balanceArE - dmontoArE
+				else:
+					balanceArE = balanceArE - balanceAnt
+					dispoArE = dispoArE - balanceAnt 
+					balanceArE = balanceArE + montoArE
+					dispoArE = dispoArE + montoArE
+
+				for cuentaAhE in regMaestra.cuentas:
+					rsDiario = DiarioGeneral.objects.get(id=cuentaAhE)
+					
+					for itemCuenta in dataCuentas:
+						if itemCuenta['cuenta'] == rsDiario.cuenta or itemCuenta['auxiliar'] == rsDiario.auxiliar:
+							rsDiario.debito = itemCuenta['debito']
+							rsDiario.credito = itemCuenta['credito']
+							rsDiario.save()
+
+				regMaestra = MaestraAhorro()
+				regMaestra.monto = data['monto']
+				regMaestra.interes = data['interes']
+				regMaestra.save()
+
+				regAhorro.balance = balanceArE
+				regAhorro.disponible = dispoArE
+				regAhorro.save()
+
+			else:
+				regMaestra = MaestraAhorro()
+				rsDiario = DiarioGeneral()
+				ahorroE=AhorroSocio.objects.get(id=dataAr['id'])
+				listaDiario=[]
+
+				for item in dataCuentas:
+					rsDiario.fecha = datetime.now()
+					rsDiario.cuenta = item['cuenta']
+					rsDiario.referencia = item['referencia']
+					rsDiario.auxiliar = item['auxiliar']
+					rsDiario.tipoDoc = item['tipoDoc']
+					rsDiario.estatus = item['estatus']
+					rsDiario.debito = item['debito']
+					rsDiario.credito = item['credito']
+					rsDiario.save()
+					listaDiario.append(rsDiario.id)
+
+				regMaestra.fecha = datetime.now()
+				regMaestra.monto = data['monto']
+				regMaestra.interes = data['interes']
+				regMaestra.balance = data['balance']
+				regMaestra.estatus = data['estatus']
+
+				for c in listaDiario:
+					regMaestra.cuentas.append(c)
+				
+				regMaestra.save()
+				ahorroE.maestra.append(regMaestra.id)
+				ahorroE.save()
+			return HttpResponse('1')
+
+		except Exception as ex:
+			return HttpResponse(ex)
 
 	def get(self, request, *args, **kwargs):
 		id_socio = self.request.GET.get('socio')
@@ -65,8 +150,6 @@ class MaestraAhorroView(ListView):
 			return JsonResponse(data,safe=False)
 
 			
-
-		
 
 class InteresAhorroViewSet(viewsets.ModelViewSet):
 	queryset=InteresesAhorro.objects.all()
