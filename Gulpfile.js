@@ -7,6 +7,8 @@ var gulp = require('gulp'),
 	minify= require('gulp-minify-css'),
 	useref= require('gulp-useref'),
 	concant= require('gulp-concat'),
+	nib= require('nib'),
+	stylus=require('stylus'),
 	templateCache= require('gulp-angular-templatecache'),
 	historyApiFallback = require('connect-history-api-fallback');
 
