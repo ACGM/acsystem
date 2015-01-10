@@ -3,9 +3,9 @@ from django.shortcuts import render
 from rest_framework import viewsets, serializers
 
 from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
-						SocioSerializer, DepartamentoSerializer
+						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer
 
-from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento
+from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento,CoBeneficiario
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -36,3 +36,6 @@ class DepartamentoViewSet(viewsets.ModelViewSet):
 	queryset=Departamento.objects.all()
 	serializer_class=DepartamentoSerializer
 
+class CoBeneficiarioViewSet(viewsets.ModelViewSet):
+	queryset=CoBeneficiario.objects.all()
+	serializer_class=CoBeneficiarioSerializer

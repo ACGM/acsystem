@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Cuentas, Auxiliares, DiarioGeneral
+from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento
 
 
 class CuentasSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,3 +19,9 @@ class DiarioSerializer(serializers.HyperlinkedModelSerializer):
 		model=DiarioGeneral
 		many=True
 		fields=('fecha', 'cuenta','auxiliar', 'referencia', 'tipoDoc', 'estatus','debito', 'credito')
+
+class TipoDocSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model=TipoDocumento
+		many=False
+		field=("tipoDoc","descripcion")

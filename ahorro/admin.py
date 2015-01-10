@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import MaestraAhorro
+from cuenta.models import DiarioGeneral
+
+@admin.register(MaestraAhorro)
+class MaestraAhorroAdmin(admin.ModelAdmin):
+	list_display = ["fecha","ahorro","retiro","monto","interes","balance","estatus","get_cuentas"]
+
+	
+	

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento
+from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario
 
 # Listado de Productos
 class ProductoSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,3 +39,9 @@ class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model=Departamento
 		fields=('centroCosto', 'descripcion')
+
+class CoBeneficiarioSerializer(serializers.HyperlinkedModelSerializer):
+
+	class Meta:
+		model=CoBeneficiario
+		fields=('socio','nombre')

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
+from .models import Cuentas, Auxiliares, DiarioGeneral,TipoDocumento
 
 @admin.register(Cuentas)
 class CuentasAdmin(admin.ModelAdmin):
@@ -12,4 +12,11 @@ class AuxiliarAdmin(admin.ModelAdmin):
 	list_display = ("codigo","descripcion","cuenta",)
 	search_fields = ("codigo","descripcion","cuenta",)
 
+@admin.register(DiarioGeneral)
+class DiarioAdmin(admin.ModelAdmin):
+	list_display=("fecha","cuenta","referencia","auxiliar","tipoDoc","estatus","debito","credito")
 
+
+@admin.register(TipoDocumento)
+class TipoDocDiarioAdmin(admin.ModelAdmin):
+	list_display=("tipoDoc","descripcion")
