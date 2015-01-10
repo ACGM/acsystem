@@ -9,7 +9,7 @@
                 .replace('N', false)
                 .replace('S', true);
         return input;
-      }
+      };
     })    
 	//########################
 	//#		Services         # 
@@ -18,13 +18,13 @@
 			//================================================================
 			
 			function setAhorro(ahorro){
-				var deferred =$q.defer()
+				var deferred =$q.defer();
 
 				$http.post('http://localhost:8000/api/ahorro',JSON.stringify({'ahorro':ahorro})
 					.success(function (data){
-						deferred.resolve(data)
+						deferred.resolve(data);
 					}).error(function(data){
-						deferred.resolve(data)
+						deferred.resolve(data);
 					})
 					);
 				return deferred.promises;		
@@ -36,7 +36,7 @@
 				$http.get('http://localhost:8000/api/ahorro')
 					.success(function(data){
 						deferred.resolve(data);
-					})
+					});
 				return deferred.promises;
 			}
 			//Filtro por Socio
@@ -63,7 +63,7 @@
 
 					allAhorro().then( function (data){
 						var result =data.filter(function (AhorroSocio) {
-							return AhorroSocio.beneficiario== beneficiario
+							return AhorroSocio.beneficiario== beneficiario;
 						});
 						if(result.length > 0){
 							deferred.resolve(result);
@@ -91,7 +91,7 @@
 				var deferred = $q.defer();
 				allRetirosA().then( function (data){
 					var result= data.filter(function (RetiroAhorro){
-						return RetiroAhorro.socio==socio
+						return RetiroAhorro.socio==socio;
 					});
 					if(result.length > 0){
 						deferred.resolve(result);
@@ -108,7 +108,7 @@
 				var deferred =$q.defer();
 				allRetirosA().then(function (data){
 					var result= data.filter(function (RetiroAhorro){
-						return retiroAhorro.beneficiario==beneficiario
+						return retiroAhorro.beneficiario==beneficiario;
 					});
 					if(result.length >0 ){
 						deferred.resolve(result);
@@ -125,7 +125,7 @@
 				var deferred =$q.defer();
 				$http.get('api/MaestraAhorro')
 					.success(function (data){
-						deferred.resolve(data)
+						deferred.resolve(data);
 					});
 				return deferred.promises;
 
@@ -135,7 +135,7 @@
 				var deferred =$q.defer();
 				allMaestraAhorro().then(function (data){
 					var result=data.filter(function (MaestraAhorro){
-						return MaestraAhorro.socio==socio
+						return MaestraAhorro.socio==socio;
 					});
 					if(result.length > 0){
 						deferred.resolve(resolve);
@@ -150,7 +150,7 @@
 				var deferred =$q.defer();
 				allMaestraAhorro().then(function (data){
 					var result = data.filter(function (MaestraAhorro){
-						return MaestraAhorro.beneficiario=beneficiario
+						return MaestraAhorro.beneficiario=beneficiario;
 					});
 					if(result.length > 0){
 						deferred.resolve(result);
@@ -171,7 +171,7 @@
 				allMaestraAhorro:allMaestraAhorro,
 				maestraABySocio:maestraABySocio,
 				maestraAByBeneficiario:maestraAByBeneficiario
-			}
+			};
 	}])
 	//########################
 	//		Controller       #
@@ -181,31 +181,10 @@
 		$scope.data={};
 		$scope.finder='';
 
-
-		$scope.setAhorro= function() {
-			alert("arrancando");
-			var data={
-					"socio": "10011", 
-				    "beneficiario": "null", 
-				    "balance": "18000", 
-				    "disponible": "18000", 
-				    "cuentas": [ "1","2"]
-				
-			};
-				alert("casi");
-				debugger;
-				var salida=ahorroService.allAhorro()
-				// .then(function (data){
-				// 	return data;
-				// });
-				alert(salida);
-				
-			}
-
 		$scope.findAhorro =function(){
 			$scope.data=ahorroService.ahorroBySocio($scope.finder);
-		}
+		};
 
-		}
-		])
+	}
+	]);
 })(_);
