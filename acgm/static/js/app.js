@@ -5,6 +5,7 @@
     'cooperativa.nomina',
     'cooperativa.facturacion',
     'cooperativa.inventario',
+    'cooperativa.fondoscajas',
     'cooperativa.Ahorro'
     ]);
 

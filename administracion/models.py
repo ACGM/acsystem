@@ -17,7 +17,7 @@ class Localidad(models.Model):
 		return '%s' % (self.descripcion)
 
 	class Meta:
-		ordering = ['descripcion']
+		ordering = ['descripcion',]
 		verbose_name_plural = 'Localidades'
 
 
@@ -31,7 +31,7 @@ class Distrito(models.Model):
 		return '%s' % (self.descripcion)
 
 	class Meta:
-		ordering = ['descripcion']
+		ordering = ['descripcion',]
 
 
 # Departamentos
@@ -44,7 +44,7 @@ class Departamento(models.Model):
 		return '%s: %s' % (self.centroCosto, self.descripcion)
 
 	class Meta:
-		ordering = ['descripcion']
+		ordering = ['descripcion',]
 
 
 # Representantes
@@ -80,7 +80,7 @@ class Producto(models.Model):
 	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	foto = models.ImageField(upload_to='productos', blank=True, null=True)
 
-	userLog = models.ForeignKey(User)
+	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
@@ -125,7 +125,7 @@ class Suplidor(models.Model):
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 	auxiliar = models.ForeignKey(Auxiliares, null=True)
 
-	userLog = models.ForeignKey(User)
+	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
@@ -167,7 +167,7 @@ class Socio(models.Model):
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
-	user_log = models.ForeignKey(User)
+	user_log = models.ForeignKey(User, editable=False)
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
@@ -220,7 +220,7 @@ class CategoriaPrestamo(models.Model):
 	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2, null=True, blank=True)
 	interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo", max_digits=6, decimal_places=2, null=True, blank=True)
 
-	userLog = models.ForeignKey(User)
+	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
@@ -257,7 +257,7 @@ class CuotaOrdenes(models.Model):
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
 	cantidadMeses = models.PositiveIntegerField("Cnatidad de Meses")
 
-	userLog = models.ForeignKey(User)
+	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
@@ -415,8 +415,8 @@ class DocumentoCuentas(models.Model):
 class CuotaAhorroSocio(models.Model):
 
 	socio = models.ForeignKey(Socio)
-	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=18, decimal_places=2, null=True, blank=True)
-	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=18, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
 
 	class Meta:
 		ordering = ['socio']

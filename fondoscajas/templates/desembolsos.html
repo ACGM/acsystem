@@ -4,9 +4,9 @@
 
 {% block content %}
 
-	<div class="Desembolso" ng-app="cooperativa">
+	<div class="Desembolso" ng-controller="DesembolsosCajasCtrl">
 		
-		<div class="sub-menu" ng-controller="desembolso">	
+		<div class="sub-menu">	
 			<div class="menu-entrada-desembolso-listado">
 				<button class="nuevo icon-file" title="Nuevo desembolso"></button>
 			</div>
@@ -15,7 +15,7 @@
 		</div>
 
 		<section class="listado-reg-desembolsos">
-			<span> Factura No. </span>
+			<span> Cheque No. </span>
 			<input type="text" id="FacturaNo">
 
 			<table class="listado-table">

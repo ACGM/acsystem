@@ -217,7 +217,7 @@
 				</div>
 			</form>
 
-			<div class="ordenCompra cssFade" ng-controller="OrdenSuperCoopCtrl" ng-submit="" ng-show="showOC">
+			<div class="ordenCompra cssFade" ng-controller="OrdenSuperCoopCtrl" ng-submit="guardarOrden($event)" ng-show="showOC">
 				<form name="OrdenForm" novalidate>
 					<div>
 						<table class="table-orden-factura">
@@ -244,7 +244,7 @@
 							<tr>
 								<td>Pagar Por</td>
 								<td>
-									<select name="pagarpor" id="pagarpor" ng-model="OC.pagarPor" class="field-choices">
+									<select name="pagarpor" id="pagarpor" ng-model="OC.pagarPor" class="field-choices" readonly>
 										<option value="EM">Empresa</option>
 										<option value="CA">Cajero</option>
 									</select>
@@ -263,7 +263,7 @@
 							<tr>
 								<td>Quincena</td>
 								<td>
-									<select name="quincena" id="quincena" ng-model="OC.quincena" class="field-choices">
+									<select name="quincena" id="quincena" ng-model="OC.quincena" class="field-choices" readonly>
 										<option value="1">1ra Quincena</option>
 										<option value="2">2da Quincena</option>
 									</select>
@@ -289,7 +289,7 @@
 							</tr>
 							<tr>
 								<td colspan="2">
-									<button class="icon-save Boton Boton-Orden-Compra" ng-click="guardarOrden($event)">Guardar</button>
+									<button class="icon-save [[BotonOC]] Boton-Orden-Compra" type="submit" ng-disabled="disableOC">Guardar</button>
 								</td>
 							</tr>
 							
