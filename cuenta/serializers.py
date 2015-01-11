@@ -1,12 +1,17 @@
 from rest_framework import serializers
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento
+from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
 
+
+class CuentasControlSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model=CuentasControl
+		fields=('codigoControl','descripcion')
 
 class CuentasSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model=Cuentas
-		fields=('codigo','descripcion','origen')
+		fields=('codigo','descripcion','origen','control','cuentaControl')
 
 
 class AuxiliarSerualizer(serializers.HyperlinkedModelSerializer):

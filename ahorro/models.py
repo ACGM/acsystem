@@ -5,7 +5,7 @@ from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
 
 #Manejo de intereces de ahorro
 class InteresesAhorro(models.Model):
-	descripcion=models.CharField(max_length=100, null=False, default=None, blank=False , verbose_name="Descripcion")
+	descripcion=models.CharField(max_length=100, verbose_name="Descripcion")
 	porcentaje=models.DecimalField(max_digits=2, decimal_places=2, null=False, blank=False)
 
 	def __unicode__(self):
@@ -24,7 +24,7 @@ class AhorroSocio(models.Model):
 	
 	
 	def __unicode__(self):
-		return self.socio
+		return '%s' % (str(self.pk))
 
 #Retiros de ahorro
 class RetiroAhorro(models.Model):
@@ -51,11 +51,11 @@ class MaestraAhorro(models.Model):
 	estatus=models.BooleanField(default=False)
 	cuentas=models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="ahorro_rel")
 
+
 	def __unicode__(self):
 		return '%i' % (self.id)
 
-	def get_cuentas(self, obj):
-		return "\n".join([c.id for c in obj.DiarioGeneral.all()])
+	#
 
 	class Meta:
 		ordering=['fecha']

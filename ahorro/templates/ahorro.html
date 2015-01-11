@@ -4,7 +4,7 @@
 
 {% block content %}
 	<!-- Visualizar Ahorros-->
-	<div class="Ahorro" ng-controller="ahorroController">
+	<div class="Ahorro" ng-controller="AhorroController">
 		<div class="cssSlideUpError" ng-show="errorShow">
 			[[errorMsg]]
 			<!-- <a href="" class="cerrarError" ng-click="toggleError()">X</a> -->
@@ -16,7 +16,7 @@
 			<section class="Ahorro-main-search">
 				<div class="Ahorro-main-search-box">
 					<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
-					<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
+					<a href="#" class="icon-uniE601 icon-search" ng-click="findAhorro()"></a>
 					[[errorMsg]]
 				</div>
 			</section>

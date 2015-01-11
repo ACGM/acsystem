@@ -33,6 +33,7 @@
     "gulp-uncss": "^0.5.2",
     "gulp-useref": "^1.1.1",
     "jshint-stylish": "^1.0.0",
-    "nib": "^1.0.4"
+    "nib": "^1.0.4",
+    "stylus": "^0.49.3"
   }
 }

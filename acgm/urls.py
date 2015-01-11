@@ -16,7 +16,7 @@ from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
-from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet
+from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet, ListadoCategoriasPrestamosViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -44,6 +44,7 @@ router.register(r'CxpSuperCoop',CxpSuperViewSet)
 router.register(r'MaestraAhorros',MaestraAhorroViewSet)
 router.register(r'ahorro',AhorroViewSet)
 router.register(r'retiroAhorro',RetirosAhorroViewSet)
+router.register(r'InteresAhorro',InteresAhorroViewSet)
 #administracion
 router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
@@ -89,7 +90,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
-    url(r'^ahorroJson/$', MaestraAhorroView.as_view(), name='ahorroSocio'),
+    url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/',include(router.urls)),
