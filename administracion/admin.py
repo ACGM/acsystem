@@ -40,6 +40,10 @@ class ProductoAdmin(admin.ModelAdmin):
 	list_editable = ('descripcion','unidad','precio','costo')
 	search_fields = ('codigo','descripcion')
 
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
 @admin.register(TipoSuplidor)
 class TipoSuplidorAdmin(admin.ModelAdmin):
 	list_display = ['id','descripcion']
@@ -51,6 +55,10 @@ class SuplidorAdmin(admin.ModelAdmin):
 	list_editable = ('nombre','telefono','intereses','tipoSuplidor','auxiliar','clase')
 	search_fields = ('cedulaRNC','nombre')
 
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
 @admin.register(CategoriaPrestamo)
 class CategoriaPrestamoAdmin(admin.ModelAdmin):
 	list_display = ['id','descripcion','montoDesde','montoHasta','tipo','interesAnualSocio','interesAnualEmpleado','interesAnualDirectivo']
@@ -58,15 +66,27 @@ class CategoriaPrestamoAdmin(admin.ModelAdmin):
 	search_fields = ('descripcion',)
 	list_filter = ('tipo',)
 
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
 @admin.register(CuotaPrestamo)
 class CuotaPrestamoAdmin(admin.ModelAdmin):
 	list_display = ['id','montoDesde','montoHasta','cantidadQuincenas','cantidadMeses']
 	list_editable = ('montoDesde', 'montoHasta', 'cantidadQuincenas','cantidadMeses')
 
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
 @admin.register(CuotaOrdenes)
 class CuotaOrdenesAdmin(admin.ModelAdmin):
 	list_display = ['id','montoDesde','montoHasta','cantidadQuincenas','cantidadMeses']
 	list_editable = ('montoDesde', 'montoHasta', 'cantidadQuincenas','cantidadMeses')
+
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
 
 @admin.register(Opcion)
 class OpcionAdmin(admin.ModelAdmin):
@@ -99,6 +119,10 @@ class SocioAdmin(admin.ModelAdmin):
 	list_editable = ('nombres','apellidos','departamento','salario','cuentaBancaria')
 	search_fields = ('nombres','apellidos','cuentaBancaria')
 	list_filter = ('departamento',)
+
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
 
 	inlines = [CoBeneficiarioInline,]
 

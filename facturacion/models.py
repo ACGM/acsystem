@@ -114,7 +114,7 @@ class OrdenDespachoSuperCoop(models.Model):
 	formaPago = models.CharField(max_length=1, choices=forma_pago_choices, default='Q')
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-	quincena = models.IntegerField(choices=quincenas_choices, default='1', blank=True)
+	quincena = models.IntegerField(choices=quincenas_choices, default=1, blank=True)
 	cuotas = models.IntegerField(default=2)
 	valorCuotas = models.DecimalField(max_digits=18, decimal_places=2)
 	estatus = models.CharField(max_length=1, choices=orden_choices, default='A')
@@ -125,7 +125,7 @@ class OrdenDespachoSuperCoop(models.Model):
 		return '%i' % (self.no_solicitud)
 
 	class Meta:
-		ordering =['noSolicitud']
+		ordering =['-noSolicitud']
 		verbose_name = "Orden Despacho SuperCoop"
 		verbose_name_plural = "Ordenes Despacho SuperCoop"
 		

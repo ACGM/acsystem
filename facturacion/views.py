@@ -30,7 +30,7 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 		return HttpResponse('No hay existencia para el producto ' + str(idProd))
 
 
-# Retornar una factura con todo su detalle
+# Retornar una factura con todo su detalle  -- url(r'^facturajson/$',
 class FacturaById(DetailView):
 
 	queryset = Factura.objects.all()
@@ -50,13 +50,18 @@ class FacturaById(DetailView):
 	def json_to_response(self):
 		data = list()
 
+		try:
+			o = OrdenDespachoSuperCoop.objects.get(noSolicitud=self.object_list[0].ordenCompra)
+		except OrdenDespachoSuperCoop.DoesNotExist:
+			o = None
+
 		for factura in self.object_list:
 			data.append({
 				'noFactura': factura.noFactura,
 				'fecha': factura.fecha,
 				'socioCodigo': factura.socio.codigo,
 				'socioNombre': factura.socio.nombreCompleto,
-				'orden': factura.ordenCompra,
+				'orden': factura.ordenCompra if factura.ordenCompra != None else 0,
 				'terminos': factura.terminos,
 				'vendedor': factura.userLog.username,
 				'posteo': factura.posteo,
@@ -68,7 +73,20 @@ class FacturaById(DetailView):
 						'descuento': prod.porcentajeDescuento,
 						'almacen': prod.almacen.id,
 					} 
-					for prod in Detalle.objects.filter(factura=factura)]
+					for prod in Detalle.objects.filter(factura=factura)],
+				'ordenDetalle':
+					{	'categoriaId': o.categoria.id if o != None else '',
+						'categoriaDescrp': o.categoria.descripcion if o != None else '',
+						'oficial': o.oficial.username if o != None else '',
+						'pagarPor': o.pagarPor if o != None else '',
+						'formaPago': o.formaPago if o != None else '',
+						'tasaInteresAnual': o.tasaInteresAnual if o != None else '',
+						'tasaInteresMensual': o.tasaInteresMensual if o != None else '',
+						'quincena': o.quincena if o != None else '',
+						'cuotas': o.cuotas if o != None else '',
+						'valorCuotas': o.valorCuotas if o != None else '',
+						'solicitud': o.noSolicitud if o != None else 0,
+					}
 				})
 		return JsonResponse(data, safe=False)
 
@@ -132,10 +150,8 @@ class FacturacionView(TemplateView):
 			return HttpResponse(e)
 
 
-# Vista para guardar la orden de despacho SUPERCOOP
+# Vista para guardar la orden de despacho SUPERCOOP  --- url(r'^ordenSuperCoop/$'
 class OrdenDespachoSPView(View):
-
-	# template_name = 'facturacion.html'
 
 	def post(self, request, *args, **kwargs):
 
@@ -144,16 +160,16 @@ class OrdenDespachoSPView(View):
 
 			OrdenD = data['orden']
 
-			solicitud = OrdenD['solicitud']
+			solicitud = int(OrdenD['solicitud'])
 			categoriaP = OrdenD['categoriaPrestamo']
 			oficial = OrdenD['oficial']
 			pagarPor = OrdenD['pagarPor']
 			formaPago = OrdenD['formaPago']
 			tasaInteresAnual = OrdenD['tasaInteresAnual']
 			tasaInteresMensual = OrdenD['tasaInteresMensual']
-			quincena = OrdenD['quincena']
+			quincena = int(OrdenD['quincena'])
 			cantidadCuotas = OrdenD['cantidadCuotas']
-			valorCuotas = OrdenD['valorCuotas']
+			valorCuotas = float(OrdenD['valorCuotas'])
 
 			factura = OrdenD['factura']
 
@@ -179,9 +195,10 @@ class OrdenDespachoSPView(View):
 
 			ordenDespacho.save()
 
-			fact = Factura.objects.get(noFactura=factura)
-			fact.ordenCompra = ordenDespacho.noSolicitud
-			fact.save()
+			if not solicitud > 0:
+				fact = Factura.objects.get(noFactura=factura)
+				fact.ordenCompra = ordenDespacho.noSolicitud
+				fact.save()
 
 			return HttpResponse(ordenDespacho.noSolicitud)
 

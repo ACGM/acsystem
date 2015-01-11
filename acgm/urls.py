@@ -24,6 +24,7 @@ from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
+from fondoscajas.views import ListadoDesembolsosViewSet
 
 
 #APIView (API)
@@ -66,6 +67,9 @@ router.register(r'producto', ProductoViewSet)
 #facturacion
 router.register(r'facturas', ListadoFacturasViewSet)
 router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
+
+#fondos de cajas
+router.register(r'desembolsos', ListadoDesembolsosViewSet)
 
 urlpatterns = patterns('',
 
