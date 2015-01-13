@@ -2,6 +2,17 @@
 
 from django.db import models
 
+
+class CuentasControl(models.Model):
+	codigoControl=models.PositiveIntegerField('Cuenta control', unique=True)
+	descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
+
+	class Meta:
+		ordering =['codigoControl']
+
+	def __unicode__(self):
+		return '%s-%s' % (str(self.codigoControl),self.descripcion)
+
 # Create your models here.
 class Cuentas(models.Model):
 
@@ -17,26 +28,42 @@ class Cuentas(models.Model):
 	origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
 	#Para Identificar si es una cuenta Control
 	control =models.BooleanField(default=False)
-	cuentaControl = models.PositiveIntegerField(verbose_name="Cuenta Control", null=True, blank=True)
-
+	cuentaControl=models.ForeignKey(CuentasControl, null=True, blank=True)
+	
 	def __unicode__(self):
 		return '%s-%s' % (self.codigo,self.descripcion)
 
 	class Meta: 
 		ordering = ['codigo']
+	
+	def save(self, *args, **kwargs):
+		if self.control == True:
+			cuentaControl=CuentasControl()
+			cuentaControl.codigoControl = self.codigo
+			cuentaControl.descripcion = self.descripcion
+			cuentaControl.save()
+
+		super(Cuentas,self).save(*args,**kwargs)
+
+
+
 
 class Auxiliares(models.Model):
   #auxiliares Contables
 
   codigo = models.PositiveIntegerField(verbose_name="Código Auxiliar", null=False,blank=False, unique=True)
   descripcion = models.CharField(max_length=200,verbose_name="Descripcion", blank=False, null=False)
-  cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=False, blank=False)
+  cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta")
 
   def __unicode__(self):
   	return '%s-%s' % (self.codigo,self.descripcion)
 
   class Meta: 
   	ordering = ['codigo']
+
+
+
+
 
 class TipoDocumento(models.Model):
 	tipoDoc=models.CharField(max_length=4, verbose_name='Tipo de Documento', blank=False, unique=True)
@@ -59,7 +86,7 @@ class DiarioGeneral(models.Model):
 	credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")
 
 	def __unicode__(self): 
-		return str(id)
+		return '%s' %(str(self.id))
 
 
 	class Meta:

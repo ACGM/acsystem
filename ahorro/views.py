@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, View
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -15,8 +15,9 @@ from administracion.models import Socio
 from cuenta.models import DiarioGeneral, Cuentas
 from .serializers import interesAhorroSerializer, maestraAhorroSerializer, AhorroSocioSerializer, RetiroAhorroSerializer
 
-class MaestraAhorroView(ListView):
-	queryset=MaestraAhorro.objects.all()
+class MaestraAhorroView(DetailView):
+	
+	queryset=AhorroSocio.objects.all()
 
 	def post(self,request,*args, **kwargs):
 		Ref= self.request.Get.get('Ref')
@@ -94,6 +95,12 @@ class MaestraAhorroView(ListView):
 					regMaestra.cuentas.append(c)
 				
 				regMaestra.save()
+
+				for item in listaDiario:
+					rsDiario=DiarioGeneral.objects.get(id=item)
+					rsDiario.referencia = 'AR-'+str(regMaestra.id)
+					rsDiario.save()
+
 				ahorroE.maestra.append(regMaestra.id)
 				ahorroE.save()
 			return HttpResponse('1')
@@ -102,12 +109,12 @@ class MaestraAhorroView(ListView):
 			return HttpResponse(ex)
 
 	def get(self, request, *args, **kwargs):
-		id_socio = self.request.GET.get('socio')
+		id_ahorro = self.request.GET.get('ahorro')
 
-		self.object_list= self.get_queryset().filter(socio=id_socio)
+		self.object_list= self.get_queryset()#.filter(id=id_ahorro)
 		format = self.request.GET.get('format')
 		if format=="json":
-			return self.json_to_response
+			return self.json_to_response()
 
 		context = self.get_context_data()
 		return self.render_to_response(context)
@@ -133,23 +140,22 @@ class MaestraAhorroView(ListView):
 							{
 								'id':cuentas.id,
 								'fecha':cuentas.fecha,
-								'cuenta':cuentas.cuenta,
+								'cuenta':cuentas.cuenta.codigo,
 								'referencia':cuentas.referencia,
 								'auxiliar':cuentas.auxiliar,
 								'tipoDoc':cuentas.tipoDoc.tipoDoc,
 								'estatus':cuentas.estatus,
 								'debito':cuentas.debito,
-								'credito':cuentas.credito
+								'credito':cuentas.credito,
 
 							}
-							for cuentas in DiarioGeneral.objects.filter(referencia='AH-'+str(maestra.pk))]
+							for cuentas in DiarioGeneral.objects.filter(referencia=('AH-'+str(maestra.id)))]
 								
 					}
 						for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
 				})
-			return JsonResponse(data,safe=False)
-
-			
+		return JsonResponse(data,safe=False)
+	
 
 class InteresAhorroViewSet(viewsets.ModelViewSet):
 	queryset=InteresesAhorro.objects.all()
@@ -167,6 +173,7 @@ class AhorroViewSet(viewsets.ModelViewSet):
 class RetirosAhorroViewSet(viewsets.ModelViewSet):
 	queryset=RetiroAhorro.objects.all()
 	serializer_class=RetiroAhorroSerializer
+
 
 class AhorroView(TemplateView):
 	template_name = 'ahorro.html'

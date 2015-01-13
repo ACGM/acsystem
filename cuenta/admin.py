@@ -4,7 +4,7 @@ from .models import Cuentas, Auxiliares, DiarioGeneral,TipoDocumento
 
 @admin.register(Cuentas)
 class CuentasAdmin(admin.ModelAdmin):
-	list_display = ("codigo","descripcion","origen","control","cuentaControl",)
+	list_display = ("codigo","descripcion","origen","control",'cuentaControl')
 	search_fields = ("codigo","descripcion","origen",)
 
 @admin.register(Auxiliares)

@@ -4,7 +4,7 @@
 
 {% block content %}
 	<!-- Visualizar Ahorros-->
-	<div class="Ahorro" ng-controller="ahorroController">
+	<div class="Ahorro" ng-controller="AhorroController">
 		<div class="cssSlideUpError" ng-show="errorShow">
 			[[errorMsg]]
 			<!-- <a href="" class="cerrarError" ng-click="toggleError()">X</a> -->
@@ -16,8 +16,8 @@
 			<section class="Ahorro-main-search">
 				<div class="Ahorro-main-search-box">
 					<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
-					<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
-					[[errorMsg]]
+					<a href="#" class="icon-uniE601 icon-search" ng-click="getHistoricoAhorro()"></a>
+					
 				</div>
 			</section>
 		</section>
@@ -44,7 +44,7 @@
 			<div class="Ahorro-detalle-header">
 				<table>
 					<tr>
-						<td class="items">Registro</td>
+						<td class="items utils-upperBorderR">Registro</td>
 						<td class="results"><input id="idAhorro" type="text"></td>
 					</tr>
 					<tr>
@@ -60,7 +60,7 @@
 						<td class="results"><input type="text" id="Balance"></td>
 					</tr>
 					<tr>
-						<td class="items">
+						<td class="items utils-bottomBorderR">
 							Disponible
 						</td>
 						<td class="results"><input type="text" id="Disponible"></td>
@@ -70,13 +70,13 @@
 			<div class="Ahorro-detalle-cuentas">
 				<div class="registroPanel">
 					<table id="tabla-detalleCuentas" class="listado-table-ei">
-						<tr class="listado-table-header-ei">
-							<th>Cuenta</th>
-							<th>Auxiliar</th>
-							<th>Ref</th>
+						<tr class="listado-table-header-ei utils-upperBorderR">
+							<th>Fecha</th>
+							<th>Monto</th>
+							<th>Interes</th>
+							<th>Balance</th>
 							<th>Estatus</th>
-							<th>Debito</th>
-							<th>Credito</th>
+							<th>Cuentas</th>
 						</tr>
 						<tr></tr>
 					</table>

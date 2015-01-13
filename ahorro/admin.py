@@ -5,7 +5,7 @@ from cuenta.models import DiarioGeneral
 
 @admin.register(MaestraAhorro)
 class MaestraAhorroAdmin(admin.ModelAdmin):
-	list_display = ["fecha","ahorro","retiro","monto","interes","balance","estatus","get_cuentas"]
+	list_display = ["fecha","ahorro","retiro","monto","interes","balance","estatus"]
 
 	
 	
