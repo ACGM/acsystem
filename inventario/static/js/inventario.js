@@ -148,6 +148,7 @@
 
       $scope.item = {};
       $scope.entradas = {};
+      $scope.dataH = {};
 
       $scope.entradasSeleccionadas = [];
       $scope.reg = [];
@@ -160,6 +161,7 @@
       
        //Listado de todas las entradas de inventario
       $scope.listadoEntradas = function() {
+        $scope.NoFoundDoc = '';
         $scope.entradasSeleccionadas = [];
         $scope.valoresChk = [];
         $scope.regAll = false;
@@ -437,6 +439,7 @@
 
         $scope.tableSuplidor = true;
 
+        
         if($scope.dataH.suplidorNombre != undefined) {
           InventarioService.suplidores().then(function (data) {
             $scope.suplidores = data.filter(function (registro) {

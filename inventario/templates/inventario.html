@@ -25,7 +25,9 @@
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span> 
 				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc" ng-keypress="buscarDoc($event, NoDoc)">
+				
 				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
+				
 				<span class="error-ei"> [[NoFoundDoc]]</span>
 				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas()">Ver todos</a>
 				

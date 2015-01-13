@@ -191,6 +191,7 @@
 
       //Listado de todas las facturas
       $scope.listadoFacturas = function() {
+        $scope.NoFoundDoc = '';
         $scope.facturasSeleccionadas = [];
         $scope.valoresChk = [];
 
@@ -624,7 +625,7 @@
 
         try {
           var Orden = new Object();
-          Orden.solicitud = $scope.OC.solicitud != undefined? parseInt($scope.OC.solicitud) : 0;
+          Orden.solicitud = $scope.OC.solicitud != undefined? parseInt('0' + $scope.OC.solicitud) : 0;
           Orden.categoriaPrestamo = $scope.OC.categoriaId;
           Orden.oficial = $scope.OC.oficial;
           Orden.pagarPor = $scope.OC.pagarPor;

@@ -6,90 +6,64 @@
 
 	<div class="Desembolso" ng-controller="DesembolsosCajasCtrl">
 		
+		<div class="cssSlideUpError" ng-show="errorShow">
+			[[errorMsg]]
+			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
+		</div>
+
+
 		<div class="sub-menu">	
 			<div class="menu-entrada-desembolso-listado">
 				<button class="nuevo icon-file" title="Nuevo desembolso"></button>
 			</div>
 				Listado de Desembolsos
-			<a class="DownArrow" href="#"></a>
+			<a class="[[ArrowLD]]" href="#" ng-click="toggleLD()"></a>
 		</div>
 
-		<section class="listado-reg-desembolsos">
-			<span> Cheque No. </span>
-			<input type="text" id="FacturaNo">
+		<div id="listado" class="listado-desembolsos-cajas cssSlideUp" ng-show="showLD" ng-init="listadoDesembolsos()">
+			
+			<section class="listado-reg-desembolsos">
+				<span> Cheque No. </span>
+				<input type="text" id="ChequeNo" class="doc-no-ei" ng-model="NoCheque" ng-keypress="buscarCheque($event, NoCheque)">
+				
+				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoCheque(NoCheque)"></a>
+				
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoDesembolsos()">Ver todos</a>
 
-			<table class="listado-table">
-				<tr class="listado-table-header">
-					<td><input type="checkbox"> </td>
-					<td>Estatus</td>
-					<td>Cheque</td>
-					<td>Distrito</td>
-					<td>Fecha</td>
-					<td>Valor</td>
-					<td>Concepto</td>
-					<td>Imprimir</td>
-					<td>Eliminar</td>
-				</tr>
 
-				<tr class="listado-desembolsos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>SEDE CENTRAL</td>
-					<td>08/12/2014</td>
-					<td>23,000.34</td>
-					<td>Compra de cosmeticos necesarios</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-desembolsos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>SEDE CENTRAL</td>
-					<td>08/12/2014</td>
-					<td>23,000.34</td>
-					<td>Compra de cosmeticos necesarios</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-desembolsos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>SEDE CENTRAL</td>
-					<td>08/12/2014</td>
-					<td>23,000.34</td>
-					<td>Compra de cosmeticos necesarios</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-desembolsos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>SEDE CENTRAL</td>
-					<td>08/12/2014</td>
-					<td>23,000.34</td>
-					<td>Compra de cosmeticos necesarios</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-desembolsos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td>0002344</td>
-					<td>SEDE CENTRAL</td>
-					<td>08/12/2014</td>
-					<td>23,000.34</td>
-					<td>Compra de cosmeticos necesarios</td>
-					<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-			</table>
+				<section class="registrosPanel">
+					<table class="listado-table-ld">
+						<tr class="listado-table-header">
+							<td><input type="checkbox"> </td>
+							<td>Estatus</td>
+							<td>Cheque</td>
+							<td>Distrito</td>
+							<td>Fecha</td>
+							<td>Valor</td>
+							<td>Concepto</td>
+							<td>Imprimir</td>
+							<td>Eliminar</td>
+						</tr>
 
-			<button class="Boton boton-postear-factura"> Postear</button>
-		</section>
+						<tr class="listado-desembolsos-detail" ng-repeat="item in desembolsos">
+							<td><input type="checkbox" name="c[[item.id]]" ng-checked="valoresChk[item.id]" ng-model="reg[item.id]" ng-click="selectedReg(item)"> </td>
+							<td class="icon-coin"></td>
+							<td> <a href="#" class="sp-field" ng-click="DocFullById(item.id)">[[item.cheque | numberFixedLen: 8]] </a></td>
+							<td>[[item.distrito]]</td>
+							<td>[[item.fecha | date: 'dd-MM-yyyy']]</td>
+							<td>[[item.totalGeneral]]</td>
+							<td>[[item.beneficiario]]</td>
+							<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
+							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
+						</tr>
+
+					</table>
+				</section>
+
+			</section>
+		</div>
+
 
 		<!--DETALLE DESEMBOLSO-->
 		<div class="sub-menu">	

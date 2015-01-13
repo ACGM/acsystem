@@ -43,25 +43,44 @@
         return deferred.promise;
       }
 
+      //Buscar un numero de cheque en especifico en listado de documentos
+      function byNoCheque(NoCheque) {
+        var deferred = $q.defer();
+        all().then(function (data) {
+          var result = data.filter(function (registro) {
+            return registro.cheque == NoCheque;
+          });
 
-      //Buscar un documento en especifico (Desglose)
-      // function DocumentoById(NoFact) {
-      //   var deferred = $q.defer();
-      //   var doc = NoFact != undefined? NoFact : 0;
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
 
-      //   $http.get('/facturajson/?nofact={NoFact}&format=json'.replace('{NoFact}', doc))
-      //     .success(function (data) {
-      //       deferred.resolve(data);
-      //     });
 
-      //   return deferred.promise;
-      // }
+      //Buscar un desembolso en especifico (Desglose)
+      function DocumentoById(NoCheque) {
+        var deferred = $q.defer();
+        var doc = NoCheque != undefined? NoCheque : 0;
+
+        $http.get('/desembolsojson/?nocheque={NoCheque}&format=json'.replace('{NoCheque}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
 
 
       return {
         all: all,
         distritos: distritos,
-        guardaDesembolso: guardaDesembolso
+        guardaDesembolso: guardaDesembolso,
+        byNoCheque: byNoCheque,
+        DocumentoById: DocumentoById
       };
 
     }])
@@ -74,6 +93,9 @@
                                         function ($scope, $filter, FondosCajasService) {
       
       //Inicializacion de variables
+      $scope.showLD = true;
+      $scope.regAll = false;
+
       $scope.item = {};
       $scope.desembolsos = {};
 
@@ -83,42 +105,68 @@
       $scope.dataD = [];
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-      $scope.ArrowLF = 'UpArrow';
+      $scope.ArrowLD = 'UpArrow';
 
       
-      // // Mostrar/Ocultar panel de Listado de Facturas
-      // $scope.toggleD = function() {
-      //   $scope.showD = !$scope.showD;
+      // Mostrar/Ocultar panel de Listado de Desembolsos
+      $scope.toggleLD = function() {
+        $scope.showLD = !$scope.showLD;
 
-      //   if($scope.showLF === true) {
-      //     $scope.ArrowLF = 'UpArrow';
-      //   } else {
-      //     $scope.ArrowLF = 'DownArrow';
-      //   }
-      // }
+        if($scope.showLD === true) {
+          $scope.ArrowLD = 'UpArrow';
+        } else {
+          $scope.ArrowLD = 'DownArrow';
+        }
+      }
 
+      //Listado de todos los desembolsos
+      $scope.listadoDesembolsos = function() {
+        $scope.desembolsosSeleccionadas = [];
+        $scope.valoresChk = [];
 
-      // //Listado de todas las facturas
-      // $scope.listadoFacturas = function() {
-      //   $scope.facturasSeleccionadas = [];
-      //   $scope.valoresChk = [];
+        FondosCajasService.all().then(function (data) {
+          $scope.desembolsos = data;
+          $scope.regAll = false;
 
-      //   FacturacionService.all().then(function (data) {
-      //     $scope.facturas = data;
-      //     $scope.regAll = false;
+          if(data.length > 0) {
+            $scope.verTodos = 'ver-todos-ei';
 
-      //     if(data.length > 0) {
-      //       $scope.verTodos = 'ver-todos-ei';
+            var i = 0;
+            data.forEach(function (data) {
+              $scope.valoresChk[i] = false;
+              i++;
+            });
 
-      //       var i = 0;
-      //       data.forEach(function (data) {
-      //         $scope.valoresChk[i] = false;
-      //         i++;
-      //       });
+          }
+        });
+      }
 
-      //     }
-      //   });
-      // }
+      //Buscar un cheque en especifico
+      $scope.filtrarPorNoCheque = function(NoCheque) {
+        try {
+          FondosCajasService.byNoCheque(NoCheque).then(function (data) {
+            $scope.desembolsos = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+          }, 
+            (function () {
+              $scope.NoFoundDoc = 'No se encontró el cheque #' + NoCheque;
+            }
+          ));          
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      //Buscar Cheque por ENTER
+      $scope.buscarCheque = function($event, NoCheque) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorNoCheque(NoCheque);
+        }
+      }
 
       // //Guardar Factura
       // $scope.guardarFactura = function($event) {
