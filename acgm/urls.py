@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 #Vistas 
-from fondoscajas.views import DesembolsoView
+from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
@@ -82,6 +82,9 @@ urlpatterns = patterns('',
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
+    
+    url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Orden_de_Compra'),
+
     # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 

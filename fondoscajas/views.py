@@ -6,7 +6,7 @@ from rest_framework import viewsets, serializers
 from rest_framework.response import Response
 
 from .serializers import DesembolsosCajasSerializer
-from .models import DesembolsoH
+from .models import DesembolsoH, DesembolsoD
 
 
 # Vista de desembolsos
@@ -15,7 +15,7 @@ class DesembolsoView(TemplateView):
 	template_name = 'desembolsos.html'
 
 
-# Retornar un desembolso con todo su detale --
+# Retornar un desembolso con todo su detale -- url(r'^desembolsojson/$',
 class DesembolsoByCheque(DetailView):
 
 	queryset = DesembolsoH.objects.all()
@@ -44,7 +44,7 @@ class DesembolsoByCheque(DetailView):
 			data.append({
 				'beneficiario': desembolso.beneficiario,
 				'fecha': desembolso.fecha,
-				'fondo': desembolso.fondo,
+				'fondo': desembolso.fondo.descripcion,
 				'distrito': desembolso.distrito,
 				'estatus': desembolso.estatus,
 				'impreso': desembolso.impreso,

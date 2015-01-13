@@ -167,7 +167,7 @@ class Socio(models.Model):
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
-	user_log = models.ForeignKey(User, editable=False)
+	userLog = models.ForeignKey(User, editable=False)
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
