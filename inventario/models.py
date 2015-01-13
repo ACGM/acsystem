@@ -19,6 +19,7 @@ class Almacen(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name_plural = 'Almacenes'
 
 
 # Cabecera del Inventario

@@ -8,17 +8,17 @@ class CuentasControl(models.Model):
 	descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
 
 	class Meta:
-		ordering =['codigoControl']
+		ordering =['codigoControl',]
 
 	def __unicode__(self):
-		return '%s-%s' % (str(self.codigoControl),self.descripcion)
+		return '%i-%s' % (self.codigoControl,self.descripcion)
 
 # Create your models here.
 class Cuentas(models.Model):
 
 	# Catalogo de Cuentas Contables
 	"""docstring for Cuentas"""
-	
+
 	#Origenes de cuentas
 	origen_choices = (('D','Debito'),('C','Credito'),)
 
@@ -29,21 +29,21 @@ class Cuentas(models.Model):
 	#Para Identificar si es una cuenta Control
 	control =models.BooleanField(default=False)
 	cuentaControl=models.ForeignKey(CuentasControl, null=True, blank=True)
-	
+
 	def __unicode__(self):
-		return '%s-%s' % (self.codigo,self.descripcion)
+		return '%i-%s' % (self.codigo,self.descripcion)
 
 	class Meta: 
 		ordering = ['codigo']
-	
-	def save(self, *args, **kwargs):
-		if self.control == True:
-			cuentaControl=CuentasControl()
-			cuentaControl.codigoControl = self.codigo
-			cuentaControl.descripcion = self.descripcion
-			cuentaControl.save()
 
-		super(Cuentas,self).save(*args,**kwargs)
+	# def save(self, *args, **kwargs):
+	# 	if self.control == True:
+	# 		cuentaControl=CuentasControl()
+	# 		cuentaControl.codigoControl = self.codigo
+	# 		cuentaControl.descripcion = self.descripcion
+	# 		cuentaControl.save()
+
+	# 	super(Cuentas,self).save(*args,**kwargs)
 
 
 
@@ -56,13 +56,10 @@ class Auxiliares(models.Model):
   cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta")
 
   def __unicode__(self):
-  	return '%s-%s' % (self.codigo,self.descripcion)
+  	return '%i-%s' % (self.codigo,self.descripcion)
 
   class Meta: 
   	ordering = ['codigo']
-
-
-
 
 
 class TipoDocumento(models.Model):
@@ -70,7 +67,7 @@ class TipoDocumento(models.Model):
 	descripcion= models.CharField(max_length=100, verbose_name='Descripcion', blank=False)
 
 	def __unicode__(self):
-		return self.tipoDoc
+		return '%s' % (self.tipoDoc)
 
 
 class DiarioGeneral(models.Model):
@@ -86,7 +83,7 @@ class DiarioGeneral(models.Model):
 	credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")
 
 	def __unicode__(self): 
-		return '%s' %(str(self.id))
+		return '%i' %(self.id)
 
 
 	class Meta:
