@@ -11,7 +11,6 @@
 			function getAllAhorro(){
 				var deferred = $q.defer();
 				var apiUrl='/ahorrojson/?format=json';
-
 				$http.get(apiUrl)
 					.success(function (data){
 						deferred.resolve(data);
@@ -19,6 +18,25 @@
 					.error(function (error){
 						deferred.resolve(error);
 					});
+				 return deferred.promise;
+			}
+
+			function getAhorroById(id){
+				var deferred =$q.defer();
+				
+				getAllAhorro().then(function (data){
+					var result = data.filter(function (reg){
+						return reg.id==id;
+					});
+
+					if(result.length > 0){
+						deferred.resolve(result);
+					}
+					else{
+						deferred.reject();
+					}
+				});
+				return deferred.promise;
 			}
 
 			function getAhorroSocio(socio){
@@ -27,15 +45,16 @@
 				getAllAhorro().then(function (data){
 					var result = data.filter(function (reg){
 						return reg.socio == socio;
-					});
+						});
 					
-					if(result.length > 0){
-						deferred.resolve(result);
-					}
-					else{
-						deferred.reject();
-					}
-				});
+						if(result.length > 0){
+							deferred.resolve(result);
+						}
+						else{
+							deferred.reject();
+						}
+					});
+				 return deferred.promise;
 			}
 
 			function getRetiroSocio(socio){
@@ -45,7 +64,8 @@
 					})
 					.error(function (error){
 						deferred.resolve(error);
-					})
+					});
+				 return deferred.promise;
 			}
 
 
@@ -54,45 +74,59 @@
 			return {
 				getAllAhorro: getAllAhorro,
 				getRetiroSocio: getRetiroSocio,
-				getAhorroSocio: getAhorroSocio
+				getAhorroSocio: getAhorroSocio,
+				getAhorroById: getAhorroById
 				
 			};
 		}])
 		
-		.controller('AhorroController', ['$scope', '$filter', '$rootScope', 'AhorroServices',
-								function ($scope, $filter, $rootScope, AhorroServices){
+		.controller('AhorroController', ['$scope', '$filter', '$rootScope', 'AhorroServices','$timeout',
+								function ($scope, $filter, $rootScope, AhorroServices, $timeout){
 			
+			$scope.Ahorros=[];
 			$scope.AhorrosPorSocio=[];
 			$scope.AhorroHistorico=[];
 			$scope.errorShow=false;
 			$scope.errorMsg='';
-			$scope.Socio='242126';
+			$scope.Socio='';
 
-			 $scope.getCabecera = function(){
+			 $scope.getListaAhorro = function(){
 			 	try{
 					AhorroServices.getAllAhorro().then(function (data) {
 						$scope.AhorrosPorSocio=data;
-						console.log(data);
 					});
 				}catch(ex){
-					debugger;
 					$rootScope.mostrarError(ex.message);
 				}
-			}
+			};
 
-			 $scope.getHistoricoAhorro = function(){
-				AhorroServices.getAhorroSocio($scope.Socio).then(function (data){
-					$scope.AhorroHistorico=data;
-				});
-			}
+			$scope.AhorroById = function(id){
+			//	try{
+					AhorroServices.getAhorroById(id).then(function (data){
+						$scope.Ahorros=data;
+						console.log(data);
+					});
+				// }
+				// catch (ex){
+				// 	$rootScope.mostrarError(ex.message);
+				// }
+			}; 
+			//  $scope.getHistoricoAhorro = function(){
+			// 	AhorroServices.getAhorroSocio($scope.Socio).then(function (data){
+			// 		$scope.AhorroHistorico=data;
+			// 	});
+			// };
 
 			  $rootScope.mostrarError = function(error) {
 		        $scope.errorMsg = error;
 		        $scope.errorShow = true;
-		        console.log('test agregado para que suba a git');
-		      }
+		         $timeout(function(){$scope.errorShow = false;}, 3000);   
 
-		}]) 
+		      };
+
+
+
+		}]); 
 
 		
 
