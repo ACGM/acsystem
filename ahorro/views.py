@@ -34,7 +34,7 @@ class MaestraAhorroView(DetailView):
 			# Operacion para registar un retiro de ahorro
 			if Ret == 'Rt':
 				listaDiario=[]
-				ahorro = AhorroSocio.objects.get(id = dataAh.['id'])
+				ahorro = AhorroSocio.objects.get(id = dataAh['id'])
 				maestraRg = MaestraAhorro()
 				rsDiario = DiarioGeneral()
 
@@ -74,7 +74,7 @@ class MaestraAhorroView(DetailView):
 				# Registra en el historico de ahorros
 				maestra.fecha=datetime.now
 				maestra.retiro=retiro.id
-				maestra.monto=data.['monto']
+				maestra.monto=data['monto']
 				maestra.interes=data['interes']
 				maestra.balance=balanceAc
 				maestra.estatus=False
@@ -202,8 +202,8 @@ class MaestraAhorroView(DetailView):
 	def json_to_response(self, Reg, Socio):
 		data=list()
 
-		if Socio != null:
-
+		if Socio != None:
+			pass
 		else:
 			if Reg =='AR':
 				for ahorro in self.object_list:
