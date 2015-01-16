@@ -11,32 +11,41 @@
 		</div>
 		<div class="sub-menu">
 			Ahorros
+			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
 		</div>
-		<section class="Ahorro-main">
-			<section class="Ahorro-main-search">
-				<div class="Ahorro-main-search-box">
-					<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
-					<a href="#" class="icon-uniE601 icon-search" ng-click="getHistoricoAhorro()"></a>
-					
-				</div>
+		<section id="mainSection">
+			<section class="Ahorro-main" ng-init="getListaAhorro()">
+				<section class="Ahorro-main-search">
+					<div class="Ahorro-main-search-box">
+						<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
+						<a href="#" class="icon-uniE601 icon-search" ng-click=""></a>
+						
+					</div>
+				</section>
 			</section>
-		</section>
-		<section class="Ahorro-main-list">
-				<div class="registroPanel">
-					<table id='tabla-ahorros' class='listado-table-ei'>
-						<tr class="listado-table-header-ei">
-							<th>Registro</th>
-							<th>Socio</th>
-							<th>Balance</th>
-							<th>Disponible</th>
-							<th>Imprimir</th>
-						</tr>
-						<tr>
+
+			<section class="Ahorro-main-list">
+					<div class="registroPanel">
+						<table id='tabla-ahorros' class='listado-table-ei'>
+							<tr class="listado-table-header-ei">
+								<th>Registro</th>
+								<th>Socio</th>
+								<th>Balance</th>
+								<th>Disponible</th>
+								<th>Imprimir</th>
+							</tr>
+							<tr ng-repeat="ahorro in AhorrosPorSocio" class="listado-facturas-detail">
+								<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-noDecoration utils-alingTCenter'>[[ahorro.id]] </a></td>
+								<td>[[ahorro.socio]] </td>
+								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.balance]]</td>
+								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.disponible]] </td>
+								<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer"></a></td>
+							</tr>
 							
-						</tr>
-					</table>
-				</div>
-			</section>
+						</table>
+					</div>
+				</section>
+		</section>
 		<section class="Ahorro-detalle">
 			<div class="sub-menu">
 				Ahorros - Detalle
@@ -45,25 +54,25 @@
 				<table>
 					<tr>
 						<td class="items utils-upperBorderR">Registro</td>
-						<td class="results"><input id="idAhorro" type="text"></td>
+						<td class="results"><input id="idAhorro" type="text" class="input-disabled"></td>
 					</tr>
 					<tr>
 						<td class="items">
 							Socio
 						</td>
 						<td class="results">
-							<input type="text" id="Socio">
+							<input type="text" id="Socio" class="input-disabled">
 						</td>
 					</tr>
 					<tr>
 						<td class="items">Balance</td>
-						<td class="results"><input type="text" id="Balance"></td>
+						<td class="results"><input type="text" id="Balance" class="input-disabled"></td>
 					</tr>
 					<tr>
 						<td class="items utils-bottomBorderR">
 							Disponible
 						</td>
-						<td class="results"><input type="text" id="Disponible"></td>
+						<td class="results"><input type="text" id="Disponible" class="input-disabled"></td>
 					</tr>
 				</table>
 			</div>
