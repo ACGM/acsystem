@@ -25,6 +25,7 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
 from fondoscajas.views import ListadoDesembolsosViewSet
+from nominacoop.views import ListadoNominasGeneradasViewSet
 
 
 #APIView (API)
@@ -70,6 +71,10 @@ router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
 
 #fondos de cajas
 router.register(r'desembolsos', ListadoDesembolsosViewSet)
+
+#nomina
+router.register(r'nominasgeneradas', ListadoNominasGeneradasViewSet)
+
 
 urlpatterns = patterns('',
 

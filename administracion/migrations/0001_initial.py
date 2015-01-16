@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
+import datetime
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cuenta', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('cuenta', '__first__'),
     ]
 
     operations = [
@@ -98,6 +99,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
                 ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
+                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 16, 2, 19, 2, 545274), auto_now_add=True)),
+                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 16, 2, 19, 2, 545307), auto_now=True)),
             ],
             options={
                 'ordering': ['socio'],
@@ -419,6 +422,12 @@ class Migration(migrations.Migration):
             model_name='cuotaahorrosocio',
             name='socio',
             field=models.ForeignKey(to='administracion.Socio'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='cuotaahorrosocio',
+            name='userLog',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
