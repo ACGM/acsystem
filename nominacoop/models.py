@@ -9,7 +9,7 @@ from prestamos.models import MaestraPrestamo, CuotasPrestamo
 
 class DepartamentoCoop(models.Model):
 
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=40)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
@@ -23,7 +23,7 @@ class DepartamentoCoop(models.Model):
 # Cargos en la cooperativa para empleados
 class CargoCoop(models.Model):
 
-	descripcion = models.CharField(max_length=100)
+	descripcion = models.CharField(max_length=40)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
@@ -43,16 +43,16 @@ class EmpleadoCoop(models.Model):
 	tipo_cobro_choices = (('Q','Quincenal'),('M','Mensual'),)
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 
-	codigo = models.CharField(max_length=5)
+	codigo = models.PositiveIntegerField(max_length=6)
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
 	cedula = models.CharField(max_length=20)
 	direccion = models.TextField(null=True, blank=True)
-	sector = models.CharField(max_length=100, null=True, blank=True)
-	ciudad = models.CharField(max_length=80, null=True, blank=True)
-	telefono = models.CharField(max_length=50, null=True, blank=True)
+	sector = models.CharField(max_length=50, null=True, blank=True)
+	ciudad = models.CharField(max_length=40, null=True, blank=True)
+	telefono = models.CharField(max_length=40, null=True, blank=True)
 	fechaNac = models.DateField("Fecha de Nacimiento", null=True, blank=True)
-	lugarNac = models.CharField("Lugar de Nacimiento", max_length=100, null=True, blank=True)
+	lugarNac = models.CharField("Lugar de Nacimiento", max_length=50, null=True, blank=True)
 	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	dependencias = models.PositiveIntegerField(null=True, blank=True)
@@ -80,13 +80,13 @@ class EmpleadoCoop(models.Model):
 # Tipos de nominas
 class TipoNomina(models.Model):
 
-	descripcion = models.CharField(max_length=50)
+	descripcion = models.CharField(max_length=20)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
 
 	class Meta:
-		ordering = ['descripcion']
+		ordering = ['id']
 		verbose_name = 'Tipo de Nomina'
 		verbose_name_plural = 'Tipos de Nominas'
 
@@ -145,6 +145,7 @@ class NominaCoopH(models.Model):
 		ordering = ['-fechaNomina']
 		verbose_name = 'Nomina Cabecera'
 		verbose_name_plural = 'Nominas Cabecera'
+		unique_together = ('fechaNomina', 'tipoNomina')
 
 
 # Detalle Nomina de Cooperativa

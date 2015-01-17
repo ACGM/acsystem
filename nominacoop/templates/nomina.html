@@ -24,7 +24,7 @@
 				<ul>
 					<li><p class="tipo-nomina">Tipo de Nomina</p></li>
 					<li>
-						<select class="tipo-nomina-t" name="tipoNomina" ng-init="tiposNominas()" ng-model="nominaH.tipoNomina" required>
+						<select class="tipo-nomina-t field-choices" name="tipoNomina" ng-init="tiposNominas()" ng-model="nominaH.tipoNomina" required>
 							<option ng-repeat="item in tiposN" value="[[item.id]]">[[item.descripcion]]</option>
 						</select>			
 					</li>
@@ -75,7 +75,7 @@
 
 						<tr class="nomina-sel-header nomina-sel-detail" ng-repeat="item in nominas">
 							<td>[[item.estatus]]</td>
-							<td>[[item.fechaNomina | date: 'dd-MM-yyyy']]</td>
+							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina)">[[item.fechaNomina | date: 'dd-MM-yyyy']]</a></td>
 							<td>[[item.cntEmpleados]]</td>
 							<td>[[item.valorNomina | number: 2]]</td>
 							<td>[[item.tipoNomina]]</td>
@@ -100,87 +100,71 @@
 				
 			</div>
 
+			<input type="text" ng-model="root.nomina">
+
 			<div class="detalle-nomina-desglosado">
+
 				
 				<div class="listado-empleados-panel">
+
 						<table class="empleados-table">
 							<tr class="empleados-listado-header">
 								<td>Empleado</td>
 								<td>Pago</td>
 							</tr>
 
-							<tr class="empleados-listado-detail">
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
+							<tr class="empleados-listado-detail" ng-repeat="empleado in detalle">
+								<td><a href="#" ng-click="selEmpleado($root.nomina, empleado)" class="select-item" ng-class="reg[empleado.id]"> [[empleado.empleado]]</a></td>
+								<td>[[empleado.salario | number: 2]]</td>
 							</tr>
-							<tr>
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
-							</tr>					
-							<tr>
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
-							</tr>					
-							<tr>
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
-							</tr>					
-							<tr>
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
-							</tr>										
-							<tr>
-								<td>Rafael Mercedes</td>
-								<td>45,000.00</td>
-							</tr>										
 						</table>
 				</div>
 
 				<div class="detalle-empleado-panel">
 					<div class="detalle-empleado-title"> Detalles del Empleado</div>
 					
-					<div class="detalle-desglose">
+					<form name="FormDetalleEmpleado" class="detalle-desglose" ng-submit="guardarEmpleado()" novalidate>
 
 						<table class="detalle-desglose-table">
 							<tr>
 								<td colspan="2" class="title-ingresos">INGRESOS</td>
 								<td colspan="2" class="title-egresos">EGRESOS</td>
-								<td rowspan="6"> <button class="icon-save Boton boton-desglose-empleado">Guardar</button> </td>
+								<td rowspan="6"> <button class="icon-save Boton boton-desglose-empleado" type="submit">Guardar</button> </td>
 							</tr>
 							<tr>
 								<td class="first-row">Salario</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.salario" ng-model="empleado.salario" readonly> </td>
 								<td class="egreso-field">ARS </td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.ars" ng-model="empleado.ars"> </td>
 							</tr>
 							<tr>
 								<td>Vacaciones</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.vacaciones" ng-model="empleado.vacaciones"> </td>
 								<td class="egreso-field">AFP</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.afp" ng-model="empleado.afp"> </td>
 							</tr>
 							<tr>
 								<td>Otros</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.otrosIngresos" ng-model="empleado.otrosIngresos"> </td>
 								<td class="egreso-field">ISR</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.isr" ng-model="empleado.isr"> </td>
 							</tr>
 							<tr>
 								<td>Incentivos</td>
 								<td> <input type="text"> </td>
 								<td class="egreso-field">Prestamos</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.descPrestamos" ng-model="empleado.descPrestamos" readonly> </td>
 							</tr>													
 							<tr>
 								<td></td>
 								<td> </td>
 								<td class="egreso-field">Ahorros</td>
-								<td> <input type="text"> </td>
+								<td> <input type="text" ng-bind="empleado.descAhorros" ng-model="empleado.descAhorros" readonly> </td>
 							</tr>
 
 						</table>
 
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>

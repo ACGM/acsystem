@@ -143,7 +143,7 @@ class Socio(models.Model):
 	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
 	estatus_choices = (('S','Socio'),('E','Empleado'),('I','Inactivo'),)
 
-	codigo = models.PositiveIntegerField()
+	codigo = models.PositiveIntegerField(max_length=7)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	direccion = models.TextField(blank=True)
@@ -162,7 +162,7 @@ class Socio(models.Model):
 	departamento = models.ForeignKey(Departamento)
 	distrito = models.ForeignKey(Distrito)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
-	salario = models.DecimalField(max_digits=18, decimal_places=2)
+	salario = models.DecimalField(max_digits=12, decimal_places=2)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
@@ -191,11 +191,11 @@ class CoBeneficiario(models.Model):
 	socio = models.ForeignKey(Socio)
 	nombre = models.CharField(max_length=100)
 	direccion = models.TextField(null=True, blank=True)
-	sector = models.CharField(max_length=80, null=True, blank=True)
-	ciudad = models.CharField(max_length=80, null=True, blank=True)
+	sector = models.CharField(max_length=40, null=True, blank=True)
+	ciudad = models.CharField(max_length=40, null=True, blank=True)
 	cedula = models.CharField(max_length=15, null=True, blank=True)
-	telefono = models.CharField(max_length=80, null=True, blank=True)
-	celular = models.CharField(max_length=80, null=True, blank=True)
+	telefono = models.CharField(max_length=40, null=True, blank=True)
+	celular = models.CharField(max_length=40, null=True, blank=True)
 	parentesco = models.CharField(max_length=1, choices=parentesco_choices, default='O')
 
 	def __unicode__(self):
