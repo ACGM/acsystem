@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('administracion', '0001_initial'),
+        ('nominacoop', '0001_initial'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='socio',
-            name='prueba',
-            field=models.PositiveIntegerField(null=True),
+        migrations.AlterField(
+            model_name='nominacooph',
+            name='posteada',
+            field=models.CharField(default=b'N', max_length=1),
             preserve_default=True,
         ),
     ]

@@ -418,6 +418,10 @@ class CuotaAhorroSocio(models.Model):
 	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
 	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
 
+	userLog = models.ForeignKey(User)
+	fechaInicioAhorro = models.DateField(auto_now_add=True, default=datetime.datetime.now())
+	fechaModificacion = models.DateField(auto_now=True, default=datetime.datetime.now())
+
 	class Meta:
 		ordering = ['socio']
 		verbose_name = 'Cuota Ahorro Socio'

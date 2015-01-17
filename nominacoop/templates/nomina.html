@@ -15,29 +15,28 @@
 
 			</div>
 
-			<div class="genera-nomina" ng-show="showGN">
+			<form name="FormGeneraNomina" class="genera-nomina" ng-show="showGN" ng-submit="generarNomina()" novalidate>
 				<ul> 
 					<li><p class="fecha-nomina">Fecha de la Nomina</p></li>
-					<li><input class="fecha-nomina-t" type="text" name="fechaNomina" id="fechaNomina"/></li>
+					<li><input class="fecha-nomina-t" type="text" name="fechaNomina" id="fechaNomina" ng-model="nominaH.fechaNomina" datepicker required/></li>
 				</ul>
 
 				<ul>
 					<li><p class="tipo-nomina">Tipo de Nomina</p></li>
 					<li>
-						<select class="tipo-nomina-t" name="tipoNomina">
-							<option value="Quincenal"> Quincenal </option>
-							<option value="Regalia"> Regalia </option>
-							<option value="Otros"> Otros </option>
+						<select class="tipo-nomina-t" name="tipoNomina" ng-init="tiposNominas()" ng-model="nominaH.tipoNomina" required>
+							<option ng-repeat="item in tiposN" value="[[item.id]]">[[item.descripcion]]</option>
 						</select>			
 					</li>
 				</ul>
 				
 				<div class="nomina-nota">Nota:</div>
-				<textarea class="nomina-nota-t" id="Nota"> </textarea>
+				<textarea class="nomina-nota-t" id="Nota" ng-model="nominaH.nota"> </textarea>
 
-				<button class="icon-cog Boton boton-genera-nomina"> Generar Nomina </button>
+				<button class="icon-cog Boton boton-genera-nomina" type="submit"> Generar Nomina </button>
 
-			</div>
+			</form>
+			[[FormGeneraNomina.$valid]]
 		</div>
 
 		<div class="consultar-nomina" ng-controller="ConsultarNominaCtrl">
@@ -49,89 +48,47 @@
 
 			</div>
 
-			<div class="nominas" ng-show="showCN">
-				<div class="nomina-sel">Nomina</div>
-				<select class="nomina-sel-text" name="NominaSel">
-					<option value="08/12/2014"> 08/12/2014</option>
-					<option value="08/12/2014"> 23/12/2014</option>
-					<option value="08/12/2014"> 23/12/2014</option>
-				</select>
+			<div class="nominas" ng-show="showCN" ng-init="getNominasGeneradas()">
+				
+				<div class="nominas-select">
+					<div class="nomina-sel">Nomina</div>
+					
+					<select class="nomina-sel-text" name="NominaSel" ng-model="nominaS" ng-init="getNominasGeneradas()">
+						<option ng-repeat="item in nominas" value="[[item.fechaNomina]]"> [[item.fechaNomina | date: 'dd-MM-yyyy']]</option>
+					</select>
+				</div>
+				
+				<div class="nominas-content">
+					<table class="consultar-nominas-table">
+						<tr class="nomina-sel-header">
+							<td>Estatus</td>
+							<td>Fecha</td>
+							<td>Empleados</td>
+							<td>Valor</td>
+							<td>Tipo Nomina</td>
+							<td>Quincena</td>
+							<td>Tipo Pago</td>
+							<td class="icon-cog"></td>
+							<td class="icon-delete icon-delete-nomina"></td>
+							<td class="icon-archivo icon-archivo-nomina"></td>
+						</tr>
 
-				<table class="consultar-nominas-table">
-					<tr class="nomina-sel-header">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
+						<tr class="nomina-sel-header nomina-sel-detail" ng-repeat="item in nominas">
+							<td>[[item.estatus]]</td>
+							<td>[[item.fechaNomina | date: 'dd-MM-yyyy']]</td>
+							<td>[[item.cntEmpleados]]</td>
+							<td>[[item.valorNomina | number: 2]]</td>
+							<td>[[item.tipoNomina]]</td>
+							<td>[[item.quincena]]</td>
+							<td>[[item.tipoPago]]</td>
+							<td class="icon-cog"></td>
+							<td class="icon-delete icon-delete-nomina"></td>
+							<td class="icon-archivo icon-archivo-nomina"></td>
+						</tr>
 
-					<tr class="nomina-sel-header nomina-sel-detail">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
-					<tr class="nomina-sel-header nomina-sel-detail">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
-					<tr class="nomina-sel-header nomina-sel-detail">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
-					<tr class="nomina-sel-header nomina-sel-detail">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
-					<tr class="nomina-sel-header nomina-sel-detail">
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Empleados</td>
-						<td>Valor</td>
-						<td>Tipo Nomina</td>
-						<td>Quincena</td>
-						<td>Tipo Pago</td>
-						<td class="icon-cog"></td>
-						<td class="icon-delete icon-delete-nomina"></td>
-						<td class="icon-archivo icon-archivo-nomina"></td>
-					</tr>
-				</table>
+					</table>
+				</div>
+				
 			</div>
 		</div>
 

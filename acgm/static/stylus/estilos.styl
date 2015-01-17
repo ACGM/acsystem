@@ -415,8 +415,10 @@ footer
 	transition .3s
 	padding-left .15em
 	outline none
+	
 	&:hover
 		font-weight bold
+		
 
 .icon-imprimir //CLASE con formato para el icono de imprimir
 	text-decoration none
@@ -569,7 +571,8 @@ footer
 .nav-menu
 	background verde
 	overflow hidden
-	padding .25em 0
+	padding .46em 0
+	box-sizing border-box
 
 .ul-menu
 	padding 0
@@ -591,7 +594,7 @@ footer
 .menu-opcion
 	color white
 	margin 0
-	padding .29em .4em
+	padding .46em .4em
 	text-decoration none
 	transition .3s
 	
@@ -603,7 +606,8 @@ footer
 	background amarillo
 	display block
 	overflow hidden
-	padding 0 
+	padding 0
+	position relative
 	
 .content-logo
 	float left
@@ -620,16 +624,18 @@ footer
 &.titleCoop
 	font-size 1.3em
 	font-weight bold
-	margin .9em 0 0 .2em
+	margin 1.2em 0 0 .2em
 	&.titleCoop2
 		margin 0 0 0 .2em
 		
 .usuario
 	float right
-	margin 1.4em 1em 0 0
-	top 0
+	margin 0 .4em .2em 0
+	bottom 0
+	right 0
+	position absolute
+	
 	&:before
-		display block
 		font-size 2em
 		color verdeMuyOscuro
 
@@ -685,7 +691,14 @@ footer
 	margin 1em 0 .2em 1em
 
 .fecha-nomina-t
-	margin 0 0 0 1em
+	margin 0 0 0 .8rem
+	width 7em
+	background verdeMuySuave
+	border 1px solid verdeMuyOscuro
+	color mamey
+	font-size 1.3em
+	font-weight bold
+	padding .1rem .2rem
 	
 .tipo-nomina-t
 	margin 0 0 0 1em
@@ -714,7 +727,15 @@ footer
 	padding 0
 	
 .consultar-nominas-table
-	margin 1em 0 1em 1em
+	margin 0 0 1em 0
+
+.nominas-content
+	height 14em
+	overflow scroll
+	border 1px solid gray
+	display inline-block 
+	padding-right 2em
+	margin 1em 0 2em 1em
 	
 .nomina-sel-header
 	background verdeClarito
