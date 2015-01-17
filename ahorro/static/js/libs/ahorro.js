@@ -7,10 +7,11 @@
 		//=================================
 
 		.factory('AhorroServices', ['$http','$q','$filter',function ($http, $q, $filter) {
-			
+			var apiUrl='/ahorrojson/?format=json';
+
 			function getAllAhorro(){
 				var deferred = $q.defer();
-				var apiUrl='/ahorrojson/?format=json';
+				
 				$http.get(apiUrl)
 					.success(function (data){
 						deferred.resolve(data);
@@ -68,6 +69,17 @@
 				 return deferred.promise;
 			}
 
+			function setAhorroReg(ahorroSocio){
+				var deferred = $q.defer();
+				$http.post("/ahorrojson/&Ref=Ahorrro&Ret=Ah", JSON.stringify({'AhorroSocio':ahorroSocio}))
+					.success(function (data){
+						deferred.resolve(data);
+					})
+					.error(function (errors){
+						deferred.resolve(errors);
+					});
+				return deferred.promise;
+			}
 
 			
 		
@@ -75,7 +87,8 @@
 				getAllAhorro: getAllAhorro,
 				getRetiroSocio: getRetiroSocio,
 				getAhorroSocio: getAhorroSocio,
-				getAhorroById: getAhorroById
+				getAhorroById: getAhorroById,
+				setAhorroReg: setAhorroReg
 				
 			};
 		}])
@@ -89,6 +102,38 @@
 			$scope.errorShow=false;
 			$scope.errorMsg='';
 			$scope.Socio='';
+			$scope.TemplateData=[{
+							'id':null,
+							'socio':'2',
+							'balance':'35000',
+							'disponible':'35000',
+							'maestra':[{
+								'id':null,
+								'fecha':'01/01/2015',
+								'monto':'35000',
+								'interes':'1',
+								'balance':'35000',
+								'estatus':false,
+								'cuentas': [{
+									'fecha':'01/01/2015',
+									'cuenta': '1',
+									'referencia':'Ar',
+									'tipoDoc' : '1',
+									'estatus' : false,
+									'debito' : '35000',
+									'credito' : '0.00'
+								},
+								{
+									'fecha':'01/01/2015',
+									'cuenta': '2',
+									'referencia':'Ar',
+									'tipoDoc' : '1',
+									'estatus' : false,
+									'debito' : '0.00',
+									'credito' : '35000'
+								}]
+							}]
+			}];
 
 			 $scope.getListaAhorro = function(){
 			 	try{
@@ -98,6 +143,12 @@
 				}catch(ex){
 					$rootScope.mostrarError(ex.message);
 				}
+			};
+
+			$scope.setAhorro = function(){
+				AhorroServices.setAhorroReg($scope.TemplateData).then(function (data){
+			 			console.log(data);
+			 		});
 			};
 
 			$scope.AhorroById = function(id){

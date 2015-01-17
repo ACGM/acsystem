@@ -27,6 +27,7 @@ class MaestraAhorroView(DetailView):
 		try:
 			dataAh=json.loads(request.body)
 			data=dataAh['maestra']
+			ahorroId=dataAh['id']
 			dataCuentas=data['cuentas']
 
 			maestraId=dataMaestra['id']
@@ -34,7 +35,11 @@ class MaestraAhorroView(DetailView):
 			# Operacion para registar un retiro de ahorro
 			if Ret == 'Rt':
 				listaDiario=[]
+<<<<<<< HEAD
+				ahorro = AhorroSocio.objects.get(id =ahorroId)
+=======
 				ahorro = AhorroSocio.objects.get(id = dataAh['id'])
+>>>>>>> FETCH_HEAD
 				maestraRg = MaestraAhorro()
 				rsDiario = DiarioGeneral()
 
@@ -187,8 +192,8 @@ class MaestraAhorroView(DetailView):
 			return HttpResponse(ex)
 
 	def get(self, request, *args, **kwargs):
-		id_ahorro = self.request.GET.get('ahorro')
-		Reg= self.request.Get.get('Reg')
+		# id_ahorro = self.request.GET.get('ahorro')
+		#Reg= self.request.Get.get('Reg')
 		Socio = self.request.GET.get(socio)
 
 		self.object_list= self.get_queryset()#.filter(id=id_ahorro)
@@ -201,52 +206,54 @@ class MaestraAhorroView(DetailView):
 
 	def json_to_response(self, Reg, Socio):
 		data=list()
+<<<<<<< HEAD
+		if 'AR' =='AR':
+			for ahorro in self.object_list:
+				data.append({
+					'id':ahorro.id,
+					'socio':ahorro.socio.nombres +' '+ ahorro.socio.apellidos,
+					'balance':ahorro.balance,
+					'disponible':ahorro.disponible,
+					'maestra':[
+						{
+							'id':maestra.id,
+							'fecha':maestra.fecha,
+							'monto':maestra.monto,
+							'interes':maestra.interes.porcentaje,
+							'balance':maestra.balance,
+							'estatus':maestra.estatus,
+							'cuentas':[
+								{
+									'id':cuentas.id,
+									'fecha':cuentas.fecha,
+									'cuenta':cuentas.cuenta.codigo,
+									'referencia':cuentas.referencia,
+									'auxiliar':cuentas.auxiliar,
+									'tipoDoc':cuentas.tipoDoc.tipoDoc,
+									'estatus':cuentas.estatus,
+									'debito':cuentas.debito,
+									'credito':cuentas.credito,
+
+								}
+								for cuentas in DiarioGeneral.objects.filter(referencia=('AH-'+str(maestra.id)))]
+									
+						}
+							for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
+					})
+=======
 
 		if Socio != None:
 			pass
+>>>>>>> FETCH_HEAD
 		else:
-			if Reg =='AR':
-				for ahorro in self.object_list:
-					data.append({
-						'id':ahorro.id,
-						'socio':ahorro.socio.nombres +' '+ ahorro.socio.apellidos,
-						'balance':ahorro.balance,
-						'disponible':ahorro.disponible,
-						'maestra':[
-							{
-								'id':maestra.id,
-								'fecha':maestra.fecha,
-								'monto':maestra.monto,
-								'interes':maestra.interes.porcentaje,
-								'balance':maestra.balance,
-								'estatus':maestra.estatus,
-								'cuentas':[
-									{
-										'id':cuentas.id,
-										'fecha':cuentas.fecha,
-										'cuenta':cuentas.cuenta.codigo,
-										'referencia':cuentas.referencia,
-										'auxiliar':cuentas.auxiliar,
-										'tipoDoc':cuentas.tipoDoc.tipoDoc,
-										'estatus':cuentas.estatus,
-										'debito':cuentas.debito,
-										'credito':cuentas.credito,
-
-									}
-									for cuentas in DiarioGeneral.objects.filter(referencia=('AH-'+str(maestra.id)))]
-										
-							}
-								for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
-						})
-			else:
-				for retiro in self.object_list:
-					data.append({
-						'id' : retiro.id,
-						'socio' : retiro.socio.nombres+' '+retiro.socio.apellidos,
-						'ahorro' : retiro.socio.id,
-						'tipoRetiro' : retiro.tipoRetiro,
-						'monto' : retiro.monto
-						})
+			for retiro in self.object_list:
+				data.append({
+					'id' : retiro.id,
+					'socio' : retiro.socio.nombres+' '+retiro.socio.apellidos,
+					'ahorro' : retiro.socio.id,
+					'tipoRetiro' : retiro.tipoRetiro,
+					'monto' : retiro.monto
+					})
 
 		return JsonResponse(data,safe=False)
 	

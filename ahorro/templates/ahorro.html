@@ -39,13 +39,15 @@
 								<td>[[ahorro.socio]] </td>
 								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.balance]]</td>
 								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.disponible]] </td>
-								<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer"></a></td>
+								<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer" ng-click="setAhorro()"></a></td>
 							</tr>
 							
 						</table>
 					</div>
 				</section>
+
 		</section>
+
 		<section class="Ahorro-detalle">
 			<div class="sub-menu">
 				Ahorros - Detalle
@@ -75,6 +77,9 @@
 						<td class="results"><input type="text" id="Disponible" class="input-disabled"></td>
 					</tr>
 				</table>
+				<section class="Ahorro-detalle-buttons utils-block utils-marginSmall">
+					<a href="#" class="Boton utils-paddingRSmall utils-noDecoration  icon-credit-card"> Retiro de Ahorros</a>
+				</section>
 			</div>
 			<div class="Ahorro-detalle-cuentas">
 				<div class="registroPanel">
