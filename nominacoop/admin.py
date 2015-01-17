@@ -31,7 +31,7 @@ class NominaCoopHAdmin(admin.ModelAdmin):
 
 @admin.register(NominaCoopD)
 class NominaCoopDAdmin(admin.ModelAdmin):
-	list_display = ['nomina', 'fechaNomina', 'empleado', 'salario']
+	list_display = ['nomina', 'empleado', 'salario']
 
 @admin.register(CuotasPrestamosEmpresa)
 class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):

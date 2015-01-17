@@ -16,6 +16,8 @@ class DepartamentoCoop(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name = 'Departamento Cooperativa'
+		verbose_name_plural = 'Departamentos Cooperativa'
 
 
 # Cargos en la cooperativa para empleados
@@ -28,6 +30,8 @@ class CargoCoop(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name = 'Cargo Cooperativa'
+		verbose_name_plural = 'Cargos Cooperativa'
 
 
 # Empleado Cooperativa
@@ -68,8 +72,8 @@ class EmpleadoCoop(models.Model):
 		return '%s %s' % (self.nombres, self.apellidos)
 
 	class Meta:
-		verbose_name = 'Empleados Coop'
-		verbose_name_plural = 'Empleados Coop'
+		verbose_name = 'Empleado Cooperativa'
+		verbose_name_plural = 'Empleados Cooperativa'
 		ordering = ['codigo',]
 
 
@@ -83,6 +87,8 @@ class TipoNomina(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name = 'Tipo de Nomina'
+		verbose_name_plural = 'Tipos de Nominas'
 
 
 # Cabecera Nomina de Cooperativa
@@ -90,18 +96,17 @@ class NominaCoopH(models.Model):
 
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 	estatus_choices = (('P','Procesada'),('E','En proceso'),)
-	quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'),)
+	quincena_choices = ((1,'1ra. Quincena'),(2,'2da. Quincena'),)
 
-	fechaNomina = models.DateField(auto_now=True)
-	fechaPago = models.DateField(auto_now=True)
-	valorNomina = models.DecimalField(max_digits=18, decimal_places=2)
+	fechaNomina = models.DateField()
+	fechaPago = models.DateField(null=True)
 	tipoNomina = models.ForeignKey(TipoNomina)
 	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)
 	nota = models.TextField(blank=True)
 
-	posteada = models.BooleanField(default=False)
+	posteada = models.CharField(max_length=1, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User)
@@ -112,13 +117,34 @@ class NominaCoopH(models.Model):
 
 	@property
 	def cntEmpleados(self):
-		cnt = NominaCoopD.objects.filter(fechaNomina=self.fechaNomina).count()
-		cnt = cnt if cnt != None else 0
+		try:
+			cnt = NominaCoopD.objects.filter(nomina=self.id).count()
+			cnt = cnt if cnt != None else 0
+		except NominaCoopD.DoesNotExist:
+			cnt = 0
 
 		return '%i' % cnt
+	
+	@property
+	def valorNomina(self):
+		valor = 0
+
+		try:
+			empleados = NominaCoopD.objects.filter(nomina=self.id)
+			
+			for empleado in empleados:
+				valor += empleado.salario - (empleado.isr + empleado.afp + empleado.ars + \
+						empleado.cafeteria + empleado.descAhorros + empleado.descPrestamos) \
+						+ empleado.otrosIngresos + empleado.vacaciones
+		except NominaCoopD.DoesNotExist:
+			valor = 0
+
+		return valor
 
 	class Meta:
 		ordering = ['-fechaNomina']
+		verbose_name = 'Nomina Cabecera'
+		verbose_name_plural = 'Nominas Cabecera'
 
 
 # Detalle Nomina de Cooperativa
@@ -128,26 +154,26 @@ class NominaCoopD(models.Model):
 	estatus_choices = (('P','Procesada'),('E','En proceso'),)
 
 	nomina = models.ForeignKey(NominaCoopH)
-	fechaNomina = models.DateField(auto_now=True)
-	userLog = models.ForeignKey(User)
 	empleado = models.ForeignKey(EmpleadoCoop)
 	salario = models.DecimalField(max_digits=18, decimal_places=2)
-	isr = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	afp = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	ars = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	cafeteria = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	vacaciones = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	otrosIngresos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	descAhorros = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
-	descPrestamos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True) #Este actualizado a traves del proceso especial
+	isr = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	afp = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	ars = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	cafeteria = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	vacaciones = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	otrosIngresos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
+	descAhorros = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
+	descPrestamos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
 	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
 	def __unicode__(self):
-		return '%s' % (self.fechaNomina)
+		return '%s' % (self.nomina.fechaNomina)
 
 	class Meta:
 		unique_together = ('nomina', 'empleado')
+		verbose_name = 'Nomina Detalles'
+		verbose_name_plural = 'Nominas Detalles'
 
 
 # Cuotas Prestamos para Nomina Empresa
@@ -163,6 +189,7 @@ class CuotasPrestamosEmpresa(models.Model):
 	nomina = models.DateField(null=True)
 	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+
 
 # Cuotas Ahorros para Nomina Empresa
 class CuotasAhorrosEmpresa(models.Model):

@@ -4,7 +4,7 @@ from rest_framework import routers
 
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
-from nominacoop.views import NominaView
+from nominacoop.views import NominaView, generaNominaView
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
@@ -25,7 +25,7 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
 from fondoscajas.views import ListadoDesembolsosViewSet
-from nominacoop.views import ListadoNominasGeneradasViewSet
+from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 
 
 #APIView (API)
@@ -74,6 +74,7 @@ router.register(r'desembolsos', ListadoDesembolsosViewSet)
 
 #nomina
 router.register(r'nominasgeneradas', ListadoNominasGeneradasViewSet)
+router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 
 
 urlpatterns = patterns('',
@@ -82,6 +83,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
+    url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),

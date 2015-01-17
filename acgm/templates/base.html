@@ -20,10 +20,11 @@
 
 	<header class="header">
 		<figure class="content-logo">
-			<img class="logo" src={% static "images/logoCoop.png" %} alt="">
+			<a href="/"><img class="logo" src={% static "images/logoCoop.png" %} alt=""></a>
+			
 		</figure>
 
-		<div class="icon-user usuario"> login </div>
+		<div class="icon-user usuario"> {{user}} </div>
 
 		<div class="content-title">
 			<p class="titleCoop"> Cooperativa de Ahorros, Creditos y Servicios Multiples, INC.</p>

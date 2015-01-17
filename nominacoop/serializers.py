@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import NominaCoopH, NominaCoopD
+from .models import NominaCoopH, NominaCoopD, TipoNomina
 
 
 # Listado de Nominas Generadas
@@ -11,3 +11,11 @@ class NominasGeneradasSerializer(serializers.HyperlinkedModelSerializer):
 		model = NominaCoopH
 		fields = ('id', 'fechaNomina', 'fechaPago', 'valorNomina', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados')
 		ordering = ('-fechaNomina',)
+
+
+# Tipos de Nominas
+class TiposNominasSerializer(serializers.HyperlinkedModelSerializer):
+
+	class Meta:
+		model = TipoNomina
+		fields = ('id','descripcion',)
