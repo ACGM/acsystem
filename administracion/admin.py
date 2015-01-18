@@ -115,8 +115,8 @@ class CoBeneficiarioInline(admin.StackedInline):
 
 @admin.register(Socio)
 class SocioAdmin(admin.ModelAdmin):
-	list_display = ['codigo','nombres','apellidos','fechaIngresoCoop','fechaIngresoEmpresa','departamento','estatus','salario','cuentaBancaria']
-	list_editable = ('nombres','apellidos','departamento','salario','cuentaBancaria')
+	list_display = ['id','codigo','nombres','apellidos', 'salario','fechaIngresoCoop','fechaIngresoEmpresa','departamento','estatus','cuentaBancaria']
+	list_editable = ('codigo','nombres','apellidos','departamento','salario','cuentaBancaria')
 	search_fields = ('nombres','apellidos','cuentaBancaria')
 	list_filter = ('departamento',)
 

@@ -15,8 +15,8 @@ class CargoCooAdminp(admin.ModelAdmin):
 
 @admin.register(EmpleadoCoop)
 class EmpleadoCoopAdmin(admin.ModelAdmin):
-	list_display = ['codigo', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual']
-	list_editable = ('nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual')
+	list_display = ['id','codigo', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual']
+	list_editable = ('codigo', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual')
 	search_fields = ('nombres', 'apellidos')
 
 @admin.register(TipoNomina)

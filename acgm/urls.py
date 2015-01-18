@@ -30,6 +30,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 #APIView (API)
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
+from nominacoop.views import DetalleNominaGeneradaAPIView
 
 admin.site.site_header = 'COOPERATIVA'
 
@@ -81,16 +82,26 @@ urlpatterns = patterns('',
 
     url(r'^$', 'acgm.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
+    
+    #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
+    url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),
+    
+    #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
-    url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
+    url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
+    url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
+
     
+    #Inventario
+    url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+
+    #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
     
-    url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Orden_de_Compra'),
 
     # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),

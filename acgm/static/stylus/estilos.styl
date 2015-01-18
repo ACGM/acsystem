@@ -335,7 +335,7 @@ footer
 		font-size 11px
 	
 // CLASES GENERICAS
-
+	
 .posteo-N
 	color red
 
@@ -703,6 +703,8 @@ footer
 .tipo-nomina-t
 	margin 0 0 0 1em
 	width 10em
+	font-size 1.2em
+	outline none
 
 .nomina-nota
 	margin 1em 0 0 1em
@@ -716,7 +718,7 @@ footer
 .boton-genera-nomina
 	height 4em
 	margin-left 2em
-	margin-top 10em
+	margin-top 8.5rem
 	padding 0 1em
 	position absolute
 	top -4em
@@ -760,15 +762,16 @@ footer
 	border 1px solid gray	
 	box-shadow rgba(0,0,0,0,0.7) 1px 1px 1px black
 	display inline-block
-	height 11.8em
-	margin 1em .3em 0 1em	
+	height 15em
+	margin 1em .3em 2em 1em	
 	overflow scroll
-	width 15.5em
+	width 30.5em
 	
 .empleados-table
 	border 1px solid black
 	display
 	margin .3em 0 0 .3em
+	width 97%
 	
 	& td
 		border 1px solid black
@@ -778,7 +781,24 @@ footer
 	background verdeClarito
 	color white
 
-// .empleados-listado-detail
+.empleados-listado-detail
+	& td
+		padding 0
+		margin 0
+		& a
+			padding .2em 0 .2em .2em
+			
+		&:last-child
+			text-align right
+			padding-right .2em
+			font-size 1.2em
+			color verdeMuyOscuro
+			background verdeMuySuave
+			font-weight bold
+
+.empleado-sel 
+	background mamey
+	color white
 	
 .detalle-empleado-panel
 	border 1px solid black
@@ -792,7 +812,8 @@ footer
 	color white
 	display block
 	margin-bottom .4em
-	padding .2em 0 .2em .2em
+	padding .4em 0 .4em .2em
+	
 	
 .detalle-desglose
 	display inline-block
@@ -800,9 +821,16 @@ footer
 
 .detalle-desglose-table
 	margin 0 .3em .4em .3em
+	& tr
+		& td
+			padding .1em
+			
+			& input
+				color verdeMuyOscuro
+				font-size 1.1em
 
 .boton-desglose-empleado
-	height 3em
+	height 6em
 	margin 0 .4em 0 .7em
 	width 8em
 	&:before
@@ -814,7 +842,7 @@ footer
 	padding .2em
 	
 .title-egresos
-	background rojoOscuro
+	background red
 	color white
 	padding .2em
 
