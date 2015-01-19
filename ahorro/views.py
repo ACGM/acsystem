@@ -35,11 +35,8 @@ class MaestraAhorroView(DetailView):
 			# Operacion para registar un retiro de ahorro
 			if Ret == 'Rt':
 				listaDiario=[]
-<<<<<<< HEAD
 				ahorro = AhorroSocio.objects.get(id =ahorroId)
-=======
 				ahorro = AhorroSocio.objects.get(id = dataAh['id'])
->>>>>>> FETCH_HEAD
 				maestraRg = MaestraAhorro()
 				rsDiario = DiarioGeneral()
 
@@ -206,7 +203,6 @@ class MaestraAhorroView(DetailView):
 
 	def json_to_response(self, Reg, Socio):
 		data=list()
-<<<<<<< HEAD
 		if 'AR' =='AR':
 			for ahorro in self.object_list:
 				data.append({
@@ -240,11 +236,9 @@ class MaestraAhorroView(DetailView):
 						}
 							for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
 					})
-=======
 
 		if Socio != None:
 			pass
->>>>>>> FETCH_HEAD
 		else:
 			for retiro in self.object_list:
 				data.append({

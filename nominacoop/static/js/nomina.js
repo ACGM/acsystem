@@ -79,23 +79,86 @@
 
       }
 
+      //Eliminar nomina (parametros: Fecha y Tipo de Nomina)
+      function eliminarNomina(fecha, tipo) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/eliminar/', JSON.stringify({'fechaNomina': fecha, 'tipoNomina': tipo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+
+      }
+
+      //Guardar Cambios en Detalle Nomina para Empleado
+      function guardarDetalleEmpleado(nomina, tipoNomina, detalle) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/guardarDE/', JSON.stringify({'nomina': nomina, 'tipoNomina': tipoNomina, 'detalle': detalle})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas: nominasGeneradas,
         generaNomina: generaNomina,
         tiposNominas: tiposNominas,
         detalleNomina: detalleNomina,
-        detalleEmpleado: detalleEmpleado
+        detalleEmpleado: detalleEmpleado,
+        eliminarNomina: eliminarNomina,
+        guardarDetalleEmpleado: guardarDetalleEmpleado
       };
 
     }])
 
     //****************************************************
+    //                                                   *
     //CONTROLLERS                                        *
-    // GENERAR NOMINA                                    *
+    //                                                   *
     //****************************************************
-    .controller('GeneraNominaCtrl', ['$scope', '$rootScope', 'NominaService', function ($scope, $rootScope, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', 'NominaService', function ($scope, $filter, NominaService) {
       $scope.showGN = true;
+      $scope.showCN = true;
+
       $scope.nominaH = {};
+      $scope.reg = [];
+      $scope.empleado = [];
+      $scope.detalle = [];
+
+      //Limpiar variables
+      $scope.clearDetalle = function() {
+        $scope.reg = [];
+        $scope.empleado = [];
+        $scope.detalle = [];
+        $scope.nomina = '';
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
+       // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar panel de Consultar Nomina
+      $scope.toggleCN = function() {
+        $scope.showCN = !$scope.showCN;
+      }
 
       // Mostrar/Ocultar panel de Generar Nomina
       $scope.toggleGN = function() {
@@ -120,16 +183,19 @@
             }
 
             NominaService.generaNomina(fechaFormatted,tipo,quincena,nota).then(function (data) {
-              console.log(data);
-              $rootScope.getNominasGeneradas();
+              if(data == -1) {
+                $scope.mostrarError("Existe una nomina generada en la fecha que ha seleccionado.");
+              }
+              $scope.getNominasGeneradas();
             });
+
           } else {
             throw "Verifique que ha completado toda la información requerida.";
 
           }
 
         } catch (e) {
-          console.log(e);
+          $scope.mostrarError(e);
         }
       }
 
@@ -140,44 +206,26 @@
         });
       }
 
-    }])
-
-
-    //****************************************************
-    //CONTROLLERS                                        *
-    // CONSULTA NOMINA                                   *
-    //****************************************************
-    .controller('ConsultarNominaCtrl', ['$scope', '$rootScope', 'NominaService', function ($scope, $rootScope, NominaService) {
-      $scope.showCN = true;
-
-      // Mostrar/Ocultar panel de Consultar Nomina
-      $scope.toggleCN = function() {
-        $scope.showCN = !$scope.showCN;
-      }
-
-
       // Todas las nominas generadas
-      $rootScope.getNominasGeneradas = function() {
+      $scope.getNominasGeneradas = function() {
         NominaService.nominasGeneradas().then(function (data) {
           $scope.nominas = data;
         });
       }
 
+      //Eliminar Nomina
+      $scope.eliminarNominaSel = function(fecha, tipo) {
+        NominaService.eliminarNomina(fecha, tipo).then(function (data) {
 
-    }])
-
-
-    //****************************************************
-    //CONTROLLERS                                        *
-    // DETALLE NOMINA                                    *
-    //****************************************************
-    .controller('DetalleNominaCtrl', ['$scope', '$rootScope', '$filter','NominaService', function ($scope, $rootScope, $filter, NominaService) {
-      $scope.reg = [];
-      $scope.empleado = [];
+          $scope.getNominasGeneradas();
+          $scope.clearDetalle();
+        });
+      }
 
       // Retorna el detalle de una nomina
-      $rootScope.getDetalleNomina = function(nomina) {
-        $rootScope.nomina = nomina;
+      $scope.getDetalleNomina = function(nomina, tipoNomina) {
+        $scope.nomina = nomina;
+        $scope.tipoNomina = tipoNomina;
 
         NominaService.detalleNomina(nomina).then(function (data) {
           $scope.detalle = data;
@@ -207,9 +255,22 @@
           $scope.empleado.descPrestamos = $filter('number')(data[0].descPrestamos,2);
           $scope.empleado.descAhorros = $filter('number')(data[0].descAhorros,2);
 
+          $scope.empleado.codigo = data[0]['getcodigo'];
+
         });
       }
 
-    }])
+      //Guardar cambios en detalle de empleado.
+      $scope.guardarDE = function() {
+        var empleado = JSON.stringify({'detalle': $scope.empleado});
+
+        NominaService.guardarDetalleEmpleado($scope.nomina, $scope.tipoNomina, empleado).then(function (data) {
+          console.log(data);
+        });
+
+      }
+
+
+    }]);
 
 })(_);

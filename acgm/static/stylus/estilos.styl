@@ -335,7 +335,7 @@ footer
 		font-size 11px
 	
 // CLASES GENERICAS
-	
+
 .posteo-N
 	color red
 
@@ -525,7 +525,7 @@ footer
 	background #FFCDBF
 	border-bottom 1px solid rojoOscuro
 	color red
-	height 4em
+	height 5em
 	left 0
 	overflow hidden
 	padding .3em 0 0 .3em
@@ -546,8 +546,12 @@ footer
 	padding .3em .6em
 	float right
 	margin 0 .2em 0 0
+	&:hover
+		background red
 
-.
+.errorMessage
+	font-size 1.4em
+	font-weight bold
 		
 // FIN CLASES GENERICAS
 
@@ -749,14 +753,44 @@ footer
 	
 	&.nomina-sel-detail
 		background white
-		color rojoOscuro	
+		color rojoOscuro
+		& td
+			&:nth-child(8), &:nth-child(9), &:nth-child(10)	
+				text-align center
 	
 	.icon-delete-nomina
+		text-decoration none
+		color red
 		&:before
-			font-size 1.2em
+			font-size 1.4em
+			margin 0
+			padding 0
+			&:hover
+				background rojoOscuro
+	
 	.icon-archivo-nomina
+		text-decoration none
+		color mamey
+		font-weight bold
 		&:before
-			font-size 1.2em
+			margin 0
+			padding 0
+			font-size 1.4em
+
+.icon-postear-nomina
+	text-decoration none
+	color verdeSubMenu
+	&:before
+		margin 0
+		padding 0
+		font-size 1.4em
+	
+.nomina-seleccionada
+	margin 1em 0 0 1em
+	font-size 1.2em
+	color verdeMuyOscuro
+	font-weight bold
+	
 
 .listado-empleados-panel
 	border 1px solid gray	
@@ -785,6 +819,8 @@ footer
 	& td
 		padding 0
 		margin 0
+		&:first-child
+			padding-left .2em
 		& a
 			padding .2em 0 .2em .2em
 			
@@ -832,9 +868,10 @@ footer
 .boton-desglose-empleado
 	height 6em
 	margin 0 .4em 0 .7em
-	width 8em
+	width 8.5em
+	padding-right .7em
 	&:before
-		margin .4em
+		margin .3em
 
 .title-ingresos
 	background blue

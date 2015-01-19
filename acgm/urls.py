@@ -4,7 +4,7 @@ from rest_framework import routers
 
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
-from nominacoop.views import NominaView, generaNominaView
+from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
@@ -90,8 +90,10 @@ urlpatterns = patterns('',
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
+    url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
+    url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
-    url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
+    url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
 
     
     #Inventario

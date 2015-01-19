@@ -152,9 +152,17 @@ class CobradorAdmin(admin.ModelAdmin):
 
 @admin.register(CuotaAhorroSocio)
 class CuotaAhorroSocioAdmin(admin.ModelAdmin):
-	list_display = ['socio','cuotaAhorroQ1','cuotaAhorroQ2']
+	list_display = ['get_codigo','socio','cuotaAhorroQ1','cuotaAhorroQ2']
 	list_editable = ('cuotaAhorroQ1','cuotaAhorroQ2')
 	search_fields = ('socio',)
+
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
+	def get_codigo(self, obj):
+		return '%s' % obj.socio.codigo
+
 
 @admin.register(DocumentoCuentas)
 class DocumentoCuentas(admin.ModelAdmin):
