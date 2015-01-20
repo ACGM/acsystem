@@ -101,7 +101,14 @@
 			$scope.AhorroHistorico=[];
 			$scope.errorShow=false;
 			$scope.errorMsg='';
-			$scope.Socio='';
+			$scope.idAhorro=null;
+			$scope.Socio=null;
+			$scope.Balance=null;
+			$scope.Disponible=null;
+			$scope.MaestraDetalle=[];
+
+
+
 			$scope.DataAhorro = {
 				'id':'8',
 				'socio':'241099',
@@ -140,7 +147,7 @@
 					'debito' : '0.00',
 					'credito' : '35000'
 								}];
-			$scope.DataRetiro={}
+			$scope.DataRetiro={};
 			// {
 			// 	'id': '7',
 			// 	'socio': '241099',
@@ -167,19 +174,18 @@
 			 		});
 			};
 
-			$scope.AhorroById = function(id){
-			//	try{
-					AhorroServices.getAhorroById(id).then(function (data){
-						$scope.Ahorros=data;
-						console.log(data);
-					});
-				// }
-				// catch (ex){
-				// 	$rootScope.mostrarError(ex.message);
-				// }
+			$scope.AhorroById = function(AhorroId){
+				try{
+					debugger;
+					$scope.MaestraDetalle=$scope.AhorrosPorSocio[0].maestra
+						}
+				catch (ex){
+					$rootScope.mostrarError('Ocurrio un error al intentar cargar los datos: '+ex.message);
+				}
 			}; 
-			//  $scope.getHistoricoAhorro = function(){
-			// 	AhorroServices.getAhorroSocio($scope.Socio).then(function (data){
+
+			//  $scope.getHistoricoAhorro = function(id){
+			// 	AhorroServices.getAhorroSocio().then(function (data){
 			// 		$scope.AhorroHistorico=data;
 			// 	});
 			// };
