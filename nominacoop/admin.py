@@ -26,12 +26,15 @@ class TipoNominaAdmin(admin.ModelAdmin):
 
 @admin.register(NominaCoopH)
 class NominaCoopHAdmin(admin.ModelAdmin):
-	list_display = ['fechaNomina', 'fechaPago', 'valorNomina', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados']
+	list_display = ['fechaNomina', 'fechaPago', 'valorNomina', 'sueldoMensual', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados']
 	list_editable = ('tipoNomina', 'tipoPago')
 
 @admin.register(NominaCoopD)
 class NominaCoopDAdmin(admin.ModelAdmin):
-	list_display = ['nomina', 'empleado', 'salario']
+	list_display = ['getCodigo','nomina', 'empleado', 'salario']
+
+	def getCodigo(self, obj):
+		return '%s' % (obj.empleado.codigo)
 
 @admin.register(CuotasPrestamosEmpresa)
 class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):

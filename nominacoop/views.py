@@ -14,6 +14,8 @@ from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina
 from administracion.models import CuotaAhorroSocio, Socio
 
 import json
+import decimal
+
 
 # Vista Principal de Nomina
 class NominaView(TemplateView):
@@ -78,9 +80,9 @@ class generaNominaView(View):
 				nominaD.nomina = nominaH
 				nominaD.empleado = empleado
 				nominaD.salario = (empleado.sueldoActual / 2)
-				nominaD.isr = 0
-				nominaD.afp = 0
-				nominaD.ars = 0
+				nominaD.isr = decimal.Decimal(empleado.sueldoActual / 2) * decimal.Decimal(0.02)
+				nominaD.afp = decimal.Decimal(empleado.sueldoActual / 2) * decimal.Decimal(0.032)
+				nominaD.ars = decimal.Decimal(empleado.sueldoActual / 2) * decimal.Decimal(0.087)
 				nominaD.cafeteria = 0
 				nominaD.vacaciones = 0
 				nominaD.otrosingresos = 0
@@ -90,16 +92,16 @@ class generaNominaView(View):
 				except socio.DoesNotExist:
 					pass
 
-				# try:
-				# 	ahorro = CuotaAhorroSocio.objects.get(socio=socio)
-				# 	if ahorro != None:
-				# 		if quincena == 1:
-				# 			montoAhorro = ahorro.cuotaAhorroQ1
-				# 		else:
-				# 			montoAhorro = ahorro.cuotaAhorroQ2
-				# except ahorro.DoesNotExist:
-				# 	montoAhorro = 0
-				nominaD.descAhorros = 0 #montoAhorro
+				try:
+					ahorro = CuotaAhorroSocio.objects.get(socio=socio)
+					if ahorro != None:
+						if nominaH.quincena == 1:
+							montoAhorro = ahorro.cuotaAhorroQ1
+						else:
+							montoAhorro = ahorro.cuotaAhorroQ2
+				except ahorro.DoesNotExist:
+					montoAhorro = 0
+				nominaD.descAhorros = montoAhorro
 				
 				# try:
 				# 	cuotaPrestamo = 0
@@ -120,8 +122,82 @@ class generaNominaView(View):
 			return HttpResponse('TODO BIEN')
 
 		except IntegrityError as ie:
-			return HttpResponse('Existe una nomina generada para esta fecha')
+			return HttpResponse(-1)
 
 		except Exception as e:
 			return HttpResponse(e)
 
+
+# Guardar Cambios en Detalle de Empleado (nomina generada)
+class guardarDetalleEmpleado(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+
+			# Tomar los parametros enviados por el Post en JSON
+			data = json.loads(request.body)
+
+			detalle = data['detalle']
+			nomina = data['nomina']
+			tipoNomina = data['tipoNomina']
+
+			#Paso 1: Tomar la nomina que se esta trabajando
+			nominaH = NominaCoopH.objects.get(fechaNomina=nomina, tipoNomina__descripcion=tipoNomina)
+
+			#Paso 2: Tomar el empleado que sera modificado en dicha nomina
+			# emp = EmpleadoCoop.objects.get(codigo=detalle['codigo'])
+
+			#Paso 3: Tomar el detalle del empleado que sera modificado
+			# nominaD = NominaCoopD.objects.get(nomina=nominaH, empleado=emp)
+			# nominaD.salario = detalle['salario']
+			# nominaD.isr = detalle['isr']
+			# nominaD.afp = detalle['afp']
+			# nominaD.ars = detalle['ars']
+			# nominaD.cafeteria = detalle['cafeteria'] if detalle['cafeteria'] != None else 0
+			# nominaD.vacaciones = detalle['vacaciones'] if detalle['vacaciones'] != None else 0
+			# nominaD.otrosingresos = detalle['otrosIngresos'] if detalle['otrosIngresos'] !=None else 0
+			# nominaD.save()
+			
+			return HttpResponse(detalle['codigo'])
+			# return HttpResponse(1)
+
+		except IntegrityError as ie:
+			return HttpResponse(-1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Eliminar nomina
+class EliminarNominaView(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+
+			data = json.loads(request.body)
+
+			nomina = data['fechaNomina']
+			tipoNomina = data['tipoNomina']
+
+			nominaH = NominaCoopH.objects.filter(fechaNomina=nomina, tipoNomina__descripcion=tipoNomina)
+			NominaCoopD.objects.filter(nomina=nominaH).delete()
+			nominaH.delete()
+
+			return HttpResponse(1)
+		
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Generar archivo
+class GenerarArchivoView(View):
+
+	pass
+
+
+# Postear Nomina Cooperativa
+class PostearNominaCoopView(View):
+
+	pass

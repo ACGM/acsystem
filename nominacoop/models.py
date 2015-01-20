@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 
 from administracion.models import Empresa, CoBeneficiario, Socio
@@ -141,8 +142,18 @@ class NominaCoopH(models.Model):
 
 		return valor
 
+	@property
+	def sueldoMensual(self):
+		try:
+			totalSueldo = NominaCoopD.objects.values('salario').filter(nomina=self.id).annotate(total=Sum('salario'))[0]['total']
+		except NominaCoopD.DoesNotExist:
+			totalSueldo = 0
+
+		return totalSueldo
+
+
 	class Meta:
-		ordering = ['-fechaNomina']
+		ordering = ['-id']
 		verbose_name = 'Nomina Cabecera'
 		verbose_name_plural = 'Nominas Cabecera'
 		unique_together = ('fechaNomina', 'tipoNomina')
@@ -170,6 +181,10 @@ class NominaCoopD(models.Model):
 
 	def __unicode__(self):
 		return '%s' % (self.nomina.fechaNomina)
+
+	@property
+	def getcodigo(self):
+		return '%s' % (self.empleado.codigo)
 
 	class Meta:
 		unique_together = ('nomina', 'empleado')

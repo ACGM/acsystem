@@ -4,10 +4,15 @@
 
 {% block content %}
 
-	<div class="Nomina">
+	<div class="Nomina" ng-controller="NominaCtrl">
 		
-		<div class="generar-nomina" ng-controller="GeneraNominaCtrl">
+		<div class="generar-nomina">
 			
+			<div class="cssSlideUpError" ng-show="errorShow">
+				<span class="errorMessage"> [[errorMsg]] </span>
+				<a href="" class="cerrarError" ng-click="toggleError()">X</a>
+			</div>
+
 			<div class="sub-menu">
 				Generar Nomina de la Cooperativa
 
@@ -36,10 +41,9 @@
 				<button class="icon-cog Boton boton-genera-nomina" type="submit"> Generar Nomina </button>
 
 			</form>
-			[[FormGeneraNomina.$valid]]
 		</div>
 
-		<div class="consultar-nomina" ng-controller="ConsultarNominaCtrl">
+		<div class="consultar-nomina">
 			
 			<div class="sub-menu nomina-consultar">
 				Consultar Nominas
@@ -68,22 +72,22 @@
 							<td>Tipo Nomina</td>
 							<td>Quincena</td>
 							<td>Tipo Pago</td>
-							<td class="icon-cog"></td>
-							<td class="icon-delete icon-delete-nomina"></td>
-							<td class="icon-archivo icon-archivo-nomina"></td>
+							<td title="Postear Nomina">Postear</td>
+							<td title="Eliminar Nomina">Eliminar</td>
+							<td title="Generar Archivo">Archivo</td>
 						</tr>
 
 						<tr class="nomina-sel-header nomina-sel-detail" ng-repeat="item in nominas">
 							<td>[[item.estatus]]</td>
-							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina)">[[item.fechaNomina | date: 'dd-MM-yyyy']]</a></td>
+							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)">[[item.fechaNomina | date: 'dd-MM-yyyy']]</a></td>
 							<td>[[item.cntEmpleados]]</td>
 							<td>[[item.valorNomina | number: 2]]</td>
 							<td>[[item.tipoNomina]]</td>
 							<td>[[item.quincena]]</td>
 							<td>[[item.tipoPago]]</td>
-							<td class="icon-cog"></td>
-							<td class="icon-delete icon-delete-nomina"></td>
-							<td class="icon-archivo icon-archivo-nomina"></td>
+							<td><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
+							<td><a href="#" class="icon-delete icon-delete-nomina" ng-click="eliminarNominaSel(item.fechaNomina, item.tipoNomina)"></a></td>
+							<td><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
 						</tr>
 
 					</table>
@@ -93,14 +97,14 @@
 		</div>
 
 		
-		<div class="detalle-nomina" ng-controller="DetalleNominaCtrl">
+		<div class="detalle-nomina">
 			
 			<div class="sub-menu nomina-detalle">
-				Detalles de Nomina
+				Detalles de Nomina <span class="nomina-seleccionada"> [[nomina | date : mediunDate : 'GMT-4']]</span>
 				
 			</div>
 
-			<input type="text" ng-model="root.nomina">
+			
 
 			<div class="detalle-nomina-desglosado">
 
@@ -109,13 +113,15 @@
 
 						<table class="empleados-table">
 							<tr class="empleados-listado-header">
+								<td>Codigo</td>
 								<td>Empleado</td>
 								<td>Pago</td>
 							</tr>
 
-							<tr class="empleados-listado-detail" ng-repeat="empleado in detalle">
-								<td><a href="#" ng-click="selEmpleado($root.nomina, empleado)" class="select-item" ng-class="reg[empleado.id]"> [[empleado.empleado]]</a></td>
-								<td>[[empleado.salario | number: 2]]</td>
+							<tr class="empleados-listado-detail" ng-repeat="item in detalle">
+								<td>[[item.getcodigo]]</td>
+								<td><a href="#" ng-click="selEmpleado(nomina, item)" class="select-item" ng-class="reg[item.id]"> [[item.empleado]]</a></td>
+								<td>[[item.salario | number: 2]]</td>
 							</tr>
 						</table>
 				</div>
@@ -123,7 +129,7 @@
 				<div class="detalle-empleado-panel">
 					<div class="detalle-empleado-title"> Detalles del Empleado</div>
 					
-					<form name="FormDetalleEmpleado" class="detalle-desglose" ng-submit="guardarEmpleado()" novalidate>
+					<form name="FormDetalleEmpleado" class="detalle-desglose" ng-submit="guardarDE()" novalidate>
 
 						<table class="detalle-desglose-table">
 							<tr>
@@ -161,9 +167,14 @@
 								<td class="egreso-field">Ahorros</td>
 								<td> <input type="text" ng-bind="empleado.descAhorros" ng-model="empleado.descAhorros" readonly> </td>
 							</tr>
+							<tr>
+								<td></td>
+								<td> </td>
+								<td class="egreso-field">Cafeteria</td>
+								<td> <input type="text" ng-bind="empleado.cafeteria" ng-model="empleado.cafeteria"> </td>
+							</tr>
 
-						</table>
-
+						</table> 
 					</form>
 				</div>
 			</div>
