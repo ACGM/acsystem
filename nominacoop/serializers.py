@@ -9,7 +9,9 @@ class NominasGeneradasSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = NominaCoopH
-		fields = ('id', 'fechaNomina', 'fechaPago', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados', 'valorNomina','posteada')
+		fields = ('id', 'fechaNomina', 'fechaPago', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', \
+		 'cntEmpleados', 'valorNomina', 'sueldoMensual', 'ISR', 'AFP', 'ARS', 'CAFETERIA', 'VACACIONES', \
+		 'OTROSINGRESOS', 'DESCAHORROS', 'DESCPRESTAMOS', 'posteada')
 		ordering = ('-id',)
 
 
@@ -21,7 +23,7 @@ class NominaGeneradaDetalleSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = NominaCoopD
 		fields = ('id', 'nomina', 'getcodigo', 'empleado', 'salario', 'isr', 'afp', 'ars', 'cafeteria', \
-					'vacaciones', 'otrosIngresos', 'descAhorros', 'descPrestamos', 'tipoPago', 'estatus')
+					'vacaciones', 'otrosIngresos', 'descAhorros', 'descPrestamos', 'pago','tipoPago', 'estatus')
 		ordering = ('empleado',)
 
 

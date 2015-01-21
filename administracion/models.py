@@ -50,7 +50,7 @@ class Departamento(models.Model):
 # Representantes
 class Representante(models.Model):
 
-	nombre = models.CharField(max_length=150)
+	nombre = models.CharField(max_length=50)
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)
@@ -143,7 +143,7 @@ class Socio(models.Model):
 	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
 	estatus_choices = (('S','Socio'),('E','Empleado'),('I','Inactivo'),)
 
-	codigo = models.PositiveIntegerField(max_length=7)
+	codigo = models.PositiveIntegerField()
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	direccion = models.TextField(blank=True)

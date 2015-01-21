@@ -8,7 +8,8 @@ from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, g
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
-                            DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView
+                            DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
+                            SolicitudOrdenDespachoView
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import DiarioGeneralView
@@ -31,24 +32,30 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 #APIView (API)
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
 from nominacoop.views import DetalleNominaGeneradaAPIView
+from prestamos.views import SolicitudesPrestamosAPIView
+
 
 admin.site.site_header = 'COOPERATIVA'
 
 router=routers.DefaultRouter()
+
 #Cuentas
 router.register(r'cuentas', CuentasViewSet)
 router.register(r'auxiliar', AuxiliarViewSet)
 router.register(r'diario', DiarioViewSet)
 router.register(r'tipoDocDiario',TipoDocViewSet)
+
 #CXP
 router.register(r'ordenCompra',OrdenViewSet)
 router.register(r'detalleOrder',DetalleOrderViewSet)
 router.register(r'CxpSuperCoop',CxpSuperViewSet)
+
 #ahorro
 router.register(r'MaestraAhorros',MaestraAhorroViewSet)
 router.register(r'ahorro',AhorroViewSet)
 router.register(r'retiroAhorro',RetirosAhorroViewSet)
 router.register(r'InteresAhorro',InteresAhorroViewSet)
+
 #administracion
 router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
@@ -77,11 +84,15 @@ router.register(r'desembolsos', ListadoDesembolsosViewSet)
 router.register(r'nominasgeneradas', ListadoNominasGeneradasViewSet)
 router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 
+#prestamos
+# router.register(r'solicitudesprestamos', SolicitudesPrestamosView)
 
 urlpatterns = patterns('',
 
     url(r'^$', 'acgm.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^mensajeError/$', 'acgm.views.mensajeError', name='error'),
+    url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
     
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
@@ -99,23 +110,27 @@ urlpatterns = patterns('',
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
+    url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     
-
     # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
-    url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
-    url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
+    #Prestamos
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota_de_Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota_de_Credito'),
     url(r'^prestamos/nce/$', NotaDeCreditoEspView.as_view(), name='Nota_de_Credito_Especial'),
     url(r'^prestamos/maestra/$', MaestraPrestamosView.as_view(), name='Maestra_Prestamos'),
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
+    url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
+    url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+
+
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
     url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),

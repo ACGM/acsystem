@@ -26,7 +26,7 @@ class TipoNominaAdmin(admin.ModelAdmin):
 
 @admin.register(NominaCoopH)
 class NominaCoopHAdmin(admin.ModelAdmin):
-	list_display = ['fechaNomina', 'fechaPago', 'valorNomina', 'sueldoMensual', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados']
+	list_display = ['id','fechaNomina', 'fechaPago', 'valorNomina', 'sueldoMensual', 'tipoNomina', 'tipoPago', 'estatus', 'quincena', 'cntEmpleados']
 	list_editable = ('tipoNomina', 'tipoPago')
 
 @admin.register(NominaCoopD)

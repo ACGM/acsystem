@@ -80,13 +80,15 @@ class Detalle(models.Model):
 			exist.save()
 
 		except Existencia.DoesNotExist:
-			existencia = Existencia()
-			existencia.producto = self.producto
+			raise Exception('NOT_EXISTENCIA')
+			# existencia = Existencia()
+			# existencia.producto = self.producto
 
-			existencia.cantidad = -self.cantidad
+			# existencia.cantidad = (self.cantidad * -1)
 			
-			existencia.almacen = self.almacen
-			existencia.save()
+			# existencia.almacen = self.almacen
+			# existencia.save()
+			
 
 		# Guardar el movimiento del producto
 		mov = Movimiento()

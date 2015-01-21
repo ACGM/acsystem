@@ -134,15 +134,18 @@ class FacturacionView(TemplateView):
 
 			fact.save()
 
-			for item in dataD:
-				detalle = Detalle()
-				detalle.factura = fact
-				detalle.producto = Producto.objects.get(codigo = item['codigo'])
-				detalle.porcentajeDescuento = item['descuento']
-				detalle.cantidad = item['cantidad']
-				detalle.precio = float(item['precio'])
-				detalle.almacen = Almacen.objects.get(id=almacen)
-				detalle.save()
+			try:
+				for item in dataD:
+					detalle = Detalle()
+					detalle.factura = fact
+					detalle.producto = Producto.objects.get(codigo = item['codigo'])
+					detalle.porcentajeDescuento = item['descuento']
+					detalle.cantidad = item['cantidad']
+					detalle.precio = float(item['precio'])
+					detalle.almacen = Almacen.objects.get(id=almacen)
+					detalle.save()
+			except Exception as exc:
+				raise Exception('NO TIENE EXISTENCIA EL PRODUCTO: ' + detalle.producto.descripcion)
 
 			return HttpResponse(fact.noFactura)
 

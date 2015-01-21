@@ -35,7 +35,7 @@
 	<nav class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
-			<li class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP()" href="#">Prestamos</a> </li>
+			<li class="menu-item" id="menu2"> <a class="menu-opcion" ng-mouseenter="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#">Prestamos</a> </li>
 			<li class="menu-item" id="menu3"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
 			<li class="menu-item" id="menu4"> <a class="menu-opcion" href="#">Contabilidad</a></li>
 			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
@@ -48,8 +48,9 @@
 			<li class="menu-item" id="menu12"> <a class="menu-opcion"  href="/admin">Administracion</a></li>
 		</ul>
 
-	<ul class="sub-menu-prestamos" ng-show="SubMPrestamo">
+	<ul class="sub-menu-prestamos" ng-show="SubMPrestamo" ng-mouseover="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)">
 		<li><a href="/prestamos/solicitudP">Solicitud de Prestamo</a></li>
+		<li><a href="/prestamos/solicitudP">Solicitud de Orden de Despacho</a></li>
 		<li><a href="/prestamos/maestra">Maestra de Prestamos</a></li>
 		<li><a href="/prestamos/desembolso">Desembolso Electronico</a></li>
 		<li><a href="/prestamos/nd">Nota de Debito</a></li>
@@ -84,6 +85,12 @@
 	<script type="text/javascript" src={% static "js/facturacion.js" %} ></script>
 	<script type="text/javascript" src={% static "js/inventario.js" %} ></script>
 	<script type="text/javascript" src={% static "js/fondoscajas.js" %} ></script>
+	<script type="text/javascript" src={% static "js/solicitudprestamo.js" %} ></script>
+	<script type="text/javascript" src={% static "js/solicitudordendespacho.js" %} ></script>
+	<script type="text/javascript" src={% static "js/desembolsoelectr.js" %} ></script>
+	<script type="text/javascript" src={% static "js/maestraprestamo.js" %} ></script>
+	<script type="text/javascript" src={% static "js/notacredito.js" %} ></script>
+	<script type="text/javascript" src={% static "js/notadebito.js" %} ></script>
 	<script type="text/javascript" src={% static "js/libs/ahorro.js" %}></script>
 
 

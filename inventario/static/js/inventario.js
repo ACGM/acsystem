@@ -277,6 +277,7 @@
 
           InventarioService.guardarEI(dataH,$scope.dataD,$scope.almacen).then(function (data) {
             if (data != '1') {
+              $scope.mostrarError(data);
               throw data;
             } else {
               $scope.errorShow = false;

@@ -8,10 +8,8 @@
 		
 		<div class="generar-nomina">
 			
-			<div class="cssSlideUpError" ng-show="errorShow">
-				<span class="errorMessage"> [[errorMsg]] </span>
-				<a href="" class="cerrarError" ng-click="toggleError()">X</a>
-			</div>
+			<mensajeerror> </mensajeerror>
+			<mensajeinfo> </mensajeinfo>
 
 			<div class="sub-menu">
 				Generar Nomina de la Cooperativa
@@ -67,24 +65,40 @@
 						<tr class="nomina-sel-header">
 							<td>Estatus</td>
 							<td>Fecha</td>
-							<td>Empleados</td>
+							<td>Empl.</td>
 							<td>Valor</td>
+							<td>ISR</td>
+							<td>AFP</td>
+							<td>ARS</td>
+							<td>Cafeteria</td>
+							<td>Vac.</td>
+							<td title="Otros Ingresos">OI</td>
+							<td>Ahorros</td>
+							<td>Prestamos</td>
 							<td>Tipo Nomina</td>
 							<td>Quincena</td>
-							<td>Tipo Pago</td>
+							<!-- <td>Tipo Pago</td> -->
 							<td title="Postear Nomina">Postear</td>
 							<td title="Eliminar Nomina">Eliminar</td>
 							<td title="Generar Archivo">Archivo</td>
 						</tr>
 
-						<tr class="nomina-sel-header nomina-sel-detail" ng-repeat="item in nominas">
+						<tr class="nomina-sel-detail" ng-repeat="item in nominas">
 							<td>[[item.estatus]]</td>
 							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)">[[item.fechaNomina | date: 'dd-MM-yyyy']]</a></td>
 							<td>[[item.cntEmpleados]]</td>
 							<td>[[item.valorNomina | number: 2]]</td>
+							<td>[[item.ISR | number : 2]]</td>
+							<td>[[item.AFP | number : 2]]</td>
+							<td>[[item.ARS | number : 2]]</td>
+							<td>[[item.CAFETERIA | number : 2]]</td>
+							<td>[[item.VACACIONES | number : 2]]</td>
+							<td>[[item.OTROSINGRESOS | number : 2]]</td>
+							<td>[[item.DESCAHORROS | number : 2]]</td>
+							<td>[[item.DESCPRESTAMOS | number : 2]]</td>
 							<td>[[item.tipoNomina]]</td>
 							<td>[[item.quincena]]</td>
-							<td>[[item.tipoPago]]</td>
+							<!-- <td>[[item.tipoPago]]</td> -->
 							<td><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
 							<td><a href="#" class="icon-delete icon-delete-nomina" ng-click="eliminarNominaSel(item.fechaNomina, item.tipoNomina)"></a></td>
 							<td><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
@@ -100,7 +114,7 @@
 		<div class="detalle-nomina">
 			
 			<div class="sub-menu nomina-detalle">
-				Detalles de Nomina <span class="nomina-seleccionada"> [[nomina | date : mediunDate : 'GMT-4']]</span>
+				Detalles de Nomina <span class="nomina-seleccionada"> [[nomina | date : 'dd-MM-yyyy']]</span>
 				
 			</div>
 
@@ -121,13 +135,13 @@
 							<tr class="empleados-listado-detail" ng-repeat="item in detalle">
 								<td>[[item.getcodigo]]</td>
 								<td><a href="#" ng-click="selEmpleado(nomina, item)" class="select-item" ng-class="reg[item.id]"> [[item.empleado]]</a></td>
-								<td>[[item.salario | number: 2]]</td>
+								<td>[[item.pago]]</td>
 							</tr>
 						</table>
 				</div>
 
 				<div class="detalle-empleado-panel">
-					<div class="detalle-empleado-title"> Detalles del Empleado</div>
+					<div class="detalle-empleado-title"> Detalles del Empleado <span class="empleado-seleccionado">[[empleado.empleado]]</span></div>
 					
 					<form name="FormDetalleEmpleado" class="detalle-desglose" ng-submit="guardarDE()" novalidate>
 

@@ -6,21 +6,16 @@
 
 	<div class="facturas" ng-controller="ListadoFacturasCtrl">
 
-		
-		<div class="cssSlideUpError" ng-show="errorShow">
-			<span class="errorMessage"> [[errorMsg]] </span>
-			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
-		</div>
-
-
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 			
-			<div class="sub-menu">	
-				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
-				</div>
-					Listado de Facturas
-				<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
+				Listado de Facturas
+			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
+		</div>
 			
 		<div class="facturacion cssSlideUp" ng-show="showLF" ng-init="listadoFacturas()">
 
@@ -125,7 +120,7 @@
 						</tr>
 						<tr>
 							<td>Orden Compra</td>
-							<td> <input type="text" ng-model="dataH.orden" class="input-no-editable"> </td>
+							<td> <input type="text" ng-model="dataH.orden" class="input-no-editable" readonly> </td>
 						</tr>
 						<tr>
 							<td>Terminos</td>

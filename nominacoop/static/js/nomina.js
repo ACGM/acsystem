@@ -133,13 +133,13 @@
 
       $scope.nominaH = {};
       $scope.reg = [];
-      $scope.empleado = [];
+      $scope.empleado = {};
       $scope.detalle = [];
 
       //Limpiar variables
       $scope.clearDetalle = function() {
         $scope.reg = [];
-        $scope.empleado = [];
+        $scope.empleado = {};
         $scope.detalle = [];
         $scope.nomina = '';
       }
@@ -185,8 +185,15 @@
             NominaService.generaNomina(fechaFormatted,tipo,quincena,nota).then(function (data) {
               if(data == -1) {
                 $scope.mostrarError("Existe una nomina generada en la fecha que ha seleccionado.");
+                throw data;
               }
               $scope.getNominasGeneradas();
+              $scope.clearDetalle();
+              $scope.toggleError();
+            },
+            function () {
+              $scope.mostrarError(data);
+              throw data;
             });
 
           } else {
@@ -254,19 +261,31 @@
           $scope.empleado.isr = $filter('number')(data[0].isr,2);
           $scope.empleado.descPrestamos = $filter('number')(data[0].descPrestamos,2);
           $scope.empleado.descAhorros = $filter('number')(data[0].descAhorros,2);
+          $scope.empleado.cafeteria = $filter('number')(data[0].cafeteria,2);
 
           $scope.empleado.codigo = data[0]['getcodigo'];
+          $scope.empleado.empleado = data[0]['empleado'];
 
         });
       }
 
       //Guardar cambios en detalle de empleado.
       $scope.guardarDE = function() {
-        var empleado = JSON.stringify({'detalle': $scope.empleado});
+        try {
+          NominaService.guardarDetalleEmpleado($scope.nomina, $scope.tipoNomina, $scope.empleado).then(function (data) {
 
-        NominaService.guardarDetalleEmpleado($scope.nomina, $scope.tipoNomina, empleado).then(function (data) {
-          console.log(data);
-        });
+            console.log('Fueron guardados los cambios con exito.');
+
+            var empleado = _.findWhere($scope.detalle, {getcodigo: $scope.empleado.codigo});
+
+            $scope.getNominasGeneradas();
+            $scope.getDetalleNomina($scope.nomina, $scope.tipoNomina);
+            $scope.selEmpleado($scope.nomina, empleado);
+        
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
 
       }
 

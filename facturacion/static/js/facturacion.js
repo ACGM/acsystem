@@ -151,8 +151,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService', 'InventarioService', 
-                                        function ($scope, $filter, $rootScope, FacturacionService, InventarioService) {
+    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', 'FacturacionService', 'InventarioService', 
+                                        function ($scope, $filter, $rootScope, $timeout, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
       $rootScope.mostrarOC = false;
@@ -239,6 +239,11 @@
           }
 
           FacturacionService.guardarFact(dataH,$scope.dataD).then(function (data) {
+            if(data.substring(0,2) == 'NO') {
+              $rootScope.mostrarError(data);
+              throw data;
+            }
+
             $rootScope.factura = data;
             $scope.dataH.factura = $filter('numberFixedLen')(data, 8)
 
@@ -398,6 +403,9 @@
       $rootScope.mostrarError = function(error) {
         $scope.errorMsg = error;
         $scope.errorShow = true;
+
+        // $timeout($scope.toggleError(), 3000);
+        
       }
 
       //Cuando se le de click al checkbox del header.

@@ -6,19 +6,17 @@
 
 
 	<div class="Inventario" ng-controller="ListadoEntradaInvCtrl">
+
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>				
 		
-		<div class="cssSlideUpError" ng-show="errorShow">
-			<span class="errorMessage"> [[errorMsg]] </span>
-			<a href="" class="cerrarError" ng-click="toggleError()">X</a>
-		</div>
-		
-			<div class="sub-menu">	
-				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
-				</div>
-					Listado Entradas de Inventario
-				<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
+				Listado Entradas de Inventario
+			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+		</div>
 
 		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas()" >
 			

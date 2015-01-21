@@ -146,18 +146,18 @@ class guardarDetalleEmpleado(View):
 			nominaH = NominaCoopH.objects.get(fechaNomina=nomina, tipoNomina__descripcion=tipoNomina)
 
 			#Paso 2: Tomar el empleado que sera modificado en dicha nomina
-			# emp = EmpleadoCoop.objects.get(codigo=detalle['codigo'])
+			emp = EmpleadoCoop.objects.get(codigo=detalle['codigo'])
 
 			#Paso 3: Tomar el detalle del empleado que sera modificado
-			# nominaD = NominaCoopD.objects.get(nomina=nominaH, empleado=emp)
-			# nominaD.salario = detalle['salario']
-			# nominaD.isr = detalle['isr']
-			# nominaD.afp = detalle['afp']
-			# nominaD.ars = detalle['ars']
-			# nominaD.cafeteria = detalle['cafeteria'] if detalle['cafeteria'] != None else 0
-			# nominaD.vacaciones = detalle['vacaciones'] if detalle['vacaciones'] != None else 0
-			# nominaD.otrosingresos = detalle['otrosIngresos'] if detalle['otrosIngresos'] !=None else 0
-			# nominaD.save()
+			nominaD = NominaCoopD.objects.get(nomina=nominaH, empleado=emp)
+			nominaD.salario = detalle['salario'].replace(',','')
+			nominaD.isr = detalle['isr'].replace(',','') if detalle['isr'] != None else 0
+			nominaD.afp = detalle['afp'].replace(',','') if detalle['afp'] != None else 0
+			nominaD.ars = detalle['ars'].replace(',','') if detalle['ars'] != None else 0
+			nominaD.cafeteria = detalle['cafeteria'].replace(',','') if detalle['cafeteria'] != None else 0
+			nominaD.vacaciones = detalle['vacaciones'].replace(',','') if detalle['vacaciones'] != None else 0
+			nominaD.otrosingresos = detalle['otrosIngresos'].replace(',','') if detalle['otrosIngresos'] !=None else 0
+			nominaD.save()
 			
 			return HttpResponse(detalle['codigo'])
 			# return HttpResponse(1)

@@ -6,7 +6,8 @@
     'cooperativa.facturacion',
     'cooperativa.inventario',
     'cooperativa.fondoscajas',
-    'cooperativa.ahorro'
+    'cooperativa.ahorro',
+    'cooperativa.solicitudprestamo'
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){
@@ -63,6 +64,32 @@
             });
         }
     }
+  });
+
+  app.directive('mensajeerror', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/mensajeError'
+    }
+  });
+
+  app.directive('mensajeinfo', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/mensajeInfo'
+    }
+  });
+
+  app.factory('UtilidadService', function () {
+    // Funcion para mostrar error por pantalla
+      function mostrarError(error) {
+        errorMsg = error;
+        errorShow = true;
+      }
+
+      return {
+        mostrarError: mostrarError
+      };
   });
 
 })();

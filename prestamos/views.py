@@ -1,6 +1,37 @@
 from django.shortcuts import render
-
 from django.views.generic import TemplateView
+
+from rest_framework import serializers, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from .serializers import SolicitudesPrestamosSerializer
+
+from .models import SolicitudPrestamo
+
+
+#Vista para Maestra de Prestamos
+class MaestraPrestamosView(TemplateView):
+
+	template_name = 'maestraprestamos.html'
+
+
+#Vista para Desembolso Electronico de Prestamos
+class DesembolsoPrestamosView(TemplateView):
+
+	template_name = 'desembolsoelectronico.html'
+
+
+#Vista para Solicitud de Prestamo
+class SolicitudPrestamoView(TemplateView):
+
+	template_name = 'solicitudprestamo.html'
+
+
+#Vista para Solicitud de Ordenes de Despacho
+class SolicitudOrdenDespachoView(TemplateView):
+
+	template_name = 'solicitudordendespacho.html'
 
 
 #Vista para Notas de Debito
@@ -21,19 +52,16 @@ class NotaDeCreditoEspView(TemplateView):
 	template_name = 'notacreditoespecial.html'
 
 
-#Vista para Maestra de Prestamos
-class MaestraPrestamosView(TemplateView):
+# Listado de Solicitudes de Prestamos
+class SolicitudesPrestamosAPIView(APIView):
 
-	template_name = 'maestraprestamos.html'
+	serializer_class = SolicitudesPrestamosSerializer
 
+	def get(self, request, solicitud=None):
+		if solicitud != None:
+			solicitudes = SolicitudPrestamo.objects.filter(noSolicitud=solicitud)
+		else:
+			solicitudes = SolicitudPrestamo.objects.all()
 
-#Vista para Desembolso Electronico de Prestamos
-class DesembolsoPrestamosView(TemplateView):
-
-	template_name = 'desembolsoelectronico.html'
-
-
-#Vista para Solicitud de Prestamo
-class SolicitudPrestamoView(TemplateView):
-
-	template_name = 'solicitudprestamo.html'
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)

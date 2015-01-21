@@ -4,20 +4,17 @@
 
 {% block content %}
 
-	<div class="SolicitudPrestamo" ng-controller="SolicitudPrestamoCtrl">
+	<div class="SolicitudPrestamo" ng-app="cooperativa">
 		
-		<mensajeerror> </mensajeerror>
-		<mensajeinfo> </mensajeinfo>		
-
-		<div class="sub-menu">	
+		<div class="sub-menu" ng-controller="solicitudPrestamo">	
 			<div class="menu-entrada-sp-listado">
 				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo"></button>
 			</div>
 				Listado de Solicitudes de Prestamos
-			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
+			<a class="DownArrow" href="#"></a>
 		</div>
 
-		<section class="listado-reg-sp" ng-show="showLSP">
+		<section class="listado-reg-sp">
 			<span>Socio</span>
 			<input type="text">
 

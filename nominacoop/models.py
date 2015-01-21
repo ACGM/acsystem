@@ -134,9 +134,12 @@ class NominaCoopH(models.Model):
 			empleados = NominaCoopD.objects.filter(nomina=self.id)
 			
 			for empleado in empleados:
-				valor += empleado.salario - (empleado.isr + empleado.afp + empleado.ars + \
-						empleado.cafeteria + empleado.descAhorros + empleado.descPrestamos) \
-						+ empleado.otrosIngresos + empleado.vacaciones
+				salario = empleado.salario
+				descuentos = empleado.isr + empleado.afp + empleado.ars + empleado.cafeteria + empleado.descAhorros + empleado.descPrestamos
+				ingresos = empleado.otrosIngresos + empleado.vacaciones
+
+				valor += (salario + ingresos - descuentos)
+
 		except NominaCoopD.DoesNotExist:
 			valor = 0
 
@@ -145,12 +148,74 @@ class NominaCoopH(models.Model):
 	@property
 	def sueldoMensual(self):
 		try:
-			totalSueldo = NominaCoopD.objects.values('salario').filter(nomina=self.id).annotate(total=Sum('salario'))[0]['total']
+			totalSueldo = NominaCoopD.objects.values('salario').filter(nomina=self.id).aggregate(total=Sum('salario'))['total']
 		except NominaCoopD.DoesNotExist:
 			totalSueldo = 0
-
 		return totalSueldo
 
+	@property
+	def ISR(self):
+		try:
+			totalISR = NominaCoopD.objects.values('isr').filter(nomina=self.id).aggregate(total=Sum('isr'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalISR = 0
+		return totalISR
+
+	@property
+	def AFP(self):
+		try:
+			totalAFP = NominaCoopD.objects.values('afp').filter(nomina=self.id).aggregate(total=Sum('afp'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalAFP = 0
+		return totalAFP
+
+	@property
+	def ARS(self):
+		try:
+			totalARS = NominaCoopD.objects.values('ars').filter(nomina=self.id).aggregate(total=Sum('ars'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalARS = 0
+		return totalARS
+
+	@property
+	def CAFETERIA(self):
+		try:
+			totalCAFETERIA = NominaCoopD.objects.values('cafeteria').filter(nomina=self.id).aggregate(total=Sum('cafeteria'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalCAFETERIA = 0
+		return totalCAFETERIA
+
+	@property
+	def VACACIONES(self):
+		try:
+			totalVACACIONES = NominaCoopD.objects.values('vacaciones').filter(nomina=self.id).aggregate(total=Sum('vacaciones'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalVACACIONES = 0
+		return totalVACACIONES
+
+	@property
+	def OTROSINGRESOS(self):
+		try:
+			totalOTROSINGRESOS = NominaCoopD.objects.values('otrosIngresos').filter(nomina=self.id).aggregate(total=Sum('otrosIngresos'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalOTROSINGRESOS = 0
+		return totalOTROSINGRESOS
+
+	@property
+	def DESCAHORROS(self):
+		try:
+			totalDESCAHORROS = NominaCoopD.objects.values('descAhorros').filter(nomina=self.id).aggregate(total=Sum('descAhorros'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalDESCAHORROS = 0
+		return totalDESCAHORROS
+
+	@property
+	def DESCPRESTAMOS(self):
+		try:
+			totalDESCPRESTAMOS = NominaCoopD.objects.values('descPrestamos').filter(nomina=self.id).aggregate(total=Sum('descPrestamos'))['total']
+		except NominaCoopD.DoesNotExist:
+			totalDESCPRESTAMOS = 0
+		return totalDESCPRESTAMOS
 
 	class Meta:
 		ordering = ['-id']
@@ -185,6 +250,14 @@ class NominaCoopD(models.Model):
 	@property
 	def getcodigo(self):
 		return '%s' % (self.empleado.codigo)
+
+	@property
+	def pago(self):
+		descuentos = self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
+		ingresos = self.vacaciones + self.otrosIngresos
+		neto = self.salario + ingresos - descuentos
+
+		return '$%s' % str(format(neto,',.2f'))
 
 	class Meta:
 		unique_together = ('nomina', 'empleado')
