@@ -19,7 +19,6 @@
 					<div class="Ahorro-main-search-box">
 						<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
 						<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
-						
 					</div>
 				</section>
 			</section>
@@ -77,25 +76,56 @@
 						<td class="results"><input type="text" id="Disponible" class="input-disabled"></td>
 					</tr>
 				</table>
-				<section class="Ahorro-detalle-buttons utils-block utils-marginSmall">
-					<a href="#" class="Boton utils-paddingRSmall utils-noDecoration  icon-credit-card" ng-click="setAhorro()"> Retiro de Ahorros</a>
-				</section>
+				
 			</div>
+			<section class="Ahorro-detalle-buttons utils-block utils-marginSmall">
+					<a href="#" class="Boton utils-paddingRSmall utils-noDecoration icon-save utils-registro" ng-click="setAhorro()"> Retiro de Ahorros</a>
+			</section>
+
 			<div class="Ahorro-detalle-cuentas">
 				<div class="registroPanel">
 					<table id="tabla-detalleCuentas" class="listado-table-ei">
 						<tr class="listado-table-header-ei utils-upperBorderR">
+							<th>id Registro</th>
 							<th>Fecha</th>
 							<th>Monto</th>
 							<th>Interes</th>
 							<th>Balance</th>
 							<th>Estatus</th>
-							<th>Cuentas</th>
 						</tr>
-						<tr></tr>
+						<tr ng-repeat="maestra in MaestraDetalle" class="listado-facturas-detail">
+						<td>[[maestra.id]]</td>
+						<td>[[maestra.fecha]]</td>
+						<td>[[maestra.monto]]</td>
+						<td>[[maestra.interes]]</td>
+						<td>[[maestra.balance]]</td>
+						<td><input type="checkbox" name="[[maestra.estatus]]" id=""></td>
+							
+						</tr>
+					</table>
+				</div>
+				<div class="cuentasPanel">
+					<table id="tabla-listaCuentas" class="listado-table-ei">
+						<tr class="listado-table-header-ei utils-upperBorderR">
+							<th>Cuenta</th>
+							<th>Auxiliar</th>
+							<th>Ref</th>
+							<th>Debito</th>
+							<th>Credito</th>
+						</tr>
+						<tr>
+							
+						</tr>
 					</table>
 				</div>
 			</div>
+		</section>
+
+		<section>
+			<div class="sub-menu">
+			Retiro ahorro
+			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
+		</div>
 		</section>
 
 	</div>

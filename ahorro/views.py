@@ -254,8 +254,6 @@ class MaestraAhorroView(DetailView):
 
     # Metodo Post para el proceso completo
     def post(self, request, *args, **kwargs):
-        # Ref = self.request.Get.get('Ref')  # Referencia de tipo de operacion
-        # Ret = self.request.Get.get('Ret')  # Referecia especifica para retiro
 
         try:
             dataT = json.loads(request.body)
@@ -470,13 +468,6 @@ class MaestraAhorroView(DetailView):
             return HttpResponse(ex)
 
     def get(self, request, *args, **kwargs):
-        # id_ahorro = self.request.GET.get('id')
-        # Reg= self.request.Get.get('Reg')
-
-
-        # if id_ahorro != None:
-        # self.object_list =self.get_queryset().filter(id=id_ahorro)
-        # else:
         self.object_list = self.get_queryset()
 
         format = self.request.GET.get('format')
