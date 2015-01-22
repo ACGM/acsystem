@@ -35,40 +35,40 @@
 					</select>
 				</div>
 
-			<section class="registrosPanel">
+				<section class="registrosPanel">
 
-				<table class="listado-table-f" id="table-lf-listado">
-					<tr class="listado-table-header-f">
-						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
-						<td>Estatus</td>
-						<td>Fecha</td>
-						<td>Factura</td>
-						<td>Orden C.</td>
-						<td>Prestamo</td>
-						<td>Socio</td>
-						<td>Valor</td>
-						<td>Imprimir</td>
-						<td>Eliminar</td>
-					</tr>
+					<table class="listado-table-f" id="table-lf-listado">
+						<tr class="listado-table-header-f">
+							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
+							<td>Estatus</td>
+							<td>Fecha</td>
+							<td>Factura</td>
+							<td>Orden C.</td>
+							<td>Prestamo</td>
+							<td>Socio</td>
+							<td>Valor</td>
+							<td>Imprimir</td>
+							<td>Eliminar</td>
+						</tr>
 
-					<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
-						<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
-						<td class="icon-coin posteo-[[factura.posteo]]"></td>
-						<td>[[factura.fecha | date: 'dd-MM-yyyy']]</td>
-						<td><a href="#" class="sp-field" ng-click="FactFullById(factura.noFactura)"> [[factura.noFactura | numberFixedLen: 8]] </a></td>
-						<td>[[factura.ordenCompra | numberFixedLen: 8]]</td>
-						<td>[[factura.prestamo]]</td>
-						<td>[[factura.socio]]</td>
-						<td>[[factura.totalGeneral]]</td>
-						<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-					</tr>
-								
-				</table>
+						<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
+							<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
+							<td class="icon-coin posteo-[[factura.posteo]]"></td>
+							<td>[[factura.fecha | date: 'dd-MM-yyyy']]</td>
+							<td><a href="#" class="sp-field" ng-click="FactFullById(factura.noFactura)"> [[factura.noFactura | numberFixedLen: 8]] </a></td>
+							<td>[[factura.ordenCompra | numberFixedLen: 8]]</td>
+							<td>[[factura.prestamo]]</td>
+							<td>[[factura.socio]]</td>
+							<td>[[factura.totalGeneral]]</td>
+							<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
+							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
+						</tr>
+									
+					</table>
 
-			</section>
+				</section>
 
-			<button class="Boton boton-postear-factura"> Postear</button>
+				<button class="Boton boton-postear-factura"> Postear</button>
 			</section>
 		
 		</div>

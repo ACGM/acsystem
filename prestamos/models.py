@@ -54,6 +54,10 @@ class SolicitudPrestamo(models.Model):
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
+	@property
+	def codigoSocio(self):
+		return self.socio.codigo
+
 
 # Solicitud de Orden de Despacho Cabecera
 class SolicitudOrdenDespachoH(models.Model):

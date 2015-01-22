@@ -65,3 +65,18 @@ class SolicitudesPrestamosAPIView(APIView):
 
 		response = self.serializer_class(solicitudes, many=True)
 		return Response(response.data)
+
+
+# Listado de Solicitudes de Prestamos Por Codigo de Socio
+class SolicitudesPrestamosAPIViewByCodigoNombre(APIView):
+
+	serializer_class = SolicitudesPrestamosSerializer
+
+	def get(self, request, codigo=None, nombre=None):
+		if codigo != None:
+			solicitudes = SolicitudPrestamo.objects.filter(socio__codigo=codigo)
+		else:
+			solicitudes = SolicitudPrestamo.objects.filter(socio__nombreCompleto__contains=nombre)
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)

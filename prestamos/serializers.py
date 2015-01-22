@@ -7,10 +7,13 @@ from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDe
 
 # Listado de Solicitudes de Prestamos
 class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
+	socio = serializers.StringRelatedField(read_only=True)
+	categoriaPrestamo = serializers.StringRelatedField(read_only=True)
 
 	class Meta:
 		model = SolicitudPrestamo
-		ordering = ('-id',)
+		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus')
+		ordering = ('-fechaSolicitud', '-noSolicitud')
 
 
 # Listado de Solicitudes de Ordenes de Despacho

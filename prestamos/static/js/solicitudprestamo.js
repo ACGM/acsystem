@@ -19,11 +19,16 @@
       //   return deferred.promise;
       // }
 
-      //Llenar el listado de Desembolsos
-      function all() {
+      //Llenar el listado de Solicitudes
+      function solicitudesprestamos(noSolicitud) {
         var deferred = $q.defer();
+        var url = "/api/prestamos/solicitudes/prestamos/?format=json";
 
-        $http.get('/api/desembolsos/?format=json')
+        if (noSolicitud != undefined) {
+            url = "/api/prestamos/solicitudes/prestamos/noSolicitud/?format=json".replace('noSolicitud', noSolicitud);
+        }
+
+        $http.get(url)
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -31,56 +36,50 @@
         return deferred.promise;
       }
 
-      // //Traer los distritos
-      // function distritos() {
-      //   var deferred = $q.defer();
+      //Filtrar el listado de Solicitudes por Socio
+      function solicitudesprestamosBySocio(dato) {
+        var deferred = $q.defer();
+        var url = "";
 
-      //   $http.get('/api/distritos/?format=json')
-      //     .success(function (data) {
-      //         deferred.resolve(data);
-      //     });
+        if(!isNaN(dato)) {
+          url = "/api/prestamos/solicitudes/prestamos/codigo/dato/".replace("dato", dato);
+        } else {
+          url = "/api/prestamos/solicitudes/prestamos/nombre/dato/".replace("dato", dato);
+        }
 
-      //   return deferred.promise;
-      // }
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
 
-      // //Buscar un numero de cheque en especifico en listado de documentos
-      // function byNoCheque(NoCheque) {
-      //   var deferred = $q.defer();
-      //   all().then(function (data) {
-      //     var result = data.filter(function (registro) {
-      //       return registro.cheque == NoCheque;
-      //     });
+        return deferred.promise;
+      }
 
-      //     if(result.length > 0) {
-      //       deferred.resolve(result);
-      //     } else {
-      //       deferred.reject();
-      //     }
-      //   });
-      //   return deferred.promise;
-      // }
+      //Filtrar el listado de Solicitudes por estatus
+      function solicitudesprestamosByEstatus(estatus) {
+        var deferred = $q.defer();
 
+        solicitudesprestamos(undefined).then(function (data) {
+          var results = data.filter(function (registros) {
+            return registros.estatus == estatus;
+          });
+          
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
 
-      // //Buscar un desembolso en especifico (Desglose)
-      // function DocumentoById(NoCheque) {
-      //   var deferred = $q.defer();
-      //   var doc = NoCheque != undefined? NoCheque : 0;
+        });
 
-      //   $http.get('/desembolsojson/?nocheque={NoCheque}&format=json'.replace('{NoCheque}', doc))
-      //     .success(function (data) {
-      //       deferred.resolve(data);
-      //     });
-
-      //   return deferred.promise;
-      // }
+        return deferred.promise;
+      }
 
 
       return {
-        all: all
-        // distritos: distritos,
-        // guardaDesembolso: guardaDesembolso,
-        // byNoCheque: byNoCheque,
-        // DocumentoById: DocumentoById
+        solicitudesprestamos: solicitudesprestamos,
+        solicitudesprestamosBySocio: solicitudesprestamosBySocio,
+        solicitudesprestamosByEstatus: solicitudesprestamosByEstatus
       };
 
     }])
@@ -97,12 +96,11 @@
       $scope.regAll = false;
 
       $scope.item = {};
-      $scope.desembolsos = {};
+      $scope.solicitudes = {};
 
-      $scope.desembolsosSeleccionadas = [];
+      $scope.solicitudesSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
-      $scope.dataD = [];
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
@@ -119,27 +117,98 @@
         }
       }
 
-      // //Listado de todos los desembolsos
-      // $scope.listadoDesembolsos = function() {
-      //   $scope.desembolsosSeleccionadas = [];
-      //   $scope.valoresChk = [];
+      //Listado de todas las solicitudes de prestamos
+      $scope.listadoSolicitudes = function(noSolicitud) {
+        $scope.solicitudesSeleccionadas = [];
+        $scope.valoresChk = [];
 
-      //   FondosCajasService.all().then(function (data) {
-      //     $scope.desembolsos = data;
-      //     $scope.regAll = false;
+        SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
+          $scope.solicitudes = data;
+          $scope.regAll = false;
 
-      //     if(data.length > 0) {
-      //       $scope.verTodos = 'ver-todos-ei';
 
-      //       var i = 0;
-      //       data.forEach(function (data) {
-      //         $scope.valoresChk[i] = false;
-      //         i++;
-      //       });
+          if(data.length > 0) {
+            $scope.verTodos = 'ver-todos-ei';
 
-      //     }
-      //   });
-      // }
+            var i = 0;
+            data.forEach(function (data) {
+              $scope.valoresChk[i] = false;
+              i++;
+            });
+          }
+        });
+      }
+
+      $scope.solicitudesprestamosBySocio = function($event, socio) {
+
+        if($event.keyCode == 13) {
+
+          SolicitudPrestamoService.solicitudesprestamosBySocio(socio).then(function (data) {
+            $scope.solicitudes = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+
+          },
+            function() {
+              $scope.NoFoundDoc = 'No se encontró el socio : ' + socio;
+
+            }
+          );
+        }
+      }
+
+      $scope.solicitudesprestamosEstatus = function(estatus) {
+
+        SolicitudPrestamoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
+          $scope.solicitudes = data;
+
+          if(data.length > 0) {
+            $scope.verTodos = '';
+            $scope.NoFoundDoc = '';
+          }
+        },
+          function() {
+            $scope.NoFoundDoc = "No existen solicitudes con el estatus : " + estatus;
+          }
+        );
+      }
+
+      //Cuando se le de click al checkbox del header.
+      $scope.seleccionAll = function() {
+
+        $scope.solicitudes.forEach(function (data) {
+          if (data.estatus != 'A' && data.estatus != 'R' && data.estatus != 'C') {
+            if ($scope.regAll === true){
+
+              $scope.valoresChk[data.id] = true;
+              $scope.solicitudesSeleccionadas.push(data);
+            }
+            else{
+
+              $scope.valoresChk[data.id] = false;
+              $scope.solicitudesSeleccionadas.splice(data);
+            }
+          }
+        });
+      }
+
+      //Cuando se le de click a un checkbox de la lista
+      $scope.selectedReg = function(iReg) {
+        
+        index = $scope.solicitudes.indexOf(iReg);
+
+        if ($scope.reg[$scope.solicitudes[index].id] === true){
+          $scope.solicitudesSeleccionadas.push($scope.solicitudes[index]);
+        }
+        else{
+
+          $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
+        }
+      }
+
 
       // //Buscar un cheque en especifico
       // $scope.filtrarPorNoCheque = function(NoCheque) {
@@ -299,51 +368,7 @@
       //   });
       // }
 
-      // //Filtrar las facturas por posteo (SI/NO)
-      // $scope.filtrarPosteo = function() {
-      //   $scope.facturasSeleccionadas = [];
-      //   $scope.valoresChk = [];
-      //   $scope.regAll = false;
 
-      //   if($scope.posteof != '*') {
-      //     FacturacionService.byPosteo($scope.posteof).then(function (data) {
-      //       $scope.facturas = data;
-
-      //       if(data.length > 0){
-      //         $scope.verTodos = '';
-      //       }
-      //   });
-      //   } else {
-      //     $scope.listadoFacturas();
-      //   }        
-      // }
-
-      //  //Buscar una factura en especifico
-      // $scope.filtrarPorNoFact = function(NoFact) {
-      //   try {
-      //     FacturacionService.byNoFact(NoFact).then(function (data) {
-      //       $scope.facturas = data;
-
-      //       if(data.length > 0) {
-      //         $scope.verTodos = '';
-      //         $scope.NoFoundDoc = '';
-      //       }
-      //     }, 
-      //       (function () {
-      //         $scope.NoFoundDoc = 'No se encontró el documento #' + NoFact;
-      //       }
-      //     ));          
-      //   } catch (e) {
-      //     console.log(e);
-      //   }
-      // }
-
-      // //Buscar Documento por ENTER
-      // $scope.buscarFact = function($event, NoFact) {
-      //   if($event.keyCode == 13) {
-      //     $scope.filtrarPorNoFact(NoFact);
-      //   }
-      // }
 
       // // Mostrar/Ocultar error
       // $scope.toggleError = function() {
@@ -356,40 +381,10 @@
       //   $scope.errorShow = true;
       // }
 
-      // //Cuando se le de click al checkbox del header.
-      // $scope.seleccionAll = function() {
 
-      //   $scope.facturas.forEach(function (data) {
-      //     if (data.posteo == 'N') {
-      //       if ($scope.regAll === true){
-
-      //         $scope.valoresChk[data.id] = true;
-      //         $scope.facturasSeleccionadas.push(data);
-      //       }
-      //       else{
-
-      //         $scope.valoresChk[data.id] = false;
-      //         $scope.facturasSeleccionadas.splice(data);
-      //       }
-      //     }
-
-      //   });
-      // }
 
       
-      // //Cuando se le de click a un checkbox de la lista
-      // $scope.selectedReg = function(iReg) {
-        
-      //   index = $scope.facturas.indexOf(iReg);
-
-      //   if ($scope.reg[$scope.facturas[index].id] === true){
-      //     $scope.facturasSeleccionadas.push($scope.facturas[index]);
-      //   }
-      //   else{
-
-      //     $scope.facturasSeleccionadas.splice($scope.facturasSeleccionadas[index],1);
-      //   }
-      // }
+      
 
       // //Nueva Entrada de Factura
       // $scope.nuevaEntrada = function(usuario) {

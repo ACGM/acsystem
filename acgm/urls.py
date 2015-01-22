@@ -9,16 +9,16 @@ from inventario.views import InventarioView, TransferenciaInvView, EntradaInvent
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
-                            SolicitudOrdenDespachoView
+                            SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre
 
-from ahorro.views import AhorroView, MaestraAhorroView
+# from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import DiarioGeneralView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
-from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
+# from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet, ListadoCategoriasPrestamosViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -51,10 +51,10 @@ router.register(r'detalleOrder',DetalleOrderViewSet)
 router.register(r'CxpSuperCoop',CxpSuperViewSet)
 
 #ahorro
-router.register(r'MaestraAhorros',MaestraAhorroViewSet)
-router.register(r'ahorro',AhorroViewSet)
-router.register(r'retiroAhorro',RetirosAhorroViewSet)
-router.register(r'InteresAhorro',InteresAhorroViewSet)
+# router.register(r'MaestraAhorros',MaestraAhorroViewSet)
+# router.register(r'ahorro',AhorroViewSet)
+# router.register(r'retiroAhorro',RetirosAhorroViewSet)
+# router.register(r'InteresAhorro',InteresAhorroViewSet)
 
 #administracion
 router.register(r'suplidor',SuplidorViewSet)
@@ -128,12 +128,16 @@ urlpatterns = patterns('',
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
+    
+    url(r'^api/prestamos/solicitudes/prestamos/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
+    url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
 
 
     #Ahorro
-    url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
-    url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
+    # url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
+    # url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
     #Cuentas
     url(r'^cuentasJson/$', DiarioGeneralView.as_view(), name='cuentas_diario'),         
 
