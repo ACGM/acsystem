@@ -11,7 +11,7 @@
 
 			function getAllAhorro(){
 				var deferred = $q.defer();
-				
+
 				$http.get(apiUrl)
 					.success(function (data){
 						deferred.resolve(data);
@@ -27,7 +27,8 @@
 				
 				getAllAhorro().then(function (data){
 					var result = data.filter(function (reg){
-						return reg.id==id;
+
+                        return reg.id==id;
 					});
 
 					if(result.length > 0){
@@ -45,7 +46,7 @@
 
 				getAllAhorro().then(function (data){
 					var result = data.filter(function (reg){
-						return reg.socio == socio;
+						return reg.socioId == socio;
 						});
 					
 						if(result.length > 0){
@@ -174,21 +175,20 @@
 			 		});
 			};
 
-			$scope.AhorroById = function(AhorroId){
+			$scope.AhorroById = function(Id){
 				try{
-					debugger;
-					$scope.MaestraDetalle=$scope.AhorrosPorSocio[0].maestra
+
+                    $scope.MaestraDetalle=$scope.AhorrosPorSocio.filter(function (data){
+                       
+                        return data.id==Id;
+                    });
+                    debugger;
+                    console.log($scope.MaestraDetalle);
 						}
 				catch (ex){
 					$rootScope.mostrarError('Ocurrio un error al intentar cargar los datos: '+ex.message);
 				}
-			}; 
-
-			//  $scope.getHistoricoAhorro = function(id){
-			// 	AhorroServices.getAhorroSocio().then(function (data){
-			// 		$scope.AhorroHistorico=data;
-			// 	});
-			// };
+			};
 
 			  $rootScope.mostrarError = function(error) {
 		        $scope.errorMsg = error;

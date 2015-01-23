@@ -93,12 +93,12 @@
 							<th>Balance</th>
 							<th>Estatus</th>
 						</tr>
-						<tr ng-repeat="maestra in MaestraDetalle" class="listado-facturas-detail">
-						<td>[[maestra.id]]</td>
-						<td>[[maestra.fecha]]</td>
-						<td>[[maestra.monto]]</td>
-						<td>[[maestra.interes]]</td>
-						<td>[[maestra.balance]]</td>
+						<tr ng-repeat="registro in MaestraDetalle[0].maestra" class="listado-facturas-detail">
+						<td><a href="#" ng-click="getCuentaMaestra(registro.id]])">[[registro.id]] </a></td>
+						<td>[[registro.fecha]]</td>
+						<td>[[registro.monto]]</td>
+						<td>[[registro.interes]]</td>
+						<td>[[registro.balance]]</td>
 						<td><input type="checkbox" name="[[maestra.estatus]]" id=""></td>
 							
 						</tr>
