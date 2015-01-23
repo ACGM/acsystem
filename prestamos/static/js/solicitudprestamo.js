@@ -61,7 +61,11 @@
 
         solicitudesprestamos(undefined).then(function (data) {
           var results = data.filter(function (registros) {
-            return registros.estatus == estatus;
+            if(estatus == 'T') {
+              return registros;
+            } else {
+              return registros.estatus == estatus;
+            }
           });
           
           if(results.length > 0) {
@@ -94,6 +98,8 @@
       //Inicializacion de variables
       $scope.showLSP = true;
       $scope.regAll = false;
+      $scope.estatus = 'T';
+
 
       $scope.item = {};
       $scope.solicitudes = {};
@@ -121,6 +127,7 @@
       $scope.listadoSolicitudes = function(noSolicitud) {
         $scope.solicitudesSeleccionadas = [];
         $scope.valoresChk = [];
+        $scope.estatus = 'T';
 
         SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
           $scope.solicitudes = data;
@@ -144,11 +151,13 @@
         if($event.keyCode == 13) {
 
           SolicitudPrestamoService.solicitudesprestamosBySocio(socio).then(function (data) {
-            $scope.solicitudes = data;
 
             if(data.length > 0) {
+              $scope.solicitudes = data;
               $scope.verTodos = '';
               $scope.NoFoundDoc = '';
+            } else {
+              $scope.NoFoundDoc = 'No se encontró el socio : ' + socio;
             }
 
           },
@@ -208,6 +217,36 @@
           $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
         }
       }
+
+      //Nueva Entrada de Factura
+      $scope.nuevaEntrada = function(usuario) {
+        $scope.producto = '';
+        $scope.almacen = '';
+        $scope.subtotal = '';
+        $scope.descuento = '';
+        $scope.total = '';
+
+        $scope.socioCodigo = '';
+        $scope.socioNombre = '';
+        
+        $scope.dataH = {};
+        $scope.dataD = [];
+        $scope.productos = [];
+
+        $rootScope.mostrarOrden(false);
+        $scope.showLF = false;
+        $scope.ArrowLF = 'DownArrow';
+        $scope.BotonOrden = '';
+        $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.dataH.vendedor = usuario;
+        $scope.dataH.terminos = 'CO';
+        $scope.dataH.posteo = 'N';
+
+        $scope.disabledButton = 'Boton';
+        $scope.disabledButtonBool = false;
+
+      }
+
 
 
       // //Buscar un cheque en especifico
@@ -380,41 +419,6 @@
       //   $scope.errorMsg = error;
       //   $scope.errorShow = true;
       // }
-
-
-
-      
-      
-
-      // //Nueva Entrada de Factura
-      // $scope.nuevaEntrada = function(usuario) {
-      //   $scope.producto = '';
-      //   $scope.almacen = '';
-      //   $scope.subtotal = '';
-      //   $scope.descuento = '';
-      //   $scope.total = '';
-
-      //   $scope.socioCodigo = '';
-      //   $scope.socioNombre = '';
-        
-      //   $scope.dataH = {};
-      //   $scope.dataD = [];
-      //   $scope.productos = [];
-
-      //   $rootScope.mostrarOrden(false);
-      //   $scope.showLF = false;
-      //   $scope.ArrowLF = 'DownArrow';
-      //   $scope.BotonOrden = '';
-      //   $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-      //   $scope.dataH.vendedor = usuario;
-      //   $scope.dataH.terminos = 'CO';
-      //   $scope.dataH.posteo = 'N';
-
-      //   $scope.disabledButton = 'Boton';
-      //   $scope.disabledButtonBool = false;
-
-      // }
-
 
       // //Traer productos
       // $scope.getProducto = function($event) {

@@ -11,14 +11,14 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamo
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre
 
-# from ahorro.views import AhorroView, MaestraAhorroView
+from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import DiarioGeneralView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
-# from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
+from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet, ListadoCategoriasPrestamosViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -51,10 +51,10 @@ router.register(r'detalleOrder',DetalleOrderViewSet)
 router.register(r'CxpSuperCoop',CxpSuperViewSet)
 
 #ahorro
-# router.register(r'MaestraAhorros',MaestraAhorroViewSet)
-# router.register(r'ahorro',AhorroViewSet)
-# router.register(r'retiroAhorro',RetirosAhorroViewSet)
-# router.register(r'InteresAhorro',InteresAhorroViewSet)
+router.register(r'MaestraAhorros',MaestraAhorroViewSet)
+router.register(r'ahorro',AhorroViewSet)
+router.register(r'retiroAhorro',RetirosAhorroViewSet)
+router.register(r'InteresAhorro',InteresAhorroViewSet)
 
 #administracion
 router.register(r'suplidor',SuplidorViewSet)
@@ -136,8 +136,9 @@ urlpatterns = patterns('',
 
 
     #Ahorro
-    # url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
-    # url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
+    url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
+    url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
+
     #Cuentas
     url(r'^cuentasJson/$', DiarioGeneralView.as_view(), name='cuentas_diario'),         
 

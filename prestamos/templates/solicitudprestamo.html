@@ -17,7 +17,7 @@
 			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
 		</div>
 
-		<section class="listado-reg-sp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
+		<section class="listado-reg-sp cssSlideUp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
 				<span>Codigo</span>
 				<input type="text" class="doc-no-ei" ng-model="socioCodigo" ng-keypress="solicitudesprestamosBySocio($event, socioCodigo)">
 
@@ -30,7 +30,7 @@
 			<div class="filtro-posteadas">
 				<span>Estatus</span>
 				<select name="estatus" id="estatus" ng-change="solicitudesprestamosEstatus(estatus)" ng-model="estatus">
-					<option value="Todas">Todas</option>
+					<option value="T">Todas</option>
 					<option value="P">En Proceso</option>
 					<option value="A">Aprobados</option>
 					<option value="R">Rechazados</option>
@@ -77,231 +77,224 @@
 				</div>
 		</section>
 
-		<!--DETALLE NC-->
-		<div class="sub-menu">	
-				Solicitud de Prestamo
-			<a class="DownArrow" href="#"></a>
-		</div>
 
-		<section class="data-entry-section-sp">
-			<div class="sub-menu-sp">	
-				Datos del Solicitante
+		<section class="datosprestamos" ng-hide="showLSP">
+			
+			<!--DETALLE NC-->
+			<div class="sub-menu">	
+					Solicitud de Prestamo
 			</div>
 
-			<table class="sp-header-table-solicitante">
-				<tr>
-					<td>Codigo de empleado</td>
-					<td>
-						<div class="codigo-empleado-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Codigo del socio</td>
-					<td> 
-						<div class="codigo-socio-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Representante</td>
-					<td><input class="cod-repr" type="text"> <input class="descrp-repr" type="text"></td>
-				</tr>
-				<tr>
-					<td>Auxiliar</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
-
-			<table class="sp-header-table-solicitante2">
-				<tr>
-					<td>Cedula</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Salario</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Cobrador</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Autorizado por</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
-
-		</section>
-
-		<section class="sp-datos-prestamo">
-			<div class="sub-menu-sp">	
-				Datos del Prestamo
-			</div>
-
-			<div class="datos-prestamo-content">
-
-				<div class="datos-prestamo-1">
-					<table class="datos-prestamo-1-table">
-						<tr>
-							<td>
-								<input type="text" class="monto-field">
-								<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
-							</td>
-							<td>
-								<div class="fecha-prestamo">
-									<span class="fecha-solicitud-field">Fecha Solicitud</span>
-									<input class="fecha-solicitud-field-t" type="text">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">Disponible para garantia</td>
-						</tr>
-						<tr>
-							<td>Ahorros Capitalizados</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Deudas Prestamos</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Prestaciones Laborales</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Valor garantizado</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Neto a desembolsar</td>
-							<td><input class="monto-desembolsar-field" type="text"></td>
-						</tr>
-						<tr>
-							<td colspan="2">Nota/Observacion</td>
-						</tr>
-						<tr>
-							<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9"></textarea></td>
-						</tr>
-
-						<tr>
-							<td colspan="2">
-								<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
-								<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
-							</td>
-						</tr>
-
-					</table>
+			<section class="data-entry-section-sp">
+				<div class="sub-menu-sp">	
+					Datos del Solicitante
 				</div>
 
-				<div class="datos-prestamo-2">
-					<table class="datos-prestamo-2-table">
-						<tr>
-							<td>Categoria Prestamo</td>
-							<td><input type="text" class="categoria-prestamo-field"></td>
-						</tr>
-						<tr>
-							<td>Fecha para descuento</td>
-							<td><input type="text" class="fecha-descuento-field"></td>
-						</tr>
-					</table>
+				<table class="sp-header-table-solicitante">
+					<tr>
+						<td>Codigo de empleado</td>
+						<td>
+							<div class="codigo-empleado-field"> 
+								<input type="text" ng-model="solicitante.codigoEmpleado"><a class="icon-uniE601 icon-buscar" href=""></a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Codigo del socio</td>
+						<td> 
+							<div class="codigo-socio-field"> 
+								<input type="text" ng-model="solicitante.codigoSocio"><a class="icon-uniE601 icon-buscar" href=""></a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Representante</td>
+						<td><input class="cod-repr" type="text" ng-model="solicitante.representanteCodigo"> <input class="descrp-repr" type="text" ng-model="solicitante.representanteNombre"></td>
+					</tr>
+					<tr>
+						<td>Auxiliar</td>
+						<td><input type="text" ng-model="solicitante.auxiliar"></td>
+					</tr>
+				</table>
 
-					<div class="descontar">
-						<span>Descontar</span>
-						<select name="descontar" id="descontar">
-							<option value="Quincenal">Quincenal</option>
-							<option value="Mensual">Mensual</option>
-						</select>
-						
-						<div class="descuento-mensual">
-							<input type="radio"> 1ra
-							<input type="radio"> 2da								
-						</div>
+				<table class="sp-header-table-solicitante2">
+					<tr>
+						<td>Cedula</td>
+						<td><input type="text" ng-model="solicitante.cedula"></td>
+					</tr>
+					<tr>
+						<td>Salario</td>
+						<td><input type="text" ng-model="solicitante.salario"></td>
+					</tr>
+					<tr>
+						<td>Cobrador</td>
+						<td><input type="text" ng-model="solicitante.cobrador"></td>
+					</tr>
+					<tr>
+						<td>Autorizado por</td>
+						<td><input type="text" ng-model="solicitante.autorizadoPor"></td>
+					</tr>
+				</table>
 
+			</section>			
+		
+			<section class="sp-datos-prestamo">
+				<div class="sub-menu-sp">	
+					Datos del Prestamo
+				</div>
+
+				<div class="datos-prestamo-content">
+
+					<div class="datos-prestamo-1">
+						<table class="datos-prestamo-1-table">
+							<tr>
+								<td>
+									<input type="text" class="monto-field" ng-model="solicitud.montoSolicitado">
+									<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
+								</td>
+								<td>
+									<div class="fecha-prestamo">
+										<span class="fecha-solicitud-field">Fecha Solicitud</span>
+										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">Disponible para garantia</td>
+							</tr>
+							<tr>
+								<td>Ahorros Capitalizados</td>
+								<td><input type="text" ng-model="solicitud.ahorrosCapitalizados"></td>
+							</tr>
+							<tr>
+								<td>Deudas Prestamos</td>
+								<td><input type="text" ng-model="solicitud.deudasPrestamos"></td>
+							</tr>
+							<tr>
+								<td>Prestaciones Laborales</td>
+								<td><input type="text" ng-model="solicitud.prestacionesLaborales"></td>
+							</tr>
+							<tr>
+								<td>Valor garantizado</td>
+								<td><input type="text" ng-model="solicitud.valorGarantizado"></td>
+							</tr>
+							<tr>
+								<td>Neto a desembolsar</td>
+								<td><input class="monto-desembolsar-field" type="text" ng-model="solicitud.netoDesembolsar"></td>
+							</tr>
+							<tr>
+								<td colspan="2">Nota/Observacion</td>
+							</tr>
+							<tr>
+								<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9" ng-model="solicitud.nota"></textarea></td>
+							</tr>
+
+							<tr>
+								<td colspan="2">
+									<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
+									<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
+								</td>
+							</tr>
+
+						</table>
 					</div>
 
-
-					<div class="unificar-prestamos-sec">
-						<div class="unificar-prestamos-title">
-							Unificar Prestamos
-						</div>
-						<table class="unificar-prestamos-table">
+					<div class="datos-prestamo-2">
+						<table class="datos-prestamo-2-table">
 							<tr>
-								<td><input type="checkbox"></td>
-								<td>Prestamo</td>
-								<td>Capital</td>
+								<td>Categoria Prestamo</td>
+								<td><input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo"></td>
 							</tr>
 							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-														<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
+								<td>Fecha para descuento</td>
+								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento"></td>
 							</tr>
 						</table>
-						<button class="Boton boton-unificar-prestamos">Unificar</button>
-						
-					</div>
 
-					<div class="otros-datos">
-						
+						<div class="descontar">
+							<span>Descontar</span>
+							<select name="descontar" id="descontar" ng-model="solicitud.descontar">
+								<option value="Quincenal">Quincenal</option>
+								<option value="Mensual">Mensual</option>
+							</select>
+							
+							<div class="descuento-mensual">
+								<input type="radio" ng-model="solicitud.q1"> 1ra
+								<input type="radio" ng-model="solicitud.q2"> 2da								
+							</div>
 
-						<div class="otros-datos-info">
-							<table class="otros-datos-info-table">
-								<tr>
-									<td>Tasa de interes anual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Tasa de interes mensual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Cantidad de cuotas</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Valor de Cuotas capital</td>
-									<td><input type="text"></td>
-								</tr>
-
-								<tr>
-									<td>Fecha Aprobacion</td>
-									<td><input type="text"></td>
-								</tr>
-								
-								<tr>
-									<td>Fecha Rechazo</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Prestamo #</td>
-									<td><input type="text"></td>
-								</tr>
-							</table>
 						</div>
+
+						<div class="unificar-prestamos-sec">
+							<div class="unificar-prestamos-title">
+								Unificar Prestamos
+							</div>
+
+							<table class="unificar-prestamos-table">
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>Prestamo</td>
+									<td>Capital</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>00048875</td>
+									<td>20,500.56</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>00048875</td>
+									<td>20,500.56</td>
+								</tr>
+									
+							</table>
+							<button class="Boton boton-unificar-prestamos">Unificar</button>
+							
+						</div>
+
+						<div class="otros-datos">
+
+							<div class="otros-datos-info">
+								<table class="otros-datos-info-table">
+									<tr>
+										<td>Tasa de interes anual</td>
+										<td><input type="text" ng-model="solicitud.tasaInteresAnual"></td>
+									</tr>
+									<tr>
+										<td>Tasa de interes mensual</td>
+										<td><input type="text" ng-model="solicitud.tasaInteresMensual"></td>
+									</tr>
+									<tr>
+										<td>Cantidad de cuotas</td>
+										<td><input type="text" ng-model="solicitud.cantidadCuotas"></td>
+									</tr>
+									<tr>
+										<td>Valor de Cuotas capital</td>
+										<td><input type="text" ng-model="solicitud.valorCuotas"></td>
+									</tr>
+
+									<tr>
+										<td>Fecha Aprobacion</td>
+										<td><input type="text" ng-model="solicitud.fechaAprobacion"></td>
+									</tr>
+									
+									<tr>
+										<td>Fecha Rechazo</td>
+										<td><input type="text" ng-model="solicitud.fechaRechazo"></td>
+									</tr>
+									<tr>
+										<td>Prestamo #</td>
+										<td><input type="text" ng-model="solicitud.prestamo"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
 					</div>
 
-				</div>
-
-			</div> 
+				</section> 
 		</section>				
+
 	</div>
 
 
