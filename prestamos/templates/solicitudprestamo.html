@@ -29,7 +29,7 @@
 				
 			<div class="filtro-posteadas">
 				<span>Estatus</span>
-				<select name="estatus" id="estatus" ng-change="solicitudesprestamosEstatus(estatus)" ng-model="estatus">
+				<select name="estatus" id="estatus" ng-change="solicitudesprestamosEstatus(estatus)" ng-model="estatus" class="field-choices">
 					<option value="T">Todas</option>
 					<option value="P">En Proceso</option>
 					<option value="A">Aprobados</option>
@@ -55,10 +55,10 @@
 					</tr>
 
 					<tr class="listado-sp-detail" ng-repeat="solicitud in solicitudes">
-						<td><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)"> </td>
-						<td>[[solicitud.estatus]]</td>
+						<td><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)" ng-disabled="[[solicitud.estatus | estatusSolicitud]]"> </td>
+						<td class="estatus-[[solicitud.estatus | lowercase]]">[[solicitud.estatus | estatusName]]</td>
 						<td> <a class="sp-field" title="Ver detalle..." href="">[[solicitud.noSolicitud]]</a> </td>
-						<td>[[solicitud.fechaSolicitud]]</td>
+						<td>[[solicitud.fechaSolicitud | date : 'dd-MM-yyyy']]</td>
 						<td>[[solicitud.codigoSocio]]</td>
 						<td>[[solicitud.socio]]</td>
 						<td>[[solicitud.montoSolicitado | number : 2]]</td>
@@ -71,8 +71,8 @@
 			</section>
 
 				<div class="botones-acciones-solicitud-prestamo-listado">
-					<button class="Boton boton-aprobar-sp"> Aprobar</button>
-					<button class="Boton boton-rechazar-sp"> Rechazar</button>
+					<button class="Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'A')"> Aprobar</button>
+					<button class="Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'R')"> Rechazar</button>
 					
 				</div>
 		</section>
@@ -185,11 +185,11 @@
 							</tr>
 							<tr>
 								<td>Prestaciones Laborales</td>
-								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()"></td>
+								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()" format="number"></td>
 							</tr>
 							<tr>
 								<td>Valor garantizado</td>
-								<td><input type="text" class="align-right" ng-model="solicitud.valorGarantizado" ng-change="montoNeto()"></td>
+								<td><input type="text" class="align-right" ng-model="solicitud.valorGarantizado" ng-change="montoNeto()" format="number"></td>
 							</tr>
 							<tr>
 								<td>Disponible</td>
@@ -209,7 +209,7 @@
 							<tr>
 								<td colspan="2">
 									<button class="Boton icon-save boton-guardar-solicitud" type="submit">Guardar</button>
-									<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
+									<button class="Boton icon-delete boton-cancelar-solicitud" ng-click="cancelarSolicitud($event)">Cancelar</button>
 								</td>
 							</tr>
 
@@ -306,7 +306,6 @@
 								</table>
 							</div>
 						</div>
-
 						<div class="unificar-prestamos-sec" ng-if="1 == 1">
 							<div class="unificar-prestamos-title">
 								Unificar Prestamos

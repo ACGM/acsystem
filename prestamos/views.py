@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from django.http import HttpResponse, JsonResponse
 
 from rest_framework import serializers, viewsets
@@ -16,7 +16,7 @@ from administracion.models import CategoriaPrestamo, Cobrador, Representante, So
 import json
 import math
 import decimal
-
+import datetime
 
 #Vista para Maestra de Prestamos
 class MaestraPrestamosView(TemplateView):
@@ -69,10 +69,10 @@ class SolicitudPrestamoView(TemplateView):
 			SolPrestamo.representante = representante
 			SolPrestamo.cobrador = cobrador
 			SolPrestamo.autorizadoPor = autorizadoPor
-			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'])
+			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
 			# SolPrestamo.prestacionesLaborales = solicitud['prestacionesLaborales'] if solicitud['prestacionesLaborales'] != None else 0
 			# SolPrestamo.valorGarantizado = solicitud['valorGarantizado'] if solicitud['valorGarantizado'] != None else 0
-			SolPrestamo.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'])
+			SolPrestamo.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
 			SolPrestamo.fechaParaDescuento = fechaDescuento
@@ -80,7 +80,7 @@ class SolicitudPrestamoView(TemplateView):
 			SolPrestamo.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual'])
 			SolPrestamo.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
 			SolPrestamo.cantidadCuotas = solicitud['cantidadCuotas']
-			SolPrestamo.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'])
+			SolPrestamo.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
 
 			SolPrestamo.userLog = User.objects.get(username=request.user.username)
 
@@ -204,3 +204,27 @@ class SolicitudPrestamoById(DetailView):
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+# Aprobar/Rechazar solicitudes de prestamos
+class AprobarRechazarSolicitudesPrestamosView(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			solicitudes = data['solicitudes']
+			accion = data['accion']
+
+			for solicitud in solicitudes:
+				oSolicitud = SolicitudPrestamo.objects.get(noSolicitud=solicitud['noSolicitud'])
+				oSolicitud.estatus = accion
+				oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
+				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' else None
+				oSolicitud.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)

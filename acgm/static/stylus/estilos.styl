@@ -448,6 +448,7 @@ footer
 .field-choices //CLASE para campos de tiene dropdown/combobox
 	background mamey
 	color white
+	outline none
 
 .field-short //CLASE para campos cortos
 	width 4em
@@ -1670,6 +1671,15 @@ footer
 		margin-right .4em
 
 //SOLICITUD DE PRESTAMO
+.estatus-p
+	background amarillo
+.estatus-c, .estatus-r
+	background red
+	color white
+.estatus-a
+	background verdeClarito
+	color verdeMuySuave
+
 .menu-entrada-sp-listado
 	position absolute
 	right 4em
@@ -1683,9 +1693,14 @@ footer
 	& td
 		padding .1em .15em .1em .1em
 		border 1px solid black
-		&:nth-child(1),&:nth-child(2) 
+		&:nth-child(1),
 			text-align center
-		&:nth-child(7),&:nth-child(8)
+		&:nth-child(2)
+			text-align left
+		&:nth-child(3)
+			padding 0 0 0 .3em
+		&:nth-child(7),
+		&:nth-child(8)
 			text-align right
 			padding 0 .3em
 		
@@ -1812,6 +1827,9 @@ footer
 .fecha-solicitud-field-t
 	width 5.5em
 	text-align right
+	padding-right .2em
+	background verdeMuySuave
+	border 1px solid verde
 
 .datos-prestamo-1
 	margin-left 1em
@@ -1923,7 +1941,10 @@ footer
 	width 85%
 
 .fecha-descuento-field
-	width 6em
+	width 5.5em
+	background verdeMuySuave
+	border 1px solid verde
+	padding-left .2em
 
 .unificar-prestamos-sec
 	border 1px solid lightgray

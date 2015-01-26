@@ -2,6 +2,31 @@
 
   angular.module('cooperativa.solicitudprestamo', ['ngAnimate'])
 
+    .filter('estatusSolicitud', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('A', true)
+                .replace('R', true)
+                .replace('C', true);
+        return input;
+      }
+    })
+
+    .filter('estatusName', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('A', 'Aprobado')
+                .replace('P', 'En Proceso')
+                .replace('R', 'Rechazado')
+                .replace('C', 'Cancelado');
+        return input;
+      }
+    })
+
     .factory('SolicitudPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       //Guardar Solicitud de Prestamo
@@ -12,6 +37,21 @@
                                                               'solicitud': solicitud, 
                                                               'fechaSolicitud': fechaSolicitud,
                                                               'fechaDescuento': fechaDescuento})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      // Aprobar/Rechazar solicitudes de prestamos.
+      function AprobarRechazarSolicitudes(solicitudes, accion) {
+        var deferred = $q.defer();
+
+        $http.post('/prestamos/solicitudP/AprobarRechazar', JSON.stringify({'solicitudes': solicitudes, 'accion': accion})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -149,13 +189,15 @@
 
 
       return {
-        solicitudesprestamos: solicitudesprestamos,
-        solicitudesprestamosBySocio: solicitudesprestamosBySocio,
-        solicitudesprestamosByEstatus: solicitudesprestamosByEstatus,
-        SocioByCodigoEmpleado: SocioByCodigoEmpleado,
-        categoriasPrestamos: categoriasPrestamos,
-        cantidadCuotasPrestamoByMonto: cantidadCuotasPrestamoByMonto,
-        guardaSolicitudPrestamo: guardaSolicitudPrestamo
+        solicitudesprestamos          : solicitudesprestamos,
+        solicitudesprestamosBySocio   : solicitudesprestamosBySocio,
+        solicitudesprestamosByEstatus : solicitudesprestamosByEstatus,
+        SocioByCodigoEmpleado         : SocioByCodigoEmpleado,
+        categoriasPrestamos           : categoriasPrestamos,
+        cantidadCuotasPrestamoByMonto : cantidadCuotasPrestamoByMonto,
+        guardaSolicitudPrestamo       : guardaSolicitudPrestamo,
+        AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
+        SolicitudPById                : SolicitudPById
       };
 
     }])
@@ -259,12 +301,13 @@
 
               $scope.verTodos = '';
               $scope.NoFoundDoc = '';
+
             } else {
-              throw "No existen solicitudes con el estatus : " + estatus;
+              throw "No existen solicitudes con el estatus : " + $filter('estatusName')(estatus);
             }
           },
             function() {
-              $scope.NoFoundDoc = "No existen solicitudes con el estatus : " + estatus;
+              $scope.NoFoundDoc = "No existen solicitudes con el estatus : " + $filter('estatusName')(estatus);
             }
           );
         } catch (e) {
@@ -291,7 +334,8 @@
           SolicitudPrestamoService.cantidadCuotasPrestamoByMonto(monto).then(function (data) {
             if(data.length > 0) {
               $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
-              $scope.solicitud.valorCuotas = $filter('number')(monto / data[0].cantidadQuincenas,2);
+
+              $scope.solicitud.valorCuotas = $filter('number')(monto.replace(',','') / data[0].cantidadQuincenas,2);
             }
           },
           function() {
@@ -313,8 +357,6 @@
 
         var disponible = ahorros + garantizado + prestaciones - deudas;
         $scope.solicitud.montoDisponible = $filter('number')(disponible,2);
-
-console.log(disponible);
 
         if(montoSolicitado > disponible) {
           $scope.solicitud.netoDesembolsar = '';
@@ -413,12 +455,6 @@ console.log(disponible);
         }
       }
 
-      // $scope.formatoNumber = function($event) {
-      //   // $event.preventDefault();
-
-      //   $scope.solicitud.montoSolicitado += $filter('number')($scope.solicitud.montoSolicitado,2).toString();
-      // }
-
       //Nueva Entrada de Factura
       $scope.nuevaEntrada = function(usuario) {
         $scope.solicitante = {};
@@ -472,6 +508,11 @@ console.log(disponible);
           var fechaP = $scope.solicitud.fechaDescuento.split('/');
           var fechaDescuentoFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
+          if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd') || fechaSolicitudFormatted < $filter('date')(Date.now(),'yyyy-MM-dd')) {
+            $scope.mostrarError("La fecha para descuento/solicitud no puede ser menor a la fecha de hoy.");
+            throw "La fecha para descuento/solicitud no puede ser menor a la fecha de hoy.";
+          }
+
           SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante,$scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
             if(isNaN(parseInt(data))) {
               $scope.mostrarError(data);
@@ -491,6 +532,35 @@ console.log(disponible);
         catch (e) {
           $scope.mostrarError(e);
         }
+      }
+
+      // Cancelar llenado de solicitud 
+      $scope.cancelarSolicitud = function($event) {
+        $event.preventDefault();
+
+        $scope.nuevaEntrada();
+        $scope.toggleLSP();
+      } 
+
+      // Aprobar/Rechazar solicitudes de prestamos
+      $scope.AprobarRechazarSolicitudesPrestamos = function($event, accion) {
+        $event.preventDefault();
+
+        try {
+          SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
+            if(data == 1) {
+              $scope.listadoSolicitudes();
+            }
+          },
+          function() {
+            $scope.mostrarError(data);
+            throw data;
+          });
+
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+
       }
 
       // // Visualizar Documento (Factura Existente - desglose)

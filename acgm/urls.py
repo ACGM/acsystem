@@ -10,7 +10,7 @@ from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
-                            SolicitudPrestamoById
+                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import DiarioGeneralView
@@ -136,12 +136,16 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
     
+    url(r'^prestamos/solicitudP/AprobarRechazar$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
+
     url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
 
     url(r'^api/prestamos/solicitudes/prestamos/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
     url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+
+    
 
 
     #Ahorro
