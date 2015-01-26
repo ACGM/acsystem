@@ -9,7 +9,7 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import ListadoFacturasSerializer, ListadoCategoriaPrestamoSerializer
+from .serializers import ListadoFacturasSerializer
 
 from .models import Factura, Detalle, OrdenDespachoSuperCoop
 from administracion.models import Producto, Socio, CategoriaPrestamo
@@ -214,11 +214,4 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 
 	queryset = Factura.objects.all()
 	serializer_class = ListadoFacturasSerializer
-
-
-# Categorias de Prestamos
-class ListadoCategoriasPrestamosViewSet(viewsets.ModelViewSet):
-
-	queryset = CategoriaPrestamo.objects.all()
-	serializer_class = ListadoCategoriaPrestamoSerializer
 

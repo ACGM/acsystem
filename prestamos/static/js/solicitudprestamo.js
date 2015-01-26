@@ -4,20 +4,23 @@
 
     .factory('SolicitudPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
-      // //Guardar Desembolso Caja
-      // function guardaDesembolso(dataH, dataD) {
-      //   var deferred = $q.defer();
+      //Guardar Solicitud de Prestamo
+      function guardaSolicitudPrestamo(solicitante, solicitud, fechaSolicitud, fechaDescuento) {
+        var deferred = $q.defer();
 
-      //   $http.post('/desembolso/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
-      //     success(function (data) {
-      //       deferred.resolve(data);
-      //     }).
-      //     error(function (data) {
-      //       deferred.resolve(data);
-      //     });
+        $http.post('/prestamos/solicitudP/', JSON.stringify({'solicitante': solicitante, 
+                                                              'solicitud': solicitud, 
+                                                              'fechaSolicitud': fechaSolicitud,
+                                                              'fechaDescuento': fechaDescuento})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
 
-      //   return deferred.promise;
-      // }
+        return deferred.promise;
+      }
 
       //Llenar el listado de Solicitudes
       function solicitudesprestamos(noSolicitud) {
@@ -42,9 +45,9 @@
         var url = "";
 
         if(!isNaN(dato)) {
-          url = "/api/prestamos/solicitudes/prestamos/codigo/dato/".replace("dato", dato);
+          url = "/api/prestamos/solicitudes/prestamos/codigo/dato/?format=json".replace("dato", dato);
         } else {
-          url = "/api/prestamos/solicitudes/prestamos/nombre/dato/".replace("dato", dato);
+          url = "/api/prestamos/solicitudes/prestamos/nombre/dato/?format=json".replace("dato", dato);
         }
 
         $http.get(url)
@@ -79,11 +82,80 @@
         return deferred.promise;
       }
 
+      //Socio por Codigo de Empleado
+      function SocioByCodigoEmpleado(codigo) {
+        var deferred = $q.defer();
+
+        if(codigo != undefined) {
+          url = '/api/socio/idempleado/codigo/?format=json'.replace('codigo', codigo);
+        } else {
+          url = '/api/socio/idempleado/?format=json'
+        }
+
+        http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Categorias de prestamos.
+      function categoriasPrestamos(id) {
+        var deferred = $q.defer();
+
+        $http.get('/api/categoriasPrestamos/?format=json')
+          .success(function (data) {
+            if (id != undefined) {
+              deferred.resolve(data.filter(function (item) {
+                return item.id == id;
+
+              }));
+            } else {
+              deferred.resolve(data.filter(function (registros) {
+                return registros.tipo == 'PR';
+              }));
+            }
+          });
+
+        return deferred.promise;
+      }
+
+      //Cantidad de Cuotas de Prestamo (parametro: monto)
+      function cantidadCuotasPrestamoByMonto(monto) {
+        var deferred = $q.defer();
+        var url = "/api/cantidadCuotasPrestamos/monto/?format=json".replace("monto", monto.toString().replace(',',''));
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Buscar una solicitud en especifico (Desglose)
+      function SolicitudPById(NoSolicitud) {
+        var deferred = $q.defer();
+        var doc = NoSolicitud != undefined? NoSolicitud : 0;
+
+        $http.get('/solicitudPjson/?nosolicitud={solicitud}&format=json'.replace('{solicitud}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
 
       return {
         solicitudesprestamos: solicitudesprestamos,
         solicitudesprestamosBySocio: solicitudesprestamosBySocio,
-        solicitudesprestamosByEstatus: solicitudesprestamosByEstatus
+        solicitudesprestamosByEstatus: solicitudesprestamosByEstatus,
+        SocioByCodigoEmpleado: SocioByCodigoEmpleado,
+        categoriasPrestamos: categoriasPrestamos,
+        cantidadCuotasPrestamoByMonto: cantidadCuotasPrestamoByMonto,
+        guardaSolicitudPrestamo: guardaSolicitudPrestamo
       };
 
     }])
@@ -92,14 +164,16 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', 'SolicitudPrestamoService', 
-                                        function ($scope, $filter, SolicitudPrestamoService) {
+    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', 'SolicitudPrestamoService', 'FacturacionService',
+                                        function ($scope, $filter, SolicitudPrestamoService, FacturacionService) {
       
       //Inicializacion de variables
-      $scope.showLSP = true;
+      $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
+      $scope.tableSocio = false; //Mostrar tabla que contiene los socios
+      $scope.showLSP = true; //Mostrar el listado de solicitudes
+
       $scope.regAll = false;
       $scope.estatus = 'T';
-
 
       $scope.item = {};
       $scope.solicitudes = {};
@@ -122,6 +196,12 @@
           $scope.ArrowLSP = 'DownArrow';
         }
       }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
 
       //Listado de todas las solicitudes de prestamos
       $scope.listadoSolicitudes = function(noSolicitud) {
@@ -171,18 +251,133 @@
 
       $scope.solicitudesprestamosEstatus = function(estatus) {
 
-        SolicitudPrestamoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
-          $scope.solicitudes = data;
+        try {
+          SolicitudPrestamoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
 
-          if(data.length > 0) {
-            $scope.verTodos = '';
-            $scope.NoFoundDoc = '';
-          }
-        },
+            if(data.length > 0) {
+              $scope.solicitudes = data;
+
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            } else {
+              throw "No existen solicitudes con el estatus : " + estatus;
+            }
+          },
+            function() {
+              $scope.NoFoundDoc = "No existen solicitudes con el estatus : " + estatus;
+            }
+          );
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Traer todas las categorias de prestamos (de tipo PRESTAMO)
+      $scope.categoriasPrestamos = function(id) {
+        try {
+          SolicitudPrestamoService.categoriasPrestamos(id).then(function (data) {
+            if(data.length > 0) {
+              $scope.categoriasP = data;
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Cantidad de cuotas (parametro: monto)
+      $scope.getCantidadCuotasPrestamo = function(monto) {
+        try {
+          SolicitudPrestamoService.cantidadCuotasPrestamoByMonto(monto).then(function (data) {
+            if(data.length > 0) {
+              $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
+              $scope.solicitud.valorCuotas = $filter('number')(monto / data[0].cantidadQuincenas,2);
+            }
+          },
           function() {
-            $scope.NoFoundDoc = "No existen solicitudes con el estatus : " + estatus;
-          }
-        );
+            $scope.mostrarError("No existe un rango para el monto neto a desembolsar.");
+            throw "No existe un rango para el monto neto a desembolsar."
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Monto Neto a Desembolsar
+      $scope.montoNeto = function() {
+        var montoSolicitado = $scope.solicitud.montoSolicitado != undefined && $scope.solicitud.montoSolicitado != ''? parseFloat($scope.solicitud.montoSolicitado.replace(',','')) : 0;
+        var ahorros = $scope.solicitud.ahorrosCapitalizados != undefined && $scope.solicitud.ahorrosCapitalizados != ''? $scope.solicitud.ahorrosCapitalizados : 0;
+        var deudas = $scope.solicitud.deudasPrestamos != undefined && $scope.solicitud.deudasPrestamos != ''? $scope.solicitud.deudasPrestamos : 0;
+        var garantizado = $scope.solicitud.valorGarantizado != undefined && $scope.solicitud.valorGarantizado != ''? parseFloat($scope.solicitud.valorGarantizado.replace(',','')) : 0;
+        var prestaciones = $scope.solicitud.prestacionesLaborales != undefined && $scope.solicitud.prestacionesLaborales != ''? parseFloat($scope.solicitud.prestacionesLaborales.replace(',','')) : 0;
+
+        var disponible = ahorros + garantizado + prestaciones - deudas;
+        $scope.solicitud.montoDisponible = $filter('number')(disponible,2);
+
+console.log(disponible);
+
+        if(montoSolicitado > disponible) {
+          $scope.solicitud.netoDesembolsar = '';
+          $scope.mostrarError("El monto solicitado no puede ser mayor a lo que tiene disponible.");
+          throw "no disponible";
+        } else {
+          $scope.solicitud.netoDesembolsar = $filter('number')(montoSolicitado, 2);
+          $scope.getCantidadCuotasPrestamo($scope.solicitud.netoDesembolsar);
+
+          $scope.errorShow = false;
+        }
+
+      }
+
+      //Traer Socios
+      $scope.getSocio = function($event) {
+        $event.preventDefault();
+
+        $scope.tableSocio = true;
+
+        if($scope.solicitante.codigoEmpleado != undefined) {
+          FacturacionService.socios().then(function (data) {
+            $scope.socios = data.filter(function (registro) {
+              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
+            });
+
+            if($scope.socios.length > 0){
+              $scope.tableSocio = true;
+              $scope.socioNoExiste = '';
+            } else {
+              $scope.tableSocio = false;
+              $scope.socioNoExiste = 'No existe el socio';
+            }
+
+          });
+        } else {
+          FacturacionService.socios().then(function (data) {
+            $scope.socios = data;
+            $scope.socioCodigo = '';
+          });
+        }
+      }
+
+       //Seleccionar Socio
+      $scope.selSocio = function($event, s) {
+        $event.preventDefault();
+
+        $scope.solicitante.codigoEmpleado = s.codigo;
+        $scope.solicitante.nombreEmpleado = s.nombreCompleto;
+        $scope.solicitante.cedula = s.cedula;
+        $scope.solicitante.salario = $filter('number')(s.salario,2);
+        $scope.tableSocio = false;
+      }
+
+      //Seleccionar Socio
+      $scope.selCP = function($event, cp) {
+        $event.preventDefault();
+
+        $scope.solicitud.categoriaPrestamoId = cp.id;
+        $scope.solicitud.categoriaPrestamo = cp.descripcion;
+        $scope.solicitud.tasaInteresAnual = cp.interesAnualSocio;
+        $scope.solicitud.tasaInteresMensual = cp.interesAnualSocio / 12;
+        $scope.showCP = false;
       }
 
       //Cuando se le de click al checkbox del header.
@@ -218,127 +413,85 @@
         }
       }
 
+      // $scope.formatoNumber = function($event) {
+      //   // $event.preventDefault();
+
+      //   $scope.solicitud.montoSolicitado += $filter('number')($scope.solicitud.montoSolicitado,2).toString();
+      // }
+
       //Nueva Entrada de Factura
       $scope.nuevaEntrada = function(usuario) {
-        $scope.producto = '';
-        $scope.almacen = '';
-        $scope.subtotal = '';
-        $scope.descuento = '';
-        $scope.total = '';
+        $scope.solicitante = {};
+        $scope.solicitud = {};
 
-        $scope.socioCodigo = '';
-        $scope.socioNombre = '';
-        
-        $scope.dataH = {};
-        $scope.dataD = [];
-        $scope.productos = [];
+        $scope.solicitante.representanteCodigo = 16; //CAMBIAR ESTO
+        $scope.solicitante.representanteNombre = 'EMPRESA'; //CAMBIAR ESTO
+        $scope.solicitante.auxiliar = usuario;
+        $scope.solicitante.cobrador = usuario;
+        $scope.solicitante.autorizadoPor = usuario;
 
-        $rootScope.mostrarOrden(false);
-        $scope.showLF = false;
-        $scope.ArrowLF = 'DownArrow';
-        $scope.BotonOrden = '';
-        $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-        $scope.dataH.vendedor = usuario;
-        $scope.dataH.terminos = 'CO';
-        $scope.dataH.posteo = 'N';
+        $scope.solicitud.solicitudNo = 0;
+        $scope.solicitud.valorGarantizado = '';
+        $scope.solicitud.prestacionesLaborales = '';
+        $scope.solicitud.nota = '';
+        $scope.solicitud.deudasPrestamos = '';
+        $scope.solicitud.fechaAprobacion = '';
+        $scope.solicitud.fechaRechazo = '';
+        $scope.solicitud.prestamo = '';
+
+        $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.solicitud.ahorrosCapitalizados = 500;
+        $scope.solicitud.deudasPrestamos = 100;
+
+        $scope.showLSP = false;
+        $scope.ArrowLSP = 'DownArrow';
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+      }
 
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
       }
 
 
+      //Guardar Factura
+      $scope.guardarSolicitud = function($event) {
+        $event.preventDefault();
 
-      // //Buscar un cheque en especifico
-      // $scope.filtrarPorNoCheque = function(NoCheque) {
-      //   try {
-      //     FondosCajasService.byNoCheque(NoCheque).then(function (data) {
-      //       $scope.desembolsos = data;
+        try {
+          if (!$scope.SolicitudForm.$valid) {
+            throw "Verifique que todos los campos esten completados correctamente.";
+          }
 
-      //       if(data.length > 0) {
-      //         $scope.verTodos = '';
-      //         $scope.NoFoundDoc = '';
-      //       }
-      //     }, 
-      //       (function () {
-      //         $scope.NoFoundDoc = 'No se encontró el cheque #' + NoCheque;
-      //       }
-      //     ));          
-      //   } catch (e) {
-      //     console.log(e);
-      //   }
-      // }
+          var fechaS = $scope.solicitud.fechaSolicitud.split('/');
+          var fechaSolicitudFormatted = fechaS[2] + '-' + fechaS[1] + '-' + fechaS[0];
 
-      // //Buscar Cheque por ENTER
-      // $scope.buscarCheque = function($event, NoCheque) {
-      //   if($event.keyCode == 13) {
-      //     $scope.filtrarPorNoCheque(NoCheque);
-      //   }
-      // }
+          var fechaP = $scope.solicitud.fechaDescuento.split('/');
+          var fechaDescuentoFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-      // //Guardar Factura
-      // $scope.guardarFactura = function($event) {
-      //   $event.preventDefault();
+          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante,$scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
+            if(isNaN(parseInt(data))) {
+              $scope.mostrarError(data);
+              throw data;
+            }
+            $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data, 8)
 
-      //   try {
-      //     if (!$scope.FacturaForm.$valid) {
-      //       throw "Verifique que todos los campos esten completados correctamente.";
-      //     }
+            $scope.errorShow = false;
+            $scope.listadoSolicitudes();
+          },
+          (function () {
+            $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
+          }
+          ));
 
-      //     var fechaP = $scope.dataH.fecha.split('/');
-      //     var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
-
-      //     var dataH = new Object();
-
-      //     dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : 0;
-      //     dataH.fecha = fechaFormatted;
-      //     dataH.terminos = $scope.dataH.terminos;
-      //     dataH.vendedor = $scope.dataH.vendedor;
-      //     dataH.almacen = $scope.dataH.almacen;
-      //     dataH.socio = $scope.socioCodigo != undefined? $scope.socioCodigo : null;
-      //     dataH.orden = $scope.orden != undefined? $scope.orden : null;
-
-      //     if ($scope.dataD.length == 0) {
-      //       throw "Debe agregar un producto al menos.";
-      //     }
-
-      //     FacturacionService.guardarFact(dataH,$scope.dataD).then(function (data) {
-      //       $rootScope.factura = data;
-      //       $scope.dataH.factura = $filter('numberFixedLen')(data, 8)
-
-      //       $scope.errorShow = false;
-      //       $scope.listadoFacturas();
-
-      //       //SI ES A CREDITO LA FACTURA SE DEBE CREAR UNA ORDEN DE DESPACHO SUPERRCOOP
-      //       if($scope.dataH.terminos == "CR") {
-
-      //         $scope.mostrarOrden(true);
-      //         $scope.disabledButton = 'Boton-disabled';
-      //         $scope.disabledButtonBool = true;
-      //         $scope.BotonOrden = 'BotonOrden';
-
-      //         $rootScope.total = $scope.total;
-      //         $rootScope.getCategoriaPrestamo($scope.dataH.vendedor);
-
-      //         if ($rootScope.oid > 0) {
-      //           $rootScope.guardarOrden($event);
-      //         }
-
-      //         } else {              
-      //           $scope.nuevaEntrada();
-      //           $scope.toggleLF();
-      //         }
-      //     },
-      //     (function () {
-      //       $rootScope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
-      //     }
-      //     ));
-
-      //   }
-      //   catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
-      // }
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
 
       // // Visualizar Documento (Factura Existente - desglose)
       // $scope.FactFullById = function(NoFact, usuario) {
@@ -385,152 +538,6 @@
 
       //   $scope.toggleLF();
       // }
-
-
-      // //Eliminar producto de la lista de entradas
-      // $scope.delProducto = function($event, prod) {
-      //   $event.preventDefault();
-      //   try {
-      //     $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
-
-      //     $scope.calculaTotales();
-          
-      //   } catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
-      // }
-
-      // //Traer almacenes
-      // $scope.getAlmacenes = function() {
-      //   InventarioService.almacenes().then(function (data) {
-      //     $scope.almacenes = data;
-      //   });
-      // }
-
-
-
-      // // Mostrar/Ocultar error
-      // $scope.toggleError = function() {
-      //   $scope.errorShow = !$scope.errorShow;
-      // }
-
-      // // Funcion para mostrar error por pantalla
-      // $rootScope.mostrarError = function(error) {
-      //   $scope.errorMsg = error;
-      //   $scope.errorShow = true;
-      // }
-
-      // //Traer productos
-      // $scope.getProducto = function($event) {
-      //   $event.preventDefault();
-
-      //   $scope.tableProducto = true;
-
-      //   if($scope.producto != undefined) {
-      //     InventarioService.productos().then(function (data) {
-      //       $scope.productos = data.filter(function (registro) {
-      //         return $filter('lowercase')(registro.descripcion
-      //                             .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
-      //       });
-
-      //       if($scope.productos.length > 0){
-      //         $scope.tableProducto = true;
-      //         $scope.productoNoExiste = '';
-      //       } else {
-      //         $scope.tableProducto = false;
-      //         $scope.productoNoExiste = 'No existe el producto'
-      //       }
-
-      //     });
-      //   } else {
-      //     InventarioService.productos().then(function (data) {
-      //       $scope.productos = data;
-      //     });
-      //   }
-      // }
-
-      // //Traer productos
-      // $scope.getSocio = function($event) {
-      //   $event.preventDefault();
-
-      //   $scope.tableSocio = true;
-
-      //   if($scope.socioNombre != undefined) {
-      //     FacturacionService.socios().then(function (data) {
-      //       $scope.socios = data.filter(function (registro) {
-      //         return $filter('lowercase')(registro.nombreCompleto
-      //                             .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-      //       });
-
-      //       if($scope.socios.length > 0){
-      //         $scope.tableSocio = true;
-      //         $scope.socioNoExiste = '';
-      //       } else {
-      //         $scope.tableSocio = false;
-      //         $scope.socioNoExiste = 'No existe el socio';
-      //       }
-
-      //     });
-      //   } else {
-      //     FacturacionService.socios().then(function (data) {
-      //       $scope.socios = data;
-      //       $scope.socioCodigo = '';
-      //     });
-      //   }
-      // }
-
-      // //Agregar Producto
-      // $scope.addProducto = function($event, Prod) {
-      //   $event.preventDefault();
-
-      //   Prod.descuento = 0;
-      //   Prod.cantidad = 1;
-      //   $scope.dataD.push(Prod);
-      //   $scope.tableProducto = false;
-
-      //   $scope.calculaTotales();
-      // }
-
-      // //Seleccionar Socio
-      // $scope.selSocio = function($event, s) {
-      //   $event.preventDefault();
-
-      //   $scope.socioNombre = s.nombreCompleto;
-      //   $scope.socioCodigo = s.codigo;
-      //   $scope.tableSocio = false;
-      // }
-
-
-      // // Calcula los totales para los productos
-      // $scope.calculaTotales = function() {
-      //   try {
-      //     var total = 0;
-      //     var subtotal = 0;
-      //     var total_descuento = 0;
-      //     var descuento = 0;
-
-      //     $scope.dataD.forEach(function (item) {
-      //       if (item.descuento != undefined && item.descuento > 0) {
-
-      //         descuento = (item.descuento/100);
-      //         descuento = item.precio * descuento * item.cantidad;
-      //       }
-      //       subtotal += (item.cantidad * item.precio);
-      //       total = subtotal - descuento;
-      //       total_descuento += descuento;
-
-      //     });
-
-      //     $scope.subtotal = $filter('number')(subtotal, 2);
-      //     $scope.total = $filter('number')(total, 2);
-      //     $scope.descuento = $filter('number')(total_descuento, 2);
-
-      //   } catch (e) {
-      //     $rootScope.mostrarError(e);
-
-      //   }  
-      // }
-
 
     }]);
 

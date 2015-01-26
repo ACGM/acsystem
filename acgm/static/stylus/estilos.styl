@@ -336,6 +336,9 @@ footer
 	
 // CLASES GENERICAS
 
+.align-right
+	text-align right
+
 .posteo-N
 	color red
 
@@ -435,7 +438,7 @@ footer
 	text-decoration none
 	color black
 	display block	
-	padding .1em .2em
+	padding .08em .2em
 	height 100%
 		
 	&:hover
@@ -1751,6 +1754,9 @@ footer
 		padding-top -.6em
 		float right
 
+.nombre-empleado-prestamo
+	width 16em
+
 .cod-repr
 	width 2em
 	
@@ -1765,20 +1771,22 @@ footer
 
 .datos-prestamo-content
 	display block
-	overflow hidden
+	// overflow hidden
 	width 85%
+	position relative
 	
 .monto-field
-	font-size 1.5em
-	color mamey
-	text-align right
-	width 6em
-	font-weight bold
 	background amarillo
 	border 1px solid amarilloOscuro
-	padding .1em .2em .1em 0 
 	border-radius 3px 3px 3px 3px 
+	color mamey
 	float left
+	font-size 1.5em
+	font-weight bold
+	outline none
+	padding .1em .2em .1em 0 
+	text-align right
+	width 6em
 
 .ayuda-monto-solicitar
 	font-size 2em
@@ -1825,22 +1833,34 @@ footer
 		&:nth-child(3)
 			& td
 				padding-top .4em
-		&:nth-child(3),&:nth-child(4),&:nth-child(5),&:nth-child(6)
+		&:nth-child(3),
+		&:nth-child(4),
+		&:nth-child(5),
+		&:nth-child(6)
 			& td
 				&:nth-child(even)
 					padding-bottom .3em
 					text-align right
-		&:nth-child(7) //Monto Desembolsar
+					
+		&:nth-child(7) //Monto Disponible
+			& td 
+				&:first-child
+					font-weight bold
+				&:last-child
+					text-align right
+					
+		&:nth-child(8) //Monto Desembolsar
 			& td
 				&:first-child
 					font-weight bold
 				&:last-child
 					text-align right
-		&:nth-child(8) 
+		
+		&:nth-child(9) 
 			& td
 				padding .4em 0 0 0
 		
-		&:nth-child(10)			
+		&:nth-child(11)			
 			& td
 				padding .5em 0 
 
@@ -1848,21 +1868,25 @@ footer
 	width 98%
 	
 .boton-guardar-solicitud
-	height 2.5em
-	width 8em
+	height 4em
+	width 10em
 	float left
 	margin-bottom 3em
 	&:before
 		margin-right .4em
 
 .boton-cancelar-solicitud
-	height 2.5em
-	width 8em
+	height 4em
+	width 10em
 	float right
 	margin-bottom 3em
 	&:before
 		margin-right .4em
-			
+
+.monto-disponible-field
+	background mamey !important
+	color white !important
+
 .monto-desembolsar-field
 	font-size 1.5em
 	color verdeMuyOscuro
@@ -1878,6 +1902,7 @@ footer
 	float left
 	width 48%
 	margin-left 1em
+	position relative
 	
 .datos-prestamo-2-table
 	width 100%
@@ -1889,8 +1914,13 @@ footer
 					width 65%
 					padding-bottom .2em
 
+.categoria-prestamo-id
+	display inline-block
+	
 .categoria-prestamo-field
-	width 98%
+	outline none
+	display inline-block
+	width 85%
 
 .fecha-descuento-field
 	width 6em
@@ -1949,6 +1979,45 @@ footer
 				padding-right .5em
 			&:last-child
 				padding-bottom .3em
+
+    //categorias de prestamo (sub division)
+.content-table-categorias-prestamos
+	position absolute
+	display inline-block
+	top 1.8em
+	right 0	
+	z-index 999
+	
+.categorias-prestamos-table
+	
+	background verdeMuySuave
+	border 1px solid darkblue
+	
+	& tr
+		& td
+			border 1px solid verdeMuyOscuro
+			
+		&:first-child
+			background verde
+			color white
+			& td
+				padding .3em
+				border 1px solid verdeMuyOscuro
+				
+				&:first-child
+					width 2em
+  
+  //socios (sub division)			
+.socios-table-search-prestamo	
+	border 1px solid black
+	position absolute
+	top 1.5em
+	left 6em
+	width 40em
+	z-index 100
+	& tr
+		&:first-child
+			text-align center
 
 //TRANSFERENCIA INVENTARIO
 

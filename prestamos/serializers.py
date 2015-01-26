@@ -13,7 +13,7 @@ class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = SolicitudPrestamo
 		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus')
-		ordering = ('-fechaSolicitud', '-noSolicitud')
+		ordering = ('-noSolicitud',)
 
 
 # Listado de Solicitudes de Ordenes de Despacho

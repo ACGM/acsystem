@@ -238,10 +238,13 @@ class CuotaPrestamo(models.Model):
 	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2)
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
-	cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
+	# cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
 
-	user = models.ForeignKey(User, editable=False)
+	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return 'Monto desde: %s Hasta %s -- %i Cuotas' % (self.montoDesde, self.montoHasta, self.cantidadQuincenas)
 
 	class Meta:
 		ordering = ['-montoDesde']

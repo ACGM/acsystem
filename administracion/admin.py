@@ -72,8 +72,8 @@ class CategoriaPrestamoAdmin(admin.ModelAdmin):
 
 @admin.register(CuotaPrestamo)
 class CuotaPrestamoAdmin(admin.ModelAdmin):
-	list_display = ['id','montoDesde','montoHasta','cantidadQuincenas','cantidadMeses']
-	list_editable = ('montoDesde', 'montoHasta', 'cantidadQuincenas','cantidadMeses')
+	list_display = ['id','montoDesde','montoHasta','cantidadQuincenas']
+	list_editable = ('montoDesde', 'montoHasta', 'cantidadQuincenas')
 
 	def save_model(self, request, obj, form, change):
 		obj.userLog = request.user

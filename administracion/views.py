@@ -1,11 +1,15 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets, serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
-						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer
+						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
+						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer
 
-from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento,CoBeneficiario
+from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, \
+					CategoriaPrestamo, CuotaPrestamo
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
@@ -39,3 +43,24 @@ class DepartamentoViewSet(viewsets.ModelViewSet):
 class CoBeneficiarioViewSet(viewsets.ModelViewSet):
 	queryset=CoBeneficiario.objects.all()
 	serializer_class=CoBeneficiarioSerializer
+
+
+# Categorias de Prestamos
+class ListadoCategoriasPrestamosViewSet(viewsets.ModelViewSet):
+
+	queryset = CategoriaPrestamo.objects.all()
+	serializer_class = ListadoCategoriaPrestamoSerializer
+
+
+# Cantidad de Cuotas (parametro: Monto)
+class CantidadCuotasPrestamosView(APIView):
+
+	serializer_class = CantidadCuotasPrestamosSerializer
+
+	def get(self, request, monto=None):
+		
+		monto = CuotaPrestamo.objects.filter(montoDesde__lte=monto, montoHasta__gte=monto)
+
+		response = self.serializer_class(monto, many=True)
+		return Response(response.data)
+

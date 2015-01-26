@@ -503,7 +503,7 @@
         }
       }
 
-      //Traer productos
+      //Traer Socios
       $scope.getSocio = function($event) {
         $event.preventDefault();
 

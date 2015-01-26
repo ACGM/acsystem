@@ -80,16 +80,24 @@
     }
   });
 
-  app.factory('UtilidadService', function () {
-    // Funcion para mostrar error por pantalla
-      function mostrarError(error) {
-        errorMsg = error;
-        errorShow = true;
-      }
+  app.directive('format', ['$filter', function ($filter) {
+    return {
+        require: '?ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            if (!ctrl) return;
 
-      return {
-        mostrarError: mostrarError
-      };
-  });
+
+            ctrl.$formatters.unshift(function (a) {
+                return $filter(attrs.format)(ctrl.$modelValue)
+            });
+
+            ctrl.$parsers.unshift(function (viewValue) {
+                var plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, '');
+                elem.val($filter(attrs.format)(plainNumber));
+                return plainNumber;
+            });
+        }
+    };
+  }]);
 
 })();

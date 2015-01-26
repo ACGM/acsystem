@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario
+from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, CategoriaPrestamo, \
+					CuotaPrestamo, CuotaOrdenes
+
 
 # Listado de Productos
 class ProductoSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,7 +33,7 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = Socio
-		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento')
+		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento', 'cedula', 'salario', )
 
 
 class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,3 +47,21 @@ class CoBeneficiarioSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model=CoBeneficiario
 		fields=('socio','nombre')
+
+
+# Categorias de Prestamos
+class ListadoCategoriaPrestamoSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = CategoriaPrestamo
+		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio', 'interesAnualEmpleado', 'interesAnualDirectivo')
+		ordering = ('id',)
+
+
+# Cantidad de Cuotas de Prestamos (parametro Monto)
+class CantidadCuotasPrestamosSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = CuotaPrestamo
+		fields = ('montoDesde', 'montoHasta', 'cantidadQuincenas')
+		ordering = ('-montoDesde',)

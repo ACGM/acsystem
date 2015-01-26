@@ -9,7 +9,8 @@ from inventario.views import InventarioView, TransferenciaInvView, EntradaInvent
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
-                            SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre
+                            SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
+                            SolicitudPrestamoById
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import DiarioGeneralView
@@ -17,10 +18,11 @@ from cuenta.views import DiarioGeneralView
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
-from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet
+from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet,\
+                                ListadoCategoriasPrestamosViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
-from facturacion.views import ListadoFacturasViewSet, ListadoCategoriasPrestamosViewSet
+from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
@@ -30,6 +32,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 
 #APIView (API)
+from administracion.views import CantidadCuotasPrestamosView
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
@@ -57,6 +60,7 @@ router.register(r'retiroAhorro',RetirosAhorroViewSet)
 router.register(r'InteresAhorro',InteresAhorroViewSet)
 
 #administracion
+router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
 router.register(r'suplidor',SuplidorViewSet)
 router.register(r'tipoSuplidor',SuplidorTipoViewSet)
 router.register(r'socio',SocioViewSet)
@@ -75,7 +79,6 @@ router.register(r'producto', ProductoViewSet)
 
 #facturacion
 router.register(r'facturas', ListadoFacturasViewSet)
-router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
 
 #fondos de cajas
 router.register(r'desembolsos', ListadoDesembolsosViewSet)
@@ -93,6 +96,10 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^mensajeError/$', 'acgm.views.mensajeError', name='error'),
     url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
+    
+    #Administracion
+    url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
+
     
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
@@ -129,6 +136,8 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
     
+    url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
+
     url(r'^api/prestamos/solicitudes/prestamos/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
