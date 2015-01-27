@@ -141,10 +141,17 @@
       }
 
       //Categorias de prestamos.
-      function categoriasPrestamos(id) {
+      function categoriasPrestamos(id, categoria) {
         var deferred = $q.defer();
 
-        $http.get('/api/categoriasPrestamos/?format=json')
+        console.log(categoria);
+        if(categoria != undefined && categoria != '') {
+          url = '/api/categoriasPrestamos/{categoria}/?format=json'.replace('{categoria}', categoria);
+        } else {
+          url = '/api/categoriasPrestamos/?format=json';
+        }
+
+        $http.get(url)
           .success(function (data) {
             if (id != undefined) {
               deferred.resolve(data.filter(function (item) {
@@ -316,12 +323,20 @@
       }
 
       //Traer todas las categorias de prestamos (de tipo PRESTAMO)
-      $scope.categoriasPrestamos = function(id) {
+      $scope.categoriasPrestamos = function(id, $event) {
+        $event.preventDefault();
+
         try {
-          SolicitudPrestamoService.categoriasPrestamos(id).then(function (data) {
+
+          SolicitudPrestamoService.categoriasPrestamos(id, $scope.solicitud.categoriaPrestamo).then(function (data) {
             if(data.length > 0) {
               $scope.categoriasP = data;
+              $scope.showCP = true;
             }
+            else {
+              $scope.showCP = false;
+            }
+
           });
         } catch (e) {
           $scope.mostrarError(e);
@@ -350,8 +365,8 @@
       //Monto Neto a Desembolsar
       $scope.montoNeto = function() {
         var montoSolicitado = $scope.solicitud.montoSolicitado != undefined && $scope.solicitud.montoSolicitado != ''? parseFloat($scope.solicitud.montoSolicitado.replace(',','')) : 0;
-        var ahorros = $scope.solicitud.ahorrosCapitalizados != undefined && $scope.solicitud.ahorrosCapitalizados != ''? $scope.solicitud.ahorrosCapitalizados : 0;
-        var deudas = $scope.solicitud.deudasPrestamos != undefined && $scope.solicitud.deudasPrestamos != ''? $scope.solicitud.deudasPrestamos : 0;
+        var ahorros = $scope.solicitud.ahorrosCapitalizados != undefined && $scope.solicitud.ahorrosCapitalizados != ''? parseFloat($scope.solicitud.ahorrosCapitalizados.replace(',','')) : 0;
+        var deudas = $scope.solicitud.deudasPrestamos != undefined && $scope.solicitud.deudasPrestamos != ''? parseFloat($scope.solicitud.deudasPrestamos.replace(',','')) : 0;
         var garantizado = $scope.solicitud.valorGarantizado != undefined && $scope.solicitud.valorGarantizado != ''? parseFloat($scope.solicitud.valorGarantizado.replace(',','')) : 0;
         var prestaciones = $scope.solicitud.prestacionesLaborales != undefined && $scope.solicitud.prestacionesLaborales != ''? parseFloat($scope.solicitud.prestacionesLaborales.replace(',','')) : 0;
 
@@ -462,13 +477,13 @@
 
         $scope.solicitante.representanteCodigo = 16; //CAMBIAR ESTO
         $scope.solicitante.representanteNombre = 'EMPRESA'; //CAMBIAR ESTO
-        $scope.solicitante.auxiliar = usuario;
+        $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
-        $scope.solicitante.autorizadoPor = usuario;
+        $scope.solicitante.autorizadoPor = '';
 
         $scope.solicitud.solicitudNo = 0;
-        $scope.solicitud.valorGarantizado = '';
-        $scope.solicitud.prestacionesLaborales = '';
+        $scope.solicitud.valorGarantizado = undefined;
+        $scope.solicitud.prestacionesLaborales = undefined;
         $scope.solicitud.nota = '';
         $scope.solicitud.deudasPrestamos = '';
         $scope.solicitud.fechaAprobacion = '';
@@ -476,8 +491,8 @@
         $scope.solicitud.prestamo = '';
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
-        $scope.solicitud.ahorrosCapitalizados = 500;
-        $scope.solicitud.deudasPrestamos = 100;
+        $scope.solicitud.ahorrosCapitalizados = "200,000";
+        $scope.solicitud.deudasPrestamos = "50,000";
 
         $scope.showLSP = false;
         $scope.ArrowLSP = 'DownArrow';
@@ -508,9 +523,20 @@
           var fechaP = $scope.solicitud.fechaDescuento.split('/');
           var fechaDescuentoFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-          if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd') || fechaSolicitudFormatted < $filter('date')(Date.now(),'yyyy-MM-dd')) {
-            $scope.mostrarError("La fecha para descuento/solicitud no puede ser menor a la fecha de hoy.");
-            throw "La fecha para descuento/solicitud no puede ser menor a la fecha de hoy.";
+          if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
+            $scope.mostrarError("La fecha para descuento no puede ser menor a la fecha de hoy.");
+            throw "La fecha para descuento no puede ser menor a la fecha de hoy.";
+          }
+          if(fechaSolicitudFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
+            $scope.mostrarError("La fecha para solicitud no puede ser menor a la fecha de hoy.");
+            throw "La fecha para solicitud no puede ser menor a la fecha de hoy.";
+          }
+
+          if($scope.solicitud.valorGarantizado == undefined) {
+            $scope.solicitud.valorGarantizado = '0';
+          }
+          if($scope.solicitud.prestacionesLaborales == undefined) {
+            $scope.solicitud.prestacionesLaborales = '0';
           }
 
           SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante,$scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
@@ -522,6 +548,7 @@
 
             $scope.errorShow = false;
             $scope.listadoSolicitudes();
+            $scope.toggleLSP();
           },
           (function () {
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -543,10 +570,15 @@
       } 
 
       // Aprobar/Rechazar solicitudes de prestamos
-      $scope.AprobarRechazarSolicitudesPrestamos = function($event, accion) {
+      $scope.AprobarRechazarSolicitudesPrestamos = function($event, accion, solicitud) {
         $event.preventDefault();
 
         try {
+          if(accion == 'C') {
+            $scope.solicitudesSeleccionadas = [];
+            $scope.solicitudesSeleccionadas.push(solicitud);
+          }
+
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
             if(data == 1) {
               $scope.listadoSolicitudes();
@@ -563,51 +595,66 @@
 
       }
 
-      // // Visualizar Documento (Factura Existente - desglose)
-      // $scope.FactFullById = function(NoFact, usuario) {
-      //   try {
-      //     FacturacionService.DocumentoById(NoFact).then(function (data) {
+      // Visualizar Solicitud de Prestamo (desglose)
+      $scope.SolicitudFullById = function($event, solicitud) {
+        $event.preventDefault();
 
-      //       if(data.length > 0) {
-      //         $scope.errorMsg = '';
-      //         $scope.errorShow = false;
+        try {
+          SolicitudPrestamoService.SolicitudPById(solicitud).then(function (data) {
 
-      //         //completar los campos
-      //         $scope.nuevaEntrada();
+            if(data.length > 0) {
+              $scope.errorMsg = '';
+              $scope.errorShow = false;
 
-      //         $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
-      //         $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-      //         $scope.socioCodigo = data[0]['socioCodigo'];
-      //         $scope.socioNombre = data[0]['socioNombre'];
-      //         $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
-      //         $scope.dataH.terminos = data[0]['terminos'];
-      //         $scope.dataH.vendedor = data[0]['vendedor'];
-      //         $scope.dataH.posteo = data[0]['posteo'];
+              //completar los campos
+              $scope.nuevaEntrada();
 
-      //         data[0]['productos'].forEach(function (item) {
-      //           $scope.dataD.push(item);
-      //           $scope.dataH.almacen = item['almacen'];
-      //         })
-      //         $scope.calculaTotales();
+              $scope.solicitante.codigoEmpleado = data[0]['socioCodigo'];
+              $scope.solicitante.nombreEmpleado = data[0]['socioNombre'];
+              $scope.solicitante.representanteCodigo = data[0]['representanteCodigo'];
+              $scope.solicitante.representanteNombre = data[0]['representanteNombre'];
+              $scope.solicitante.auxiliar = ''; //data[0]['auxiliar'];
+              $scope.solicitante.cedula = data[0]['socioCedula'];
+              $scope.solicitante.salario = $filter('number')(data[0]['socioSalario'],2);
+              $scope.solicitante.cobrador = data[0]['cobrador'];
+              $scope.solicitante.autorizadoPor = data[0]['autorizadoPor'];
 
-      //         if(data[0]['orden'] > 0) {
-      //           $rootScope.clearOrden();
-      //           $rootScope.FullOrden(data[0]['ordenDetalle']);
-      //         }
-      //       }
+              $scope.solicitud.montoSolicitado = data[0]['montoSolicitado']; //$filter('number')(data[0]['montoSolicitado'],2);
+              $scope.solicitud.fechaSolicitud = $filter('date')(data[0]['fechaSolicitud'], 'dd/MM/yyyy');
+              $scope.solicitud.ahorrosCapitalizados = $filter('number')(data[0]['ahorrosCapitalizados']);
+              $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['deudasPrestamos'],2);
+              $scope.solicitud.prestacionesLaborales = data[0]['prestacionesLaborales']; //$filter('number')(data[0]['prestacionesLaborales'],2);
+              $scope.solicitud.valorGarantizado = $filter('number')(data[0]['valorGarantizado'],2);
+              $scope.solicitud.netoDesembolsar = $filter('number')(data[0]['netoDesembolsar']);
+              $scope.solicitud.nota = data[0]['observacion'];
+              $scope.solicitud.categoriaPrestamoId = data[0]['categoriaPrestamoId'];
+              $scope.solicitud.categoriaPrestamo = data[0]['categoriaPrestamoDescrp'];
+              $scope.solicitud.fechaDescuento = $filter('date')(data[0]['fechaParaDescuento'],'dd/MM/yyyy');
+              $scope.solicitud.tasaInteresAnual = data[0]['tasaInteresAnual'];
+              $scope.solicitud.tasaInteresMensual = data[0]['tasaInteresMensual'];
+              $scope.solicitud.cantidadCuotas = data[0]['cantidadCuotas'];
+              $scope.solicitud.valorCuotas = $filter('number')(data[0]['valorCuotasCapital'],2);
+              $scope.solicitud.fechaAprobacion = data[0]['fechaAprobacion'] != undefined? $filter('date')(data[0]['fechaAprobacion'],'dd/MM/yyyy') : '';
+              $scope.solicitud.fechaRechazo = data[0]['fechaRechazo'] != undefined? $filter('date')(data[0]['fechaRechazo'],'dd/MM/yyyy') : '';
+              $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data[0]['noSolicitud'],8);
+              $scope.solicitud.prestamo = data[0]['prestamo'] != undefined? $filter('numberFixedLen')(data[0]['prestamo'],8) : '';
+              $scope.solicitud.estatus = data[0]['estatus'];
 
-      //     }, 
-      //       (function () {
-      //         $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
-      //       }
-      //     ));
-      //   }
-      //   catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
+              $scope.solicitud.prestamosUnificados = data[0]['PrestamosUnificados'];
+            }
 
-      //   $scope.toggleLF();
-      // }
+          }, 
+            (function () {
+              $scope.mostrarError('No pudo encontrar el desglose de la solicitud #' + solicitud);
+            }
+          ));
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+
+        $scope.toggleLSP();
+      }
 
     }]);
 

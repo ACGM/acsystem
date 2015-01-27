@@ -32,7 +32,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 
 #APIView (API)
-from administracion.views import CantidadCuotasPrestamosView
+from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
@@ -99,8 +99,9 @@ urlpatterns = patterns('',
     
     #Administracion
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
+    url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
 
-    
+
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),

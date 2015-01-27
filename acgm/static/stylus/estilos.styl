@@ -336,6 +336,10 @@ footer
 	
 // CLASES GENERICAS
 
+.disabled
+	color lightgray !important
+	cursor default
+
 .align-right
 	text-align right
 
@@ -1677,7 +1681,7 @@ footer
 	background red
 	color white
 .estatus-a
-	background verdeClarito
+	background verdeSubMenu
 	color verdeMuySuave
 
 .menu-entrada-sp-listado
@@ -1862,6 +1866,7 @@ footer
 					
 		&:nth-child(7) //Monto Disponible
 			& td 
+				padding-bottom .2em
 				&:first-child
 					font-weight bold
 				&:last-child
@@ -2006,13 +2011,15 @@ footer
 	position absolute
 	display inline-block
 	top 1.8em
-	right 0	
+	left 11em
 	z-index 999
 	
 .categorias-prestamos-table
 	
 	background verdeMuySuave
 	border 1px solid darkblue
+	width 34em
+	
 	
 	& tr
 		& td

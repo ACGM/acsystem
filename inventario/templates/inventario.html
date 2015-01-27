@@ -57,7 +57,7 @@
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
 							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
-							<td>[[entrada.fecha | date: 'dd-MM-yyyy']]</td>
+							<td>[[entrada.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
 							<td>[[entrada.suplidor]]</td>

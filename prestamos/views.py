@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from .serializers import SolicitudesPrestamosSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio
 
 import json
@@ -51,7 +51,6 @@ class SolicitudPrestamoView(TemplateView):
 			cobrador = Cobrador.objects.get(userLog=User.objects.get(username=solicitante['cobrador']))
 			representante = Representante.objects.get(id=solicitante['representanteCodigo'])
 			# auxiliar = Auxiliar.objects.get()
-			autorizadoPor = User.objects.get(username=solicitante['autorizadoPor'])
 			categoriaPrest = CategoriaPrestamo.objects.get(id=solicitud['categoriaPrestamoId'])
 
 			if solicitudNo > 0:
@@ -65,13 +64,15 @@ class SolicitudPrestamoView(TemplateView):
 
 			SolPrestamo.socio = socio
 			SolPrestamo.fechaSolicitud = fechaSolicitud
-			# SolPrestamo.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',',''))
+			SolPrestamo.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',','')) if solicitante['salario'] != None else 0
 			SolPrestamo.representante = representante
 			SolPrestamo.cobrador = cobrador
-			SolPrestamo.autorizadoPor = autorizadoPor
+
 			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
-			# SolPrestamo.prestacionesLaborales = solicitud['prestacionesLaborales'] if solicitud['prestacionesLaborales'] != None else 0
-			# SolPrestamo.valorGarantizado = solicitud['valorGarantizado'] if solicitud['valorGarantizado'] != None else 0
+			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0
+			SolPrestamo.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
+			SolPrestamo.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
+			SolPrestamo.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado'].replace(',','')) if solicitud['valorGarantizado'] != None else 0
 			SolPrestamo.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
@@ -172,12 +173,15 @@ class SolicitudPrestamoById(DetailView):
 				'fechaSolicitud': solicitud.fechaSolicitud,
 				'socioCodigo': solicitud.socio.codigo,
 				'socioNombre': solicitud.socio.nombreCompleto,
-				'salarioSocio': solicitud.salarioSocio if solicitud.salarioSocio != None else 0,
+				'socioCedula': solicitud.socio.cedula,
+				'socioSalario': solicitud.salarioSocio if solicitud.salarioSocio != None else 0,
 				'representanteCodigo': solicitud.representante.id,
 				'representanteNombre': solicitud.representante.nombre,
 				'cobrador': solicitud.cobrador.userLog.username,
-				'autorizadoPor': solicitud.autorizadoPor.username,
+				'autorizadoPor': solicitud.autorizadoPor.username if solicitud.autorizadoPor != None else '',
 				'montoSolicitado': solicitud.montoSolicitado,
+				'ahorrosCapitalizados': solicitud.ahorrosCapitalizados,
+				'deudasPrestamos': solicitud.deudasPrestamos,
 				'prestacionesLaborales': solicitud.prestacionesLaborales,
 				'valorGarantizado': solicitud.valorGarantizado,
 				'netoDesembolsar': solicitud.netoDesembolsar,
@@ -221,8 +225,19 @@ class AprobarRechazarSolicitudesPrestamosView(View):
 				oSolicitud = SolicitudPrestamo.objects.get(noSolicitud=solicitud['noSolicitud'])
 				oSolicitud.estatus = accion
 				oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
-				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' else None
+				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
+				oSolicitud.autorizadoPor = request.user
 				oSolicitud.save()
+
+				#Crear prestamo en la maestra de prestamos
+				# maestra = MaestraPrestamo()
+
+				# maestra.noPrestamo = MaestraPrestamo.objects.get_o_create('noPrestamo').latest().noPrestamo
+				# maestra.noSolicitudPrestamo = oSolicitud
+
+				# maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
+				# maestra.socio = oSolicitud.socio
+
 
 			return HttpResponse(1)
 

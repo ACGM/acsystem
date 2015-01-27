@@ -57,29 +57,32 @@
 					<tr class="listado-sp-detail" ng-repeat="solicitud in solicitudes">
 						<td><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)" ng-disabled="[[solicitud.estatus | estatusSolicitud]]"> </td>
 						<td class="estatus-[[solicitud.estatus | lowercase]]">[[solicitud.estatus | estatusName]]</td>
-						<td> <a class="sp-field" title="Ver detalle..." href="">[[solicitud.noSolicitud]]</a> </td>
-						<td>[[solicitud.fechaSolicitud | date : 'dd-MM-yyyy']]</td>
+						<td> <a class="sp-field" title="Ver mas detalle..." href="#" ng-click="SolicitudFullById($event,solicitud.noSolicitud)">[[solicitud.noSolicitud | numberFixedLen : 8]]</a> </td>
+						<td>[[solicitud.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
 						<td>[[solicitud.codigoSocio]]</td>
 						<td>[[solicitud.socio]]</td>
 						<td>[[solicitud.montoSolicitado | number : 2]]</td>
 						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
-						<td><a class="icon-printer icon-imprimir" href=""></a></td>
-						<td><a class="icon-delete icon-eliminar" href=""></a></td>
+						<td><a class="icon-printer icon-imprimir" href="#"></a></td>
+						<td>
+							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesPrestamos($event,'C', solicitud)"></a> </div>
+							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>
+							
+						</td>
 					</tr>
 											
 				</table>
 			</section>
 
 				<div class="botones-acciones-solicitud-prestamo-listado">
-					<button class="Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'A')"> Aprobar</button>
-					<button class="Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'R')"> Rechazar</button>
+					<button class="Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'A', undefined)"> Aprobar</button>
+					<button class="Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'R', undefined)"> Rechazar</button>
 					
 				</div>
 		</section>
 
 
 		<form name="SolicitudForm" class="datosprestamos" ng-hide="showLSP" ng-submit="guardarSolicitud($event)" novalidate>
-			
 			<!--DETALLE NC-->
 			<div class="sub-menu">	
 					Solicitud de Prestamo
@@ -126,7 +129,7 @@
 					</tr>
 					<tr>
 						<td>Auxiliar</td>
-						<td><input type="text" ng-model="solicitante.auxiliar" readonly required></td>
+						<td><input type="text" ng-model="solicitante.auxiliar" readonly></td>
 					</tr>
 				</table>
 
@@ -145,7 +148,7 @@
 					</tr>
 					<tr>
 						<td>Autorizado por</td>
-						<td><input type="text" ng-model="solicitante.autorizadoPor" readonly required></td>
+						<td><input type="text" ng-model="solicitante.autorizadoPor" readonly></td>
 					</tr>
 				</table>
 
@@ -193,7 +196,7 @@
 							</tr>
 							<tr>
 								<td>Disponible</td>
-								<td><input class="monto-desembolsar-field monto-disponible-field" type="text" ng-model="solicitud.montoDisponible" readonly required></td>
+								<td><input class="monto-desembolsar-field monto-disponible-field" type="text" ng-model="solicitud.montoDisponible" readonly></td>
 							</tr>
 							<tr>
 								<td>Neto a desembolsar</td>
@@ -216,9 +219,13 @@
 						</table>
 					</div>
 
+						
+
+					<div class="datos-prestamo-2">
+
 						<div class="content-table-categorias-prestamos" ng-show="showCP">
 
-							<table class="categorias-prestamos-table" ng-init="categoriasPrestamos(undefined)">
+							<table class="categorias-prestamos-table">
 								<tr>
 									<td>ID</td>
 									<td>Categoria de Prestamo</td>
@@ -231,16 +238,15 @@
 
 						</div>
 
-					<div class="datos-prestamo-2">
 
 						<table class="datos-prestamo-2-table">
 							<tr>
 								<td>Categoria Prestamo</td>
 								<td>
 									<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
-									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo"> 
+									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
 								<td>
-									<a href="#" class="icon-uniE601 icon-buscar" ng-click="showCP=true"></a>
+									<a href="#" class="icon-uniE601 icon-buscar" ng-click="categoriasPrestamos(undefined, $event)"></a>
 								</td>
 								</td>
 							</tr>
@@ -292,7 +298,10 @@
 									</tr>
 									
 									<tr>
-										<td>Fecha Rechazo</td>
+										<td> 
+											<span ng-if="solicitud.estatus == 'C'">Fecha Cancelación </span>
+											<span ng-if="solicitud.estatus != 'C'">Fecha Rechazo</span>
+										</td>
 										<td><input type="text" ng-model="solicitud.fechaRechazo" readonly></td>
 									</tr>
 									<tr>

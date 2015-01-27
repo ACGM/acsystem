@@ -385,7 +385,7 @@ class Empresa(models.Model):
 class Cobrador(models.Model):
 
 	usuario = models.CharField(max_length=10)
-	userLog = models.ForeignKey(User)
+	userLog = models.ForeignKey(User, unique=True)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):

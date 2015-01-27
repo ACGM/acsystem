@@ -32,9 +32,11 @@ class SolicitudPrestamo(models.Model):
 	salarioSocio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
-	autorizadoPor = models.ForeignKey(User)
+	autorizadoPor = models.ForeignKey(User, null=True)
 
 	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
+	ahorrosCapitalizados = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar los ahorros capitalizados al momento de realizar esta solicitud
+	deudasPrestamos = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar las deudas de prestamos al momento de realizar esta solicitud
 	prestacionesLaborales = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)

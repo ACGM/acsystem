@@ -56,7 +56,7 @@
 					<div class="nomina-sel">Nomina</div>
 					
 					<select class="nomina-sel-text" name="NominaSel" ng-model="nominaS" ng-init="getNominasGeneradas()">
-						<option ng-repeat="item in nominas" value="[[item.fechaNomina]]"> [[item.fechaNomina | date: 'dd-MM-yyyy']]</option>
+						<option ng-repeat="item in nominas" value="[[item.fechaNomina]]"> [[item.fechaNomina | date: 'dd/MM/yyyy']]</option>
 					</select>
 				</div>
 				
@@ -85,7 +85,7 @@
 
 						<tr class="nomina-sel-detail" ng-repeat="item in nominas">
 							<td>[[item.estatus]]</td>
-							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)">[[item.fechaNomina | date: 'dd-MM-yyyy']]</a></td>
+							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
 							<td>[[item.cntEmpleados]]</td>
 							<td>[[item.valorNomina | number: 2]]</td>
 							<td>[[item.ISR | number : 2]]</td>
@@ -114,7 +114,7 @@
 		<div class="detalle-nomina">
 			
 			<div class="sub-menu nomina-detalle">
-				Detalles de Nomina <span class="nomina-seleccionada"> [[nomina | date : 'dd-MM-yyyy']]</span>
+				Detalles de Nomina <span class="nomina-seleccionada"> [[nomina | date : 'dd/MM/yyyy']]</span>
 				
 			</div>
 

@@ -52,6 +52,19 @@ class ListadoCategoriasPrestamosViewSet(viewsets.ModelViewSet):
 	serializer_class = ListadoCategoriaPrestamoSerializer
 
 
+# Categoria de Prestamo por Descripcion
+class CategoriaPrestamoByDescrpView(APIView):
+
+	serializer_class = ListadoCategoriaPrestamoSerializer
+
+	def get(self, request, descrp=None):
+		
+		categorias = CategoriaPrestamo.objects.filter(descripcion__contains=descrp)
+
+		response = self.serializer_class(categorias, many=True)
+		return Response(response.data)
+
+
 # Cantidad de Cuotas (parametro: Monto)
 class CantidadCuotasPrestamosView(APIView):
 
