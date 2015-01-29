@@ -60,9 +60,9 @@ class InventarioH(models.Model):
 
 	@property
 	def totalGeneral(self):
-		total = 0
+		total = 0.0
 		for n in InventarioD.objects.filter(inventario_id=self.id).values('costo','cantidadTeorico'):
-			total += n['costo'] * n['cantidadTeorico']
+			total += float(n['costo']) * float(n['cantidadTeorico'])
 		#total = (InventarioD.objects.filter(inventario_id=self.id).aggregate(total=Sum('costo')))['total'] * InventarioD.objects.filter(inventario_id=self.id).values('cantidadTeorico')
 		
 		if total == None:
@@ -81,9 +81,9 @@ class InventarioD(models.Model):
 	inventario = models.ForeignKey(InventarioH)
 	producto = models.ForeignKey(Producto)
 	almacen = models.ForeignKey(Almacen)
-	cantidadTeorico = models.PositiveIntegerField()
-	cantidadFisico = models.PositiveIntegerField(null=True, blank=True)
-	costo = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+	cantidadTeorico = models.DecimalField(max_digits=12, decimal_places=2)
+	cantidadFisico = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	tipoAccion = models.CharField(max_length=1, 
 								choices=tipo_accion_choices, 
 								default='E',
@@ -103,9 +103,9 @@ class InventarioD(models.Model):
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
 			if self.tipoAccion == 'S':
-				exist.cantidad -= int(self.cantidadTeorico)
+				exist.cantidad -= float(self.cantidadTeorico)
 			else:
-				exist.cantidad = int(exist.cantidad) + int(self.cantidadTeorico)
+				exist.cantidad = float(exist.cantidad) + float(self.cantidadTeorico)
 
 			exist.save()
 		except Existencia.DoesNotExist:
@@ -124,7 +124,7 @@ class InventarioD(models.Model):
 		# Guardar el movimiento del producto
 		mov = Movimiento()
 		mov.producto = self.producto
-		mov.cantidad = self.cantidadTeorico
+		mov.cantidad = float(self.cantidadTeorico)
 		mov.almacen = self.almacen
 		mov.tipo_mov = self.tipoAccion
 		mov.save()
@@ -138,7 +138,7 @@ class Movimiento(models.Model):
 	tipo_mov_choices = (('E','Entrada'),('S','Salida'),)
 
 	producto = models.ForeignKey(Producto)
-	cantidad = models.IntegerField()
+	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	almacen = models.ForeignKey(Almacen)
 	fecha_movimiento = models.DateField(auto_now_add=True)
 	tipo_mov = models.CharField(max_length=1,
@@ -149,7 +149,7 @@ class Movimiento(models.Model):
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s - %i (%s) - Almacen: %s' % (self.producto,self.cantidad,self.tipo_mov,self.almacen)
+		return '%s - %s (%s) - Almacen: %s' % (self.producto,self.cantidad,self.tipo_mov,self.almacen)
 
 	class Meta:
 		ordering = ['producto']
@@ -159,12 +159,12 @@ class Movimiento(models.Model):
 class Existencia(models.Model):
 	
 	producto = models.ForeignKey(Producto)
-	cantidad = models.IntegerField()
+	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	almacen = models.ForeignKey(Almacen)
 	fecha = models.DateField(auto_now=True)
 
 	def __unicode__(self):
-		return '%s - %i' % (self.producto,self.cantidad)
+		return '%s - %s' % (self.producto,self.cantidad)
 
 	class Meta:
 		ordering = ['producto']

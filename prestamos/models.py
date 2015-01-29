@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Distrito, Banco
+from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Distrito, Banco, Articulo
 from facturacion.models import Factura
 
 import datetime
@@ -107,6 +107,10 @@ class SolicitudOrdenDespachoH(models.Model):
 class SolicitudOrdenDespachoD(models.Model):
 
 	ordenDespacho = models.ForeignKey(SolicitudOrdenDespachoH)
+	articulo = models.ForeignKey(Articulo, unique=True)
+	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
+	precio = models.DecimalField(max_digits=12, decimal_places=2)
+
 	#FALTA COMPLETAR AQUI -- VER DETALLE EN EL SISTEMA ACTUAL
 
 
@@ -114,8 +118,9 @@ class SolicitudOrdenDespachoD(models.Model):
 #Maestra de Prestamos
 class MaestraPrestamo(models.Model):
 
-	tipoPago_choices = (('Q','Quincenal'),('M','Mensual'))
-	quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'))
+	# tipoPago_choices = (('Q','Quincenal'),('M','Mensual'))
+	# quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'))
+	posteo_choices = (('N','NO'), ('S','SI'))
 
 	noPrestamo = models.PositiveIntegerField(unique=True)
 	noSolicitudPrestamo = models.ForeignKey(SolicitudPrestamo, null=True, blank=True)
@@ -128,22 +133,22 @@ class MaestraPrestamo(models.Model):
 	oficial = models.ForeignKey(User)
 	distrito = models.ForeignKey(Distrito)
 
-	montoInicial = models.DecimalField(max_digits=18, decimal_places=2)
-	tasaInteresAnual = models.DecimalField(max_digits=18, decimal_places=2)
-	tasaInteresMensual = models.DecimalField(max_digits=18, decimal_places=2)
-	pagoPrestamoAnterior = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+	montoInicial = models.DecimalField(max_digits=12, decimal_places=2)
+	tasaInteresAnual = models.DecimalField(max_digits=12, decimal_places=2)
+	tasaInteresMensual = models.DecimalField(max_digits=12, decimal_places=2)
+	pagoPrestamoAnterior = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	cantidadCuotas = models.PositiveIntegerField()
-	montoCuotaQ1 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	montoCuotaQ2 = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	fechaDesembolso = models.DateField()
-	fechaEntrega = models.DateField()
-	chequeNo = models.ForeignKey(Cheque)
-	tipoPago = models.CharField(max_length=1, choices=tipoPago_choices, default='Q')
-	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)	
-	valorGarantizado = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-	balance = models.DecimalField(max_digits=18, decimal_places=2, blank=True)
+	montoCuotaQ1 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	montoCuotaQ2 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	fechaDesembolso = models.DateField(null=True)
+	fechaEntrega = models.DateField(null=True)
+	chequeNo = models.ForeignKey(Cheque, null=True)
+	# tipoPago = models.CharField(max_length=1, choices=tipoPago_choices, default='Q')
+	# quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)	
+	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
 
-	posteado = models.BooleanField(default=False)
+	posteado = models.CharField(max_length=1, default='N')
 	posteadoFecha = models.DateField(auto_now=True, null=True, blank=True)
 
 	userLog = models.ForeignKey(User, related_name='+')

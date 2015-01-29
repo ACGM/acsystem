@@ -32,7 +32,8 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 
 #APIView (API)
-from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView
+from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
+                                    ProductoByDescrpView
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
@@ -100,6 +101,8 @@ urlpatterns = patterns('',
     #Administracion
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
     url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
+    url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
+    url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
 
 
     #Fondos de Cajas (Desembolsos)

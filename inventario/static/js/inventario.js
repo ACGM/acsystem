@@ -46,10 +46,16 @@
       }
 
       //Listado de suplidores
-      function suplidores() {
+      function suplidores(nombre) {
         var deferred = $q.defer();
 
-        $http.get('/api/suplidor/?format=json')
+        if(nombre != undefined && nombre != '') {
+          url = '/api/suplidor/nombre/{nombre}/?format=json'.replace('{nombre}',nombre);
+        } else {
+          url = '/api/suplidor/?format=json';
+        }
+
+        $http.get(url)
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -70,10 +76,16 @@
       }
 
       //Listado de productos
-      function productos() {
+      function productos(descrp) {
         var deferred = $q.defer();
 
-        $http.get('/api/producto/?format=json')
+        if(descrp != undefined && descrp != '') {
+          url = '/api/producto/descripcion/{descrp}/?format=json'.replace('{descrp}',descrp)
+        } else {
+          url = '/api/producto/?format=json';
+        }
+
+        $http.get(url)
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -353,16 +365,19 @@
       // Calcula los totales para los productos
       $scope.calculaTotales = function() {
         try {
-          var total = 0;
-          var subtotal = 0;
+          var total = 0.0;
+          var subtotal = 0.0;
 
           $scope.dataD.forEach(function (item) {
-            total += (item.cantidad * item.costo);
+            total += (parseFloat(item.cantidad) * parseFloat(item.costo));
           });
 
           $scope.subtotal = $filter('number')(total, 2);
           $scope.total = $filter('number')(total, 2);
 
+          console.log('Subtotal : ' + $scope.subtotal);
+          console.log('Subtotal TOTAL: ' + total);
+          
         } catch (e) {
           $scope.mostrarError(e);
 
@@ -412,7 +427,7 @@
           var fechaP = $scope.dataH.fecha.split('/');
           var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
 
-          if ($scope.dataH.venceDias != undefined && fechaF != 'Invalid Date') {
+          if ($scope.dataH.venceDias != undefined && fechaF != 'Invalid Date' && $scope.dataH.venceDias != '') {
             var nextDate = new Date();
             nextDate.setDate(fechaF.getDate()+parseInt($scope.dataH.venceDias));
 
@@ -437,62 +452,49 @@
       //Traer suplidores
       $scope.getSuplidor = function($event) {
         $event.preventDefault();
+        var suplidor = '';
 
-        $scope.tableSuplidor = true;
-
-        
-        if($scope.dataH.suplidorNombre != undefined) {
-          InventarioService.suplidores().then(function (data) {
-            $scope.suplidores = data.filter(function (registro) {
-              return $filter('lowercase')(registro.nombre
-                          .substring(0,$scope.dataH.suplidorNombre.length)) == $filter('lowercase')($scope.dataH.suplidorNombre);
-            });
-
-            if($scope.suplidores.length > 0) {
-              $scope.tableSuplidor = true;
-              $scope.suplidorNoExiste = '';
-            } else {
-              $scope.tableSuplidor = false;
-              $scope.suplidorNoExiste = 'No existe el suplidor';
-            }
-
-          });
-        } else {
-          InventarioService.suplidores().then(function (data) {
-            $scope.suplidores = data;
-          });
+        if($event.type != 'click') {
+          suplidor = $scope.dataH.suplidorNombre;
         }
+
+        InventarioService.suplidores(suplidor).then(function (data) {
+
+          if(data.length > 0) {
+            $scope.suplidores = data;
+
+            $scope.tableSuplidor = true;
+            $scope.suplidorNoExiste = '';
+          } else {
+            $scope.tableSuplidor = false;
+            $scope.suplidorNoExiste = 'No existe el suplidor';
+          }
+
+        });
       }
 
       //Traer productos
       $scope.getProducto = function($event) {
         $event.preventDefault();
+        var descrp = '';
 
-        $scope.tableProducto = true;
-
-        if($scope.producto != undefined) {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data.filter(function (registro) {
-              return $filter('lowercase')(registro.descripcion
-                                  .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
-            });
-
-            if($scope.productos.length > 0){
-              $scope.tableProducto = true;
-              $scope.productoNoExiste = '';
-            } else {
-              $scope.tableProducto = false;
-              $scope.productoNoExiste = 'No existe el producto'
-            }
-
-          });
-        } else {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data;
-          });
+        if($event.type != 'click') {
+          descrp = $scope.producto;
         }
-      }
 
+        InventarioService.productos(descrp).then(function (data) {
+
+          if(data.length > 0){
+            $scope.productos = data;
+
+            $scope.tableProducto = true;
+            $scope.productoNoExiste = '';
+          } else {
+            $scope.tableProducto = false;
+            $scope.productoNoExiste = 'No existe el producto'
+          }
+        });
+      }
 
       //Seleccionar Suplidor
       $scope.selSuplidor = function($event, supl) {
@@ -507,6 +509,7 @@
       $scope.addProducto = function($event, Prod) {
         $event.preventDefault();
 
+        Prod.cantidad = 1;
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
       }

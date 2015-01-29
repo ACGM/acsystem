@@ -23,12 +23,12 @@ class SuplidorTipoViewSet(viewsets.ModelViewSet):
 
 
 class SuplidorViewSet(viewsets.ModelViewSet):
-	queryset=Suplidor.objects.all()
+	queryset=Suplidor.objects.all().order_by('nombre')
 	serializer_class=SuplidorSerializer
 
 
 class SocioViewSet(viewsets.ModelViewSet):
-	queryset=Socio.objects.all()
+	queryset=Socio.objects.all().order_by('nombreCompleto')
 	serializer_class=SocioSerializer
 
 
@@ -36,9 +36,6 @@ class DepartamentoViewSet(viewsets.ModelViewSet):
 	queryset=Departamento.objects.all()
 	serializer_class=DepartamentoSerializer
 
-class DepartamentoViewSet(viewsets.ModelViewSet):
-	queryset=Departamento.objects.all()
-	serializer_class=DepartamentoSerializer
 
 class CoBeneficiarioViewSet(viewsets.ModelViewSet):
 	queryset=CoBeneficiario.objects.all()
@@ -77,3 +74,32 @@ class CantidadCuotasPrestamosView(APIView):
 		response = self.serializer_class(monto, many=True)
 		return Response(response.data)
 
+
+# Suplidor por Nombre
+class SuplidorByNombreView(APIView):
+
+	serializer_class = SuplidorSerializer
+
+	def get(self, request, nombre=None):
+		if nombre != None:
+			suplidores = Suplidor.objects.filter(nombre__contains=nombre, estatus='A').order_by('nombre')
+		else:
+			suplidores = Suplidor.objects.filter(estatus='A')
+
+		response = self.serializer_class(suplidores, many=True)
+		return Response(response.data)
+
+
+# Producto por Descripcion
+class ProductoByDescrpView(APIView):
+
+	serializer_class = ProductoSerializer
+
+	def get(self, request, descrp=None):
+		if descrp != None:
+			productos = Producto.objects.filter(descripcion__contains=descrp).order_by('descripcion')
+		else:
+			productos = Producto.objects.all()
+
+		response = self.serializer_class(productos, many=True)
+		return Response(response.data)

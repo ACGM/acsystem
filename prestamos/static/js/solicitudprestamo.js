@@ -221,6 +221,9 @@
       $scope.tableSocio = false; //Mostrar tabla que contiene los socios
       $scope.showLSP = true; //Mostrar el listado de solicitudes
 
+      $scope.disabledButton = 'Boton-disabled';
+      $scope.disabledButtonBool = true;
+
       $scope.regAll = false;
       $scope.estatus = 'T';
 
@@ -325,10 +328,15 @@
       //Traer todas las categorias de prestamos (de tipo PRESTAMO)
       $scope.categoriasPrestamos = function(id, $event) {
         $event.preventDefault();
+        var descrp = '';
+
+        if($event.type != 'click') {
+          descrp = $scope.solicitud.categoriaPrestamo;
+        }
 
         try {
 
-          SolicitudPrestamoService.categoriasPrestamos(id, $scope.solicitud.categoriaPrestamo).then(function (data) {
+          SolicitudPrestamoService.categoriasPrestamos(id, descrp).then(function (data) {
             if(data.length > 0) {
               $scope.categoriasP = data;
               $scope.showCP = true;
@@ -546,6 +554,9 @@
             }
             $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data, 8)
 
+            $scope.disabledButton = 'Boton-disabled';
+            $scope.disabledButtonBool = true;
+
             $scope.errorShow = false;
             $scope.listadoSolicitudes();
             $scope.toggleLSP();
@@ -639,6 +650,14 @@
               $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data[0]['noSolicitud'],8);
               $scope.solicitud.prestamo = data[0]['prestamo'] != undefined? $filter('numberFixedLen')(data[0]['prestamo'],8) : '';
               $scope.solicitud.estatus = data[0]['estatus'];
+
+              if(data[0]['estatus'] == 'P') {
+                $scope.disabledButton = 'Boton';
+                $scope.disabledButtonBool = false;
+              } else {
+                $scope.disabledButton = 'Boton-disabled';
+                $scope.disabledButtonBool = true;
+              }
 
               $scope.solicitud.prestamosUnificados = data[0]['PrestamosUnificados'];
             }

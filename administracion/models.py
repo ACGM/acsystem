@@ -8,6 +8,21 @@ from cuenta.models import Cuentas, Auxiliares
 import datetime
 
 
+# Articulo (para Ordenes de Despacho)
+class Articulo(models.Model):
+	
+	descripcion = models.CharField(max_length=50)
+	precio = models.DecimalField(max_digits=12, decimal_places=2)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		ordering = ('descripcion',)
+		verbose_name = 'Articulo'
+		verbose_name_plural = 'Articulos'
+
+
 # Localidades
 class Localidad(models.Model):
 
@@ -110,6 +125,7 @@ class Suplidor(models.Model):
 	
 	tipoIdentificacion_choices = (('C','Cedula'),('R','RNC'))
 	clase_choices = (('N','Normal'),('S','SuperCoop'))
+	estatus_choices = (('A','Activo'), ('I','Inactivo'))
 
 	tipoIdentificacion = models.CharField(max_length=1, choices=tipoIdentificacion_choices, default='C')
 	cedulaRNC = models.CharField(unique=True, max_length=25)
@@ -124,6 +140,7 @@ class Suplidor(models.Model):
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 	auxiliar = models.ForeignKey(Auxiliares, null=True)
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -155,14 +172,14 @@ class Socio(models.Model):
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
 	pasaporte = models.CharField("Pasaporte No.", max_length=20, blank=True)
-	carnetNumero = models.PositiveIntegerField("Carnet Numero")
+	# carnetNumero = models.PositiveIntegerField("Carnet Numero")
 	fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
 	fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
 	correo = models.EmailField(blank=True)
 	departamento = models.ForeignKey(Departamento)
 	distrito = models.ForeignKey(Distrito)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
-	salario = models.DecimalField(max_digits=12, decimal_places=2)
+	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=0)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
@@ -181,6 +198,8 @@ class Socio(models.Model):
 
 	class Meta:
 		ordering = ['codigo']
+		verbose_name = '1) Socio'
+		verbose_name_plural = '1) Socios'
 
 
 # Co-Beneficiarios del socio
@@ -203,8 +222,8 @@ class CoBeneficiario(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
-		verbose_name = 'Co-Beneficiario'
-		verbose_name_plural = 'Co-Beneficiarios'
+		verbose_name = '2) Co-Beneficiario'
+		verbose_name_plural = '2) Co-Beneficiarios'
 
 
 # Categorias de Prestamos
@@ -417,7 +436,7 @@ class DocumentoCuentas(models.Model):
 # Cuotas de Ahorros de Socios
 class CuotaAhorroSocio(models.Model):
 
-	socio = models.ForeignKey(Socio)
+	socio = models.ForeignKey(Socio, unique=True)
 	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
 	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
 
@@ -427,5 +446,5 @@ class CuotaAhorroSocio(models.Model):
 
 	class Meta:
 		ordering = ['socio']
-		verbose_name = 'Cuota Ahorro Socio'
-		verbose_name_plural = 'Cuotas Ahorros Socios'
+		verbose_name = '3) Cuota Ahorro Socio'
+		verbose_name_plural = '3) Cuotas Ahorros Socios'

@@ -13,7 +13,7 @@
 			<div class="menu-entrada-sp-listado">
 				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
-				Listado de Solicitudes de Prestamos
+				<a href="#" ng-click="toggleLSP()">Listado de Solicitudes de Prestamos</a>
 			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
 		</div>
 
@@ -211,7 +211,9 @@
 
 							<tr>
 								<td colspan="2">
-									<button class="Boton icon-save boton-guardar-solicitud" type="submit">Guardar</button>
+
+									<button class="icon-save boton-guardar-solicitud [[disabledButton]]" ng-disabled="solicitud.estatus != 'P' && disabledButtonBool" type="submit">Guardar</button>
+
 									<button class="Boton icon-delete boton-cancelar-solicitud" ng-click="cancelarSolicitud($event)">Cancelar</button>
 								</td>
 							</tr>
@@ -226,6 +228,11 @@
 						<div class="content-table-categorias-prestamos" ng-show="showCP">
 
 							<table class="categorias-prestamos-table">
+								<tr>
+									<td colspan="2" class="cerrar-table">
+										<a href="#" class="icon-delete" ng-click="showCP=false"></a>
+									</td>
+								</tr>
 								<tr>
 									<td>ID</td>
 									<td>Categoria de Prestamo</td>

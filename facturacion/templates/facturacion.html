@@ -13,7 +13,7 @@
 			<div class="menu-entrada-inventario-listado">
 				<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
-				Listado de Facturas
+				<a href="#" ng-click="toggleLF()">Listado de Facturas</a>
 			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
 		</div>
 			
@@ -61,7 +61,11 @@
 							<td>[[factura.socio]]</td>
 							<td>[[factura.totalGeneral]]</td>
 							<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
-							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
+							<td>
+								<div ng-if="factura.posteo == 'N'"> <a href="#" class="icon-delete icon-eliminar"></a></div> 
+								<div ng-if="factura.posteo != 'N'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
+
+							</td>
 						</tr>
 									
 					</table>
@@ -189,8 +193,9 @@
 								<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" >%</td>
 								<td>[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
 								<td>
-									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
-									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
+									<div ng-if="dataH.posteo == 'N'"> <button class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button> </div>
+									
+									<div ng-if="dataH.posteo != 'N'"> <button class="icon-delete eliminar-entrada-producto disabled" disabld="true"></button> </div> 
 								</td>
 
 							</tr>		
@@ -205,7 +210,7 @@
 							</ul>
 						</div>
 
-					<button class="icon-save [[disabledButton]] boton-guarda-inventario" type="submit" ng-disabled="FacturaForm.$valid && dataH.posteo == 'N' && disabledButtonBool" ng-class="BotonOrden">Guardar</button>
+					<button class="icon-save [[disabledButton]] boton-guarda-inventario" type="submit" ng-disabled="FacturaForm.$valid && dataH.posteo == 'N' && disabledButtonBool">Guardar</button>
 
 					</section>
 

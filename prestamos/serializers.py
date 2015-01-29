@@ -1,3 +1,5 @@
+# SERIALIZERS de PRESTAMOS
+
 from rest_framework import serializers
 
 from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DesembolsoElectronico, \

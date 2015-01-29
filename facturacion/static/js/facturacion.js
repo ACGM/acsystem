@@ -256,7 +256,6 @@
               $scope.mostrarOrden(true);
               $scope.disabledButton = 'Boton-disabled';
               $scope.disabledButtonBool = true;
-              $scope.BotonOrden = 'BotonOrden';
 
               $rootScope.total = $scope.total;
               $rootScope.getCategoriaPrestamo($scope.dataH.vendedor);
@@ -558,16 +557,16 @@
       // Calcula los totales para los productos
       $scope.calculaTotales = function() {
         try {
-          var total = 0;
-          var subtotal = 0;
-          var total_descuento = 0;
-          var descuento = 0;
+          var total = 0.0;
+          var subtotal = 0.0;
+          var total_descuento = 0.0;
+          var descuento = 0.0;
 
           $scope.dataD.forEach(function (item) {
             if (item.descuento != undefined && item.descuento > 0) {
 
-              descuento = (item.descuento/100);
-              descuento = item.precio * descuento * item.cantidad;
+              descuento = parseFloat(item.descuento/100);
+              descuento = parseFloat(item.precio * descuento * item.cantidad);
             }
             subtotal += (item.cantidad * item.precio);
             total = subtotal - descuento;

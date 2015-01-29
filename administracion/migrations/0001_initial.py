@@ -15,6 +15,20 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Articulo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('descripcion', models.CharField(max_length=50)),
+                ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
+            ],
+            options={
+                'ordering': ('descripcion',),
+                'verbose_name': 'Articulo',
+                'verbose_name_plural': 'Articulos',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Autorizador',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -74,8 +88,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['nombre'],
-                'verbose_name': 'Co-Beneficiario',
-                'verbose_name_plural': 'Co-Beneficiarios',
+                'verbose_name': '2) Co-Beneficiario',
+                'verbose_name_plural': '2) Co-Beneficiarios',
             },
             bases=(models.Model,),
         ),
@@ -85,7 +99,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('usuario', models.CharField(max_length=10)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL, unique=True)),
             ],
             options={
                 'ordering': ['usuario'],
@@ -99,13 +113,13 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
                 ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
-                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 17, 14, 59, 54, 831426), auto_now_add=True)),
-                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 17, 14, 59, 54, 831450), auto_now=True)),
+                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 29, 2, 18, 31, 80175), auto_now_add=True)),
+                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 29, 2, 18, 31, 80200), auto_now=True)),
             ],
             options={
                 'ordering': ['socio'],
-                'verbose_name': 'Cuota Ahorro Socio',
-                'verbose_name_plural': 'Cuotas Ahorros Socios',
+                'verbose_name': '3) Cuota Ahorro Socio',
+                'verbose_name_plural': '3) Cuotas Ahorros Socios',
             },
             bases=(models.Model,),
         ),
@@ -134,9 +148,8 @@ class Migration(migrations.Migration):
                 ('montoDesde', models.DecimalField(verbose_name=b'Monto Desde', max_digits=18, decimal_places=2)),
                 ('montoHasta', models.DecimalField(verbose_name=b'Monto Hasta', max_digits=18, decimal_places=2)),
                 ('cantidadQuincenas', models.PositiveIntegerField(verbose_name=b'Cantidad de Quincenas')),
-                ('cantidadMeses', models.PositiveIntegerField(verbose_name=b'Cantidad de Meses')),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
+                ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-montoDesde'],
@@ -263,7 +276,7 @@ class Migration(migrations.Migration):
             name='Representante',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nombre', models.CharField(max_length=150)),
+                ('nombre', models.CharField(max_length=50)),
             ],
             options={
             },
@@ -273,7 +286,7 @@ class Migration(migrations.Migration):
             name='Socio',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('codigo', models.PositiveIntegerField(max_length=7)),
+                ('codigo', models.PositiveIntegerField()),
                 ('nombres', models.CharField(max_length=40)),
                 ('apellidos', models.CharField(max_length=40)),
                 ('direccion', models.TextField(blank=True)),
@@ -285,12 +298,11 @@ class Migration(migrations.Migration):
                 ('sexo', models.CharField(default=b'M', max_length=1, choices=[(b'M', b'Masculino'), (b'F', b'Femenino')])),
                 ('estadoCivil', models.CharField(default=b'S', max_length=1, verbose_name=b'Estado Civil', choices=[(b'S', b'Soltero(a)'), (b'C', b'Casado(a)'), (b'U', b'Union Libre')])),
                 ('pasaporte', models.CharField(max_length=20, verbose_name=b'Pasaporte No.', blank=True)),
-                ('carnetNumero', models.PositiveIntegerField(verbose_name=b'Carnet Numero')),
                 ('fechaIngresoCoop', models.DateField(verbose_name=b'Fecha de Ingreso Coop.')),
                 ('fechaIngresoEmpresa', models.DateField(verbose_name=b'Fecha de Ingreso Empresa')),
                 ('correo', models.EmailField(max_length=75, blank=True)),
                 ('estatus', models.CharField(default=b'S', max_length=2, choices=[(b'S', b'Socio'), (b'E', b'Empleado'), (b'I', b'Inactivo')])),
-                ('salario', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('salario', models.DecimalField(default=0, null=True, max_digits=12, decimal_places=2)),
                 ('cuentaBancaria', models.CharField(max_length=20, verbose_name=b'Cuenta Bancaria', blank=True)),
                 ('foto', models.ImageField(null=True, upload_to=b'administracion', blank=True)),
                 ('nombreCompleto', models.CharField(verbose_name=b'Nombre Completo', max_length=80, editable=False)),
@@ -301,6 +313,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['codigo'],
+                'verbose_name': '1) Socio',
+                'verbose_name_plural': '1) Socios',
             },
             bases=(models.Model,),
         ),
@@ -319,6 +333,7 @@ class Migration(migrations.Migration):
                 ('fax', models.CharField(max_length=50, blank=True)),
                 ('intereses', models.DecimalField(default=0, null=True, max_digits=5, decimal_places=2, blank=True)),
                 ('clase', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'Normal'), (b'S', b'SuperCoop')])),
+                ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('auxiliar', models.ForeignKey(to='cuenta.Auxiliares', null=True)),
             ],
@@ -421,13 +436,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cuotaahorrosocio',
             name='socio',
-            field=models.ForeignKey(to='administracion.Socio'),
+            field=models.ForeignKey(to='administracion.Socio', unique=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='cuotaahorrosocio',
             name='userLog',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(

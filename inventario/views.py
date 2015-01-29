@@ -15,6 +15,7 @@ from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, Entr
 
 import json
 import math
+import decimal
 
 
 # Retornar un documento con todo su detalle 
@@ -124,15 +125,14 @@ class InventarioView(TemplateView):
 				invD.inventario = invH
 				invD.producto = Producto.objects.get(codigo = item['codigo'])
 				invD.almacen = Almacen.objects.get(id=almacen)
-				invD.cantidadTeorico = item['cantidad']
-				invD.costo = float(item['costo'])
+				invD.cantidadTeorico = decimal.Decimal(item['cantidad'])
+				invD.costo = decimal.Decimal(item['costo'])
 				invD.save()
 
 			return HttpResponse('1')
 
 		except Exception as e:
 			return HttpResponse(e)
-
 
 
 # Transferencia de Inventario

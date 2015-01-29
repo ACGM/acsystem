@@ -41,8 +41,8 @@ class Factura(models.Model):
 			descuento = 0
 
 			if(n['porcentajeDescuento'] > 0):
-				descuento = (n['precio'] * float(n['porcentajeDescuento'] / 100)) * n['cantidad']
-			total += (n['precio'] * n['cantidad']) - descuento
+				descuento = (float(n['precio']) * float(n['porcentajeDescuento'] / 100)) * float(n['cantidad'])
+			total += float(n['precio'] * n['cantidad']) - descuento
 		
 		if total == None:
 			total = 0
@@ -56,16 +56,17 @@ class Detalle(models.Model):
 	factura = models.ForeignKey(Factura)	
 	producto = models.ForeignKey(Producto)
 	porcentajeDescuento = models.DecimalField("Porcentaje Descuento", max_digits=6, decimal_places=2,blank=True, default=0)
-	cantidad = models.PositiveIntegerField()
-	precio = models.PositiveIntegerField()
+	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
+	precio = models.DecimalField(max_digits=12, decimal_places=2)
 	almacen = models.ForeignKey(Almacen)
 
 	class Meta:
 		ordering = ('-factura',)
+		unique_together = ('factura','producto')
 
 	@property
 	def importeValor(self):
-		return '%i' % ((self.cantidad * self.precio) - ((self.porcentajeDescuento/100) * self.precio * self.cantidad))
+		return '%i' % ((float(self.cantidad) * float(self.precio)) - (float(self.porcentajeDescuento/100) * float(self.precio) * float(self.cantidad)))
 
 	def __unicode__(self):
 		return u"%s %s" % (self.producto, (self.cantidad * self.precio))
@@ -76,7 +77,7 @@ class Detalle(models.Model):
 		try:
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
-			exist.cantidad -= int(self.cantidad)
+			exist.cantidad -= float(self.cantidad)
 			exist.save()
 
 		except Existencia.DoesNotExist:
@@ -93,7 +94,7 @@ class Detalle(models.Model):
 		# Guardar el movimiento del producto
 		mov = Movimiento()
 		mov.producto = self.producto
-		mov.cantidad = self.cantidad
+		mov.cantidad = float(self.cantidad)
 		mov.almacen = self.almacen
 		mov.tipo_mov = 'S'
 		mov.save()

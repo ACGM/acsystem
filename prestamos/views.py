@@ -230,13 +230,31 @@ class AprobarRechazarSolicitudesPrestamosView(View):
 				oSolicitud.save()
 
 				#Crear prestamo en la maestra de prestamos
-				# maestra = MaestraPrestamo()
+				maestra = MaestraPrestamo()
 
-				# maestra.noPrestamo = MaestraPrestamo.objects.get_o_create('noPrestamo').latest().noPrestamo
-				# maestra.noSolicitudPrestamo = oSolicitud
+				maestra.noPrestamo = MaestraPrestamo.objects.get_o_create('noPrestamo').latest().noPrestamo
+				maestra.noSolicitudPrestamo = oSolicitud
 
-				# maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
-				# maestra.socio = oSolicitud.socio
+				maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
+				maestra.socio = oSolicitud.socio
+				maestra.representante = oSolicitud.representante
+				maestra.oficial = oSolicitud.cobrador
+				# maestra.distrito = oSolicitud.distrito
+				maestra.montoInicial = oSolicitud.netoDesembolsar
+				maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
+				maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
+				maestra.pagoPrestamoAnterior = 0
+				maestra.cantidadCuotas = oSolicitud.cantidadCuotas
+				maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+				maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+				maestra.fechaDesembolso = oSolicitud.fechaParaDescuento
+				maestra.fechaEntrega = datetime.datetime.now()
+				# maestra.chequeNo
+				maestra.valorGarantizado = oSolicitud.valorGarantizado
+				maestra.userLog = request.user
+
+
+
 
 
 			return HttpResponse(1)

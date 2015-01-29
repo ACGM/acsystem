@@ -21,7 +21,7 @@ class SuplidorTipoSerializer(serializers.HyperlinkedModelSerializer):
 		fields=('descripcion',)
 
 
-class SuplidorSerializer(serializers.HyperlinkedModelSerializer):
+class SuplidorSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Suplidor
