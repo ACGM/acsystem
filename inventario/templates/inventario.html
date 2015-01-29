@@ -63,7 +63,7 @@
 							<td>[[entrada.factura]]</td>
 							<td>[[entrada.suplidor]]</td>
 							<td>[[entrada.totalGeneral]]</td>
-							<td><span class="icon-printer imprimir-inventario"></span> </td>
+							<td><a href="#" class="icon-printer imprimir-icon"></a> </td>
 							<!-- <td>
 								<div ng-if="entrada.posteo == 'N'"> <a href="#" class="icon-delete icon-eliminar"></a></div> 
 								<div ng-if="entrada.posteo != 'N'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
@@ -231,7 +231,7 @@
 							</ul>
 						</div>
 
-						<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit" ng-disabled="!EntradaInventarioForm.$valid">Guardar</button>
+						<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
 
 						<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
 

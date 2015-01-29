@@ -101,7 +101,9 @@ class InventarioD(models.Model):
 		# Actualizar la existencia del producto 
 		try:
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
-			
+
+			exist.cantidadAnterior = exist.cantidad
+						
 			if self.tipoAccion == 'S':
 				exist.cantidad -= float(self.cantidadTeorico)
 			else:
@@ -160,11 +162,16 @@ class Existencia(models.Model):
 	
 	producto = models.ForeignKey(Producto)
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
+	cantidadAnterior = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	almacen = models.ForeignKey(Almacen)
 	fecha = models.DateField(auto_now=True)
 
 	def __unicode__(self):
 		return '%s - %s' % (self.producto,self.cantidad)
+
+	@property
+	def getCodigo(self):
+		return self.producto.codigo
 
 	class Meta:
 		ordering = ['producto']

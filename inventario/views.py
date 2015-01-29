@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from .models import InventarioH, InventarioD, Almacen, Existencia
 from administracion.models import Suplidor, Producto
 
-from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer
+from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
+							ExistenciaProductoSerializer
 
 import json
 import math
@@ -153,3 +154,15 @@ class ListadoAlmacenesView(viewsets.ModelViewSet):
 
 	queryset = Almacen.objects.all()
 	serializer_class = AlmacenesSerializer
+
+
+# Existencia de un producto en especifico
+class getExistenciaByProductoView(APIView):
+
+	serializer_class = ExistenciaProductoSerializer
+
+	def get(self, request, codProd, almacen):
+		existencia = Existencia.objects.filter(producto__codigo=codProd, almacen_id=almacen)
+
+		response = self.serializer_class(existencia, many=True)
+		return Response(response.data)

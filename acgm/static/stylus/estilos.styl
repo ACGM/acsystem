@@ -31,7 +31,7 @@
 	content: "\e619";
 }
 
-.icon-icon-save:before {
+.icon-save:before {
 	content: "\e89c";
 }
 
@@ -243,6 +243,12 @@ footer
 	
 // CLASES GENERICAS
 
+.imprimir-icon
+	text-decoration none
+	color verde
+	&:hover
+		color mamey
+		
 .cerrar-table
 	width 100%
 	text-align right
@@ -285,8 +291,8 @@ footer
 .Boton //CLASE para darle formato a los botones
 	background verdeClarito
 	border 0
-	border-bottom .3em solid green
-	border-radius 3px 3px 3px 3px
+	border-bottom .35em solid green
+	border-radius 3px 3px 4px 4px
 	color white
 	height 2.2em
 	transition .1s
@@ -294,7 +300,7 @@ footer
 	
 	&:hover
 		background mamey
-		border-bottom .3em solid rojoOscuro
+		border-bottom .35em solid rojoOscuro
 
 .Boton-disabled //CLASE para darle apariencia deshabilitado a botones
 	background lightgray !important
@@ -863,7 +869,7 @@ footer
 		transform scale(1.2,1.2)
 
 .listado-reg-inventario
-	margin 1em 1em 0 1em
+	margin 1em
 	display inline-block
 
 .doc-no-ei
@@ -948,9 +954,6 @@ footer
 	// &:nth-child(even)
 	// 	background verdeMuySuave
 	
-
-.imprimir-inventario
-	color verde
 
 .boton-postear-inventario
 	height 3em
@@ -1065,6 +1068,9 @@ footer
 	& td
 		padding 0.2em
 		border 1px solid black
+		
+		&:nth-child(7)
+			text-align center
 
 .productos-table-detail
 	& td
@@ -1107,8 +1113,8 @@ footer
 	font-weight bold
 	color verde
 .boton-guarda-inventario
-	height 2.5em
-	width 7em
+	height 3em
+	width 7.5em
 	float right
 	margin-bottom 3em
 	&:before
@@ -1159,12 +1165,6 @@ footer
 		
 		&:nth-child(9),&:nth-child(10)
 			text-align center			
-
-.imprimir-factura
-	text-decoration none
-	color verde
-	&:hover
-		color mamey
 			
 .boton-postear-factura
 	height 2.5em

@@ -8,21 +8,6 @@ from cuenta.models import Cuentas, Auxiliares
 import datetime
 
 
-# Articulo (para Ordenes de Despacho)
-class Articulo(models.Model):
-	
-	descripcion = models.CharField(max_length=50)
-	precio = models.DecimalField(max_digits=12, decimal_places=2)
-
-	def __unicode__(self):
-		return '%s' % (self.descripcion)
-
-	class Meta:
-		ordering = ('descripcion',)
-		verbose_name = 'Articulo'
-		verbose_name_plural = 'Articulos'
-
-
 # Localidades
 class Localidad(models.Model):
 
@@ -88,7 +73,7 @@ class Unidad(models.Model):
 # PRODUCTOS para registrarlos en la facturacion
 class Producto(models.Model):
 	
-	codigo = models.CharField(max_length=10)
+	codigo = models.CharField(max_length=10, editable=False)
 	descripcion = models.CharField(max_length=50)
 	unidad = models.ForeignKey(Unidad)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
@@ -101,9 +86,14 @@ class Producto(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
 
+	def save(self, *args, **kwargs):
+		sec = Producto.objects.all().count() + 1
+		self.codigo = self.descripcion[:4].upper() + ('000000' + str(sec))[-6:]
+
+		super(Producto, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['descripcion']
-		unique_together = ('codigo',)
 
 
 # Tipo de suplidores

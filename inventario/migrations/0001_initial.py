@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0002_auto_20150129_0218'),
+        ('administracion', '0004_auto_20150129_2057'),
     ]
 
     operations = [
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             name='Existencia',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad', models.IntegerField()),
+                ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('fecha', models.DateField(auto_now=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
             name='Movimiento',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad', models.IntegerField()),
+                ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('fecha_movimiento', models.DateField(auto_now_add=True)),
                 ('tipo_mov', models.CharField(default=b'E', max_length=1, verbose_name=b'Tipo de Movimiento', choices=[(b'E', b'Entrada'), (b'S', b'Salida')])),
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),

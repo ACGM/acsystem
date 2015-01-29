@@ -34,7 +34,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
                                     ProductoByDescrpView
-from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView
+from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
 
@@ -122,6 +122,8 @@ urlpatterns = patterns('',
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
+    url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
+    
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),

@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Distrito, Banco, Articulo
+from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Distrito, Banco
 from facturacion.models import Factura
 
 import datetime
@@ -107,7 +107,7 @@ class SolicitudOrdenDespachoH(models.Model):
 class SolicitudOrdenDespachoD(models.Model):
 
 	ordenDespacho = models.ForeignKey(SolicitudOrdenDespachoH)
-	articulo = models.ForeignKey(Articulo, unique=True)
+	articulo = models.CharField(max_length=80, default='No especificado')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
 

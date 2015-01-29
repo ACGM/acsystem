@@ -15,20 +15,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Articulo',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('descripcion', models.CharField(max_length=50)),
-                ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
-            ],
-            options={
-                'ordering': ('descripcion',),
-                'verbose_name': 'Articulo',
-                'verbose_name_plural': 'Articulos',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Autorizador',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -113,8 +99,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
                 ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
-                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 29, 2, 18, 31, 80175), auto_now_add=True)),
-                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 29, 2, 18, 31, 80200), auto_now=True)),
+                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 29, 20, 57, 14, 713367), auto_now_add=True)),
+                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 29, 20, 57, 14, 713392), auto_now=True)),
             ],
             options={
                 'ordering': ['socio'],

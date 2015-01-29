@@ -77,6 +77,7 @@ class Detalle(models.Model):
 		try:
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
+			exist.cantidadAnterior = exist.cantidad
 			exist.cantidad -= float(self.cantidad)
 			exist.save()
 

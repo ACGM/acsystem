@@ -1,3 +1,5 @@
+# SERIALIZERS -- Administracion
+
 from rest_framework import serializers
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, CategoriaPrestamo, \

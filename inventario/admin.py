@@ -13,7 +13,7 @@ class InventarioDAdmin(admin.ModelAdmin):
 
 @admin.register(Existencia)
 class ExistenciaAdmin(admin.ModelAdmin):
-	list_display = ['producto', 'cantidad', 'almacen', 'fecha']
+	list_display = ['producto', 'cantidad', 'cantidadAnterior', 'almacen', 'fecha']
 	search_fields = ('producto', 'almacen')
 
 @admin.register(Almacen)

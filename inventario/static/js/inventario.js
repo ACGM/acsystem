@@ -31,6 +31,19 @@
         return deferred.promise;
       }
 
+      //Existencia de Producto
+      function getExistenciaByProducto(producto, almacen) {
+        var deferred = $q.defer();
+        url = '/api/producto/existencia/{producto}/{almacen}/?format=json'.replace('{producto}',producto).replace('{almacen}',almacen);
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
       //Buscar un documento en especifico (Desglose)
       function DocumentoById(NoDoc) {
         var deferred = $q.defer();
@@ -138,7 +151,8 @@
         productos: productos,
         guardarEI: guardarEI,
         almacenes: almacenes,
-        DocumentoById: DocumentoById
+        DocumentoById: DocumentoById,
+        getExistenciaByProducto: getExistenciaByProducto
       };
 
     }])
@@ -268,7 +282,6 @@
             var fechaVFormatted = fechaVP[2] + '-' + fechaVP[1] + '-' + fechaVP[0];  
           }
           
-          
           var dataH = new Object();
 
           dataH.suplidor = $scope.dataH.idSuplidor;
@@ -375,9 +388,6 @@
           $scope.subtotal = $filter('number')(total, 2);
           $scope.total = $filter('number')(total, 2);
 
-          console.log('Subtotal : ' + $scope.subtotal);
-          console.log('Subtotal TOTAL: ' + total);
-          
         } catch (e) {
           $scope.mostrarError(e);
 
@@ -496,6 +506,29 @@
         });
       }
 
+      //Existencia de Producto
+      $scope.existenciaProducto = function(prod, almacen) {
+
+        try {
+          InventarioService.getExistenciaByProducto(prod, almacen).then(function (data) {
+
+            if(data.length > 0) {
+              if(data[0]['cantidad'] < 11) {
+                $scope.mostrarError('El producto ' + prod + ' tiene una existencia de ' + data[0]['cantidad']);
+              }
+            } else {
+              $scope.mostrarError('Este producto (' + prod + ') no tiene existencia.');
+              throw data;
+            }
+
+          }, function() {
+            throw data;
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
       //Seleccionar Suplidor
       $scope.selSuplidor = function($event, supl) {
         $event.preventDefault();
@@ -508,6 +541,13 @@
       //Agregar Producto
       $scope.addProducto = function($event, Prod) {
         $event.preventDefault();
+
+        if ($scope.almacen == undefined || $scope.almacen == '') {
+          $scope.mostrarError('Debe seleccionar un almacen');
+          throw "almacen";
+        }
+
+        $scope.existenciaProducto(Prod.codigo, $scope.almacen);
 
         Prod.cantidad = 1;
         $scope.dataD.push(Prod);
