@@ -17,12 +17,11 @@ class CuentasControl(models.Model):
 # Create your models here.
 class Cuentas(models.Model):
     # Catalogo de Cuentas Contables
-    """docstring for Cuentas"""
 
     # Origenes de cuentas
     origen_choices = (('D', 'Debito'), ('C', 'Credito'),)
 
-    #Campos Base
+    # Campos Base
     codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
     origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
@@ -37,13 +36,13 @@ class Cuentas(models.Model):
         ordering = ['codigo']
 
     def save(self, *args, **kwargs):
-    	if self.control == True:
-    		cuentaControl=CuentasControl()
-    		cuentaControl.codigoControl = self.codigo
-    		cuentaControl.descripcion = self.descripcion
-    		cuentaControl.save()
+        if self.control:
+            cuentaControl = CuentasControl()
+            cuentaControl.codigoControl = self.codigo
+            cuentaControl.descripcion = self.descripcion
+            cuentaControl.save()
 
-    	super(Cuentas,self).save(*args,**kwargs)
+        super(Cuentas, self).save(*args, **kwargs)
 
 
 class Auxiliares(models.Model):

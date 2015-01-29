@@ -13,7 +13,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamo
                             SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
 
 from ahorro.views import AhorroView, MaestraAhorroView
-from cuenta.views import DiarioGeneralView
+from cuenta.views import CuentasView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
@@ -157,7 +157,7 @@ urlpatterns = patterns('',
     url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
 
     #Cuentas
-    url(r'^cuentasJson/$', DiarioGeneralView.as_view(), name='cuentas_diario'),         
+    url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
