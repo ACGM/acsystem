@@ -6,20 +6,61 @@
 .titulo,.localidad,.numeracion
 	display block
 	text-align center
-
+	font-size 12px
 .tituloRPT
 	text-align center
-
+	font-weight bold
+	font-size 1.2em
+	
+.entradaInventario
+	font-size 12px
+	padding 1em
+	
+.cabecera
+	margin-bottom 1.5em
+	font-size 12px
+	
 .table-cabecera
-	width 50%
+	font-size 12px
+	width 100%
+	margin-bottom 1em
+	
+.table-productos
+	width 100%
+	font-size 12px
+	
 	& tr
+		&:first-child
+			background gray
+			font-weight bold
 		& td
 			border 1px solid black
+			padding .3em
+		
+		& td 
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7)
+				text-align right
+		
+		&:last-child
+			background lightgray
+			font-weight bold
+			
+			& td
+				&:nth-child(2),
+				&:nth-child(3)
+					text-align right
 
-
-@media print
-	.titulo
-		font-size 2em
-	
+.firma
+	float left
+	margin-top 3em
+	text-align center
+.linea
+	display block
+			
+@media print 
+		
 	.head,.pie
 		display none

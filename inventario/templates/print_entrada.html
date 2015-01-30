@@ -8,52 +8,40 @@
 </div>
 
 	<div class="entradaInventario" ng-controller="ImprimirInventarioCtrl">
-		<header>
+		<header class="header-ei">
 			<span class="titulo"> COOPERATIVA </span>
 			<span class="localidad"> ZONA IND. LA ISABELA </span>
 			<span class="numeracion"> 2397299 </span>
 			<p class="tituloRPT"> Entrada de Mercancia al Inventario</p>
 		</header>
 
-		<section class="cabecera">
+		<section class="-cabecera">
 			<table class="table-cabecera">
 				<tr>
-					<td>Entrada No.:</td>
-					<td>[[entrada.id | numberFixedLen : 8]]</td>
-
-					<td>ESTATUS:</td>
-					<td>[[posteo]]</td>
+					<td><strong>Entrada No.:</strong> [[entrada.id | numberFixedLen : 8]]</td>
+					<td><strong>ESTATUS:</strong> [[posteo]]</td>
 				</tr>
 				<tr>
-					<td>De Fecha:</td>
-					<td>[[entrada.fecha | date : 'dd/MM/yyyy']]</td>
-
-					<td>Fecha de Vencimiento:</td>
-					<td>[[fechaVence]]</td>
+					<td><strong>De Fecha:</strong> [[entrada.fecha | date : 'dd/MM/yyyy']]</td>
+					<td><strong>Fecha de Vencimiento:</strong> [[fechaVence]]</td>
 				</tr>
 				<tr>
-					<td>Factura No.:</td>
-					<td>[[entrada.factura]]</td>
-
-					<td>NCF:</td>
-					<td>[[entrada.NCF]]</td>
+					<td><strong>Factura No.:</strong> [[entrada.factura]]</td>
+					<td><strong>NCF:</strong> [[entrada.NCF]]</td>
 				</tr>
 				<tr>
-					<td>Nota o Recibido por:</td>
-					<td>[[condicion]]</td>
-
-					<td>Fecha: [[hoy | date : 'dd/MM/yyyy']]</td>
+					<td><strong>Nota o Recibido por:</strong> [[condicion]]</td>
+					<td><strong>Fecha:</strong> [[hoy | date : 'dd/MM/yyyy']]</td>
 				</tr>
 				<tr>
-					<td>Suplidor:</td>
-					<td>[[entrada.suplidorId]] - [[entrada.suplidorName]]</td>
+					<td colspan="2"><strong>Suplidor:</strong> [[entrada.suplidorId]] - [[entrada.suplidorName]]</td>
 				</tr>
 			</table>
 			
 		</section>
 
 		<section class="detalle">
-			<table class="productos">
+			<table class="table-productos">
 				<tr>
 					<td>CODIGO</td>
 					<td>DESCRIPCION</td>
@@ -74,10 +62,19 @@
 					<td>[[producto.costo * (producto.cantidad + producto.cantidadAnterior) | number : 2]]</td>
 					
 				</tr>
+				<tr>
+					<td colspan="3">TOTALES</td>
+					<td>[[totalCantidadAnterior() | number : 2]]</td>
+					<td>[[totalCantidad() | number : 2]]</td>
+					<td>[[totalCosto() | number : 2]]</td>
+					<td>[[totalValor() | number : 2]]</td>
+				</tr>
+
 			</table>
 
 			<div class="firma">
-				
+				<span class="linea">___________________________________</span>
+				<span class="recibido">Recibido Por</span>
 			</div>
 
 			<div class="totales">

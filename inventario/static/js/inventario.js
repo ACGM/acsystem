@@ -644,9 +644,47 @@
         $scope.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
 
       }
-
-console.log($scope.entrada);
     });
+
+    $scope.totalValor = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.costo * (item.cantidad + item.cantidadAnterior);
+      });
+
+      return total;
+    }
+
+    $scope.totalCantidad = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidad;
+      });
+      
+      return total;
+    }
+
+    $scope.totalCantidadAnterior = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidadAnterior;
+      });
+      
+      return total;
+    }
+
+    $scope.totalCosto = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += parseFloat(item.costo);
+      });
+      
+      return total;
+    }
 
   }]);
 

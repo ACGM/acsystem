@@ -74,11 +74,10 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 	try:
 
 		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-		exist.cantidad -= float(iCantidad)
+		exist.cantidad -= decimal.Decimal(iCantidad)
 		exist.save()
 	except Existencia.DoesNotExist:
 		return HttpResponse('No hay existencia para el producto ' + str(idProd))
-
 
 
 # Entrada de Inventario
