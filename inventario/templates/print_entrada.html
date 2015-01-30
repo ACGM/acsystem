@@ -1,0 +1,92 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Inventario {% endblock title %}
+
+{% block content %}
+
+</div>
+
+	<div class="entradaInventario" ng-controller="ImprimirInventarioCtrl">
+		<header>
+			<span class="titulo"> COOPERATIVA </span>
+			<span class="localidad"> ZONA IND. LA ISABELA </span>
+			<span class="numeracion"> 2397299 </span>
+			<p class="tituloRPT"> Entrada de Mercancia al Inventario</p>
+		</header>
+
+		<section class="cabecera">
+			<table class="table-cabecera">
+				<tr>
+					<td>Entrada No.:</td>
+					<td>[[entrada.id | numberFixedLen : 8]]</td>
+
+					<td>ESTATUS:</td>
+					<td>[[posteo]]</td>
+				</tr>
+				<tr>
+					<td>De Fecha:</td>
+					<td>[[entrada.fecha | date : 'dd/MM/yyyy']]</td>
+
+					<td>Fecha de Vencimiento:</td>
+					<td>[[fechaVence]]</td>
+				</tr>
+				<tr>
+					<td>Factura No.:</td>
+					<td>[[entrada.factura]]</td>
+
+					<td>NCF:</td>
+					<td>[[entrada.NCF]]</td>
+				</tr>
+				<tr>
+					<td>Nota o Recibido por:</td>
+					<td>[[condicion]]</td>
+
+					<td>Fecha: [[hoy | date : 'dd/MM/yyyy']]</td>
+				</tr>
+				<tr>
+					<td>Suplidor:</td>
+					<td>[[entrada.suplidorId]] - [[entrada.suplidorName]]</td>
+				</tr>
+			</table>
+			
+		</section>
+
+		<section class="detalle">
+			<table class="productos">
+				<tr>
+					<td>CODIGO</td>
+					<td>DESCRIPCION</td>
+					<td>ALMACEN</td>
+					<td>Existencia Anterior</td>
+					<td>Cantidad</td>
+					<td>Costo</td>
+					<td>Valor</td>
+				</tr>
+
+				<tr ng-repeat="producto in productos">
+					<td>[[producto.codigo]]</td>
+					<td>[[producto.descripcion]]</td>
+					<td>[[producto.almacen]]</td>
+					<td>[[producto.cantidadAnterior]]</td>
+					<td>[[producto.cantidad]]</td>
+					<td>[[producto.costo]]</td>
+					<td>[[producto.costo * (producto.cantidad + producto.cantidadAnterior) | number : 2]]</td>
+					
+				</tr>
+			</table>
+
+			<div class="firma">
+				
+			</div>
+
+			<div class="totales">
+				
+			</div>
+		</section>
+	</div>
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

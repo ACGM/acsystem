@@ -163,7 +163,7 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', 'InventarioService', function ($scope, $filter, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
       
       //Inicializacion de variables
       $scope.posteof = '*';
@@ -606,12 +606,48 @@
         }
       }
 
+      //Imprimir entrada de inventario
+      $scope.Imprimir = function(entrada) {
+
+        $window.localStorage['entrada'] = JSON.stringify(entrada);
+        $window.open('/inventario/print/{entrada}'.replace('{entrada}',entrada.id), target='_blank'); 
+      }
+
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
 
       }
 
-    }]);
+    }])
+  
+  //****************************************************
+  //CONTROLLERS PRINT DOCUMENT                         *
+  //****************************************************
+  .controller('ImprimirInventarioCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
+    $scope.entrada = JSON.parse($window.localStorage['entrada']);
+
+    InventarioService.DocumentoById($scope.entrada.id).then(function (data) {
+      $scope.hoy = Date.now();
+      $scope.entrada = data[0];
+      $scope.productos = data[0]['productos']
+      
+      $scope.condicion = $scope.entrada.condicion.replace('CR','CREDITO').replace('CO','DE CONTADO');
+      $scope.posteo = $scope.entrada.posteo.replace('S', 'POSTEADA').replace('N', 'EN PROCESO');
+
+      if($scope.entrada.diasPlazo != undefined && $scope.entrada.diasPlazo != '') {
+        var nextDate = new Date();
+        var fechaF = new Date($scope.entrada.fecha);
+
+        nextDate.setDate(fechaF.getDate()+parseInt($scope.entrada.diasPlazo));
+
+        $scope.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
+
+      }
+
+console.log($scope.entrada);
+    });
+
+  }]);
 
 })(_);  

@@ -25,7 +25,6 @@ class Almacen(models.Model):
 # Cabecera del Inventario
 class InventarioH(models.Model):
 
-	dias_plazo_choices = (('30','30'),('60','60'), ('120','120'),)
 	posteo_choices = (('N','NO'),('S','SI'))
 	condicion_choices = (('CO','Contado'),('CR','Credito'),)
 
@@ -33,8 +32,7 @@ class InventarioH(models.Model):
 	orden = models.CharField(max_length=30, blank=True, null=True)
 	factura = models.CharField(max_length=12, blank=True, null=True)
 	
-	diasPlazo = models.CharField("Dias de Plazo", max_length=3, choices=dias_plazo_choices,
-									default=dias_plazo_choices[0][0], null=True, blank=True)
+	diasPlazo = models.CharField("Dias de Plazo", max_length=3, null=True, blank=True)
 
 	nota = models.TextField(blank=True, null=True)
 	ncf = models.CharField("NCF", max_length=25, blank=True, null=True)

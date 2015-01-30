@@ -58,6 +58,8 @@ class EntradaInventarioById(ListView):
 						'descripcion': prod.producto.descripcion,
 						'unidad': prod.producto.unidad.descripcion,
 						'cantidad': prod.cantidadTeorico,
+						'cantidadAnterior': float(Existencia.objects.filter(producto__codigo=prod.producto.codigo, almacen=prod.almacen.id).values('cantidadAnterior')[0]['cantidadAnterior']) 
+												if Existencia.objects.filter(producto=prod, almacen=prod.almacen.id).values('cantidadAnterior') != None else 0,
 						'costo': prod.costo,
 						'almacen': prod.almacen.id,
 					} 
@@ -166,3 +168,9 @@ class getExistenciaByProductoView(APIView):
 
 		response = self.serializer_class(existencia, many=True)
 		return Response(response.data)
+
+
+#Imprimir Entrada de Inventario
+class ImprimirEntradaInventarioView(TemplateView):
+
+	template_name = 'print_entrada.html'

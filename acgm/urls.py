@@ -5,7 +5,7 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
-from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById
+from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
@@ -123,7 +123,9 @@ urlpatterns = patterns('',
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
-    
+    #Inventario#Imprimir
+    url(r'^inventario/print/(?P<entrada>[\d]+)$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
+
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),

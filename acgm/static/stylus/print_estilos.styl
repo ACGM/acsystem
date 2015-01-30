@@ -1,0 +1,25 @@
+@import 'normalize'
+
+//MODULO INVENTARIO
+// Entrada de Inventario
+
+.titulo,.localidad,.numeracion
+	display block
+	text-align center
+
+.tituloRPT
+	text-align center
+
+.table-cabecera
+	width 50%
+	& tr
+		& td
+			border 1px solid black
+
+
+@media print
+	.titulo
+		font-size 2em
+	
+	.head,.pie
+		display none
