@@ -61,7 +61,7 @@ class FacturaById(DetailView):
 				'fecha': factura.fecha,
 				'socioCodigo': factura.socio.codigo,
 				'socioNombre': factura.socio.nombreCompleto,
-				'orden': factura.ordenCompra if factura.ordenCompra != None else 0,
+				'orden': factura.ordenCompra if factura.ordenCompra != None else '',
 				'terminos': factura.terminos,
 				'vendedor': factura.userLog.username,
 				'posteo': factura.posteo,
@@ -227,3 +227,18 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 class ImprimirFacturaView(TemplateView):
 
 	template_name = 'print_factura.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+			factura = data['factura']
+
+			fact = Factura.objects.get(noFactura=factura)
+			fact.impresa = fact.impresa + 1
+			fact.save()
+
+			return HttpResponse(fact.impresa)
+
+		except Exception as e:
+			return HttpResponse(e)

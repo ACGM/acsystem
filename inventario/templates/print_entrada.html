@@ -55,7 +55,7 @@
 				<tr ng-repeat="producto in productos">
 					<td>[[producto.codigo]]</td>
 					<td>[[producto.descripcion]]</td>
-					<td>[[producto.almacen]]</td>
+					<td>[[producto.almacenDescrp]]</td>
 					<td>[[producto.cantidadAnterior]]</td>
 					<td>[[producto.cantidad]]</td>
 					<td>[[producto.costo]]</td>
@@ -64,10 +64,10 @@
 				</tr>
 				<tr>
 					<td colspan="3">TOTALES</td>
-					<td>[[totalCantidadAnterior() | number : 2]]</td>
-					<td>[[totalCantidad() | number : 2]]</td>
-					<td>[[totalCosto() | number : 2]]</td>
-					<td>[[totalValor() | number : 2]]</td>
+					<td>[[totalCantidadAnterior_ | number : 2]]</td>
+					<td>[[totalCantidad_ | number : 2]]</td>
+					<td>[[totalCosto_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
 				</tr>
 
 			</table>

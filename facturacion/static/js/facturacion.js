@@ -19,6 +19,21 @@
         return deferred.promise;
       }
 
+      //Impresion de Factura (incrementa el campo de IMPRESA)
+      function impresionFact(fact) {
+        var deferred = $q.defer();
+
+        $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+
       //Guardar Orden de Compra
       function guardarOrdenSC(Orden) {
         var deferred = $q.defer();
@@ -142,7 +157,8 @@
         guardarFact: guardarFact,
         DocumentoById: DocumentoById,
         categoriasPrestamos: categoriasPrestamos,
-        guardarOrdenSC: guardarOrdenSC
+        guardarOrdenSC: guardarOrdenSC,
+        impresionFact: impresionFact
       };
 
     }])
@@ -284,14 +300,15 @@
       // Visualizar Documento (Factura Existente - desglose)
       $scope.FactFullById = function(NoFact, usuario) {
         try {
+
           FacturacionService.DocumentoById(NoFact).then(function (data) {
 
             if(data.length > 0) {
-              $scope.errorMsg = '';
-              $scope.errorShow = false;
-
               //completar los campos
               $scope.nuevaEntrada();
+
+              $scope.errorMsg = '';
+              $scope.errorShow = false;
 
               $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
               $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
@@ -301,6 +318,7 @@
               $scope.dataH.terminos = data[0]['terminos'];
               $scope.dataH.vendedor = data[0]['vendedor'];
               $scope.dataH.posteo = data[0]['posteo'];
+              $scope.dataH.impresa = data[0]['impresa'];
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
@@ -770,7 +788,6 @@
     $scope.dataD = [];
 
     FacturacionService.DocumentoById($scope.factura.noFactura).then(function (data) {
-console.log(data)
 
       if(data.length > 0) {
         $scope.dataH.factura = $filter('numberFixedLen')($scope.factura.noFactura, 8);
@@ -781,53 +798,55 @@ console.log(data)
         $scope.dataH.terminos = data[0]['terminos'].replace('CR', 'CREDITO').replace('CO', 'DE CONTADO');
         $scope.dataH.vendedor = data[0]['vendedor'];
       //   $scope.dataH.posteo = data[0]['posteo'];
+        $scope.dataH.impresa = data[0]['impresa'];
 
         data[0]['productos'].forEach(function (item) {
+          item.subtotal = parseFloat(item.descuento) > 0? (item.precio * item.cantidad) - ((item.descuento / 100) * item.cantidad * item.precio) : (item.precio * item.cantidad);
           $scope.dataD.push(item);
           // $scope.dataH.almacen = item['almacen'];
-        })
+        });
 
+        $scope.totalDescuento_ = $scope.totalDescuento();
+        $scope.totalValor_ = $scope.totalValor();
+
+        FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
+          console.log(data);
+        });
       }
 
     });
 
     $scope.totalValor = function() {
       var total = 0.0;
+      var descuento = 0;
 
-      $scope.productos.forEach(function (item) {
-        total += item.costo * (item.cantidad + item.cantidadAnterior);
+      $scope.dataD.forEach(function (item) {
+        if(parseFloat(item.descuento) > 0) {
+          descuento = (parseFloat(item.descuento)/100);
+          descuento = (parseFloat(item.precio) * parseFloat(descuento) * parseFloat(item.cantidad));
+        } else {
+          descuento = 0;
+        }
+        total += (parseFloat(item.precio) * parseFloat(item.cantidad)) - descuento;
       });
 
       return total;
     }
 
-    $scope.totalCantidad = function() {
+    $scope.totalDescuento = function() {
       var total = 0.0;
+      var descuento = 0.0;
 
-      $scope.productos.forEach(function (item) {
-        total += item.cantidad;
+      $scope.dataD.forEach(function (item) {
+        if(parseFloat(item.descuento) > 0) {
+          descuento = (parseFloat(item.descuento)/100);
+          descuento = (parseFloat(item.precio) * parseFloat(descuento) * parseFloat(item.cantidad));
+        } else {
+          descuento = 0;
+        }
+        total += descuento;
       });
-      
-      return total;
-    }
 
-    $scope.totalCantidadAnterior = function() {
-      var total = 0.0;
-
-      $scope.productos.forEach(function (item) {
-        total += item.cantidadAnterior;
-      });
-      
-      return total;
-    }
-
-    $scope.totalCosto = function() {
-      var total = 0.0;
-
-      $scope.productos.forEach(function (item) {
-        total += parseFloat(item.costo);
-      });
-      
       return total;
     }
 

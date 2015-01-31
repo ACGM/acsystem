@@ -24,7 +24,7 @@ class Factura(models.Model):
 	socio = models.ForeignKey(Socio, null=True)
 	ordenCompra = models.CharField(max_length=20, blank=True, null=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
-	impresa = models.IntegerField(default=0)
+	impresa = models.PositiveIntegerField(default=0)
 
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)

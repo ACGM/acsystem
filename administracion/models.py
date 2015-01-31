@@ -43,6 +43,11 @@ class Departamento(models.Model):
 	def __unicode__(self):
 		return '%s: %s' % (self.centroCosto, self.descripcion)
 
+	def save(self, *args, **kwargs):
+		self.descripcion = self.descripcion.title()
+
+		super(Departamento, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['descripcion',]
 
@@ -87,8 +92,10 @@ class Producto(models.Model):
 		return '%s' % (self.descripcion)
 
 	def save(self, *args, **kwargs):
+		self.descripcion = self.descripcion.upper()
+
 		sec = Producto.objects.all().count() + 1
-		self.codigo = self.descripcion[:4].upper() + ('000000' + str(sec))[-6:]
+		self.codigo = self.descripcion[:3].upper() + ('0000' + str(sec))[-4:]
 
 		super(Producto, self).save(*args, **kwargs)
 
@@ -138,6 +145,11 @@ class Suplidor(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.nombre)
 
+	def save(self, *args, **kwargs):
+		self.nombre = self.nombre.upper()
+
+		super(Suplidor, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['nombre']
 		verbose_name_plural = 'Suplidores'
@@ -182,7 +194,10 @@ class Socio(models.Model):
 
 	
 	def save(self, *args, **kwargs):
-		self.nombreCompleto = self.nombres + ' ' + self.apellidos
+		self.nombres = self.nombres.upper()
+		self.apellidos = self.apellidos.upper()
+
+		self.nombreCompleto = self.nombres.upper() + ' ' + self.apellidos.upper()
 
 		super(Socio, self).save(*args, **kwargs)
 
@@ -210,6 +225,11 @@ class CoBeneficiario(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.nombre)
 
+	def save(self, *args, **kwargs):
+		self.nombre = self.nombre.upper()
+
+		super(CoBeneficiario, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['nombre']
 		verbose_name = '2) Co-Beneficiario'
@@ -235,6 +255,11 @@ class CategoriaPrestamo(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
 
+	def save(self, *args, **kwargs):
+		self.descripcion = self.descripcion.upper()
+
+		super(CategoriaPrestamo, self).save(*args, **kwargs)
+
 	class Meta:
 		ordering = ['descripcion']
 		verbose_name = 'Categoria de Prestamo'
@@ -247,7 +272,6 @@ class CuotaPrestamo(models.Model):
 	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2)
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
-	# cantidadMeses = models.PositiveIntegerField("Cantidad de Meses")
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -267,7 +291,6 @@ class CuotaOrdenes(models.Model):
 	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2)
 	cantidadQuincenas = models.PositiveIntegerField("Cantidad de Quincenas")
-	cantidadMeses = models.PositiveIntegerField("Cnatidad de Meses")
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -339,6 +362,11 @@ class Banco(models.Model):
 
 	def __unicode__(self):
 		return '%s - %s' % (self.codigo,self.nombre)
+
+	def save(self, *args, **kwargs):
+		self.nombre = self.nombre.upper()
+
+		super(Banco, self).save(*args, **kwargs)
 
 	class Meta:
 		ordering = ['nombre']

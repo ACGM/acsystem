@@ -123,10 +123,10 @@ urlpatterns = patterns('',
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
-    url(r'^inventario/transferencia$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
+    url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
-    url(r'^inventario/print/(?P<entrada>[\d]+)$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
+    url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
 
 
     #Facturacion    
@@ -134,7 +134,7 @@ urlpatterns = patterns('',
     url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     #Factura#Imprimir
-    url(r'^facturacion/print/(?P<factura>[\d]+)$', ImprimirFacturaView.as_view(), name='factura_print'),
+    url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     
     # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),

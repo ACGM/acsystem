@@ -64,6 +64,7 @@ class EntradaInventarioById(ListView):
 												if Existencia.objects.filter(producto=prod, almacen=prod.almacen.id).values('cantidadAnterior') != None else 0,
 						'costo': prod.costo,
 						'almacen': prod.almacen.id,
+						'almacenDescrp': prod.almacen.descripcion,
 					} 
 					for prod in InventarioD.objects.filter(inventario=inventario.id)]
 				})

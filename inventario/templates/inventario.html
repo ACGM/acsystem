@@ -144,21 +144,21 @@
 						<tr>
 							<td>Condicion</td>
 							<td> 
-								<select name="condicion" id="condicion" ng-model="dataH.condicion" class="field-choices" required>
+								<select name="condicion" id="condicion" ng-model="dataH.condicion" class="field-choices" ng-change="condicion()" required>
 									<option value="CO">Contado</option>
 									<option value="CR">Credito</option>
 								</select>
 							</td>
 							<td>Dias Plazo</td>
 							<td> 
-								<input type="text" ng-model="dataH.venceDias" ng-change="venceFecha()">
+								<input type="text" ng-model="dataH.venceDias" ng-change="venceFecha()" ng-disabled="condicionBool">
 							</td>
 						</tr>
 						<tr>
 							<td>Nota</td>
-							<td> <textarea name="nota" id="nota" cols="43" rows="2" ng-model="dataH.nota"></textarea> </td>
+							<td> <textarea name="nota" id="nota" cols="40" rows="2" ng-model="dataH.nota"></textarea> </td>
 							<td>Vence</td>
-							<td> <input type="text" disabled ng-model="dataH.fechaVence"></td>
+							<td> <input type="text" disabled ng-model="dataH.fechaVence" ng-disabled="condicionBool"></td>
 						</tr>
 
 					</table>
