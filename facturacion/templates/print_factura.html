@@ -1,0 +1,56 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Factura {% endblock title %}
+
+{% block content %}
+
+</div>
+
+	<div class="FacturaVenta" ng-controller="ImprimirFacturaCtrl">
+		<header class="header-f">
+			<span class="titulo-f"> COOPERATIVA </span>
+			<span class="localidad-f"> ZONA IND. LA ISABELA </span>
+			<span class="numeracion-f"> 2397299 </span>
+		</header>
+
+		<section class="cabecera-factura">
+			<p class="vendido-f"> Vendido a: </p>
+			<span class="socio"> <strong> [[socioCodigo]]-[[socioNombre]] </strong> </span>
+			<span class="vendedor">Vendedor: [[dataH.vendedor]]</span>
+			<span class="terminos">Terminos: [[dataH.terminos]]</span>
+			<span class="orden">Orden No.: [[dataH.orden]]</span>
+			
+		</section>
+
+		<section class="detalle-factura">
+			<table class="table-producto-factura">
+				<tr>
+					<td>Cantidad</td>
+					<td>Codigo</td>
+					<td>Unidad</td>
+					<td>Descripcion</td>
+					<td>Precio</td>
+					<td>Monto</td>
+				</tr>
+				<tr ng-repeat="producto in dataD">
+					<td>[[producto.cantidad | number : 2]]</td>
+					<td>[[producto.codigo]]</td>
+					<td>[[producto.unidad]]</td>
+					<td>[[producto.descripcion]]</td>
+					<td>[[producto.precio | number : 2]]</td>
+					<td>[[producto.cantidad * producto.precio | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="5">TOTALES</td>
+					<td>44444</td>
+				</tr>
+			</table>
+		</section>
+
+	</div>
+
+<div class="pie">
+{% endblock content %}
+	
+</div>
