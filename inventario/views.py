@@ -1,3 +1,5 @@
+# VIEWS de Inventario
+
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -62,6 +64,7 @@ class EntradaInventarioById(ListView):
 												if Existencia.objects.filter(producto=prod, almacen=prod.almacen.id).values('cantidadAnterior') != None else 0,
 						'costo': prod.costo,
 						'almacen': prod.almacen.id,
+						'almacenDescrp': prod.almacen.descripcion,
 					} 
 					for prod in InventarioD.objects.filter(inventario=inventario.id)]
 				})
@@ -74,11 +77,10 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 	try:
 
 		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-		exist.cantidad -= float(iCantidad)
+		exist.cantidad -= decimal.Decimal(iCantidad)
 		exist.save()
 	except Existencia.DoesNotExist:
 		return HttpResponse('No hay existencia para el producto ' + str(idProd))
-
 
 
 # Entrada de Inventario

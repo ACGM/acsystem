@@ -80,6 +80,13 @@
     }
   });
 
+  app.directive('productossearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/productosSearch'
+    }
+  });
+
   app.directive('selectOnClick', function () {
     return {
         restrict: 'A',

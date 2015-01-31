@@ -171,6 +171,7 @@
       $scope.showLEI = true;
       $scope.regAll = false;
       $scope.tableProducto = false;
+      $scope.condicionBool = true;
 
       $scope.item = {};
       $scope.entradas = {};
@@ -327,14 +328,14 @@
        // Visualizar Documento (Entrada de Inventario Existente - desglose)
       $scope.DocFullById = function(NoDoc) {
         try {
+
           InventarioService.DocumentoById(NoDoc).then(function (data) {
+            //completar los campos
+            $scope.nuevaEntrada();
 
             if(data.length > 0) {
               $scope.errorMsg = '';
               $scope.errorShow = false;
-
-              //completar los campos
-              $scope.nuevaEntrada();
 
               $scope.dataH.entradaNo = $filter('numberFixedLen')(NoDoc, 8);
               $scope.dataH.idSuplidor = data[0]['suplidorId'];
@@ -370,9 +371,7 @@
         catch (e) {
           $scope.mostrarError(e);
         }
-
         $scope.toggleLEI();
-
       }
 
       // Calcula los totales para los productos
@@ -552,6 +551,8 @@
         Prod.cantidad = 1;
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
+
+        $scope.calculaTotales();
       }
 
       
@@ -606,6 +607,16 @@
         }
       }
 
+      $scope.condicion = function() {
+        if($scope.dataH.condicion == 'CO') {
+          $scope.condicionBool = true;
+          $scope.dataH.venceDias = '';
+          $scope.dataH.fechaVence = '';
+        } else {
+          $scope.condicionBool = false;
+        }
+      }
+
       //Imprimir entrada de inventario
       $scope.Imprimir = function(entrada) {
 
@@ -630,7 +641,7 @@
     InventarioService.DocumentoById($scope.entrada.id).then(function (data) {
       $scope.hoy = Date.now();
       $scope.entrada = data[0];
-      $scope.productos = data[0]['productos']
+      $scope.productos = data[0]['productos'];
       
       $scope.condicion = $scope.entrada.condicion.replace('CR','CREDITO').replace('CO','DE CONTADO');
       $scope.posteo = $scope.entrada.posteo.replace('S', 'POSTEADA').replace('N', 'EN PROCESO');
@@ -643,10 +654,53 @@
 
         $scope.fechaVence = $filter('date')(nextDate, 'dd/MM/yyyy');
 
-      }
+        $scope.totalValor_ = $scope.totalValor();
+        $scope.totalCantidad_ = $scope.totalCantidad();
+        $scope.totalCantidadAnterior_ = $scope.totalCantidadAnterior();
+        $scope.totalCosto_ = $scope.totalCosto();
 
-console.log($scope.entrada);
+      }
     });
+
+    $scope.totalValor = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.costo * (item.cantidad + item.cantidadAnterior);
+      });
+
+      return total;
+    }
+
+    $scope.totalCantidad = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidad;
+      });
+      
+      return total;
+    }
+
+    $scope.totalCantidadAnterior = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidadAnterior;
+      });
+      
+      return total;
+    }
+
+    $scope.totalCosto = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += parseFloat(item.costo);
+      });
+      
+      return total;
+    }
 
   }]);
 

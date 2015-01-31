@@ -1,25 +1,204 @@
 @import 'normalize'
 
+//CLASES GENERICAS
+@media print 
+		
+	.head,.pie
+		display none
+
 //MODULO INVENTARIO
 // Entrada de Inventario
 
 .titulo,.localidad,.numeracion
 	display block
 	text-align center
-
+	font-size 12px
 .tituloRPT
 	text-align center
-
+	font-weight bold
+	font-size 1.2em
+	
+.entradaInventario
+	font-size 12px
+	padding 1em
+	
+.cabecera
+	margin-bottom 1.5em
+	font-size 12px
+	
 .table-cabecera
-	width 50%
+	font-size 12px
+	width 100%
+	margin-bottom 1em
+	
+.table-productos
+	width 100%
+	font-size 12px
+	
 	& tr
+		&:first-child
+			background gray
+			font-weight bold
 		& td
 			border 1px solid black
+			padding .3em
+		
+		& td 
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7)
+				text-align right
+		
+		&:last-child
+			background lightgray
+			font-weight bold
+			
+			& td
+				&:nth-child(2),
+				&:nth-child(3)
+					text-align right
+
+.firma
+	float left
+	margin-top 3em
+	text-align center
+.linea
+	display block
+			
 
 
-@media print
-	.titulo
-		font-size 2em
+//MODULO FACTURACION
+// Factura
+
+.FacturaVenta
+	position relative
+	padding 1em
+	font-size 12px
 	
-	.head,.pie
-		display none
+.titulo-f, .localidad-f
+	display block
+
+.numeracion-f
+	float left
+	
+.rnc-f
+	margin-left 23em
+	
+.cabecera-factura
+	display block
+	background lightgray
+
+.cabecera-factura-2
+	float right
+	top 0
+	right 0
+	position absolute
+	& table
+		font-size 12px
+		margin-right 1em
+		margin-top 1em
+		
+		& tr
+			&:first-child
+				& td
+					&:nth-child(1)
+						text-align center
+						font-weight bold
+		& tr
+			& td
+				&:nth-child(odd)
+					width 6em
+				&:nth-child(even)
+					text-align right
+					width 4em		
+		
+.vendido-f
+	margin-top 1em
+	display block
+	font-size 1.1em
+.socio-f
+	font-size 1.1em
+	display block
+	padding .4em 0 1em 0
+.vendedor-f
+	display block
+	
+.hora
+	margin-right .5em
+	float right
+	
+.table-producto-factura
+	font-size 12px
+	width 100%
+	margin-top .5em
+	& tr
+		&:first-child
+			background gray
+			font-weight bold
+			& td
+				&:nth-child(4),
+				&:nth-child(5),
+				&:nth-child(6),
+				&:nth-child(7)
+					text-align right
+		
+		&:last-child
+			& td
+				&:nth-child(1)
+					text-align right
+		& td
+			border 1px solid
+			padding .3em
+		& td 
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7)
+				text-align right
+		
+		&:last-child
+			background lightgray
+			font-weight bold
+			
+			& td
+				&:nth-child(2),
+				&:nth-child(3)
+					text-align right
+.totales-f
+	float right
+	margin 1em 1em 0 0
+	
+	& table
+		font-size 12px
+		& tr
+			& td
+				&:first-child
+					width 6em
+				&:last-child
+					width 4em
+					text-align right
+			&:nth-child(4)
+				& td
+					font-weight bold
+.firmas-f
+	float left
+	margin-top 3em
+	display inline-block
+				
+.firma1-f,.firma2-f
+	
+	text-align center
+	float left
+	margin-right 3em
+	& span
+		font-size 12px
+		display block
+
+.reimpresa
+	font-size 10em
+	margin-top 1em
+	margin-left .3em
+	position absolute
+	opacity .1
+	-webkit-transform rotate(55deg)

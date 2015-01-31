@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from administracion.models import Producto, Socio, CategoriaPrestamo
 from inventario.models import Existencia, Movimiento, Almacen
 
+import decimal
 
 # Cabecera de la Factura
 class Factura(models.Model):
@@ -23,7 +24,7 @@ class Factura(models.Model):
 	socio = models.ForeignKey(Socio, null=True)
 	ordenCompra = models.CharField(max_length=20, blank=True, null=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
-	impresa = models.IntegerField(default=0)
+	impresa = models.PositiveIntegerField(default=0)
 
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -78,7 +79,7 @@ class Detalle(models.Model):
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
 			exist.cantidadAnterior = exist.cantidad
-			exist.cantidad -= float(self.cantidad)
+			exist.cantidad -= decimal.Decimal(self.cantidad)
 			exist.save()
 
 		except Existencia.DoesNotExist:

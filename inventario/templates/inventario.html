@@ -144,21 +144,21 @@
 						<tr>
 							<td>Condicion</td>
 							<td> 
-								<select name="condicion" id="condicion" ng-model="dataH.condicion" class="field-choices" required>
+								<select name="condicion" id="condicion" ng-model="dataH.condicion" class="field-choices" ng-change="condicion()" required>
 									<option value="CO">Contado</option>
 									<option value="CR">Credito</option>
 								</select>
 							</td>
 							<td>Dias Plazo</td>
 							<td> 
-								<input type="text" ng-model="dataH.venceDias" ng-change="venceFecha()">
+								<input type="text" ng-model="dataH.venceDias" ng-change="venceFecha()" ng-disabled="condicionBool">
 							</td>
 						</tr>
 						<tr>
 							<td>Nota</td>
-							<td> <textarea name="nota" id="nota" cols="43" rows="2" ng-model="dataH.nota"></textarea> </td>
+							<td> <textarea name="nota" id="nota" cols="40" rows="2" ng-model="dataH.nota"></textarea> </td>
 							<td>Vence</td>
-							<td> <input type="text" disabled ng-model="dataH.fechaVence"></td>
+							<td> <input type="text" disabled ng-model="dataH.fechaVence" ng-disabled="condicionBool"></td>
 						</tr>
 
 					</table>
@@ -176,24 +176,7 @@
 							
 						</div>
 
-						<table class="productos-table-search" ng-show="tableProducto">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableProducto=false"></a>
-								</td>
-							</tr>
-							<tr class="productos-table-header">
-								<td>Codigo</td>
-								<td>Descripcion</td>
-								<td>Costo</td>
-							</tr>
-							<tr ng-repeat="prod in productos" class="productos-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.costo]] </a></td>
-							</tr>
-						</table>
-						<span class="error-ei"> [[productoNoExiste]]</span>
+						<productosSearch> </productosSearch>
 
 					</div>
 
