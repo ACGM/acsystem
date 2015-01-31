@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from administracion.models import Producto, Socio, CategoriaPrestamo
 from inventario.models import Existencia, Movimiento, Almacen
 
+import decimal
 
 # Cabecera de la Factura
 class Factura(models.Model):
@@ -78,7 +79,7 @@ class Detalle(models.Model):
 			exist = Existencia.objects.get(producto=self.producto, almacen=self.almacen)
 			
 			exist.cantidadAnterior = exist.cantidad
-			exist.cantidad -= float(self.cantidad)
+			exist.cantidad -= decimal.Decimal(self.cantidad)
 			exist.save()
 
 		except Existencia.DoesNotExist:

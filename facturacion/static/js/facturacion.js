@@ -151,8 +151,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', 'FacturacionService', 'InventarioService', 
-                                        function ($scope, $filter, $rootScope, $timeout, FacturacionService, InventarioService) {
+    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', '$window', 'FacturacionService', 'InventarioService', 
+                                        function ($scope, $filter, $rootScope, $timeout, $window, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
       $rootScope.mostrarOC = false;
@@ -239,7 +239,8 @@
           }
 
           FacturacionService.guardarFact(dataH,$scope.dataD).then(function (data) {
-            if(data.substring(0,2) == 'NO') {
+
+            if(isNaN(data)) {
               $rootScope.mostrarError(data);
               throw data;
             }
@@ -535,13 +536,60 @@
       //Agregar Producto
       $scope.addProducto = function($event, Prod) {
         $event.preventDefault();
+        $scope.errorShow = false;
 
-        Prod.descuento = 0;
-        Prod.cantidad = 1;
-        $scope.dataD.push(Prod);
-        $scope.tableProducto = false;
+        try {
 
-        $scope.calculaTotales();
+          //Debe seleccionar un almacen.
+          if ($scope.dataH.almacen == undefined || $scope.dataH.almacen == '') {
+            $scope.mostrarError('Debe seleccionar un almacen');
+            throw "Debe seleccionar un almacen";
+          }
+
+          //No agregar el producto si ya existe
+          $scope.dataD.forEach(function (item) {
+            if(item.codigo == Prod.codigo) {
+              $scope.mostrarError("No puede agregar mas de una vez el producto : " + item.descripcion);
+              throw "No puede agregar mas de una vez el producto : " + item.descripcion;
+            }
+          });
+
+
+          var existencia = 0;
+
+          InventarioService.getExistenciaByProducto(Prod.codigo, $scope.dataH.almacen).then(function (data) {
+
+            if(data.length > 0) {
+              existencia = data[0]['cantidad'];
+
+              //Si en algun momento existe un producto con disponibilidad en negativo no puede permitir agregarlo.
+              if(existencia <= 0) {
+                $scope.mostrarError('No hay disponibilidad para el producto : ' + Prod.descripcion);
+                throw 'No hay disponibilidad para el producto : ' + Prod.descripcion;
+              }
+
+              if(existencia < 11 && existencia > 0) {
+                $scope.mostrarError('El producto ' + Prod.descripcion + ' tiene una existencia de ' + data[0]['cantidad']);
+              }
+
+              Prod.descuento = 0;
+              Prod.cantidad = 1;
+              Prod.existencia = existencia;
+
+              $scope.dataD.push(Prod);
+              $scope.tableProducto = false;
+
+              $scope.calculaTotales();
+
+            } else {
+              $scope.mostrarError('Este producto (' + Prod.descripcion + ') no tiene existencia.');
+              throw 'Este producto (' + Prod.descripcion + ') no tiene existencia.';
+            }
+          });
+        } catch(e) {
+          $scope.mostrarError(e);
+        }
+
       }
 
       //Seleccionar Socio
@@ -553,21 +601,32 @@
         $scope.tableSocio = false;
       }
 
-
       // Calcula los totales para los productos
       $scope.calculaTotales = function() {
-        try {
+        try {          
           var total = 0.0;
           var subtotal = 0.0;
           var total_descuento = 0.0;
           var descuento = 0.0;
 
+          if($scope.existError == true) {
+            $scope.errorShow = false;
+            $scope.existError = false;
+          } 
+
           $scope.dataD.forEach(function (item) {
             if (item.descuento != undefined && item.descuento > 0) {
-
               descuento = parseFloat(item.descuento/100);
-              descuento = parseFloat(item.precio * descuento * item.cantidad);
+              descuento = (item.precio * descuento * item.cantidad);
             }
+
+            //Verificar si la cantidad no excede la existencia disponible
+            if(parseFloat(item.cantidad) > parseFloat(item.existencia)) {
+              $scope.existError = true;
+              $scope.mostrarError('No puede digitar una cantidad mayor a la disponibilidad : ' + item.existencia);
+              throw 'No puede digitar una cantidad mayor a la disponibilidad : ' + item.existencia;
+            } 
+
             subtotal += (item.cantidad * item.precio);
             total = subtotal - descuento;
             total_descuento += descuento;
@@ -580,13 +639,20 @@
 
         } catch (e) {
           $rootScope.mostrarError(e);
-
         }  
       }
 
+        //Imprimir factura
+      $scope.ImprimirFactura = function(factura) {
+        $window.localStorage['factura'] = JSON.stringify(factura);
+        $window.open('/facturacion/print/{factura}'.replace('{factura}',factura.noFactura), target='_blank'); 
+      }
 
     }])
 
+   //*************************************************//
+   // CONTROLLERS  ORDEN DE SUPERCOOP                *
+   //*************************************************//
    .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService',
                                       function ($scope, $filter, $rootScope, FacturacionService) {
     
@@ -692,8 +758,80 @@
         }
       }
 
+    }])  
+
+
+  //****************************************************
+  //CONTROLLERS PRINT DOCUMENT                         *
+  //****************************************************
+  .controller('ImprimirFacturaCtrl', ['$scope', '$filter', '$window', 'FacturacionService', function ($scope, $filter, $window, FacturacionService) {
+    $scope.factura = JSON.parse($window.localStorage['factura']);
+    $scope.dataH = {};
+    $scope.dataD = [];
+
+    FacturacionService.DocumentoById($scope.factura.noFactura).then(function (data) {
+console.log(data)
+
+      if(data.length > 0) {
+        $scope.dataH.factura = $filter('numberFixedLen')($scope.factura.noFactura, 8);
+        $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+        $scope.socioCodigo = data[0]['socioCodigo'];
+        $scope.socioNombre = data[0]['socioNombre'];
+        $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
+        $scope.dataH.terminos = data[0]['terminos'].replace('CR', 'CREDITO').replace('CO', 'DE CONTADO');
+        $scope.dataH.vendedor = data[0]['vendedor'];
+      //   $scope.dataH.posteo = data[0]['posteo'];
+
+        data[0]['productos'].forEach(function (item) {
+          $scope.dataD.push(item);
+          // $scope.dataH.almacen = item['almacen'];
+        })
+
+      }
+
+    });
+
+    $scope.totalValor = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.costo * (item.cantidad + item.cantidadAnterior);
+      });
+
+      return total;
+    }
+
+    $scope.totalCantidad = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidad;
+      });
       
-    }]);    
+      return total;
+    }
+
+    $scope.totalCantidadAnterior = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += item.cantidadAnterior;
+      });
+      
+      return total;
+    }
+
+    $scope.totalCosto = function() {
+      var total = 0.0;
+
+      $scope.productos.forEach(function (item) {
+        total += parseFloat(item.costo);
+      });
+      
+      return total;
+    }
+
+  }]);
    
 
 })(_);

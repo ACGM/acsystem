@@ -385,6 +385,7 @@ class Periodo(models.Model):
 class Empresa(models.Model):
 
 	nombre = models.CharField(max_length=100)
+	rnc = models.CharField(max_length=15, blank=True, null=True, default='')
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)

@@ -176,24 +176,7 @@
 							
 						</div>
 
-						<table class="productos-table-search" ng-show="tableProducto">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableProducto=false"></a>
-								</td>
-							</tr>
-							<tr class="productos-table-header">
-								<td>Codigo</td>
-								<td>Descripcion</td>
-								<td>Costo</td>
-							</tr>
-							<tr ng-repeat="prod in productos" class="productos-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
-								<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.costo]] </a></td>
-							</tr>
-						</table>
-						<span class="error-ei"> [[productoNoExiste]]</span>
+						<productosSearch> </productosSearch>
 
 					</div>
 

@@ -6,7 +6,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView
-from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView
+from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
@@ -99,6 +99,8 @@ urlpatterns = patterns('',
     url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
     
     #Administracion
+    url(r'^productosSearch/$', 'administracion.views.productosSearch', name='productos_search'),
+
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
     url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
@@ -131,6 +133,8 @@ urlpatterns = patterns('',
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
+    #Factura#Imprimir
+    url(r'^facturacion/print/(?P<factura>[\d]+)$', ImprimirFacturaView.as_view(), name='factura_print'),
     
     # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
     # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),

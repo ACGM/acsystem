@@ -28,7 +28,7 @@
 
 				<div class="posteo-ei">
 					<span>Posteadas</span>
-					<select name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
+					<select class="field-choices" name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
 						<option value="*">TODOS</option>
 						<option value="S">SI</option>
 						<option value="N">NO</option>
@@ -60,7 +60,7 @@
 							<td>[[factura.prestamo]]</td>
 							<td>[[factura.socio]]</td>
 							<td>[[factura.totalGeneral]]</td>
-							<td><a href="#" class="icon-printer imprimir-factura"></a> </td>
+							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirFactura(factura)"></a> </td>
 							<td>
 								<div ng-if="factura.posteo == 'N'"> <a href="#" class="icon-delete icon-eliminar"></a></div> 
 								<div ng-if="factura.posteo != 'N'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
@@ -88,6 +88,11 @@
 					
 					<div class="content-socios-table">
 						<table class="socios-table-search" ng-show="tableSocio">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+								</td>
+							</tr>
 							<tr class="socios-table-header">
 								<td>Codigo</td>
 								<td>Nombre</td>
@@ -158,6 +163,11 @@
 					</div>
 
 					<table class="productos-table-search" ng-show="tableProducto">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableProducto=false"></a>
+							</td>
+						</tr>
 						<tr class="productos-table-header">
 							<td>Codigo</td>
 							<td>Descripcion</td>
@@ -166,7 +176,7 @@
 						<tr ng-repeat="prod in productos" class="productos-table-detail-search">
 							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
 							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
-							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.precio]] </a></td>
+							<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> <strong> [[prod.precio]] </strong> </a></td>
 						</tr>
 					</table>
 					<span class="error-ei"> [[productoNoExiste]]</span>
@@ -177,6 +187,7 @@
 							<tr class="productos-table-header">
 								<td>Codigo</td>
 								<td>Descripcion</td>
+								<td>Unidad</td>
 								<td>Cantidad</td>
 								<td>Precio</td>
 								<td>% Desc.</td>
@@ -186,11 +197,12 @@
 							<tr class="productos-table-detail" ng-repeat="item in dataD">
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
+								<td>[[item.unidad]]</td>
 								<td>
-									<input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required>
+									<input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" select-on-click required>
 								</td>
 								<td>[[item.precio | number: 2]]</td>
-								<td><input type="text" pattern="[0-9]*" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" >%</td>
+								<td><input type="text" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" select-on-click>%</td>
 								<td>[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
 								<td>
 									<div ng-if="dataH.posteo == 'N'"> <button class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button> </div>

@@ -474,6 +474,8 @@ footer
 	top 0
 	transition .3s linear all
 	z-index 9999
+	& span
+		float left
 	
 	&.ng-hide
 		height 0
@@ -492,6 +494,15 @@ footer
 .errorMessage
 	font-size 1.4em
 	font-weight bold
+	line-height 20px
+	padding-top 1em
+	margin-left .5em
+		
+.errorMessageIcon
+	
+	&:before
+		font-size 4.5em
+		
 		
 // FIN CLASES GENERICAS
 
@@ -1035,12 +1046,19 @@ footer
 
 .productos-table-search	
 	border 1px solid black
-	width 75%
 	position absolute
 	z-index 100
 	& tr
 		&:first-child
 			text-align center
+		&:nth-child(2)
+			& td
+				&:nth-child(1)
+					width 4em
+				&:nth-child(2)
+					width 22em
+				&:nth-child(3)
+					width 7em
 	
 	
 .productos-table-detail-search

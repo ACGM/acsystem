@@ -17,14 +17,14 @@ from inventario.models import Existencia, Almacen
 
 import json
 import math
-
+import decimal
 
 # Eliminar producto de la factura
 def quitar_producto(self, idProd, iCantidad, iAlmacen):
 	try:
 
 		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-		exist.cantidad -= float(iCantidad)
+		exist.cantidad -= decimal.Decimal(iCantidad)
 		exist.save()
 	except Existencia.DoesNotExist:
 		return HttpResponse('No hay existencia para el producto ' + str(idProd))
@@ -65,9 +65,11 @@ class FacturaById(DetailView):
 				'terminos': factura.terminos,
 				'vendedor': factura.userLog.username,
 				'posteo': factura.posteo,
+				'impresa': factura.impresa,
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
+						'unidad': prod.producto.unidad.descripcion,
 						'cantidad': prod.cantidad,
 						'precio': prod.precio,
 						'descuento': prod.porcentajeDescuento,
@@ -120,6 +122,14 @@ class FacturacionView(TemplateView):
 				detalle = Detalle.objects.filter(factura = fact).delete()
 
 			else:
+				#Verificar la existencia de cada producto
+				for item in dataD:
+					exist = Existencia.objects.filter(producto__codigo=item['codigo'], almacen__id=almacen).values('cantidad','producto__descripcion')
+
+					if decimal.Decimal(item['cantidad']) > exist[0]['cantidad']:
+						raise Exception('No tiene existencia el producto: ' + exist[0]['producto__descripcion'] + ', solo tiene : '+ str(exist[0]['cantidad']))
+				#Fin de verificacion de existencia
+				
 				try:
 					fact = Factura()
 					fact.noFactura = Factura.objects.latest('noFactura').noFactura + 1
@@ -134,18 +144,15 @@ class FacturacionView(TemplateView):
 
 			fact.save()
 
-			try:
-				for item in dataD:
-					detalle = Detalle()
-					detalle.factura = fact
-					detalle.producto = Producto.objects.get(codigo = item['codigo'])
-					detalle.porcentajeDescuento = item['descuento']
-					detalle.cantidad = item['cantidad']
-					detalle.precio = float(item['precio'])
-					detalle.almacen = Almacen.objects.get(id=almacen)
-					detalle.save()
-			except Exception as exc:
-				raise Exception('NO TIENE EXISTENCIA EL PRODUCTO: ' + detalle.producto.descripcion)
+			for item in dataD:
+				detalle = Detalle()
+				detalle.factura = fact
+				detalle.producto = Producto.objects.get(codigo = item['codigo'])
+				detalle.porcentajeDescuento = item['descuento']
+				detalle.cantidad = item['cantidad']
+				detalle.precio = float(item['precio'])
+				detalle.almacen = Almacen.objects.get(id=almacen)
+				detalle.save()
 
 			return HttpResponse(fact.noFactura)
 
@@ -215,3 +222,8 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 	queryset = Factura.objects.all()
 	serializer_class = ListadoFacturasSerializer
 
+
+#Imprimir Factura
+class ImprimirFacturaView(TemplateView):
+
+	template_name = 'print_factura.html'

@@ -552,6 +552,8 @@
         Prod.cantidad = 1;
         $scope.dataD.push(Prod);
         $scope.tableProducto = false;
+
+        $scope.calculaTotales();
       }
 
       

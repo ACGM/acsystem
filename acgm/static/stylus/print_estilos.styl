@@ -1,5 +1,11 @@
 @import 'normalize'
 
+//CLASES GENERICAS
+@media print 
+		
+	.head,.pie
+		display none
+
 //MODULO INVENTARIO
 // Entrada de Inventario
 
@@ -60,7 +66,48 @@
 .linea
 	display block
 			
-@media print 
+
+
+//MODULO FACTURACION
+// Factura
+
+.FacturaVenta
+	padding 1em
+	font-size 12px
+	
+.table-producto-factura
+	font-size 12px
+	width 100%
+	margin-top .5em
+	& tr
 		
-	.head,.pie
-		display none
+		&:first-child
+			background gray
+			font-weight bold
+			& td
+				&:nth-child(1)
+					text-align right
+		
+		&:last-child
+			& td
+				&:nth-child(1)
+					text-align right
+		& td
+			border 1px solid
+			padding .3em
+			
+		
+		& td 
+			&:nth-child(1),
+			&:nth-child(5),
+			&:nth-child(6)
+				text-align right
+		
+		&:last-child
+			background lightgray
+			font-weight bold
+			
+			& td
+				&:nth-child(2),
+				&:nth-child(3)
+					text-align right

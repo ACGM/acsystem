@@ -12,6 +12,11 @@ from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBen
 					CategoriaPrestamo, CuotaPrestamo
 
 
+# Productos Busqueda (GENERICO)
+def productosSearch(request):
+	return render(request, 'productos_search.html')
+
+
 class ProductoViewSet(viewsets.ModelViewSet):
 	queryset=Producto.objects.all().order_by('descripcion')
 	serializer_class=ProductoSerializer
