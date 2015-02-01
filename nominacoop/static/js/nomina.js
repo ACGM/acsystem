@@ -189,10 +189,10 @@
               }
               $scope.getNominasGeneradas();
               $scope.clearDetalle();
-              $scope.toggleError();
+              $scope.errorShow = false;
             },
             function () {
-              $scope.mostrarError(data);
+              $scope.mostrarError('Ocurrio un error inesperado, contacte al administrador del sistema' + data);
               throw data;
             });
 

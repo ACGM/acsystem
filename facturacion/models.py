@@ -20,9 +20,9 @@ class Factura(models.Model):
 	noFactura = models.PositiveIntegerField("No. Factura", unique=True)
 	fecha = models.DateTimeField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=facturas_choices, default='A')
-	descrpAnulacion = models.CharField(max_length=150, blank=True)
+	descrpAnulacion = models.CharField(max_length=150, blank=True, null=True)
 	socio = models.ForeignKey(Socio, null=True)
-	ordenCompra = models.CharField(max_length=20, blank=True, null=True)
+	ordenCompra = models.PositiveIntegerField(null=True, blank=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
 	impresa = models.PositiveIntegerField(default=0)
 

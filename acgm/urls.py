@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+
 from rest_framework import routers
 
 #Vistas 
@@ -95,6 +96,7 @@ urlpatterns = patterns('',
 
     url(r'^$', 'acgm.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/login/$', 'acgm.views.login', name='login'),
     url(r'^mensajeError/$', 'acgm.views.mensajeError', name='error'),
     url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
     

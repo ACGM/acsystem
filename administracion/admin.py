@@ -143,8 +143,8 @@ class PeriodoAdmin(admin.ModelAdmin):
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-	list_display = ['id','nombre']
-	list_editable = ('nombre',)
+	list_display = ['id','nombre', 'rnc', 'bancoAsign']
+	list_editable = ('nombre','rnc','bancoAsign')
 
 @admin.register(Cobrador)
 class CobradorAdmin(admin.ModelAdmin):

@@ -18,7 +18,7 @@ class Localidad(models.Model):
 
 	class Meta:
 		ordering = ['descripcion',]
-		verbose_name_plural = 'Localidades'
+		verbose_name_plural = 'Config 2.6) Localidades'
 
 
 # Distritos
@@ -32,6 +32,7 @@ class Distrito(models.Model):
 
 	class Meta:
 		ordering = ['descripcion',]
+		verbose_name_plural = 'Config 2.5) Distritos'
 
 
 # Departamentos
@@ -50,6 +51,7 @@ class Departamento(models.Model):
 
 	class Meta:
 		ordering = ['descripcion',]
+		verbose_name_plural = 'Config 1.4) Departamentos'
 
 
 # Representantes
@@ -59,6 +61,9 @@ class Representante(models.Model):
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)
+
+	class Meta:
+		verbose_name_plural = 'Config 2.3) Representantes'
 
 
 # Unidades de productos
@@ -72,7 +77,7 @@ class Unidad(models.Model):
 
 	class Meta:
 		verbose_name = 'Unidad'
-		verbose_name_plural = 'Unidades'
+		verbose_name_plural = 'Config 4.2) Unidades'
 
 
 # PRODUCTOS para registrarlos en la facturacion
@@ -101,6 +106,7 @@ class Producto(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name_plural = 'Config 4.1) Productos'
 
 
 # Tipo de suplidores
@@ -114,7 +120,7 @@ class TipoSuplidor(models.Model):
 	class Meta:
 		ordering = ['descripcion']
 		verbose_name = 'Tipo de Suplidor'
-		verbose_name_plural = 'Tipos de Suplidores'
+		verbose_name_plural = 'Config 4.4) Tipos de Suplidores'
 
 
 # Suplidores/Proveedores registrados
@@ -152,7 +158,7 @@ class Suplidor(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
-		verbose_name_plural = 'Suplidores'
+		verbose_name_plural = 'Config 4.3) Suplidores'
 
 
 # Socios de la cooperativa
@@ -203,8 +209,8 @@ class Socio(models.Model):
 
 	class Meta:
 		ordering = ['codigo']
-		verbose_name = '1) Socio'
-		verbose_name_plural = '1) Socios'
+		verbose_name = 'Config 1) Socio'
+		verbose_name_plural = 'Config 1.1) Socios'
 
 
 # Co-Beneficiarios del socio
@@ -232,8 +238,8 @@ class CoBeneficiario(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
-		verbose_name = '2) Co-Beneficiario'
-		verbose_name_plural = '2) Co-Beneficiarios'
+		verbose_name = 'Config 1) Co-Beneficiario'
+		verbose_name_plural = 'Config 1.2) Co-Beneficiarios'
 
 
 # Categorias de Prestamos
@@ -263,7 +269,7 @@ class CategoriaPrestamo(models.Model):
 	class Meta:
 		ordering = ['descripcion']
 		verbose_name = 'Categoria de Prestamo'
-		verbose_name_plural = 'Categorias de Prestamos'
+		verbose_name_plural = 'Config 6.1) Categorias de Prestamos'
 
 
 # Cuotas de montos segun Prestamos
@@ -282,7 +288,7 @@ class CuotaPrestamo(models.Model):
 	class Meta:
 		ordering = ['-montoDesde']
 		verbose_name = 'Cuota de Prestamo'
-		verbose_name_plural = 'Cuotas de Prestamos'
+		verbose_name_plural = 'Config 6.2) Cuotas de Prestamos'
 
 
 # Cuotas de montos segun Ordenes de Despacho
@@ -298,7 +304,7 @@ class CuotaOrdenes(models.Model):
 	class Meta:
 		ordering = ['-montoDesde']
 		verbose_name = 'Cuota de Ordenes'
-		verbose_name_plural = 'Cuotas de Ordenes'
+		verbose_name_plural = 'Config 6.3) Cuotas de Ordenes'
 
 
 # Opciones
@@ -314,7 +320,7 @@ class Opcion(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
-		verbose_name_plural = 'Opciones'
+		verbose_name_plural = 'Config 3.3) Opciones'
 
 
 # Perfiles
@@ -328,7 +334,7 @@ class Perfil(models.Model):
 
 	class Meta:
 		ordering = ['perfilCod']
-		verbose_name_plural = 'Perfiles'
+		verbose_name_plural = 'Config 3.4) Perfiles'
 
 
 # Autorizadores
@@ -341,7 +347,7 @@ class Autorizador(models.Model):
 
 	class Meta:
 		ordering = ['usuario']
-		verbose_name_plural = 'Autorizadores'
+		verbose_name_plural = 'Config 3.1) Autorizadores'
 
 
 # Tipos de Notas de Credito Globales
@@ -370,6 +376,7 @@ class Banco(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
+		verbose_name_plural = 'Config 2.1) Bancos'
 
 
 # Tipos de Documentos
@@ -383,6 +390,7 @@ class TipoDocumento(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
+		verbose_name_plural = 'Config 7.1) Tipos de Documentos'
 
 
 # Periodos (Fiscales)
@@ -407,16 +415,21 @@ class Periodo(models.Model):
 
 	class Meta:
 		ordering = ['-agno']
+		verbose_name_plural = 'Config 7.3) Periodos'
 
 
 # Empresas
 class Empresa(models.Model):
 
 	nombre = models.CharField(max_length=100)
-	rnc = models.CharField(max_length=15, blank=True, null=True, default='')
+	rnc = models.CharField(max_length=15, blank=True, null=True)
+	bancoAsign = models.CharField(max_length=5, blank=True, null=True)
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)
+
+	class Meta:
+		verbose_name_plural = 'Config 2.2) Empresas'
 
 
 # Cobradores
@@ -431,7 +444,7 @@ class Cobrador(models.Model):
 
 	class Meta:
 		ordering = ['usuario']
-		verbose_name_plural = 'Cobradores'
+		verbose_name_plural = 'Config 3.2) Cobradores'
 
 
 # Asociacion de Documentos con Cuentas
@@ -449,7 +462,7 @@ class DocumentoCuentas(models.Model):
 	class Meta:
 		ordering = ['documento','cuenta']
 		verbose_name = 'Documento relacionado a Cuentas'
-		verbose_name_plural = 'Documentos relacionados a Cuentas'
+		verbose_name_plural = 'Config 7.2) Documentos relacionados a Cuentas'
 	
 
 # Cuotas de Ahorros de Socios
@@ -465,5 +478,17 @@ class CuotaAhorroSocio(models.Model):
 
 	class Meta:
 		ordering = ['socio']
-		verbose_name = '3) Cuota Ahorro Socio'
-		verbose_name_plural = '3) Cuotas Ahorros Socios'
+		verbose_name = 'Config 1) Cuota Ahorro Socio'
+		verbose_name_plural = 'Config 1.3) Cuotas Ahorros Socios'
+
+
+# Archivos para Banco
+class ArchivoBancoNomina(models.Model):
+
+	bancoAsign = models.CharField(max_length=5) # Numero Asignado a la Empresa de cinco posiciones
+	tipoServicio = models.CharField(max_length=2) #T ipo de Servicio de dos posiciones
+	envio = models.CharField(max_length=4) # MMDD mes y dia en que se envia el archivo
+	secuencia = models.PositiveIntegerField() # Secuencia del header de siete posiciones
+
+	datetimeServer = models.DateTimeField(auto_now_add=True)
+	

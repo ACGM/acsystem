@@ -12,7 +12,7 @@
 			<mensajeinfo> </mensajeinfo>
 
 			<div class="sub-menu">
-				Generar Nomina de la Cooperativa
+				<a href="#" ng-click="toggleGN()">Generar Nomina de la Cooperativa</a>
 
 				<a class="DownArrow" href="#" ng-click="toggleGN()"></a>
 
@@ -44,7 +44,7 @@
 		<div class="consultar-nomina">
 			
 			<div class="sub-menu nomina-consultar">
-				Consultar Nominas
+				<a href="#" ng-click="toggleCN()">Consultar Nominas</a>
 
 				<a class="DownArrow" href="#" ng-click="toggleCN()"></a>
 
@@ -155,23 +155,23 @@
 								<td class="first-row">Salario</td>
 								<td> <input type="text" ng-bind="empleado.salario" ng-model="empleado.salario" readonly> </td>
 								<td class="egreso-field">ARS </td>
-								<td> <input type="text" ng-bind="empleado.ars" ng-model="empleado.ars"> </td>
+								<td> <input type="text" ng-bind="empleado.ars" ng-model="empleado.ars" select-on-click> </td>
 							</tr>
 							<tr>
 								<td>Vacaciones</td>
-								<td> <input type="text" ng-bind="empleado.vacaciones" ng-model="empleado.vacaciones"> </td>
+								<td> <input type="text" ng-bind="empleado.vacaciones" ng-model="empleado.vacaciones" select-on-click> </td>
 								<td class="egreso-field">AFP</td>
-								<td> <input type="text" ng-bind="empleado.afp" ng-model="empleado.afp"> </td>
+								<td> <input type="text" ng-bind="empleado.afp" ng-model="empleado.afp" select-on-click> </td>
 							</tr>
 							<tr>
 								<td>Otros</td>
-								<td> <input type="text" ng-bind="empleado.otrosIngresos" ng-model="empleado.otrosIngresos"> </td>
+								<td> <input type="text" ng-bind="empleado.otrosIngresos" ng-model="empleado.otrosIngresos" select-on-click> </td>
 								<td class="egreso-field">ISR</td>
-								<td> <input type="text" ng-bind="empleado.isr" ng-model="empleado.isr"> </td>
+								<td> <input type="text" ng-bind="empleado.isr" ng-model="empleado.isr" select-on-click> </td>
 							</tr>
 							<tr>
-								<td>Incentivos</td>
-								<td> <input type="text"> </td>
+								<td><!-- Incentivos --></td>
+								<td> <!-- <input type="text"> --> </td>
 								<td class="egreso-field">Prestamos</td>
 								<td> <input type="text" ng-bind="empleado.descPrestamos" ng-model="empleado.descPrestamos" readonly> </td>
 							</tr>													
@@ -185,7 +185,7 @@
 								<td></td>
 								<td> </td>
 								<td class="egreso-field">Cafeteria</td>
-								<td> <input type="text" ng-bind="empleado.cafeteria" ng-model="empleado.cafeteria"> </td>
+								<td> <input type="text" ng-bind="empleado.cafeteria" ng-model="empleado.cafeteria" select-on-click> </td>
 							</tr>
 
 						</table> 

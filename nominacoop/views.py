@@ -1,3 +1,6 @@
+# VIEWS de Nomina
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -17,8 +20,16 @@ import json
 import decimal
 
 
+#Mixin for login_required
+class LoginRequiredMixin(object):
+
+	@classmethod
+	def as_view(cls):
+		return login_required(super(LoginRequiredMixin, cls).as_view())
+
+
 # Vista Principal de Nomina
-class NominaView(TemplateView):
+class NominaView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'nomina.html'
 
@@ -119,7 +130,7 @@ class generaNominaView(View):
 				nominaD.descPrestamos = 0 #cuotaPrestamo
 				nominaD.save()
 			
-			return HttpResponse('TODO BIEN')
+			return HttpResponse(nominaH.id)
 
 		except IntegrityError as ie:
 			return HttpResponse(-1)

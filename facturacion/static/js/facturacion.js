@@ -850,6 +850,10 @@
       return total;
     }
 
+    $scope.hora = function() {
+      return Date.now();
+    }
+
   }]);
    
 
