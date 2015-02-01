@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 
 @login_required
 def home(request):
-
+	request.session.empresa = 'EMPRESA EJEMPLO'
 	return render(request, 'homepage.html')
 
 def login(request):

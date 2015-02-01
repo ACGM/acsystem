@@ -340,10 +340,15 @@ class Perfil(models.Model):
 # Autorizadores
 class Autorizador(models.Model):
 
-	usuario = models.ForeignKey(User)
+	usuario = models.ForeignKey(User, unique=True)
 	perfil = models.ForeignKey(Perfil)
+	clave = models.CharField(max_length=4)
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	@property
+	def userName(self):
+		return '%s' % self.usuario.username
 
 	class Meta:
 		ordering = ['usuario']

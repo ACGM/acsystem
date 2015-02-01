@@ -128,8 +128,13 @@
 						<td><input class="cod-repr" type="text" ng-model="solicitante.representanteCodigo" readonly required> <input class="descrp-repr" type="text" ng-model="solicitante.representanteNombre" readonly></td>
 					</tr>
 					<tr>
-						<td>Auxiliar</td>
-						<td><input type="text" ng-model="solicitante.auxiliar" readonly></td>
+						<td>Autorizado por</td>
+						<td>
+							<select name="autorizador" id="autorizador" ng-model="autorizador" ng-init="autorizadores()" required>
+								<option ng-repeat="autorizador in autorizadores" value="[[autorizador.userName]]">[[autorizador.userName]]</option>
+							</select>
+							<input type="password" ng-model="solicitante.autorizadoPor" class="field-short">
+						</td>
 					</tr>
 				</table>
 
@@ -147,8 +152,8 @@
 						<td><input type="text" ng-model="solicitante.cobrador" readonly></td>
 					</tr>
 					<tr>
-						<td>Autorizado por</td>
-						<td><input type="text" ng-model="solicitante.autorizadoPor" readonly></td>
+						<td><!-- Contraseña --></td>
+						<td></td>
 					</tr>
 				</table>
 

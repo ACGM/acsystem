@@ -194,6 +194,18 @@
         return deferred.promise;
       }
 
+      //Autorizadores
+      function getAutorizadores() {
+        var deferred = $q.defer();
+
+        $http.get('/api/autorizador/')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
 
       return {
         solicitudesprestamos          : solicitudesprestamos,
@@ -204,7 +216,8 @@
         cantidadCuotasPrestamoByMonto : cantidadCuotasPrestamoByMonto,
         guardaSolicitudPrestamo       : guardaSolicitudPrestamo,
         AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
-        SolicitudPById                : SolicitudPById
+        SolicitudPById                : SolicitudPById,
+        getAutorizadores              : getAutorizadores 
       };
 
     }])
@@ -570,6 +583,16 @@
         catch (e) {
           $scope.mostrarError(e);
         }
+      }
+
+      // Autoriazadores
+      $scope.autorizadores = function() {
+        SolicitudPrestamoService.getAutorizadores().then(function (data) {
+          if(data.length > 0) {
+            $scope.autorizadores = data;
+          }
+
+        });
       }
 
       // Cancelar llenado de solicitud 

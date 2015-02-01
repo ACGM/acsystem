@@ -27,7 +27,8 @@ from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
-                                SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet
+                                SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
+                                AutorizadoresViewSet, EmpresasViewSet
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 
@@ -63,11 +64,13 @@ router.register(r'InteresAhorro',InteresAhorroViewSet)
 
 #administracion
 router.register(r'categoriasPrestamos', ListadoCategoriasPrestamosViewSet)
-router.register(r'suplidor',SuplidorViewSet)
-router.register(r'tipoSuplidor',SuplidorTipoViewSet)
-router.register(r'socio',SocioViewSet)
+router.register(r'suplidor', SuplidorViewSet)
+router.register(r'tipoSuplidor', SuplidorTipoViewSet)
+router.register(r'socio', SocioViewSet)
 router.register(r'departamento', DepartamentoViewSet)
-router.register(r'CoBeneficiario',CoBeneficiarioViewSet)
+router.register(r'CoBeneficiario', CoBeneficiarioViewSet)
+router.register(r'autorizador', AutorizadoresViewSet)
+router.register(r'empresa', EmpresasViewSet)
 
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)

@@ -6,10 +6,11 @@ from rest_framework.response import Response
 
 from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
 						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
-						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer
+						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer, \
+						AutorizadoresSerializer, EmpresasSerializer
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, \
-					CategoriaPrestamo, CuotaPrestamo
+					CategoriaPrestamo, CuotaPrestamo, Autorizador, Empresa
 
 
 # Productos Busqueda (GENERICO)
@@ -52,6 +53,20 @@ class ListadoCategoriasPrestamosViewSet(viewsets.ModelViewSet):
 
 	queryset = CategoriaPrestamo.objects.all()
 	serializer_class = ListadoCategoriaPrestamoSerializer
+
+
+# Autorizadores
+class AutorizadoresViewSet(viewsets.ModelViewSet):
+
+	queryset = Autorizador.objects.all()
+	serializer_class = AutorizadoresSerializer
+
+
+# Empresas
+class EmpresasViewSet(viewsets.ModelViewSet):
+
+	queryset = Empresa.objects.all()
+	serializer_class = EmpresasSerializer
 
 
 # Categoria de Prestamo por Descripcion
