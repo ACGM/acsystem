@@ -206,6 +206,18 @@
         return deferred.promise;
       }
 
+      //Empresas
+      function getEmpresas() {
+        var deferred = $q.defer();
+
+        $http.get('/api/empresa/')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
 
       return {
         solicitudesprestamos          : solicitudesprestamos,
@@ -217,7 +229,8 @@
         guardaSolicitudPrestamo       : guardaSolicitudPrestamo,
         AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
         SolicitudPById                : SolicitudPById,
-        getAutorizadores              : getAutorizadores 
+        getAutorizadores              : getAutorizadores,
+        getEmpresas                   : getEmpresas 
       };
 
     }])
@@ -591,7 +604,15 @@
           if(data.length > 0) {
             $scope.autorizadores = data;
           }
+        });
+      }
 
+      // Empresas
+      $scope.empresas = function() {
+        SolicitudPrestamoService.getEmpresas().then(function (data) {
+          if(data.length > 0) {
+            $scope.empresas = data;
+          }
         });
       }
 

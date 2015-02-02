@@ -125,7 +125,13 @@
 					</tr>
 					<tr>
 						<td>Representante</td>
-						<td><input class="cod-repr" type="text" ng-model="solicitante.representanteCodigo" readonly required> <input class="descrp-repr" type="text" ng-model="solicitante.representanteNombre" readonly></td>
+						<td>
+							<input class="cod-repr" type="text" ng-model="solicitante.representanteCodigo" readonly required> 
+							<!-- <input class="descrp-repr" type="text" ng-model="solicitante.representanteNombre" readonly> -->
+							<select class="descrp-repr" ng-init="empresas()" ng-model="solicitante.representanteNombre" required>
+								<option ng-repeat="empresa in empresas" value="[[empresa.id]]"> [[empresa.nombre]] </option>
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<td>Autorizado por</td>

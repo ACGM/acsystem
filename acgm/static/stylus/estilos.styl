@@ -241,7 +241,7 @@ footer
 	text-align center
 	
 .imgHome
-	width 312px
+	width 50% //312px
 	
 
 @media screen and (max-width: 800px)
@@ -619,27 +619,37 @@ footer
 
 //SUB MENU PRESTAMOS
 .sub-menu-prestamos	
+	background verde
+	border 3px solid lightgreen
+	list-style none
+	margin 1.7em 0 0 1em
+	padding 0
 	position absolute
 	z-index 800
-	background verde
-	list-style none
-	margin 1.5em 0 0 1em
-	padding 0
+	
+	&:before
+		border solid
+		border-color transparent transparent lightgreen transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
 	
 	& li
-		&:first-child
-			padding-top .5em
+			
 		&:last-child
-			padding-bottom .5em
+			padding-bottom .8em
 	
 	& a 
 		text-decoration none
-		padding .2em 1em
+		padding .35em 1em
 		display block
 		color verdeSuave
 		
 		&:hover
 			background verdeClarito
+			color white
 		
 
 // MODULO DE NOMINA  **********************************
@@ -1678,6 +1688,7 @@ footer
 		&:nth-child(2)
 			text-align center
 		&:nth-child(3)
+			width 5.5em
 			padding 0 0 0 .3em
 		&:nth-child(4)
 			padding 0 .2em
