@@ -223,7 +223,7 @@ amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
 
 body
-	font-family "Arial", "serif"
+	font-family "Arial", sans-serif, "serif"
 	font-size 13px
 
 footer
@@ -374,8 +374,8 @@ footer
 		color mamey
 
 .input-disabled //CLASE para campo con apariencia de deshabilitado
-	background lightgray
-	border 1px solid gray
+	background lightgray !important
+	border 1px solid gray !important
 
 .select-item //CLASE para campos seleccionables dentro de una tabla por ej: Socios (tabla emergente)
 	text-decoration none
@@ -650,7 +650,75 @@ footer
 		&:hover
 			background verdeClarito
 			color white
+
+//SUB-MENU DE INVENTARIO
+.sub-menu-inventario	
+	background verde
+	border 3px solid lightgreen
+	list-style none
+	margin 1.7em 0 0 36.5em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent lightgreen transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
 		
+		&:hover
+			background verdeClarito
+			color white
+					
+//SUB-MENU DE FACTURACION
+.sub-menu-facturacion	
+	background verde
+	border 3px solid lightgreen
+	list-style none
+	margin 1.7em 0 0 43em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent lightgreen transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+
 
 // MODULO DE NOMINA  **********************************
 .genera-nomina
@@ -981,7 +1049,10 @@ footer
 	// Para poner un color de fondo en cada registro de forma intercalada
 	// &:nth-child(even)
 	// 	background verdeMuySuave
-	
+
+//Para salida de inventario
+.SalidaInventarioForm
+	background red
 
 .boton-postear-inventario
 	height 3em
@@ -1155,6 +1226,15 @@ footer
 	&:before
 		margin-right .4em
 
+.boton-guarda-inventario-salida
+	height 4em
+	width 11em
+	position relative
+	// margin-bottom 3em
+	top -1.83em
+	&:before
+		margin-right .4em
+			
 //MODULO DE FACTURACION
 	
 .listado-table-header-f

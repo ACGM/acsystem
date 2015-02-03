@@ -18,7 +18,6 @@
 
 </head>
 <body ng-app="cooperativa">
-{{valor}}
 	<header class="header">
 		<figure class="content-logo">
 			<a href="/"><img class="logo" src={% static "images/logoCoop.png" %} alt=""></a>
@@ -36,13 +35,15 @@
 	<nav class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
-			<li ng-hide="{{prestamo}}" class="menu-item" id="menu2"> <a class="menu-opcion" ng-mouseenter="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#">Prestamos</a> </li>
+			<li ng-hide="{{prestamo}}" class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#">Prestamos</a> </li>
 			<li class="menu-item" id="menu3"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
 			<li class="menu-item" id="menu4"> <a class="menu-opcion" href="#">Contabilidad</a></li>
 			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
 			<li class="menu-item" id="menu6"> <a class="menu-opcion" href="/desembolso">Desembolsos</a></li>
-			<li class="menu-item" id="menu7"> <a class="menu-opcion" href="/inventario">Inventario</a></li>
-			<li class="menu-item" id="menu8"> <a class="menu-opcion" href="/facturacion">Facturacion</a></li>
+			
+			<li ng-hide="{{inventario}}" class="menu-item" id="menu7"> <a class="menu-opcion" ng-click="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)" href="#">Inventario</a> </li>
+			<li ng-hide="{{facturacion}}" class="menu-item" id="menu8"> <a class="menu-opcion" ng-click="ShowSubMenuFact(true)" ng-mouseleave="ShowSubMenuFact(false)" href="#">Facturacion</a> </li>
+
 			<li class="menu-item" id="menu9"> <a class="menu-opcion" href="#">Conciliacion</a></li>
 			<li class="menu-item" id="menu10"> <a class="menu-opcion" href="/nomina">Nomina</a></li>
 			<li class="menu-item" id="menu11"> <a class="menu-opcion" href="#">CxP</a></li>
@@ -57,6 +58,19 @@
 		<li><a href="/prestamos/nd">Nota de Debito</a></li>
 		<li><a href="/prestamos/nc">Nota de Credito</a></li>
 		<li><a href="/prestamos/nce">Nota de Credito Especial</a></li>
+	</ul>
+
+	<ul class="sub-menu-inventario" ng-show="SubMInventario" ng-mouseover="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)">
+		<li><a href="/inventario">Entrada de Inventario</a></li>
+		<li><a href="/inventario/salida">Salida del Inventario</a></li>
+		<li><a href="/inventario/transferencia">Transferencia entre Almacenes</a></li>
+	</ul>
+
+	<ul class="sub-menu-facturacion" ng-show="SubMFacturacion" ng-mouseover="ShowSubMenuFact(true)" ng-mouseleave="ShowSubMenuFact(false)">
+		<li><a href="/facturacion">Crear/Modificar Factura</a></li>
+		<li><a href="/facturacion/solicitudOD">Anular Factura</a></li>
+		<li><hr/></li>
+		<li><a href="/prestamos/maestra">Reporte de Facturas</a></li>
 	</ul>
 
 	</nav>

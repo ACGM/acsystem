@@ -169,6 +169,8 @@
       $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLEI = true;
+      $scope.showEI = false;
+      $scope.showSI = false;
       $scope.regAll = false;
       $scope.tableProducto = false;
       $scope.condicionBool = true;
@@ -326,7 +328,7 @@
       }
 
        // Visualizar Documento (Entrada de Inventario Existente - desglose)
-      $scope.DocFullById = function(NoDoc) {
+      $scope.DocFullById = function(NoDoc, tipo) {
         try {
 
           InventarioService.DocumentoById(NoDoc).then(function (data) {
@@ -371,7 +373,15 @@
         catch (e) {
           $scope.mostrarError(e);
         }
-        $scope.toggleLEI();
+
+        if(tipo == 'salida') {
+          $scope.showSI = true;
+          $scope.showLEI = true;
+        } else {
+          $scope.toggleLEI();
+          $scope.showSI = false;
+        }
+
       }
 
       // Calcula los totales para los productos
@@ -562,8 +572,11 @@
 
         if($scope.showLEI === true) {
           $scope.ArrowLEI = 'UpArrow';
+          $scope.showSI = false;
+          $scope.showEI = false;
         } else {
           $scope.ArrowLEI = 'DownArrow';
+          $scope.showEI = true;
         }
       }
 
@@ -623,7 +636,6 @@
         $window.localStorage['entrada'] = JSON.stringify(entrada);
         $window.open('/inventario/print/{entrada}'.replace('{entrada}',entrada.id), target='_blank'); 
       }
-
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
