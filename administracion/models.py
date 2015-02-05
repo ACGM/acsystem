@@ -77,7 +77,19 @@ class Unidad(models.Model):
 
 	class Meta:
 		verbose_name = 'Unidad'
-		verbose_name_plural = 'Config 4.2) Unidades'
+		verbose_name_plural = 'Config 4.3) Unidades'
+
+
+# CATEGORIA para productos
+class CategoriaProducto(models.Model):
+
+	descripcion = models.CharField(max_length=25)
+
+	def __unicode__(self):
+		return '%s' % (self.descripcion)
+
+	class Meta:
+		verbose_name_plural = 'Config 4.2) Categorias de Productos'
 
 
 # PRODUCTOS para registrarlos en la facturacion
@@ -86,6 +98,7 @@ class Producto(models.Model):
 	codigo = models.CharField(max_length=10, editable=False)
 	descripcion = models.CharField(max_length=50)
 	unidad = models.ForeignKey(Unidad)
+	categoria = models.ForeignKey(CategoriaProducto, null=True)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
 	costo = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 	foto = models.ImageField(upload_to='productos', blank=True, null=True)
@@ -120,7 +133,7 @@ class TipoSuplidor(models.Model):
 	class Meta:
 		ordering = ['descripcion']
 		verbose_name = 'Tipo de Suplidor'
-		verbose_name_plural = 'Config 4.4) Tipos de Suplidores'
+		verbose_name_plural = 'Config 4.5) Tipos de Suplidores'
 
 
 # Suplidores/Proveedores registrados
@@ -158,7 +171,7 @@ class Suplidor(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
-		verbose_name_plural = 'Config 4.3) Suplidores'
+		verbose_name_plural = 'Config 4.4) Suplidores'
 
 
 # Socios de la cooperativa

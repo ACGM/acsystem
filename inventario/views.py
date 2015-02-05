@@ -19,6 +19,7 @@ from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, Entr
 import json
 import math
 import decimal
+import datetime
 
 
 # Retornar un documento con todo su detalle 
@@ -55,6 +56,10 @@ class EntradaInventarioById(ListView):
 				'nota': inventario.nota,
 				'posteo': inventario.posteo,
 				'usuario': inventario.userLog.username,
+				'tipo': inventario.getTipo,
+				'descripcionSalida': inventario.descripcionSalida,
+				'fechaSalida': inventario.fechaSalida,
+				'usuarioSalida': inventario.usuarioSalida.username,
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -172,7 +177,40 @@ class getExistenciaByProductoView(APIView):
 		return Response(response.data)
 
 
-#Imprimir Entrada de Inventario
+# Imprimir Entrada de Inventario
 class ImprimirEntradaInventarioView(TemplateView):
 
 	template_name = 'print_entrada.html'
+
+
+# Salida de Inventario
+class SalidaInventarioView(TemplateView):
+
+	template_name = 'inventario.html'
+
+	# @login_required
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			nota = data['nota']
+			entradaNo = int(data['entradaNo'])
+
+			invH = InventarioH.objects.get(id=entradaNo)
+			invH.descripcionSalida = nota
+			invH.fechaSalida = datetime.datetime.now()
+			invH.usuarioSalida = User.objects.get(username=request.user)
+			invH.save()
+
+			invD = InventarioD.objects.filter(inventario=invH)
+
+			for item in invD:
+				d = InventarioD.objects.get(id=item.id)
+				d.tipoAccion = 'S'
+				d.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)

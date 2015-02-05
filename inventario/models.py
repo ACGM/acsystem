@@ -7,6 +7,7 @@ from django.db.models import Sum
 from administracion.models import Producto, Suplidor
 
 from datetime import timedelta, datetime
+import decimal
 
 
 # Almacenes disponibles
@@ -36,9 +37,11 @@ class InventarioH(models.Model):
 
 	nota = models.TextField(blank=True, null=True)
 	ncf = models.CharField("NCF", max_length=25, blank=True, null=True)
+	
 	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
-	fechaSalida = models.DateField("Fecha de Salida", blank=True, null=True)
+	fechaSalida = models.DateTimeField("Fecha de Salida", blank=True, null=True)
 	usuarioSalida = models.ForeignKey(User, related_name='+', null=True)
+
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	condicion = models.CharField(max_length=2, choices=condicion_choices, default='CO')
 
@@ -69,6 +72,10 @@ class InventarioH(models.Model):
 			total = 0
 
 		return '$%s' % str(format(total,',.2f'))
+
+	@property
+	def getTipo(self):
+		return '%s' % (InventarioD.objects.filter(inventario=self.id).values('tipoAccion')[0]['tipoAccion'])[:1]
 
 	def __unicode__(self):
 		return '%i' % (self.id)
@@ -105,9 +112,9 @@ class InventarioD(models.Model):
 			exist.cantidadAnterior = exist.cantidad
 						
 			if self.tipoAccion == 'S':
-				exist.cantidad -= float(self.cantidadTeorico)
+				exist.cantidad -= decimal.Decimal(self.cantidadTeorico)
 			else:
-				exist.cantidad = float(exist.cantidad) + float(self.cantidadTeorico)
+				exist.cantidad = decimal.Decimal(exist.cantidad) + decimal.Decimal(self.cantidadTeorico)
 
 			exist.save()
 		except Existencia.DoesNotExist:

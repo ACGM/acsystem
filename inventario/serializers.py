@@ -11,7 +11,7 @@ class EntradasInventarioSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = InventarioH
-		fields = ('id','posteo','fecha','ncf','factura','suplidor','totalGeneral')
+		fields = ('id','posteo','fecha','ncf','factura','suplidor','totalGeneral','getTipo')
 		ordering = ('-id',)
 
 

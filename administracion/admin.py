@@ -5,7 +5,7 @@ from administracion.models import Localidad, Distrito, Departamento, Representan
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
 								 TipoDocumento, Periodo, Empresa, Cobrador, CuotaAhorroSocio, \
-								 DocumentoCuentas
+								 DocumentoCuentas, CategoriaProducto
 
 
 @admin.register(Localidad)
@@ -43,6 +43,12 @@ class ProductoAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		obj.userLog = request.user
 		obj.save()
+
+@admin.register(CategoriaProducto)
+class CategoriaProductoAdmin(admin.ModelAdmin):
+	list_display = ['id','descripcion',]
+	list_editable = ('descripcion',)
+	search_fields = ('descripcion',)
 
 @admin.register(TipoSuplidor)
 class TipoSuplidorAdmin(admin.ModelAdmin):

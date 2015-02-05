@@ -221,6 +221,7 @@ mamey = #FF5A13
 amarillo = #FFF676
 amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
+colorBordeSubMenu = lightgreen
 
 body
 	font-family "Arial", sans-serif, "serif"
@@ -389,8 +390,8 @@ footer
 		color white
 
 .field-choices //CLASE para campos de tiene dropdown/combobox
-	background mamey
-	color white
+	background amarillo
+	color verdeMuyOscuro
 	outline none
 
 .field-short //CLASE para campos cortos
@@ -620,7 +621,7 @@ footer
 //SUB MENU PRESTAMOS
 .sub-menu-prestamos	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
 	margin 1.7em 0 0 1em
 	padding 0
@@ -629,10 +630,10 @@ footer
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
-		left 32%
+		left 25%
 		position relative
 		top -2em
 	
@@ -654,16 +655,16 @@ footer
 //SUB-MENU DE INVENTARIO
 .sub-menu-inventario	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
-	margin 1.7em 0 0 36.5em
+	margin 1.7em 0 0 35.5em
 	padding 0
 	position absolute
 	z-index 800
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
 		left 32%
@@ -688,7 +689,7 @@ footer
 //SUB-MENU DE FACTURACION
 .sub-menu-facturacion	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
 	margin 1.7em 0 0 43em
 	padding 0
@@ -697,7 +698,7 @@ footer
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
 		left 32%
@@ -719,6 +720,40 @@ footer
 			background verdeClarito
 			color white
 
+//SUB-MENU DE NOMINA
+.sub-menu-nomina	
+	background verde
+	border 3px solid colorBordeSubMenu
+	list-style none
+	margin 1.7em 0 0 53.4em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent colorBordeSubMenu transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+			
 
 // MODULO DE NOMINA  **********************************
 .genera-nomina
@@ -979,6 +1014,7 @@ footer
 	display none
 
 .posteo-ei
+	margin-left 1em
 	display inline-block
 	float right	
 	
@@ -1001,19 +1037,21 @@ footer
 		&:nth-child(2)
 			width 2em
 		&:nth-child(3)
-			width 3em
+			width 1em	
 		&:nth-child(4)
-			width 6.5em
+			width 3em
 		&:nth-child(5)
+			width 6.5em
+		&:nth-child(6)
 			width 11em
-		&:nth-child(6) //CAMPO FACTURA
+		&:nth-child(7) //CAMPO FACTURA
 			width 6em
-		&:nth-child(7)
-			width 22em
 		&:nth-child(8)
+			width 22em
+		&:nth-child(9)
 			width 5em
 			text-align center
-		&:nth-child(9)
+		&:nth-child(10)
 			width 2em
 			text-align center
 			
@@ -1026,24 +1064,25 @@ footer
 		border 1px solid black
 		padding .17em 0
 		&:nth-child(1),
-		&:nth-child(2) 
+		&:nth-child(2), 
+		&:nth-child(3) 
 			text-align center
-		&:nth-child(3),
-		&:nth-child(8)
+		&:nth-child(4),
+		&:nth-child(9)
 			text-align right
 			padding 0 .3em
-		&:nth-child(4),
 		&:nth-child(5),
 		&:nth-child(6),
-		&:nth-child(7)
-			padding 0 .3em
+		&:nth-child(7),
 		&:nth-child(8)
+			padding 0 .3em
+		&:nth-child(9)
 			width 7em
 			font-size 1.2em
 			font-weight bold
 			color mamey
-		&:nth-child(9),
-		&:nth-child(10)
+		&:nth-child(10),
+		&:nth-child(11)
 			text-align center		
 		
 	// Para poner un color de fondo en cada registro de forma intercalada

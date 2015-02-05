@@ -15,5 +15,9 @@
 		    	$scope.SubMFacturacion = valor;
 		    }
 
+		    $scope.ShowSubMenuNomina = function(valor) {
+		    	$scope.SubMNomina = valor;
+		    }
+
 		}]);
 })();
