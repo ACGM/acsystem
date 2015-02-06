@@ -21,6 +21,20 @@ class Localidad(models.Model):
 		verbose_name_plural = 'Config 2.6) Localidades'
 
 
+# UserExtra contiene datos agregados al usuario registrado,
+# como la Localidad, entre otros.
+class UserExtra(models.Model):
+
+	usuario = models.ForeignKey(User)
+	localidad = models.ForeignKey(Localidad)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.usuario.username, self.localidad.descripcion)
+
+	class Meta:
+		ordering = ('usuario',)
+
+
 # Distritos
 class Distrito(models.Model):
 
@@ -88,6 +102,11 @@ class CategoriaProducto(models.Model):
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
 
+	def save(self, *args, **kwargs):
+		self.descripcion = self.descripcion.upper()
+
+		super(CategoriaProducto, self).save(*args, **kwargs)
+
 	class Meta:
 		verbose_name_plural = 'Config 4.2) Categorias de Productos'
 
@@ -147,11 +166,12 @@ class Suplidor(models.Model):
 	cedulaRNC = models.CharField(unique=True, max_length=25)
 	nombre = models.CharField(max_length=60)
 	direccion = models.TextField(blank=True)
-	sector = models.CharField(max_length=40, blank=True)
-	ciudad = models.CharField(max_length=40, blank=True)
-	contacto = models.CharField(max_length=50, blank=True)
-	telefono = models.CharField(max_length=50, blank=True)
-	fax = models.CharField(max_length=50, blank=True)
+	sector = models.CharField(max_length=40, blank=True, null=True)
+	ciudad = models.CharField(max_length=40, blank=True, null=True)
+	contacto = models.CharField(max_length=50, blank=True, null=True)
+	telefono = models.CharField(max_length=50, blank=True, null=True)
+	correo = models.CharField(max_length=40, blank=True, null=True)
+	fax = models.CharField(max_length=50, blank=True, null=True)
 	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=0)
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
@@ -193,7 +213,6 @@ class Socio(models.Model):
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
 	pasaporte = models.CharField("Pasaporte No.", max_length=20, blank=True)
-	# carnetNumero = models.PositiveIntegerField("Carnet Numero")
 	fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
 	fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
 	correo = models.EmailField(blank=True)
@@ -202,6 +221,7 @@ class Socio(models.Model):
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
 	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=0)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
+	tipoCuentaBancaria = models.CharField(max_length=1, default='1')
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
@@ -509,4 +529,115 @@ class ArchivoBancoNomina(models.Model):
 	secuencia = models.PositiveIntegerField() # Secuencia del header de siete posiciones
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+
+# Cabecera Contenido Archivo de Banco
+class ArchivoBancoHeader(models.Model):
+
+	tipoRegistro 		= models.CharField(max_length=1) # = H
+	idCompania 			= models.CharField(max_length=15)
+	nombreCompania 		= models.CharField(max_length=35)
+	secuencia 			= models.CharField(max_length=7) # Secuencia del archivo generado
+	tipoServicio 		= models.CharField(max_length=2)
+	fechaEfectiva 		= models.CharField(max_length=8) # YYYYMMDD
+	cantidadDB			= models.CharField(max_length=11) # Cantidad de Debitos
+	montoTotalDB		= models.CharField(max_length=13) # Monto Total de Debitos
+	cantidadCR			= models.CharField(max_length=11) # Cantidad Total de Creditos
+	montoTotalCR		= models.CharField(max_length=13) # Monto Total de Creditos
+	numeroAfiliacion	= models.CharField(max_length=15) # Afiliacion a CARDNET
+	fecha 				= models.CharField(max_length=8) # YYYYMMDD
+	hora				= models.CharField(max_length=4) # HHMM del envio
+	correo 				= models.CharField(max_length=40) # Correo para recibir info del banco
+	estatus 			= models.CharField(max_length=1) # Dejar vacio para el banco
+	cuentaEmpresa		= models.CharField(max_length=1) # Numero de cuenta que empresa usara para DB/CR (1-9)
+	filler				= models.CharField(max_length=107) # Llenar con espacio en Blanco
+	lineaFormateadaH	= models.CharField(max_length=292) # Aqui ira la linea formateada para el TXT
+
+	def save(self, *args, **kwargs):
+		self.tipoRegistro		= 'H'
+		self.idCompania 		= '{:<15}'.format(self.idCompania)
+		self.nombreCompania 	= '{:<35}'.format(self.nombreCompania)
+		self.secuencia 			= '{:0>7}'.format(self.secuencia)
+		self.cantidadDB 		= '{:0>11}'.format(self.cantidadDB)
+		self.montoTotalDB		= '{:0>13}'.format(self.montoTotalDB.replace('.',''))
+		self.cantidadCR			= '{:0>11}'.format(self.cantidadCR)
+		self.montoTotalCR 		= '{:0>13}'.format(self.montoTotalCR)
+		self.numeroAfiliacion	= '{:0>15'.format(self.numeroAfiliacion)
+		self.correo				= '{:<40}'.format(self.correo)
+		self.estatus			= '{:<2}'.format(self.estatus)
+		self.filler				= '{:<107}'.format(self.filler)
+		self.lineaFormateadaH	= self.tipoRegistro + \
+									self.idCompania + \
+									self.nombreCompania + \
+									self.secuencia + \
+									self.tipoServicio + \
+									self.fechaEfectiva + \
+									self.cantidadDB + \
+									self.montoTotalDB + \
+									self.cantidadCR + \
+									self.montoTotalCR + \
+									self.numeroAfiliacion + \
+									self.fecha + \
+									self.hora + \
+									self.correo + \
+									self.estatus + \
+									self.cuentaEmpresa + \
+									self.filler
+
+		super(ArchivoBancoHeader, self).save(*args, **kwargs)
+
+
+# Detalle Contenido Archivo de Banco -- Registro N
+class ArchivoBancoDetailN(models.Model):
+
+	tipoRegistro		= models.CharField(max_length=1, default='N')
+	idCompania 			= models.CharField(max_length=15)
+	secuencia 			= models.CharField(max_length=7) # Secuencia del Header
+	secuenciaTrans		= models.CharField(max_length=7) # Numero que identifica la transaccion en el archivo
+	cuentaDestino		= models.CharField(max_length=20) # Justificada a la izquierda - del suplidor
+	tipoCuentaDestino	= models.CharField(max_length=1) 
+	monedaDestino		= models.CharField(max_length=3, default='214')
+	codBancoDestino		= models.CharField(max_length=8, default='10101070')
+	digiVerBancoDestino = models.CharField(max_length=1, default='8')
+	codigoOperacion		= models.CharField(max_length=2, default='22')
+	montoTransaccion	= models.CharField(max_length=13)
+	tipoIdentificacion 	= models.CharField(max_length=2) # Debe ser llenado para el BANCO POPULAR
+	identificacion 		= models.CharField(max_length=15) # Debe ser llenado para el BANCO POPULAR
+	nombre 				= models.CharField(max_length=35, default='                                   ') # Nombre del Beneficiario o Cliente
+	numeroReferencia	= models.CharField(max_length=12, default='            ')
+	descrpEstadoDestino = models.CharField(max_length=40, default='                                        ')
+	fechaVencimiento	= models.CharField(max_length=4) # solo para Codigo de Operacion 57
+	formaContacto		= models.CharField(max_length=1, default=' ')
+	emailBenef			= models.CharField(max_length=40, default='                                        ') # requerido si el campo formaContacto = 1
+	faxTelefonoBenef	= models.CharField(max_length=12, default='000000000000') # Requerido si el campo formaContacto = 2 ó 3
+	filler				= models.CharField(max_length=2, default='00')
+	numeroAut			= models.CharField(max_length=15, default='               ') # Uso del banco
+	codRetornoRemoto	= models.CharField(max_length=3, default='   ') # Uso del banco
+	codRazonRemoto		= models.CharField(max_length=3, default='   ') # Uso del banco
+	codRazonInterno		= models.CharField(max_length=3, default='   ') # Uso del banco
+	procTransaccion		= models.CharField(max_length=1, default=' ') # Uso del banco
+	estatusTransaccion	= models.CharField(max_length=2, default=' ') # Uso del banco
+	filler2				= models.CharField(max_length=52, default='                                                    ')
+	lineaFormateadaN 	= models.CharField(max_length=320)
+
+
+# Detalle Contenido Archivo de Banco -- Registro R
+class ArchivoBancoDetailR(models.Model):
+
+	tipoRegistro		= models.CharField(max_length=1, default='R')
+	idCompania 			= models.CharField(max_length=15)
+	secuencia 			= models.CharField(max_length=7) # Secuencia del Header
+	secuenciaTrans 		= models.CharField(max_length=7) # Secuencia de la Transaccion N
+	numeroCtaDestino	= models.CharField(max_length=20) # Justificada a la izquierda Suplidor
+	numeroDocumento		= models.CharField(max_length=15) # Numero del Documento
+	tipoDocumento 		= models.CharField(max_length=2) # 00 Facturas --- 01 Nota de Creditos --- 02 Nota de Debitos
+	fechaDocumento		= models.CharField(max_length=8) # Fecha del Documento YYYYMMDD
+	montoDocumento		= models.CharField(max_length=13) # Monto del Documento (Bruto)
+	montoDescuento		= models.CharField(max_length=11) # Monto Descuento
+	montoImpuesto		= models.CharField(max_length=11) # Monto Impuesto
+	netoDocumento		= models.CharField(max_length=13) # Monto Neto del Documento
+	descripcion 		= models.CharField(max_length=50) # Descripcion del Documento
+	filler 				= models.CharField(max_length=146, blank=True)
+	lineaFormateadaR	= models.CharField(max_length=319)
+
 	
