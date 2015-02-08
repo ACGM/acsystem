@@ -1,20 +1,27 @@
 @import 'normalize'
 
 //CLASES GENERICAS
-@media print 
-		
-	.head,.pie
-		display none
-	
-	#ad
-		display none
-	#leftbar
-		display none
+// @media print 
 
+.displayNone
+	display none
+	
+.boton-imprimir-doc
+	position absolute
+	bottom 3em
+	right 1em
+	width 10em
+	height 4em
+	&:before
+		margin-right .3em
+		font-size 1.4em
+		color darkgreen
+
+	
 //MODULO INVENTARIO
 // Entrada de Inventario
 
-.titulo,.localidad,.numeracion
+.titulo, .localidad, .numeracion
 	display block
 	text-align center
 	font-size 12px

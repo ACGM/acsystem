@@ -25,9 +25,15 @@ class SolicitudesOrdenesDespachoSerializer(serializers.HyperlinkedModelSerialize
 
 
 # Listado de Prestamos (Maestra de Prestamos)
-class MaestraPrestamosListado(serializers.HyperlinkedModelSerializer):
+class MaestraPrestamosListadoSerializer(serializers.HyperlinkedModelSerializer):
+	factura = serializers.StringRelatedField(read_only=True)
+	socio = serializers.StringRelatedField(read_only=True)
+	categoriaPrestamo = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = MaestraPrestamo
+		fields = ('noPrestamo', 'estatus', 'factura', 'codigoSocio', 'socio', 'montoInicial', 'categoriaPrestamo')
+		ordering = ('-noPrestamo',)
 
 
 # Prestamos Unificados

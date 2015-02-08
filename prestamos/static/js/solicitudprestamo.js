@@ -65,7 +65,7 @@
       function AprobarRechazarSolicitudes(solicitudes, accion) {
         var deferred = $q.defer();
 
-        $http.post('/prestamos/solicitudP/AprobarRechazar', JSON.stringify({'solicitudes': solicitudes, 'accion': accion})).
+        $http.post('/prestamos/solicitudP/AprobarRechazar/', JSON.stringify({'solicitudes': solicitudes, 'accion': accion})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -663,7 +663,7 @@
         $event.preventDefault();
 
         try {
-          SolicitudPrestamoService.ValidaAutorizador($scope.solicitante.autorizador, $scope.solicitante.autorizadorPin).then(function (data) {
+          SolicitudPrestamoService.ValidaAutorizador($scope.solicitante.autorizadoPor, $scope.solicitante.autorizadorPin).then(function (data) {
             if(isNaN(parseInt(data))) {
               $scope.solicitante.validado = '';
               $scope.mostrarError('El pin que ha digitado es incorrecto.');
@@ -705,7 +705,6 @@
         } catch (e) {
           $scope.mostrarError(e);
         }
-
       }
 
       // Visualizar Solicitud de Prestamo (desglose)

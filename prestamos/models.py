@@ -22,8 +22,6 @@ class Cheque(models.Model):
 class SolicitudPrestamo(models.Model):
 
 	estatus_choices = (('P','En Proceso'),('A','Aprobado'),('R','Rechazado'),('C','Cancelado'))
-	# descontar_choices = (('Q','Quincenal'),('M','Mensual'))
-	# quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'))
 
 	noSolicitud = models.PositiveIntegerField(unique=True)
 	fechaSolicitud = models.DateField(auto_now=True)
@@ -32,7 +30,8 @@ class SolicitudPrestamo(models.Model):
 	salarioSocio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
-	autorizadoPor = models.ForeignKey(User, null=True)
+	autorizadoPor = models.ForeignKey(User, null=True) #Corregir esto, no puede guardarse con un autorizador NULO
+	aprobadoRechazadoPor = models.ForeignKey(User, related_name='+', null=True, blank=True)
 
 	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
 	ahorrosCapitalizados = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar los ahorros capitalizados al momento de realizar esta solicitud
@@ -44,8 +43,6 @@ class SolicitudPrestamo(models.Model):
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	fechaParaDescuento = models.DateField()
 	unificarPrestamos = models.BooleanField(default=False)
-	# descontar = models.CharField(max_length=1, choices=descontar_choices, default='Q')
-	# quincena = models.IntegerField(choices=quincena_choices, default=1, null=True, blank=True)
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
 	cantidadCuotas = models.IntegerField()
@@ -62,13 +59,14 @@ class SolicitudPrestamo(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	def __unicode__(self):
+		return '%s' % (self.noSolicitud)
+
 
 # Solicitud de Orden de Despacho Cabecera
 class SolicitudOrdenDespachoH(models.Model):
 
 	estatus_choices = (('P','En Proceso'),('A','Aprobado'),('R','Rechazado'),('C','Cancelado'))
-	# descontar_choices = (('Q','Quincenal'),('M','Mensual'))
-	# quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'))
 
 	noSolicitud = models.IntegerField(unique=True)
 	fechaSolicitud = models.DateField(auto_now=True)
@@ -87,8 +85,6 @@ class SolicitudOrdenDespachoH(models.Model):
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	fechaParaDescuento = models.DateField()
 	unificarPrestamos = models.BooleanField(default=False)
-	# descontar = models.CharField(max_length=1, choices=descontar_choices, default='Q')
-	# quincena = models.IntegerField(choices=quincena_choices, default=1, null=True, blank=True)
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
 	cantidadCuotas = models.IntegerField()
@@ -97,7 +93,6 @@ class SolicitudOrdenDespachoH(models.Model):
 	fechaRechazo = models.DateField(null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	prestamo = models.PositiveIntegerField(null=True)
-	
 	
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -118,20 +113,18 @@ class SolicitudOrdenDespachoD(models.Model):
 #Maestra de Prestamos
 class MaestraPrestamo(models.Model):
 
-	# tipoPago_choices = (('Q','Quincenal'),('M','Mensual'))
-	# quincena_choices = (('1','1ra. Quincena'),('2','2da. Quincena'))
-	posteo_choices = (('N','NO'), ('S','SI'))
+	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'),)
 
 	noPrestamo = models.PositiveIntegerField(unique=True)
 	noSolicitudPrestamo = models.ForeignKey(SolicitudPrestamo, null=True, blank=True)
 	noSolicitudOD = models.ForeignKey(SolicitudOrdenDespachoH, null=True, blank=True)
-	factura = models.ForeignKey(Factura, null=True)
+	factura = models.ForeignKey(Factura, null=True, blank=True)
 
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	socio = models.ForeignKey(Socio)
 	representante = models.ForeignKey(Representante)
 	oficial = models.ForeignKey(User)
-	distrito = models.ForeignKey(Distrito)
+	distrito = models.ForeignKey(Distrito, null=True, blank=True)
 
 	montoInicial = models.DecimalField(max_digits=12, decimal_places=2)
 	tasaInteresAnual = models.DecimalField(max_digits=12, decimal_places=2)
@@ -140,19 +133,24 @@ class MaestraPrestamo(models.Model):
 	cantidadCuotas = models.PositiveIntegerField()
 	montoCuotaQ1 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	montoCuotaQ2 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	fechaDesembolso = models.DateField(null=True)
-	fechaEntrega = models.DateField(null=True)
+	fechaDesembolso = models.DateField(null=True, blank=True)
+	fechaEntrega = models.DateField(null=True, blank=True)
 	chequeNo = models.ForeignKey(Cheque, null=True)
 	# tipoPago = models.CharField(max_length=1, choices=tipoPago_choices, default='Q')
 	# quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)	
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 
-	posteado = models.CharField(max_length=1, default='N')
+	estatus = models.CharField(max_length=1, default='E')
+
 	posteadoFecha = models.DateField(auto_now=True, null=True, blank=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	@property
+	def codigoSocio(self):
+		return socio.codigo
 
 
 # Prestamos Unificados

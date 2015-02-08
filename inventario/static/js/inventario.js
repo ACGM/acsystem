@@ -714,7 +714,7 @@
       //Imprimir entrada de inventario
       $scope.Imprimir = function(entrada) {
 
-        $window.localStorage['entrada'] = JSON.stringify(entrada);
+        $window.sessionStorage['entrada'] = JSON.stringify(entrada);
         $window.open('/inventario/print/{entrada}'.replace('{entrada}',entrada.id), target='_blank'); 
       }
 
@@ -729,7 +729,7 @@
   //CONTROLLERS PRINT DOCUMENT                         *
   //****************************************************
   .controller('ImprimirInventarioCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
-    $scope.entrada = JSON.parse($window.localStorage['entrada']);
+    $scope.entrada = JSON.parse($window.sessionStorage['entrada']);
 
     InventarioService.DocumentoById($scope.entrada.id).then(function (data) {
       $scope.hoy = Date.now();

@@ -662,7 +662,7 @@
 
         //Imprimir factura
       $scope.ImprimirFactura = function(factura) {
-        $window.localStorage['factura'] = JSON.stringify(factura);
+        $window.sessionStorage['factura'] = JSON.stringify(factura);
         $window.open('/facturacion/print/{factura}'.replace('{factura}',factura.noFactura), target='_blank'); 
       }
 
@@ -783,7 +783,7 @@
   //CONTROLLERS PRINT DOCUMENT                         *
   //****************************************************
   .controller('ImprimirFacturaCtrl', ['$scope', '$filter', '$window', 'FacturacionService', function ($scope, $filter, $window, FacturacionService) {
-    $scope.factura = JSON.parse($window.localStorage['factura']);
+    $scope.factura = JSON.parse($window.sessionStorage['factura']);
     $scope.dataH = {};
     $scope.dataD = [];
 
@@ -808,13 +808,24 @@
 
         $scope.totalDescuento_ = $scope.totalDescuento();
         $scope.totalValor_ = $scope.totalValor();
-
-        FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
-          console.log(data);
-        });
       }
-
     });
+
+    $scope.imprimirFactura = function() {
+      console.log('ENTRO');
+      // FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
+      //   console.log(data);
+      // });
+      // var doc = jsPDF();
+      // doc.text(20,20, 'HOLA MUDO');
+      // doc.save('pruebaPDF.pdf');
+      // console.log(doc);
+      $scope.displayClass = 'displayNone';
+      console.log($scope.displayClass);
+      
+      window.print();
+      console.log($scope.displayClass);
+    }
 
     $scope.totalValor = function() {
       var total = 0.0;
