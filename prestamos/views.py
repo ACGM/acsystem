@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
-from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio
+from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
 
 import json
 import math
@@ -118,6 +118,26 @@ class NotaDeCreditoEspView(TemplateView):
 
 	template_name = 'notacreditoespecial.html'
 
+
+# Verificar Autorizador
+class validarAutorizadorView(View):
+
+	def post(self, request, *args, **kwargs):
+
+		data = json.loads(request.body)
+
+		autorizador = data['autorizador']
+		pin = data['pin']
+
+		try:
+			usuario = User.objects.get(username=autorizador)
+
+			AU = Autorizador.objects.get(usuario=usuario, clave=pin)
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
 
 # Listado de Solicitudes de Prestamos
 class SolicitudesPrestamosAPIView(APIView):

@@ -5,9 +5,16 @@ from administracion.models import Localidad, Distrito, Departamento, Representan
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
 								 TipoDocumento, Periodo, Empresa, Cobrador, CuotaAhorroSocio, \
-								 DocumentoCuentas, CategoriaProducto
+								 DocumentoCuentas, CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN
 
+@admin.register(ArchivoBancoHeader)
+class ArchivoBancoHeaderAdmin(admin.ModelAdmin):
+	list_display = ['id', 'tipoRegistro', 'idCompania', 'nombreCompania', 'secuencia']
 
+@admin.register(ArchivoBancoDetailN)
+class ArchivoBancoDetailNAdmin(admin.ModelAdmin):
+	list_display = ['id','tipoRegistro','idCompania','secuencia','secuenciaTrans']
+	
 @admin.register(Localidad)
 class LocalidadAdmin(admin.ModelAdmin):
 	list_display = ['id','descripcion',]

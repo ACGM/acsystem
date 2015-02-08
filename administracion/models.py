@@ -459,7 +459,7 @@ class Periodo(models.Model):
 # Empresas
 class Empresa(models.Model):
 
-	nombre = models.CharField(max_length=100)
+	nombre = models.CharField(max_length=50)
 	rnc = models.CharField(max_length=15, blank=True, null=True)
 	bancoAsign = models.CharField(max_length=5, blank=True, null=True)
 
@@ -521,10 +521,10 @@ class CuotaAhorroSocio(models.Model):
 
 
 # Archivos para Banco
-class ArchivoBancoNomina(models.Model):
+class ArchivoBanco(models.Model):
 
 	bancoAsign = models.CharField(max_length=5) # Numero Asignado a la Empresa de cinco posiciones
-	tipoServicio = models.CharField(max_length=2) #T ipo de Servicio de dos posiciones
+	tipoServicio = models.CharField(max_length=2) #Tipo de Servicio de dos posiciones
 	envio = models.CharField(max_length=4) # MMDD mes y dia en que se envia el archivo
 	secuencia = models.PositiveIntegerField() # Secuencia del header de siete posiciones
 
@@ -544,14 +544,14 @@ class ArchivoBancoHeader(models.Model):
 	montoTotalDB		= models.CharField(max_length=13) # Monto Total de Debitos
 	cantidadCR			= models.CharField(max_length=11) # Cantidad Total de Creditos
 	montoTotalCR		= models.CharField(max_length=13) # Monto Total de Creditos
-	numeroAfiliacion	= models.CharField(max_length=15) # Afiliacion a CARDNET
+	numeroAfiliacion	= models.CharField(max_length=15, blank=True) # Afiliacion a CARDNET
 	fecha 				= models.CharField(max_length=8) # YYYYMMDD (Fecha de envio del archivo)
 	hora				= models.CharField(max_length=4) # HHMM del envio
 	correo 				= models.CharField(max_length=40) # Correo para recibir info del banco
-	estatus 			= models.CharField(max_length=1) # Dejar vacio para el banco
+	estatus 			= models.CharField(max_length=1, blank=True) # Dejar vacio para el banco
 	cuentaEmpresa		= models.CharField(max_length=1) # Numero de cuenta que empresa usara para DB/CR (1-9)
-	filler				= models.CharField(max_length=107) # Llenar con espacio en Blanco
-	lineaFormateadaH	= models.CharField(max_length=292) # Aqui ira la linea formateada para el TXT
+	filler				= models.CharField(max_length=107, blank=True) # Llenar con espacio en Blanco
+	lineaFormateadaH	= models.CharField(max_length=292, blank=True) # Aqui ira la linea formateada para el TXT
 
 	def save(self, *args, **kwargs):
 		self.tipoRegistro		= 'H'
@@ -563,12 +563,12 @@ class ArchivoBancoHeader(models.Model):
 		self.cantidadDB 		= '{:0>11}'.format(self.cantidadDB)
 		self.montoTotalDB		= '{:0>13}'.format(self.montoTotalDB.replace('.',''))
 		self.cantidadCR			= '{:0>11}'.format(self.cantidadCR)
-		self.montoTotalCR 		= '{:0>13}'.format(self.montoTotalCR)
-		self.numeroAfiliacion	= '{:0>15'.format(self.numeroAfiliacion)
+		self.montoTotalCR 		= '{:0>13}'.format(self.montoTotalCR.replace('.',''))
+		self.numeroAfiliacion	= '{:0>15}'.format(self.numeroAfiliacion)
 		self.fecha				= self.fecha
 		self.hora				= self.hora
 		self.correo				= '{:<40}'.format(self.correo)
-		self.estatus			= '{:<2}'.format(self.estatus)
+		self.estatus			= '{:<1}'.format(self.estatus)
 		self.cuentaEmpresa		= self.cuentaEmpresa
 		self.filler				= '{:<107}'.format(self.filler)
 		self.lineaFormateadaH	= self.tipoRegistro + \
@@ -595,7 +595,7 @@ class ArchivoBancoHeader(models.Model):
 # Detalle Contenido Archivo de Banco -- Registro N
 class ArchivoBancoDetailN(models.Model):
 
-	tipoRegistro		= models.CharField(max_length=1)
+	tipoRegistro		= models.CharField(max_length=1, blank=True, default='N')
 	idCompania 			= models.CharField(max_length=15)
 	secuencia 			= models.CharField(max_length=7) # Secuencia del Header
 	secuenciaTrans		= models.CharField(max_length=7) # Numero que identifica la transaccion en el archivo
@@ -609,21 +609,21 @@ class ArchivoBancoDetailN(models.Model):
 	tipoIdentificacion 	= models.CharField(max_length=2, default='CE') # Debe ser llenado para el BANCO POPULAR
 	identificacion 		= models.CharField(max_length=15) # Debe ser llenado para el BANCO POPULAR
 	nombre 				= models.CharField(max_length=35, default='') # Nombre del Beneficiario o Cliente
-	numeroReferencia	= models.CharField(max_length=12, default='')
-	descrpEstadoDestino = models.CharField(max_length=40, default='')
-	fechaVencimiento	= models.CharField(max_length=4, default='') # solo para Codigo de Operacion 57
+	numeroReferencia	= models.CharField(max_length=12, blank=True, default='')
+	descrpEstadoDestino = models.CharField(max_length=40, blank=True, default='')
+	fechaVencimiento	= models.CharField(max_length=4, blank=True, default='') # solo para Codigo de Operacion 57
 	formaContacto		= models.CharField(max_length=1, default=' ')
-	emailBenef			= models.CharField(max_length=40, default='') # requerido si el campo formaContacto = 1
-	faxTelefonoBenef	= models.CharField(max_length=12, default='') # Requerido si el campo formaContacto = 2 ó 3
+	emailBenef			= models.CharField(max_length=40, blank=True, default='') # requerido si el campo formaContacto = 1
+	faxTelefonoBenef	= models.CharField(max_length=12, blank=True, default='') # Requerido si el campo formaContacto = 2 ó 3
 	filler				= models.CharField(max_length=2, default='00')
-	numeroAut			= models.CharField(max_length=15, default='') # Uso del banco
+	numeroAut			= models.CharField(max_length=15, blank=True, default='') # Uso del banco
 	codRetornoRemoto	= models.CharField(max_length=3, default='   ') # Uso del banco
 	codRazonRemoto		= models.CharField(max_length=3, default='   ') # Uso del banco
 	codRazonInterno		= models.CharField(max_length=3, default='   ') # Uso del banco
 	procTransaccion		= models.CharField(max_length=1, default=' ') # Uso del banco
 	estatusTransaccion	= models.CharField(max_length=2, default=' ') # Uso del banco
-	filler2				= models.CharField(max_length=52, default='')
-	lineaFormateadaN 	= models.CharField(max_length=320)
+	filler2				= models.CharField(max_length=52, blank=True, default='')
+	lineaFormateadaN 	= models.CharField(max_length=320, blank=True,)
 
 	def save(self, *args, **kwargs):
 
@@ -637,11 +637,11 @@ class ArchivoBancoDetailN(models.Model):
 		self.codBancoDestino	= self.codBancoDestino
 		self.digiVerBancoDestino= self.digiVerBancoDestino
 		self.codigoOperacion	= self.codigoOperacion
-		self.montoTransaccion	= '{:<13}'.format(self.montoTransaccion)
+		self.montoTransaccion	= '{:<13}'.format(self.montoTransaccion.replace('.',''))
 		self.tipoIdentificacion	= self.tipoIdentificacion
 		self.identificacion		= '{:<15}'.format(self.identificacion)
 		self.nombre				= '{:<35}'.format(self.nombre)
-		self.numeroReferencia	= '{:<12}'.format(self.nombre)
+		self.numeroReferencia	= '{:<12}'.format(self.numeroReferencia)
 		self.descrpEstadoDestino= '{:<40}'.format(self.descrpEstadoDestino)
 		self.fechaVencimiento	= '{:<4}'.format(self.fechaVencimiento)
 		self.formaContacto		= self.formaContacto

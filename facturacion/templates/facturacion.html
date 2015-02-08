@@ -53,7 +53,7 @@
 
 						<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[factura.id]]" ng-disabled="[[factura.posteo | posteo]]" ng-checked="valoresChk[factura.id]" ng-model="reg[factura.id]" ng-click="selectedReg(factura)"> </td>
-							<td class="icon-coin posteo-[[factura.posteo]]"></td>
+							<td class="icon-folder posteo-[[factura.posteo]]"></td>
 							<td>[[factura.fecha | date: 'dd/MM/yyyy']]</td>
 							<td><a href="#" class="sp-field" ng-click="FactFullById(factura.noFactura)"> [[factura.noFactura | numberFixedLen: 8]] </a></td>
 							<td>[[factura.ordenCompra | numberFixedLen: 8]]</td>

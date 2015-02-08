@@ -47,6 +47,20 @@
         return deferred.promise;
       }
 
+      // Validar Autorizador
+      function ValidaAutorizador(autorizador, pin) {
+        var deferred = $q.defer();
+
+        $http.post('/prestamos/validaAutorizador/', JSON.stringify({'autorizador': autorizador, 'pin': pin})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       // Aprobar/Rechazar solicitudes de prestamos.
       function AprobarRechazarSolicitudes(solicitudes, accion) {
         var deferred = $q.defer();
@@ -144,7 +158,6 @@
       function categoriasPrestamos(id, categoria) {
         var deferred = $q.defer();
 
-        console.log(categoria);
         if(categoria != undefined && categoria != '') {
           url = '/api/categoriasPrestamos/{categoria}/?format=json'.replace('{categoria}', categoria);
         } else {
@@ -206,15 +219,14 @@
         return deferred.promise;
       }
 
-      //Empresas
-      function getEmpresas() {
+      //Representantes
+      function getRepresentantes() {
         var deferred = $q.defer();
 
-        $http.get('/api/empresa/')
+        $http.get('/api/representante/')
           .success(function (data) {
             deferred.resolve(data);
           });
-
         return deferred.promise;
       }
 
@@ -230,7 +242,8 @@
         AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
         SolicitudPById                : SolicitudPById,
         getAutorizadores              : getAutorizadores,
-        getEmpresas                   : getEmpresas 
+        getRepresentantes             : getRepresentantes,
+        ValidaAutorizador             : ValidaAutorizador
       };
 
     }])
@@ -509,8 +522,8 @@
         $scope.solicitante = {};
         $scope.solicitud = {};
 
-        $scope.solicitante.representanteCodigo = 16; //CAMBIAR ESTO
-        $scope.solicitante.representanteNombre = 'EMPRESA'; //CAMBIAR ESTO
+        $scope.solicitante.representanteCodigo = '';
+        $scope.solicitante.representanteNombre = undefined;
         $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
         $scope.solicitante.autorizadoPor = '';
@@ -542,7 +555,7 @@
       }
 
 
-      //Guardar Factura
+      //Guardar Solicitud de Prestamo
       $scope.guardarSolicitud = function($event) {
         $event.preventDefault();
 
@@ -557,6 +570,11 @@
           var fechaP = $scope.solicitud.fechaDescuento.split('/');
           var fechaDescuentoFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
+          //Exeptions
+          if($scope.solicitante.validado != 'Correcto!') {
+            // $scope.mostrarError("Verifique que haya digitado un pin de autorizador valido");
+            throw "Verifique que haya digitado un pin de autorizador valido."
+          }
           if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
             $scope.mostrarError("La fecha para descuento no puede ser menor a la fecha de hoy.");
             throw "La fecha para descuento no puede ser menor a la fecha de hoy.";
@@ -565,6 +583,7 @@
             $scope.mostrarError("La fecha para solicitud no puede ser menor a la fecha de hoy.");
             throw "La fecha para solicitud no puede ser menor a la fecha de hoy.";
           }
+          //End Exeptions
 
           if($scope.solicitud.valorGarantizado == undefined) {
             $scope.solicitud.valorGarantizado = '0';
@@ -573,7 +592,7 @@
             $scope.solicitud.prestacionesLaborales = '0';
           }
 
-          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante,$scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
+          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante, $scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
             if(isNaN(parseInt(data))) {
               $scope.mostrarError(data);
               throw data;
@@ -607,11 +626,11 @@
         });
       }
 
-      // Empresas
-      $scope.empresas = function() {
-        SolicitudPrestamoService.getEmpresas().then(function (data) {
+      // Representantes
+      $scope.getRepresentantes = function() {
+        SolicitudPrestamoService.getRepresentantes().then(function (data) {
           if(data.length > 0) {
-            $scope.empresas = data;
+            $scope.representantes = data;
           }
         });
       }
@@ -622,7 +641,46 @@
 
         $scope.nuevaEntrada();
         $scope.toggleLSP();
-      } 
+      }
+
+      // Seleccionar Autorizador
+      $scope.selectAutorizador = function() {
+        $scope.solicitante.autorizadorPin = '';
+        $scope.solicitante.validado = '';
+        $scope.solicitante.pinValido = false;
+      }
+
+      // Valida autorizador mediante ENTER
+      $scope.validaAutorizadorKey = function($event) {
+        
+        if($event.keyCode == 13) {
+          $scope.validarAutorizador($event);
+        }
+      }
+
+      // Validar autorizador
+      $scope.validarAutorizador = function($event) {
+        $event.preventDefault();
+
+        try {
+          SolicitudPrestamoService.ValidaAutorizador($scope.solicitante.autorizador, $scope.solicitante.autorizadorPin).then(function (data) {
+            if(isNaN(parseInt(data))) {
+              $scope.solicitante.validado = '';
+              $scope.mostrarError('El pin que ha digitado es incorrecto.');
+              $scope.solicitante.pinValido = false;
+              $scope.solicitante.validado = 'Incorrecto!';
+              throw data;
+            } else {
+              $scope.solicitante.validado = 'Correcto!';
+              $scope.solicitante.pinValido = true;
+              $scope.errorShow = false;
+            }
+
+          })
+        } catch(e) {
+          $scope.mostrarError(e);
+        }
+      }
 
       // Aprobar/Rechazar solicitudes de prestamos
       $scope.AprobarRechazarSolicitudesPrestamos = function($event, accion, solicitud) {
@@ -672,7 +730,12 @@
               $scope.solicitante.cedula = data[0]['socioCedula'];
               $scope.solicitante.salario = $filter('number')(data[0]['socioSalario'],2);
               $scope.solicitante.cobrador = data[0]['cobrador'];
+
               $scope.solicitante.autorizadoPor = data[0]['autorizadoPor'];
+              $scope.solicitante.autorizadorPin = '****';
+              $scope.solicitante.validado = 'Correcto!';
+              $scope.solicitante.pinValido = true;
+              $scope.solicitante.autorizadorFill = true;
 
               $scope.solicitud.montoSolicitado = data[0]['montoSolicitado']; //$filter('number')(data[0]['montoSolicitado'],2);
               $scope.solicitud.fechaSolicitud = $filter('date')(data[0]['fechaSolicitud'], 'dd/MM/yyyy');

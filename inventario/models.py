@@ -40,7 +40,7 @@ class InventarioH(models.Model):
 	
 	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
 	fechaSalida = models.DateTimeField("Fecha de Salida", blank=True, null=True)
-	usuarioSalida = models.ForeignKey(User, related_name='+', null=True)
+	usuarioSalida = models.ForeignKey(User, related_name='+', null=True, blank=True)
 
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	condicion = models.CharField(max_length=2, choices=condicion_choices, default='CO')

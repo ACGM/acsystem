@@ -65,7 +65,7 @@
 
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
-							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
+							<td class="icon-folder posteo-[[entrada.posteo]]"></td>
 							<td>[[entrada.getTipo]]</td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id, 'entrada')"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd/MM/yyyy']]</td>
@@ -109,8 +109,7 @@
 				<div ng-if="tipoinv == 'S'" class="salida-datos">
 					<p><strong>Descripción de Salida: </strong> [[dataH.descripcionSalida]]</p>
 					<p><strong>Fecha de Salida: </strong> [[dataH.fechaSalida | date : 'dd/MM/yyyy hh:MM a']]</p>
-					<p><strong>Por el usuario: </strong> [[dataH.usuarioSalida]]</p>
-					
+					<p><strong>Salida por el usuario: </strong> [[dataH.usuarioSalida]]</p>
 				</div>
 
 				<div>

@@ -59,7 +59,7 @@ class EntradaInventarioById(ListView):
 				'tipo': inventario.getTipo,
 				'descripcionSalida': inventario.descripcionSalida,
 				'fechaSalida': inventario.fechaSalida,
-				'usuarioSalida': inventario.usuarioSalida.username,
+				'usuarioSalida': inventario.usuarioSalida.username if inventario.usuarioSalida != None else '',
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,

@@ -12,7 +12,8 @@ from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView,
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
-                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
+                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView, \
+                            validarAutorizadorView
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
@@ -29,7 +30,7 @@ from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
-                                AutorizadoresViewSet, EmpresasViewSet
+                                AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 
@@ -72,6 +73,7 @@ router.register(r'departamento', DepartamentoViewSet)
 router.register(r'CoBeneficiario', CoBeneficiarioViewSet)
 router.register(r'autorizador', AutorizadoresViewSet)
 router.register(r'empresa', EmpresasViewSet)
+router.register(r'representante', RepresentantesViewSet)
 
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)
@@ -154,6 +156,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
+    url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
     
     url(r'^prestamos/solicitudP/AprobarRechazar$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
 

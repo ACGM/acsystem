@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, CategoriaPrestamo, \
-					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa
+					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, Representante
 
 
 # Listado de Productos
@@ -82,5 +82,13 @@ class EmpresasSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Empresa
-		fields = ('nombre', 'rnc', 'bancoAsign')
+		fields = ('id', 'nombre', 'rnc', 'bancoAsign')
+
+		
+# Representantes
+class RepresentantesSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Representante
+		fields = ('id', 'nombre',)
 		
