@@ -7,7 +7,8 @@
     'cooperativa.inventario',
     'cooperativa.fondoscajas',
     'cooperativa.ahorro',
-    'cooperativa.solicitudprestamo'
+    'cooperativa.solicitudprestamo',
+    'cooperativa.maestraprestamo'
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){
