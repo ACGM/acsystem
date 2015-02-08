@@ -16,6 +16,8 @@ from administracion.models import Suplidor, Producto
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
 							ExistenciaProductoSerializer
 
+from acgm.views import LoginRequiredMixin
+
 import json
 import math
 import decimal
@@ -23,7 +25,7 @@ import datetime
 
 
 # Retornar un documento con todo su detalle 
-class EntradaInventarioById(ListView):
+class EntradaInventarioById(LoginRequiredMixin, ListView):
 
 	queryset = InventarioH.objects.all()
 
@@ -89,7 +91,7 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 
 
 # Entrada de Inventario
-class InventarioView(TemplateView):
+class InventarioView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'inventario.html'
 
@@ -146,7 +148,7 @@ class InventarioView(TemplateView):
 
 
 # Transferencia de Inventario
-class TransferenciaInvView(TemplateView):
+class TransferenciaInvView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'transferenciainv.html'
 
@@ -178,7 +180,7 @@ class getExistenciaByProductoView(APIView):
 
 
 # Imprimir Entrada de Inventario
-class ImprimirEntradaInventarioView(TemplateView):
+class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'print_entrada.html'
 

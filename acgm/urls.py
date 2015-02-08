@@ -9,11 +9,11 @@ from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, g
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView, \
                                 SalidaInventarioView
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
-from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
+from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
-                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView, \
-                            validarAutorizadorView
+                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
@@ -41,6 +41,7 @@ from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoB
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
+from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
 
 admin.site.site_header = 'COOPERATIVA'
@@ -96,7 +97,7 @@ router.register(r'nominasgeneradas', ListadoNominasGeneradasViewSet)
 router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 
 #prestamos
-# router.register(r'solicitudesprestamos', SolicitudesPrestamosView)
+# router.register(r'maestraprestamos', PrestamosEnMaestraView)
 
 urlpatterns = patterns('',
 
@@ -166,6 +167,8 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
     url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
+    url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
 
     
 

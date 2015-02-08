@@ -16,16 +16,10 @@ from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, Nom
 from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina
 from administracion.models import CuotaAhorroSocio, Socio
 
+from acgm.views import LoginRequiredMixin
+
 import json
 import decimal
-
-
-#Mixin for login_required
-class LoginRequiredMixin(object):
-
-	@classmethod
-	def as_view(cls):
-		return login_required(super(LoginRequiredMixin, cls).as_view())
 
 
 # Vista Principal de Nomina

@@ -141,7 +141,7 @@ class MaestraPrestamo(models.Model):
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 
-	estatus = models.CharField(max_length=1, default='E')
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
 	posteadoFecha = models.DateField(auto_now=True, null=True, blank=True)
 
@@ -150,7 +150,7 @@ class MaestraPrestamo(models.Model):
 
 	@property
 	def codigoSocio(self):
-		return socio.codigo
+		return self.socio.codigo
 
 
 # Prestamos Unificados

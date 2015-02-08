@@ -4,12 +4,14 @@
 
 {% block content %}
 
-	<div class="MaestraPrestamo" ng-app="cooperativa">
-		
-		<div class="sub-menu" ng-controller="facturacion">	
+	<div class="MaestraPrestamo" ng-controller="maestraPrestamosCtrl">
 
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
+		
+		<div class="sub-menu">	
 				Maestra de Prestamos
-			<a class="DownArrow" href="#"></a>
+			<a class="[[ArrowMP]]" href="#" ng-click="toggleMP()"></a>
 		</div>
 
 		<section class="listado-reg-prestamos">

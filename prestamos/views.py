@@ -10,37 +10,27 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import SolicitudesPrestamosSerializer, MaestraPrestamosListadoSerializer
+from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
+
+from acgm.views import LoginRequiredMixin
 
 import json
 import math
 import decimal
 import datetime
 
-#Vista para Maestra de Prestamos
-class MaestraPrestamosView(TemplateView):
-
-	template_name = 'maestraprestamos.html'
-
-
-# Listado de Prestamos en Maestra de Prestamos
-class PrestamosEnMaestra(APIView):
-
-	queryset=MaestraPrestamo.objects.all().order_by('-noPrestamo')
-	serializer_class = MaestraPrestamosListadoSerializer
-
 
 #Vista para Desembolso Electronico de Prestamos
-class DesembolsoPrestamosView(TemplateView):
+class DesembolsoPrestamosView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'desembolsoelectronico.html'
 
 
 #Vista para Solicitud de Prestamo  -- El POST guarda la Solicitud de Prestamo
-class SolicitudPrestamoView(TemplateView):
+class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'solicitudprestamo.html'
 
@@ -103,31 +93,31 @@ class SolicitudPrestamoView(TemplateView):
 
 
 #Vista para Solicitud de Ordenes de Despacho
-class SolicitudOrdenDespachoView(TemplateView):
+class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'solicitudordendespacho.html'
 
 
 #Vista para Notas de Debito
-class NotaDeDebitoView(TemplateView):
+class NotaDeDebitoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notasdebito.html'
 
 
 #Vista para Notas de Credito
-class NotaDeCreditoView(TemplateView):
+class NotaDeCreditoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notascredito.html'
 
 
 #Vista para Notas de Credito Especiales
-class NotaDeCreditoEspView(TemplateView):
+class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notacreditoespecial.html'
 
 
 # Verificar Autorizador
-class validarAutorizadorView(View):
+class validarAutorizadorView(LoginRequiredMixin, View):
 
 	def post(self, request, *args, **kwargs):
 
@@ -178,7 +168,7 @@ class SolicitudesPrestamosAPIViewByCodigoNombre(APIView):
 
 
 # Desglose de Solicitud de Prestamo
-class SolicitudPrestamoById(DetailView):
+class SolicitudPrestamoById(LoginRequiredMixin, DetailView):
 
 	queryset = SolicitudPrestamo.objects.all()
 
@@ -241,7 +231,7 @@ class SolicitudPrestamoById(DetailView):
 
 
 # Aprobar/Rechazar solicitudes de prestamos
-class AprobarRechazarSolicitudesPrestamosView(View):
+class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 
 	def post(self, request, *args, **kwargs):
 

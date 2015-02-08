@@ -38,7 +38,7 @@ class UserExtra(models.Model):
 # Distritos
 class Distrito(models.Model):
 
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=50)
 	localidad = models.ForeignKey(Localidad)
 
 	def __unicode__(self):
