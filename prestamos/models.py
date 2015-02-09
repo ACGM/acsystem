@@ -84,7 +84,6 @@ class SolicitudOrdenDespachoH(models.Model):
 	observacion = models.TextField()
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
 	fechaParaDescuento = models.DateField()
-	unificarPrestamos = models.BooleanField(default=False)
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
 	cantidadCuotas = models.IntegerField()
@@ -92,7 +91,8 @@ class SolicitudOrdenDespachoH(models.Model):
 	fechaAprobacion = models.DateField(null=True, blank=True)
 	fechaRechazo = models.DateField(null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
-	prestamo = models.PositiveIntegerField(null=True)
+	prestamo = models.PositiveIntegerField(null=True, blank=True)
+	fechaVencimiento = models.DateField(null=True, blank=True)
 	
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -105,9 +105,6 @@ class SolicitudOrdenDespachoD(models.Model):
 	articulo = models.CharField(max_length=80, default='No especificado')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
-
-	#FALTA COMPLETAR AQUI -- VER DETALLE EN EL SISTEMA ACTUAL
-
 
 
 #Maestra de Prestamos

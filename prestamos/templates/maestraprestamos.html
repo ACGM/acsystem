@@ -20,12 +20,16 @@
 				<div class="busqueda-by-field">
 					<div class="by-prestamo">
 						<span> Prestamo No. </span>
-						<input type="text" id="PrestamoNo" class="doc-no-ei" ng-keypress="buscarPrestamo($event, NoPrestamo)">		
+						<input type="text" id="PrestamoNo" ng-model="NoPrestamo" class="doc-no-ei" ng-keypress="buscarPrestamo($event, NoPrestamo)">		
 					</div>	
 					<div class="by-socio">
 						<span> Socio </span>
-						<input type="text" id="Socio" placeholder="Codigo de Empleado">
+						<input type="text" id="Socio" ng-model="codigoSocio" placeholder="Codigo de Empleado" ng-keypress="buscarPrestamoBySocio($event, codigoSocio)">
 					</div>
+
+					<span class="error-ei"> [[NoFoundDoc]]</span>
+					<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoPrestamos(undefined)">Ver todos</a>
+
 				</div>
 
 				<section class="registrosPanel">

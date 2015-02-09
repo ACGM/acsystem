@@ -4,339 +4,327 @@
 
 {% block content %}
 
-	<div class="SolicitudPrestamo" ng-app="cooperativa">
+	<div class="SolicitudPrestamo" ng-controller="SolicitudPrestamoCtrl">
 		
-		<div class="sub-menu" ng-controller="solicitudPrestamo">	
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>		
+
+		<div class="sub-menu">	
 			<div class="menu-entrada-sp-listado">
-				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo"></button>
+				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
-				Listado de Solicitudes de Prestamos
-			<a class="DownArrow" href="#"></a>
+				<a href="#" ng-click="toggleLSP()">Listado de Solicitudes de Prestamos</a>
+			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
 		</div>
 
-		<section class="listado-reg-sp">
-			<span>Socio</span>
-			<input type="text">
+		<section class="listado-reg-sp cssSlideUp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
+				<span>Codigo</span>
+				<input type="text" class="doc-no-ei" ng-model="socioCodigo" ng-keypress="solicitudesprestamosBySocio($event, socioCodigo)">
 
+				<span>Socio</span>
+				<input type="text" class="socio-field-sp" ng-model="socioNombre" ng-keypress="solicitudesprestamosBySocio($event, socioNombre)">
+
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoSolicitudes()">Ver todos</a>
+				
 			<div class="filtro-posteadas">
-				<span>Posteadas</span>
-				<select name="posteadas" id="posteadas">
-					<option value="Todas">Todas</option>
-					<option value="Si">Si</option>
-					<option value="No">No</option>
+				<span>Estatus</span>
+				<select name="estatus" id="estatus" ng-change="solicitudesprestamosEstatus(estatus)" ng-model="estatus" class="field-choices">
+					<option value="T">Todas</option>
+					<option value="P">En Proceso</option>
+					<option value="A">Aprobados</option>
+					<option value="R">Rechazados</option>
+					<option value="C">Cancelados</option>
 				</select>
 			</div>
 
-			<table class="listado-table">
-				<tr class="listado-table-nc-header">
-					<td><input type="checkbox"> </td>
-					<td>Estatus</td>
-					<td>Solicitud #</td>
-					<td>Fecha</td>
-					<td>Codigo</td>
-					<td>Socio</td>
-					<td>Solicitado</td>
-					<td>Desembolsar</td>
-					<td>Imprimir</td>
-					<td>Eliminar</td>
-				</tr>
+			<section class="registrosPanel">
 
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-sp-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="sp-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>241099</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
+				<table class="listado-table">
+					<tr class="listado-table-nc-header">
+						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
+						<td>Estatus</td>
+						<td>Solicitud #</td>
+						<td>Fecha</td>
+						<td>Codigo</td>
+						<td>Socio</td>
+						<td>Solicitado</td>
+						<td>Desembolsar</td>
+						<td>Imprimir</td>
+						<td title="Cancelar Prestamo">Cancelar</td>
+					</tr>
 
-										
-			</table>
+					<tr class="listado-sp-detail" ng-repeat="solicitud in solicitudes">
+						<td><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)" ng-disabled="[[solicitud.estatus | estatusSolicitud]]"> </td>
+						<td class="estatus-[[solicitud.estatus | lowercase]]">[[solicitud.estatus | estatusName]]</td>
+						<td> <a class="sp-field" title="Ver mas detalle..." href="#" ng-click="SolicitudFullById($event,solicitud.noSolicitud)">[[solicitud.noSolicitud | numberFixedLen : 8]]</a> </td>
+						<td>[[solicitud.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
+						<td>[[solicitud.codigoSocio]]</td>
+						<td>[[solicitud.socio]]</td>
+						<td>[[solicitud.montoSolicitado | number : 2]]</td>
+						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
+						<td><a class="icon-printer icon-imprimir" href="#"></a></td>
+						<td>
+							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesPrestamos($event,'C', solicitud)"></a> </div>
+							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>
+							
+						</td>
+					</tr>
+											
+				</table>
+			</section>
 
-			<div class="botones-acciones-solicitud-prestamo-listado">
-				<button class="Boton boton-aprobar-sp"> Aprobar</button>
-				<button class="Boton boton-rechazar-sp"> Rechazar</button>
-				
-			</div>
-		</section>
-
-		<!--DETALLE NC-->
-		<div class="sub-menu">	
-				Solicitud de Prestamo
-			<a class="DownArrow" href="#"></a>
-		</div>
-
-		<section class="data-entry-section-sp">
-			<div class="sub-menu-sp">	
-				Datos del Solicitante
-			</div>
-
-			<table class="sp-header-table-solicitante">
-				<tr>
-					<td>Codigo de empleado</td>
-					<td>
-						<div class="codigo-empleado-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Codigo del socio</td>
-					<td> 
-						<div class="codigo-socio-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Representante</td>
-					<td><input class="cod-repr" type="text"> <input class="descrp-repr" type="text"></td>
-				</tr>
-				<tr>
-					<td>Auxiliar</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
-
-			<table class="sp-header-table-solicitante2">
-				<tr>
-					<td>Cedula</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Salario</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Cobrador</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Autorizado por</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
-
-		</section>
-
-		<section class="sp-datos-prestamo">
-			<div class="sub-menu-sp">	
-				Datos del Prestamo
-			</div>
-
-			<div class="datos-prestamo-content">
-
-				<div class="datos-prestamo-1">
-					<table class="datos-prestamo-1-table">
-						<tr>
-							<td>
-								<input type="text" class="monto-field">
-								<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
-							</td>
-							<td>
-								<div class="fecha-prestamo">
-									<span class="fecha-solicitud-field">Fecha Solicitud</span>
-									<input class="fecha-solicitud-field-t" type="text">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">Disponible para garantia</td>
-						</tr>
-						<tr>
-							<td>Ahorros Capitalizados</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Deudas Prestamos</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Prestaciones Laborales</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Valor garantizado</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Neto a desembolsar</td>
-							<td><input class="monto-desembolsar-field" type="text"></td>
-						</tr>
-						<tr>
-							<td colspan="2">Nota/Observacion</td>
-						</tr>
-						<tr>
-							<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="9"></textarea></td>
-						</tr>
-
-						<tr>
-							<td colspan="2">
-								<button class="Boton icon-save boton-guardar-solicitud">Guardar</button>
-								<button class="Boton icon-delete boton-cancelar-solicitud">Cancelar</button>
-							</td>
-						</tr>
-
-					</table>
+				<div class="botones-acciones-solicitud-prestamo-listado">
+					<button class="icon-cog Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'A', undefined)"> Aprobar</button>
+					<button class="icon-blocked Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'R', undefined)"> Rechazar</button>
+					
 				</div>
-
-				<div class="datos-prestamo-2">
-					<table class="datos-prestamo-2-table">
-						<tr>
-							<td>Categoria Prestamo</td>
-							<td><input type="text" class="categoria-prestamo-field"></td>
-						</tr>
-						<tr>
-							<td>Fecha para descuento</td>
-							<td><input type="text" class="fecha-descuento-field"></td>
-						</tr>
-					</table>
-
-					<div class="descontar">
-						<span>Descontar</span>
-						<select name="descontar" id="descontar">
-							<option value="Quincenal">Quincenal</option>
-							<option value="Mensual">Mensual</option>
-						</select>
-						
-						<div class="descuento-mensual">
-							<input type="radio"> 1ra
-							<input type="radio"> 2da								
-						</div>
-
-					</div>
+		</section>
 
 
-					<div class="unificar-prestamos-sec">
-						<div class="unificar-prestamos-title">
-							Unificar Prestamos
-						</div>
-						<table class="unificar-prestamos-table">
+		<form name="SolicitudForm" class="datosprestamos" ng-hide="showLSP" ng-submit="guardarSolicitud($event)" novalidate>
+			<!--DETALLE OD-->
+			<div class="sub-menu">	
+					Solicitud de Prestamo
+			</div>
+
+			<section class="data-entry-section-sp">
+				<div class="sub-menu-sp">	
+					Datos del Solicitante
+				</div>
+					<div class="content-socios-table">
+						<table class="socios-table-search-prestamo" ng-show="tableSocio">
 							<tr>
-								<td><input type="checkbox"></td>
-								<td>Prestamo</td>
-								<td>Capital</td>
+								<td class="cerrar-table" colspan="3">
+									<a  href="#" class="icon-delete" ng-click="tableSocio=false">  </a>
+								</td>
 							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
 							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-														<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"></td>
-								<td>00048875</td>
-								<td>20,500.56</td>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
 							</tr>
 						</table>
-						<button class="Boton boton-unificar-prestamos">Unificar</button>
-						
 					</div>
 
-					<div class="otros-datos">
+				<table class="sp-header-table-solicitante">
+					<tr>
+						<td>Codigo de empleado</td>
+						<td>
+							<div class="codigo-empleado-field"> 
+								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required><a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event)"></a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Nombre</td>
+						<td> 
+							<input type="text" class="nombre-empleado-prestamo" ng-model="solicitante.nombreEmpleado" readonly>
+						</td>
+					</tr>
+					<tr>
+						<td>Representante</td>
+						<td>
+							<select class="descrp-repr" ng-model="solicitante.representanteCodigo" ng-init="getRepresentantes()" required>
+								<option ng-repeat="representante in representantes" value="[[representante.id]]"> [[representante.nombre]] </option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Autorizado por</td>
+						<td>
+							<select name="autorizador" id="autorizador" ng-model="solicitante.autorizadoPor" ng-change="selectAutorizador()" ng-init="autorizadores()" required>
+								<option ng-repeat="autorizador in autorizadores" value="[[autorizador.userName]]">[[autorizador.userName]]</option>
+							</select>
+							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" ng-disabled="solicitante.pinValido">
+						</td>
+					</tr>
+				</table>
+
+				<table class="sp-header-table-solicitante2">
+					<tr>
+						<td>Cedula</td>
+						<td><input type="text" ng-model="solicitante.cedula" readonly></td>
+					</tr>
+					<tr>
+						<td>Salario</td>
+						<td><input type="text" ng-model="solicitante.salario" readonly></td>
+					</tr>
+					<tr>
+						<td>Cobrador</td>
+						<td><input type="text" ng-model="solicitante.cobrador" readonly></td>
+					</tr>
+					<tr>
+						<td>Validado</td>
+						<td><input type="text" ng-model="solicitante.validado" readonly></td>
+					</tr>
+				</table>
+
+			</section>			
+		
+			<section class="sp-datos-prestamo">
+				<div class="sub-menu-sp">	
+					Datos de Solicitud Orden de Despacho
+				</div>
+
+				<div class="datos-prestamo-content">
+
+					<div class="datos-prestamo-1">
+						<table class="datos-prestamo-1-table">
+							<tr>
+								<td>
+									<input type="text" class="monto-field" ng-model="solicitud.montoSolicitado" ng-change="montoNeto()" format="number" required>
+									<span class="icon-help ayuda-monto-solicitar" title="Este es el monto a solicitar."></span>
+								</td>
+								<td>
+									<div class="fecha-prestamo">
+										<span class="fecha-solicitud-field">Fecha Solicitud</span>
+										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud" datepicker required>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">Disponible para garantia</td>
+							</tr>
+							<tr>
+								<td>Ahorros Capitalizados</td>
+								<td><input type="text" class="align-right" ng-model="solicitud.ahorrosCapitalizados" readonly></td>
+							</tr>
+							<tr>
+								<td>Deudas Prestamos</td>
+								<td><input type="text" class="align-right" ng-model="solicitud.deudasPrestamos" readonly></td>
+							</tr>
+							<tr>
+								<td>Prestaciones Laborales</td>
+								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()" format="number"></td>
+							</tr>
+							<tr>
+								<td>Valor garantizado</td>
+								<td><input type="text" class="align-right" ng-model="solicitud.valorGarantizado" ng-change="montoNeto()" format="number"></td>
+							</tr>
+							<tr>
+								<td>Disponible</td>
+								<td><input class="monto-desembolsar-field monto-disponible-field" type="text" ng-model="solicitud.montoDisponible" readonly></td>
+							</tr>
+							<tr>
+								<td>Neto a desembolsar</td>
+								<td><input class="monto-desembolsar-field" type="text" ng-model="solicitud.netoDesembolsar" readonly required></td>
+							</tr>
+							<tr>
+								<td colspan="2">Nota/Observacion</td>
+							</tr>
+							<tr>
+								<td colspan="3"><textarea class="nota-field" name="nota" id="nota"  rows="3" ng-model="solicitud.nota"></textarea></td>
+							</tr>
+
+							<tr>
+								<td colspan="2">
+
+									<button class="icon-save boton-guardar-solicitud [[disabledButton]]" ng-disabled="solicitud.estatus != 'P' && disabledButtonBool" type="submit">Guardar</button>
+
+									<button class="Boton icon-delete boton-cancelar-solicitud" ng-click="cancelarSolicitud($event)">Cancelar</button>
+								</td>
+							</tr>
+
+						</table>
+					</div>
+
 						
 
-						<div class="otros-datos-info">
-							<table class="otros-datos-info-table">
-								<tr>
-									<td>Tasa de interes anual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Tasa de interes mensual</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Cantidad de cuotas</td>
-									<td><input type="text"></td>
-								</tr>
-								<tr>
-									<td>Valor de Cuotas capital</td>
-									<td><input type="text"></td>
-								</tr>
+					<div class="datos-prestamo-2">
 
+						<div class="content-suplidores-table">
+							<table class="suplidores-table-search" ng-show="tableSuplidor">
 								<tr>
-									<td>Fecha Aprobacion</td>
-									<td><input type="text"></td>
+									<td class="cerrar-table" colspan="3">
+										<a  href="#" class="icon-delete" ng-click="tableSuplidor=false">  </a>
+									</td>
 								</tr>
-								
-								<tr>
-									<td>Fecha Rechazo</td>
-									<td><input type="text"></td>
+								<tr class="suplidores-table-header">
+									<td>Id</td>
+									<td>Cedula o RNC</td>
+									<td>Nombre</td>
 								</tr>
-								<tr>
-									<td>Prestamo #</td>
-									<td><input type="text"></td>
+								<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
+									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.id]] </a></td>
+									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
+									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
 								</tr>
 							</table>
 						</div>
+
+
+						<table class="datos-prestamo-2-table">
+							<tr>
+								<td>Categoria Prestamo</td>
+								<td>
+									<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
+									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
+								<td>
+									<a href="#" class="icon-uniE601 icon-buscar" ng-click="categoriasPrestamos(undefined, $event)"></a>
+								</td>
+								</td>
+							</tr>
+							<tr>
+								<td>Fecha para descuento</td>
+								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" datepicker required></td>
+							</tr>
+						</table>
+
+						<div class="otros-datos">
+
+							<div class="otros-datos-info">
+								<table class="otros-datos-info-table">
+									<tr>
+										<td>Tasa de interes anual</td>
+										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresAnual" readonly></td>
+									</tr>
+									<tr>
+										<td>Tasa de interes mensual</td>
+										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresMensual" readonly></td>
+									</tr>
+									<tr>
+										<td>Cantidad de cuotas</td>
+										<td><input type="text" class="field-short" ng-model="solicitud.cantidadCuotas" readonly required></td>
+									</tr>
+									<tr>
+										<td>Valor de Cuotas capital</td>
+										<td><input type="text" ng-model="solicitud.valorCuotas" readonly required></td>
+									</tr>
+
+									<tr>
+										<td>Fecha Aprobacion</td>
+										<td><input type="text" ng-model="solicitud.fechaAprobacion" readonly></td>
+									</tr>
+									
+									<tr>
+										<td> 
+											<span ng-if="solicitud.estatus == 'C'">Fecha Cancelación </span>
+											<span ng-if="solicitud.estatus != 'C'">Fecha Rechazo</span>
+										</td>
+										<td><input type="text" ng-model="solicitud.fechaRechazo" readonly></td>
+									</tr>
+									<tr>
+										<td>Solicitud #</td>
+										<td><input type="text" ng-model="solicitud.solicitudNo" readonly></td>
+									</tr>
+									<tr>
+										<td>Prestamo #</td>
+										<td><input type="text" ng-model="solicitud.prestamo" readonly></td>
+									</tr>
+								</table>
+							</div>
+						</div>
 					</div>
 
-				</div>
+				</section> 
+		</form>				
 
-			</div> 
-		</section>				
 	</div>
 
 

@@ -125,29 +125,28 @@
       }
 
 
-      // //Buscar por tipo de posteo
-      // function byPosteo(valor){
-      //   var deferred = $q.defer();
+      //Buscar Prestamos por socio
+      function PrestamosbySocio(codigoSocio){
+        var deferred = $q.defer();
 
-      //   all().then(function (data) {
-      //     var results = data.filter(function (registros) {
-      //       return registros.posteo == valor;
-      //     });
+        all().then(function (data) {
+          var results = data.filter(function (registros) {
+            return registros.codigoSocio == codigoSocio;
+          });
 
-      //     if(results.length > 0) {
-      //       deferred.resolve(results);
-      //     } else {
-      //       deferred.reject();
-      //     }
-      //   });
-
-      //   return deferred.promise;
-      // }
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
 
       return {
         all: all,
-        byNoPrestamo: byNoPrestamo
-        // byNoFact: byNoFact,
+        byNoPrestamo: byNoPrestamo,
+        PrestamosbySocio: PrestamosbySocio
         // socios: socios,
         // guardarFact: guardarFact,
         // DocumentoById: DocumentoById,
@@ -213,6 +212,60 @@
             });
           }
         });
+      }
+
+      //Buscar un prestamo en especifico
+      $scope.filtrarPorNoPrestamo = function(NoPrestamo) {
+        try {
+          MaestraPrestamoService.byNoPrestamo(NoPrestamo).then(function (data) {
+            $scope.prestamos = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+          }, 
+            (function () {
+              $scope.NoFoundDoc = 'No se encontró el prestamo #' + NoPrestamo;
+            }
+          ));          
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      //Buscar Documento por ENTER
+      $scope.buscarPrestamo = function($event, NoPrestamo) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorNoPrestamo(NoPrestamo);
+        }
+      }
+
+      //Buscar prestamos en especifico por socio
+      $scope.filtrarPorSocio = function(codigoSocio) {
+        try {
+          MaestraPrestamoService.PrestamosbySocio(codigoSocio).then(function (data) {
+            $scope.prestamos = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+          }, 
+            (function () {
+              $scope.NoFoundDoc = 'No se encontró prestamo para el socio: ' + codigoSocio;
+            }
+          ));          
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      //Buscar Documento por ENTER (by Socio)
+      $scope.buscarPrestamoBySocio = function($event, codigoSocio) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorSocio(codigoSocio);
+        }
       }
 
       // //Guardar Factura
@@ -372,32 +425,7 @@
       //   }        
       // }
 
-       //Buscar un prestamo en especifico
-      $scope.filtrarPorNoPrestamo = function(NoPrestamo) {
-        try {
-          MaestraPrestamoService.byNoPrestamo(NoPrestamo).then(function (data) {
-            $scope.prestamos = data;
-
-            if(data.length > 0) {
-              $scope.verTodos = '';
-              $scope.NoFoundDoc = '';
-            }
-          }, 
-            (function () {
-              $scope.NoFoundDoc = 'No se encontró el prestamo #' + NoPrestamo;
-            }
-          ));          
-        } catch (e) {
-          console.log(e);
-        }
-      }
-
-      //Buscar Documento por ENTER
-      $scope.buscarPrestamo = function($event, NoPrestamo) {
-        if($event.keyCode == 13) {
-          $scope.filtrarPorNoPrestamo(NoPrestamo);
-        }
-      }
+      
 
       // // Mostrar/Ocultar error
       // $scope.toggleError = function() {
