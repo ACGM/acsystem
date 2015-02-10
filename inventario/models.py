@@ -112,19 +112,22 @@ class InventarioD(models.Model):
 			exist.cantidadAnterior = exist.cantidad
 						
 			if self.tipoAccion == 'S':
-				exist.cantidad -= decimal.Decimal(self.cantidadTeorico)
+				# exist.cantidad -= decimal.Decimal(self.cantidadTeorico)
+				exist.cantidad = 100
 			else:
-				exist.cantidad = decimal.Decimal(exist.cantidad) + decimal.Decimal(self.cantidadTeorico)
+				# exist.cantidad = decimal.Decimal(exist.cantidad) + decimal.Decimal(self.cantidadTeorico)
+				exist.cantidad = 100
 
 			exist.save()
+
 		except Existencia.DoesNotExist:
 			existencia = Existencia()
 			existencia.producto = self.producto
 			
 			if self.tipoAccion == 'S':
-				existencia.cantidad = -self.cantidadTeorico
+				existencia.cantidad = - decimal.Decimal(self.cantidadTeorico)
 			else:
-				existencia.cantidad = self.cantidadTeorico
+				existencia.cantidad = decimal.Decimal(self.cantidadTeorico)
 			
 			existencia.almacen = self.almacen
 			existencia.tipo_mov = self.tipoAccion
@@ -133,7 +136,7 @@ class InventarioD(models.Model):
 		# Guardar el movimiento del producto
 		mov = Movimiento()
 		mov.producto = self.producto
-		mov.cantidad = float(self.cantidadTeorico)
+		mov.cantidad = decimal.Decimal(self.cantidadTeorico)
 		mov.almacen = self.almacen
 		mov.tipo_mov = self.tipoAccion
 		mov.save()

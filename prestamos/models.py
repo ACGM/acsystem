@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Distrito, Banco
+from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Banco, Localidad
 from facturacion.models import Factura
 
 import datetime
@@ -30,7 +30,7 @@ class SolicitudPrestamo(models.Model):
 	salarioSocio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
-	autorizadoPor = models.ForeignKey(User, null=True) #Corregir esto, no puede guardarse con un autorizador NULO
+	autorizadoPor = models.ForeignKey(User)
 	aprobadoRechazadoPor = models.ForeignKey(User, related_name='+', null=True, blank=True)
 
 	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
@@ -121,7 +121,7 @@ class MaestraPrestamo(models.Model):
 	socio = models.ForeignKey(Socio)
 	representante = models.ForeignKey(Representante)
 	oficial = models.ForeignKey(User)
-	distrito = models.ForeignKey(Distrito, null=True, blank=True)
+	localidad = models.ForeignKey(Localidad)
 
 	montoInicial = models.DecimalField(max_digits=12, decimal_places=2)
 	tasaInteresAnual = models.DecimalField(max_digits=12, decimal_places=2)
@@ -133,8 +133,6 @@ class MaestraPrestamo(models.Model):
 	fechaDesembolso = models.DateField(null=True, blank=True)
 	fechaEntrega = models.DateField(null=True, blank=True)
 	chequeNo = models.ForeignKey(Cheque, null=True)
-	# tipoPago = models.CharField(max_length=1, choices=tipoPago_choices, default='Q')
-	# quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)	
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 

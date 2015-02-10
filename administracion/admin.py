@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from administracion.models import Localidad, Distrito, Departamento, Representante, \
+from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
@@ -19,11 +19,6 @@ class ArchivoBancoDetailNAdmin(admin.ModelAdmin):
 class LocalidadAdmin(admin.ModelAdmin):
 	list_display = ['id','descripcion',]
 	list_editable = ('descripcion',)
-
-@admin.register(Distrito)
-class DistritoAdmin(admin.ModelAdmin):
-	list_display = ['id','descripcion', 'localidad',]
-	list_editable = ('descripcion','localidad',)
 
 @admin.register(Departamento)
 class DepartamentoAdmin(admin.ModelAdmin):

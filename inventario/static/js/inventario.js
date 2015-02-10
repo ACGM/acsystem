@@ -200,6 +200,7 @@
     .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
       
       //Inicializacion de variables
+      $scope.mostrar = 'mostrar';
       $scope.tipoinv = "E";
       $scope.posteof = '*';
       $scope.errorShow = false;
@@ -225,39 +226,50 @@
       
        //Listado de todas las entradas de inventario
       $scope.listadoEntradas = function(tipo) {
+        $scope.mostrar = 'mostrar';
         $scope.NoFoundDoc = '';
         $scope.entradasSeleccionadas = [];
         $scope.valoresChk = [];
         $scope.regAll = false;
 
-        if(tipo == undefined || tipo == 'undefined') {
-          InventarioService.all().then(function (data) {
-            $scope.entradas = data;
+        try {
+          if(tipo == undefined || tipo == 'undefined') {
+            InventarioService.all().then(function (data) {
+              $scope.entradas = data;
 
-            if(data.length > 0) {
-              $scope.verTodos = 'ver-todos-ei';
+              if(data.length > 0) {
+                $scope.verTodos = 'ver-todos-ei';
 
-              var i = 0;
-              data.forEach(function (data) {
-                $scope.valoresChk[i] = false;
-                i++;
-              });
-            }
-          });
-        } else {
-          InventarioService.allByTipo(tipo).then(function (data) {
-            $scope.entradas = data;
+                var i = 0;
+                data.forEach(function (data) {
+                  $scope.valoresChk[i] = false;
+                  i++;
+                });
+              }
+              $scope.mostrar = 'ocultar';
+            });
+          } else {
+            InventarioService.allByTipo(tipo).then(function (data) {
+              $scope.entradas = data;
 
-            if(data.length > 0) {
-              $scope.verTodos = 'ver-todos-ei';
+              if(data.length > 0) {
+                $scope.verTodos = 'ver-todos-ei';
 
-              var i = 0;
-              data.forEach(function (data) {
-                $scope.valoresChk[i] = false;
-                i++;
-              });
-            }
-          });
+                var i = 0;
+                data.forEach(function (data) {
+                  $scope.valoresChk[i] = false;
+                  i++;
+                });
+              }
+              $scope.mostrar = 'ocultar';
+
+            });
+          }
+        } catch (e) {
+          console.log(e);
+
+        } finally {
+          // $scope.mostrar = 'ocultar';
         }
       }
 

@@ -35,20 +35,6 @@ class UserExtra(models.Model):
 		ordering = ('usuario',)
 
 
-# Distritos
-class Distrito(models.Model):
-
-	descripcion = models.CharField(max_length=50)
-	localidad = models.ForeignKey(Localidad)
-
-	def __unicode__(self):
-		return '%s' % (self.descripcion)
-
-	class Meta:
-		ordering = ['descripcion',]
-		verbose_name_plural = 'Config 2.5) Distritos'
-
-
 # Departamentos
 class Departamento(models.Model):
 
@@ -217,7 +203,7 @@ class Socio(models.Model):
 	fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
 	correo = models.EmailField(blank=True)
 	departamento = models.ForeignKey(Departamento)
-	distrito = models.ForeignKey(Distrito)
+	localidad = models.ForeignKey(Localidad)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
 	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=0)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
