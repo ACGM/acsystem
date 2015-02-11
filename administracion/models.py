@@ -207,7 +207,7 @@ class Socio(models.Model):
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
 	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=0)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
-	tipoCuentaBancaria = models.CharField(max_length=1, default='1')
+	tipoCuentaBancaria = models.CharField(max_length=1, default='1', blank=True, null=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
