@@ -330,8 +330,10 @@ class CuotaOrdenes(models.Model):
 class Opcion(models.Model):
 
 	tipo_choices = (('P','Principal'),('S','Secundario'),)
+	valor_choices = (('true','Habilitado'),('false','Deshabilitado'),)
 
 	descripcion = models.CharField(max_length=80)
+	valor = models.CharField(max_length=5, default='true')
 	tipo = models.CharField(max_length=1, choices=tipo_choices, default='P')
 
 	def __unicode__(self):

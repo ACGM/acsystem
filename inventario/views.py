@@ -24,6 +24,36 @@ import decimal
 import datetime
 
 
+# Transferencia de Inventario
+class TransferenciaInvView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'transferenciainv.html'
+
+
+# Imprimir Entrada de Inventario
+class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_entrada.html'
+
+
+# Reporte de Entrada/Salida de Articulo(s)
+class RPTEntradaSalidaArticuloView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_EntradaSalidaArticulo.html'
+# Listado de Entradas de inventario
+class ListadoEntradasInvView(viewsets.ModelViewSet):
+
+	queryset = InventarioH.objects.all()
+	serializer_class = EntradasInventarioSerializer
+
+
+# Listado de Almacenes
+class ListadoAlmacenesView(viewsets.ModelViewSet):
+
+	queryset = Almacen.objects.all()
+	serializer_class = AlmacenesSerializer
+
+
 # Retornar un documento con todo su detalle 
 class EntradaInventarioById(LoginRequiredMixin, ListView):
 
@@ -147,26 +177,6 @@ class InventarioView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
-# Transferencia de Inventario
-class TransferenciaInvView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'transferenciainv.html'
-
-
-# Listado de Entradas de inventario
-class ListadoEntradasInvView(viewsets.ModelViewSet):
-
-	queryset = InventarioH.objects.all()
-	serializer_class = EntradasInventarioSerializer
-
-
-# Listado de Almacenes
-class ListadoAlmacenesView(viewsets.ModelViewSet):
-
-	queryset = Almacen.objects.all()
-	serializer_class = AlmacenesSerializer
-
-
 # Existencia de un producto en especifico
 class getExistenciaByProductoView(APIView):
 
@@ -177,12 +187,6 @@ class getExistenciaByProductoView(APIView):
 
 		response = self.serializer_class(existencia, many=True)
 		return Response(response.data)
-
-
-# Imprimir Entrada de Inventario
-class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'print_entrada.html'
 
 
 # Salida de Inventario

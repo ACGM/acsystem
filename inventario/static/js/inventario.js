@@ -197,7 +197,7 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', function ($scope, $filter, $window, $rootScope, InventarioService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -738,7 +738,7 @@
     }])
   
   //****************************************************
-  //CONTROLLERS PRINT DOCUMENT                         *
+  //CONTROLLERS PRINT DOCUMENT ENTRADA DE INVENTARIO   *
   //****************************************************
   .controller('ImprimirInventarioCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
     $scope.entrada = JSON.parse($window.sessionStorage['entrada']);
@@ -807,6 +807,35 @@
       return total;
     }
 
-  }]);
+  }])
+
+    //****************************************************
+    //CONTROLLERS  TRANSFERENCIA INVENTARIO              *
+    //****************************************************
+    .controller('TransfInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', 
+                                  function ($scope, $filter, $window, $rootScope, InventarioService) {
+      
+      //Inicializacion de variables
+      $scope.mostrar = 'mostrar';
+      $scope.errorShow = false;
+      $scope.showLEI = true;
+      $scope.regAll = false;
+      $scope.tableProducto = false;
+      $scope.condicionBool = true;
+
+      $scope.item = {};
+      $scope.entradas = {};
+      $scope.dataH = {};
+
+      $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      $scope.ArrowLEI = 'UpArrow';
+
+      $scope.getAlmacen = function() {
+        InventarioService.almacenes().then(function (data) {
+          $scope.almacenes = data;
+        });
+      }      
+
+    }]);
 
 })(_);  

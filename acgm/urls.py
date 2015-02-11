@@ -6,31 +6,38 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
+
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView, \
-                                SalidaInventarioView
+                                SalidaInventarioView, RPTEntradaSalidaArticuloView
+
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
+
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
                             SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
-from prestamos.viewMaestraPrestamos import MaestraPrestamosView
 
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
+
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet,\
                                 ListadoCategoriasPrestamosViewSet
+
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
+
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
                                 AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet
+
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 
@@ -38,6 +45,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
                                     ProductoByDescrpView
+
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
@@ -137,6 +145,8 @@ urlpatterns = patterns('',
     url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
+    #Inventario#Reportes
+    url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
 
 
     #Facturacion    
