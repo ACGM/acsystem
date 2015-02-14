@@ -24,7 +24,7 @@ class Factura(models.Model):
 	socio = models.ForeignKey(Socio, null=True)
 	ordenCompra = models.PositiveIntegerField(null=True, blank=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
-	localidad = models.ForeignKey(Localidad, null=True)
+	localidad = models.ForeignKey(Localidad, null=True, blank=True)
 
 	impresa = models.PositiveIntegerField(default=0)
 

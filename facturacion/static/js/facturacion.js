@@ -456,8 +456,7 @@
           $scope.facturasSeleccionadas.push($scope.facturas[index]);
         }
         else{
-
-          $scope.facturasSeleccionadas.splice($scope.facturasSeleccionadas[index],1);
+          $scope.facturasSeleccionadas = _.without($scope.facturasSeleccionadas, _.findWhere($scope.facturasSeleccionadas, {id : iReg.id}));
         }
       }
 

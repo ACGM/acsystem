@@ -31,7 +31,7 @@
 	content: "\e619";
 }
 
-.icon-icon-save:before {
+.icon-save:before {
 	content: "\e89c";
 }
 
@@ -327,7 +327,14 @@ footer
 	height 2.2em
 	transition .1s !important
 	outline none !important
-						
+
+.boton-genera-reporte //CLASE para botones de generar reporte
+	height 3.5em
+	width 10em
+	margin-left 1em
+	&:before
+		margin-right .4em
+								
 .sub-menu //CLASE para darle formato a la subdivision en la pantalla. Ej: listado y la otra mitad el data entry.
 	background verdeSubMenu
 	padding .2em 0 .2em .4em 
@@ -1281,6 +1288,7 @@ footer
 	text-align right
 	font-weight bold
 	color verde
+
 .boton-guarda-inventario
 	height 3em
 	width 7.5em
@@ -1293,10 +1301,101 @@ footer
 	height 4em
 	width 11em
 	position relative
-	// margin-bottom 3em
 	top -1.83em
 	&:before
 		margin-right .4em
+
+//***Para Reporte Existencia
+.busqueda-existencia-inventario
+	margin 1em 0 1em 1em
+
+.busqueda,.almacen
+	display inline-block
+
+.busqueda-producto
+	margin 1em 0 0 1em
+
+.busqueda-categoria
+	margin 1em 0 1em 1em
+
+.section-categorias
+	border 2px solid verde
+	width 90%
+	padding 1em
+	margin .4em 0 0 0
+	height 10em
+	overflow scroll
+
+.content-categorias-productos
+	margin 0
+	display inline-block
+	list-style none
+	
+	& li
+		color verdeMuyOscuro
+		width 17em
+		padding .2em
+	
+
+.caja-productos
+	margin-top 1em
+	
+.content-productos
+	padding 0
+	margin 0 0 0 1em
+
+.categoria-producto
+	padding .4em 0 0 0
+	background lightgray
+	list-style none
+	font-size 1.1em
+	font-weight bold
+	width 52em
+
+.content-productos-header
+	display block
+	list-style none
+	overflow hidden
+
+	& li
+		border 1px solid black
+	
+	&-1
+		float left
+		padding .2em 0 .2em .2em
+		width 6em
+	&-2
+		float left
+		padding .2em 0 .2em .2em
+		width 40em
+	&-3
+		float left
+		padding .2em 0 .2em .2em
+		width 10em
+		text-align right
+
+.content-productos-detail
+	display block
+	list-style none
+	overflow hidden
+	
+	& li
+		border 1px solid black
+	
+	&-1
+		float left
+		width 6em
+		padding .2em 0 .2em .2em
+	&-2
+		float left
+		padding .2em 0 .2em .2em
+		width 40em
+	&-3
+		padding .2em 0 .2em .2em
+		float left
+		width 10em
+		text-align right
+
 			
 //MODULO DE FACTURACION
 	

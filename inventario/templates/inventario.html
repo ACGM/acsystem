@@ -81,7 +81,7 @@
 								<a ng-if="entrada.getTipo == 'S'" href="#" class="icon-printer imprimir-icon disabled"></a> 
 							</td>
 							<td>
-								<div ng-if="entrada.posteo == 'N'"> <a href="#" class="icon-blocked icon-eliminar" ng-click="DocFullById(entrada.id, 'salida')"></a></div> 
+								<div ng-if="entrada.posteo == 'N' && entrada.getTipo != 'S'"> <a href="#" class="icon-blocked icon-eliminar" ng-click="DocFullById(entrada.id, 'salida')"></a></div> 
 								<div ng-if="entrada.posteo != 'N'"> <a href="#" class="icon-blocked icon-eliminar disabled"></a></div> 
 							</td>
 							
@@ -110,6 +110,7 @@
 				<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong> </span>
 
 				<div ng-if="tipoinv == 'S'" class="salida-datos">
+					<p><strong>Numero de Salida: </strong> [[dataH.numeroSalida]]</p>
 					<p><strong>Descripción de Salida: </strong> [[dataH.descripcionSalida]]</p>
 					<p><strong>Fecha de Salida: </strong> [[dataH.fechaSalida | date : 'dd/MM/yyyy hh:MM a']]</p>
 					<p><strong>Salida por el usuario: </strong> [[dataH.usuarioSalida]]</p>

@@ -512,8 +512,8 @@
           $scope.solicitudesSeleccionadas.push($scope.solicitudes[index]);
         }
         else{
-
-          $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
+          $scope.solicitudesSeleccionadas = _.without($scope.solicitudesSeleccionadas, _.findWhere($scope.solicitudesSeleccionadas, {id : iReg.id}));
+          // $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
         }
       }
 

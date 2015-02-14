@@ -8,7 +8,7 @@ from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
 from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView, \
-                                SalidaInventarioView, RPTEntradaSalidaArticuloView
+                                SalidaInventarioView, RPTEntradaSalidaArticuloView, RPTExistenciaArticuloView
 
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 
@@ -36,7 +36,8 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
-                                AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet
+                                AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet, \
+                                CategoriaProductoViewSet
 
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
@@ -46,7 +47,9 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
                                     ProductoByDescrpView
 
-from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView
+from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
+                                getExistenciaRPT
+
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
@@ -83,6 +86,7 @@ router.register(r'CoBeneficiario', CoBeneficiarioViewSet)
 router.register(r'autorizador', AutorizadoresViewSet)
 router.register(r'empresa', EmpresasViewSet)
 router.register(r'representante', RepresentantesViewSet)
+router.register(r'categoriasProductos', CategoriaProductoViewSet)
 
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)
@@ -147,6 +151,10 @@ urlpatterns = patterns('',
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
     #Inventario#Reportes
     url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
+    url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+
+    url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
+
 
 
     #Facturacion    

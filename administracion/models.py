@@ -21,20 +21,6 @@ class Localidad(models.Model):
 		verbose_name_plural = 'Config 2.6) Localidades'
 
 
-# UserExtra contiene datos agregados al usuario registrado,
-# como la Localidad, entre otros.
-class UserExtra(models.Model):
-
-	usuario = models.ForeignKey(User)
-	localidad = models.ForeignKey(Localidad)
-
-	def __unicode__(self):
-		return '%s - %s' % (self.usuario.username, self.localidad.descripcion)
-
-	class Meta:
-		ordering = ('usuario',)
-
-
 # Departamentos
 class Departamento(models.Model):
 
@@ -148,8 +134,8 @@ class Suplidor(models.Model):
 	clase_choices = (('N','Normal'),('S','SuperCoop'))
 	estatus_choices = (('A','Activo'), ('I','Inactivo'))
 
-	tipoIdentificacion = models.CharField(max_length=1, choices=tipoIdentificacion_choices, default='C')
-	cedulaRNC = models.CharField(unique=True, max_length=25)
+	tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=1, choices=tipoIdentificacion_choices, default='C')
+	cedulaRNC = models.CharField("Cedula o RNC", unique=True, max_length=25)
 	nombre = models.CharField(max_length=60)
 	direccion = models.TextField(blank=True)
 	sector = models.CharField(max_length=40, blank=True, null=True)
@@ -158,7 +144,7 @@ class Suplidor(models.Model):
 	telefono = models.CharField(max_length=50, blank=True, null=True)
 	correo = models.CharField(max_length=40, blank=True, null=True)
 	fax = models.CharField(max_length=50, blank=True, null=True)
-	intereses = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=0)
+	intereses = models.DecimalField("Intereses %", max_digits=5, decimal_places=2, blank=True, null=True, default=0)
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 	auxiliar = models.ForeignKey(Auxiliares, null=True)
@@ -205,11 +191,14 @@ class Socio(models.Model):
 	departamento = models.ForeignKey(Departamento)
 	localidad = models.ForeignKey(Localidad)
 	estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
-	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=0)
-	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True)
-	tipoCuentaBancaria = models.CharField(max_length=1, default='1', blank=True, null=True)
+	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True, null=True)
+	tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=1, default='1', blank=True, null=True)
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
+
+	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetime_server = models.DateTimeField(auto_now_add=True)
@@ -228,7 +217,7 @@ class Socio(models.Model):
 
 	class Meta:
 		ordering = ['codigo']
-		verbose_name = 'Config 1) Socio'
+		verbose_name = 'Socio'
 		verbose_name_plural = 'Config 1.1) Socios'
 
 
@@ -257,8 +246,8 @@ class CoBeneficiario(models.Model):
 
 	class Meta:
 		ordering = ['nombre']
-		verbose_name = 'Config 1) Co-Beneficiario'
-		verbose_name_plural = 'Config 1.2) Co-Beneficiarios'
+		verbose_name = 'Co-Beneficiario'
+		verbose_name_plural = 'Co-Beneficiarios'
 
 
 # Categorias de Prestamos
@@ -270,9 +259,9 @@ class CategoriaPrestamo(models.Model):
 	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True)
 	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)
-	interesAnualSocio = models.DecimalField("Intereses Anual Socio", max_digits=6, decimal_places=2, null=True, blank=True)
-	interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado", max_digits=6, decimal_places=2, null=True, blank=True)
-	interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo", max_digits=6, decimal_places=2, null=True, blank=True)
+	interesAnualSocio = models.DecimalField("Intereses Anual Socio %", max_digits=6, decimal_places=2, null=True, blank=True)
+	# interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado %", max_digits=6, decimal_places=2, null=True, blank=True)
+	# interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo %", max_digits=6, decimal_places=2, null=True, blank=True)
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -326,6 +315,19 @@ class CuotaOrdenes(models.Model):
 		verbose_name_plural = 'Config 6.3) Cuotas de Ordenes'
 
 
+# Perfiles
+class Perfil(models.Model):
+
+	perfilCod = models.CharField("Codigo Perfil", max_length=15, unique=True)
+
+	def __unicode__(self):
+		return '%s' % (self.perfilCod)
+
+	class Meta:
+		ordering = ['perfilCod']
+		verbose_name_plural = 'Config 3.4) Perfiles'
+
+
 # Opciones
 class Opcion(models.Model):
 
@@ -335,6 +337,7 @@ class Opcion(models.Model):
 	descripcion = models.CharField(max_length=80)
 	valor = models.CharField(max_length=5, default='true')
 	tipo = models.CharField(max_length=1, choices=tipo_choices, default='P')
+	perfil = models.ForeignKey(Perfil)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)
@@ -342,20 +345,6 @@ class Opcion(models.Model):
 	class Meta:
 		ordering = ['descripcion']
 		verbose_name_plural = 'Config 3.3) Opciones'
-
-
-# Perfiles
-class Perfil(models.Model):
-
-	perfilCod = models.CharField("Codigo Perfil", max_length=10, unique=True)
-	opcion = models.ForeignKey(Opcion)
-
-	def __unicode__(self):
-		return '%s - %s' % (self.perfilCod, self.opcion)
-
-	class Meta:
-		ordering = ['perfilCod']
-		verbose_name_plural = 'Config 3.4) Perfiles'
 
 
 # Autorizadores
@@ -413,6 +402,12 @@ class TipoDocumento(models.Model):
 
 	def __unicode__(self):
 		return '%s - %s' % (self.codigo,self.descripcion)
+
+	def save(self, *args, **kwargs):
+		self.codigo = self.codigo.upper()
+		self.descripcion = self.descripcion.upper()
+
+		super(TipoDocumento, self).save(*args, **kwargs)
 
 	class Meta:
 		ordering = ['descripcion']
@@ -473,6 +468,22 @@ class Cobrador(models.Model):
 		verbose_name_plural = 'Config 3.2) Cobradores'
 
 
+# UserExtra contiene datos agregados al usuario registrado,
+# como la Localidad, perfil, entre otros.
+class UserExtra(models.Model):
+
+	usuario = models.ForeignKey(User)
+	localidad = models.ForeignKey(Localidad)
+	perfil = models.ForeignKey(Perfil)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.usuario.username, self.localidad.descripcion)
+
+	class Meta:
+		ordering = ('usuario',)
+		unique_together = ('usuario','localidad','perfil')
+
+
 # Asociacion de Documentos con Cuentas
 class DocumentoCuentas(models.Model):
 
@@ -487,25 +498,9 @@ class DocumentoCuentas(models.Model):
 
 	class Meta:
 		ordering = ['documento','cuenta']
+		unique_together = ('documento', 'cuenta', 'accion')
 		verbose_name = 'Documento relacionado a Cuentas'
 		verbose_name_plural = 'Config 7.2) Documentos relacionados a Cuentas'
-	
-
-# Cuotas de Ahorros de Socios
-class CuotaAhorroSocio(models.Model):
-
-	socio = models.ForeignKey(Socio, unique=True)
-	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
-	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
-
-	userLog = models.ForeignKey(User, editable=False)
-	fechaInicioAhorro = models.DateField(auto_now_add=True, default=datetime.datetime.now())
-	fechaModificacion = models.DateField(auto_now=True, default=datetime.datetime.now())
-
-	class Meta:
-		ordering = ['socio']
-		verbose_name = 'Config 1) Cuota Ahorro Socio'
-		verbose_name_plural = 'Config 1.3) Cuotas Ahorros Socios'
 
 
 # Archivos para Banco

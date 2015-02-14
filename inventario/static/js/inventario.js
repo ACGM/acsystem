@@ -247,6 +247,8 @@
                 });
               }
               $scope.mostrar = 'ocultar';
+            }, function() {
+                $scope.mostrar = 'ocultar';
             });
           } else {
             InventarioService.allByTipo(tipo).then(function (data) {
@@ -262,7 +264,8 @@
                 });
               }
               $scope.mostrar = 'ocultar';
-
+            }, function() {
+                $scope.mostrar = 'ocultar';
             });
           }
         } catch (e) {
@@ -271,6 +274,7 @@
         } finally {
           // $scope.mostrar = 'ocultar';
         }
+
       }
 
       //Buscar una entrada de inventario en especifico
@@ -446,6 +450,7 @@
               $scope.tipoinv = data[0]['tipo'];
 
               //Datos de salida
+              $scope.dataH.numeroSalida = data[0]['numeroSalida'];
               $scope.dataH.descripcionSalida = data[0]['descripcionSalida'];
               $scope.dataH.fechaSalida = data[0]['fechaSalida'];
               $scope.dataH.usuarioSalida = data[0]['usuarioSalida'];
@@ -679,7 +684,6 @@
         $scope.errorShow = !$scope.errorShow;
       }
 
-
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
 
@@ -709,7 +713,7 @@
           $scope.entradasSeleccionadas.push($scope.entradas[index]);
         }
         else{
-          $scope.entradasSeleccionadas.splice($scope.entradasSeleccionadas[index],1);
+          $scope.entradasSeleccionadas = _.without($scope.entradasSeleccionadas, _.findWhere($scope.entradasSeleccionadas, {id : iReg.id}));
         }
       }
 

@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, NominaGeneradaDetalleSerializer
 
 from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina
-from administracion.models import CuotaAhorroSocio, Socio
+from administracion.models import Socio
 
 from acgm.views import LoginRequiredMixin
 
@@ -98,7 +98,7 @@ class generaNominaView(View):
 					pass
 
 				try:
-					ahorro = CuotaAhorroSocio.objects.get(socio=socio)
+					ahorro = Socio.objects.get(socio=socio)
 					if ahorro != None:
 						if nominaH.quincena == 1:
 							montoAhorro = ahorro.cuotaAhorroQ1

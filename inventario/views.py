@@ -3,6 +3,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db.models import Sum, Count
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, ListView, DetailView
 
@@ -40,6 +41,14 @@ class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
 class RPTEntradaSalidaArticuloView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'rpt_EntradaSalidaArticulo.html'
+
+
+# Reporte de Existencia de Articulo(s)
+class RPTExistenciaArticuloView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_ExistenciaArticulo.html'
+
+
 # Listado de Entradas de inventario
 class ListadoEntradasInvView(viewsets.ModelViewSet):
 
@@ -89,6 +98,7 @@ class EntradaInventarioById(LoginRequiredMixin, ListView):
 				'posteo': inventario.posteo,
 				'usuario': inventario.userLog.username,
 				'tipo': inventario.getTipo,
+				'numeroSalida': inventario.numeroSalida,
 				'descripcionSalida': inventario.descripcionSalida,
 				'fechaSalida': inventario.fechaSalida,
 				'usuarioSalida': inventario.usuarioSalida.username if inventario.usuarioSalida != None else '',
@@ -189,6 +199,68 @@ class getExistenciaByProductoView(APIView):
 		return Response(response.data)
 
 
+# Existencia productos (filtro: Almacen)
+class getExistenciaRPT(ListView):
+
+	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion','almacen__descripcion').annotate(total=Sum('cantidad'))
+	def get(self, request, *args, **kwargs):
+		
+		almacen = self.request.GET.get('almacen')
+		format = self.request.GET.get('format')
+		producto = self.request.GET.get('producto')
+
+		if producto != None:
+			# Busqueda para tipo producto
+			if almacen != None:
+				if producto != None:
+					self.object_list = self.get_queryset().filter(almacen=almacen, producto__descripcion__contains=producto)
+				else:
+					self.object_list = self.get_queryset().filter(almacen=almacen)
+			else:
+				self.object_list = self.get_queryset().filter(producto__descripcion__contains=producto)
+
+		else:
+			# Busqueda para tipo categoria
+			if self.request.GET.get('categorias') != None:
+				categoriasList = list(self.request.GET.get('categorias'))
+				categorias = list()
+
+				for categoria in categoriasList:
+					if categoria != ',':
+						categorias.append(categoria)
+
+				if almacen != None:
+					if categorias != None:
+						self.object_list = self.get_queryset().filter(almacen=almacen, producto__categoria__id__in=categorias)
+					else:
+						self.object_list = self.get_queryset().filter(almacen=almacen)
+				else:
+					if categorias != None:
+						self.object_list = self.get_queryset().filter(producto__categoria__id__in=categorias)
+			else:
+				self.object_list = self.get_queryset()
+
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for existencia in self.object_list:
+			data.append({
+				'categoria': existencia['producto__categoria__descripcion'],
+				'codigo': existencia['producto__codigo'],
+				'producto': existencia['producto__descripcion'],
+				'almacen': existencia['almacen__descripcion'] if existencia['almacen__descripcion'] != None else '',
+				'total': existencia['total'],
+				})
+
+		return JsonResponse(data, safe=False)
+
+
 # Salida de Inventario
 class SalidaInventarioView(TemplateView):
 
@@ -203,7 +275,11 @@ class SalidaInventarioView(TemplateView):
 			nota = data['nota']
 			entradaNo = int(data['entradaNo'])
 
+			# Traer el ultimo numero de Salida para incrementar
+			lastNum = InventarioH.objects.latest('numeroSalida').numeroSalida
+
 			invH = InventarioH.objects.get(id=entradaNo)
+			invH.numeroSalida = lastNum + 1
 			invH.descripcionSalida = nota
 			invH.fechaSalida = datetime.datetime.now()
 			invH.usuarioSalida = User.objects.get(username=request.user)

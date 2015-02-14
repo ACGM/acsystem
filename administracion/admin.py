@@ -4,8 +4,20 @@ from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
-								 TipoDocumento, Periodo, Empresa, Cobrador, CuotaAhorroSocio, \
-								 DocumentoCuentas, CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN
+								 TipoDocumento, Periodo, Empresa, Cobrador, DocumentoCuentas, \
+								 CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN, \
+								 UserExtra
+
+
+
+class CoBeneficiarioInline(admin.StackedInline):
+	model = CoBeneficiario
+	extra = 1
+
+class OpcionInline(admin.StackedInline):
+	model = Opcion
+	extra = 2
+
 
 @admin.register(ArchivoBancoHeader)
 class ArchivoBancoHeaderAdmin(admin.ModelAdmin):
@@ -69,8 +81,8 @@ class SuplidorAdmin(admin.ModelAdmin):
 
 @admin.register(CategoriaPrestamo)
 class CategoriaPrestamoAdmin(admin.ModelAdmin):
-	list_display = ['id','descripcion','montoDesde','montoHasta','tipo','interesAnualSocio','interesAnualEmpleado','interesAnualDirectivo']
-	list_editable = ('descripcion','montoDesde','montoHasta','tipo','interesAnualSocio','interesAnualEmpleado','interesAnualDirectivo')
+	list_display = ['id','descripcion','montoDesde','montoHasta','tipo','interesAnualSocio',] #'interesAnualEmpleado','interesAnualDirectivo'
+	list_editable = ('descripcion','montoDesde','montoHasta','tipo','interesAnualSocio',) #'interesAnualEmpleado','interesAnualDirectivo'
 	search_fields = ('descripcion',)
 	list_filter = ('tipo',)
 
@@ -96,37 +108,41 @@ class CuotaOrdenesAdmin(admin.ModelAdmin):
 		obj.userLog = request.user
 		obj.save()
 
-@admin.register(Opcion)
-class OpcionAdmin(admin.ModelAdmin):
-	list_display = ['descripcion','tipo']
-	list_editable = ('descripcion',)
+# @admin.register(Opcion)
+# class OpcionAdmin(admin.ModelAdmin):
+# 	list_display = ['id','descripcion','tipo']
+# 	list_editable = ('descripcion',)
+
+@admin.register(UserExtra)
+class UserExtraAdmin(admin.ModelAdmin):
+	list_display = ['usuario', 'localidad', 'perfil']
+	list_editable = ('localidad','perfil')
 
 @admin.register(Perfil)
 class PerfilAdmin(admin.ModelAdmin):
-	list_display = ['id','perfilCod','opcion']
-	list_editable = ('opcion',)
+	list_display = ['id','perfilCod',]
+	list_editable = ('perfilCod',)
+
+	inlines = [OpcionInline,]
 
 @admin.register(Autorizador)
 class AutorizadorAdmin(admin.ModelAdmin):
 	list_display = ['usuario','perfil']
 
-@admin.register(CoBeneficiario)
-class CoBeneficiarioAdmin(admin.ModelAdmin):
-	list_display = ['socio','nombre','telefono','parentesco']
-	list_editable = ('nombre','telefono','parentesco')
-	search_fields = ('nombre',)
-	raw_id_fields = ('socio',)
-
-class CoBeneficiarioInline(admin.StackedInline):
-	model = CoBeneficiario
-	extra = 1
+# @admin.register(CoBeneficiario)
+# class CoBeneficiarioAdmin(admin.ModelAdmin):
+# 	list_display = ['socio','nombre','telefono','parentesco']
+# 	list_editable = ('nombre','telefono','parentesco')
+# 	search_fields = ('nombre',)
+# 	raw_id_fields = ('socio',)
 
 @admin.register(Socio)
 class SocioAdmin(admin.ModelAdmin):
 	list_display = ['id','codigo','nombres','apellidos', 'salario','fechaIngresoCoop','fechaIngresoEmpresa','departamento','estatus','cuentaBancaria']
 	list_editable = ('codigo','nombres','apellidos','departamento','salario','cuentaBancaria')
-	search_fields = ('nombres','apellidos','cuentaBancaria')
+	search_fields = ('codigo','nombres','apellidos','cuentaBancaria')
 	list_filter = ('departamento',)
+	raw_id_fields = ('departamento',)
 
 	def save_model(self, request, obj, form, change):
 		obj.userLog = request.user
@@ -157,20 +173,6 @@ class EmpresaAdmin(admin.ModelAdmin):
 @admin.register(Cobrador)
 class CobradorAdmin(admin.ModelAdmin):
 	list_display = ['usuario','userLog']
-
-@admin.register(CuotaAhorroSocio)
-class CuotaAhorroSocioAdmin(admin.ModelAdmin):
-	list_display = ['get_codigo','socio','cuotaAhorroQ1','cuotaAhorroQ2']
-	list_editable = ('cuotaAhorroQ1','cuotaAhorroQ2')
-	search_fields = ('socio',)
-
-	def save_model(self, request, obj, form, change):
-		obj.userLog = request.user
-		obj.save()
-
-	def get_codigo(self, obj):
-		return '%s' % obj.socio.codigo
-
 
 @admin.register(DocumentoCuentas)
 class DocumentoCuentas(admin.ModelAdmin):
