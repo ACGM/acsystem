@@ -18,7 +18,7 @@
 			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
 		</div>
 
-		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas()" >
+		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas('E')" >
 			
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span> 
@@ -27,7 +27,7 @@
 				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
 				
 				<span class="error-ei"> [[NoFoundDoc]]</span>
-				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas()">Ver todos</a>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas(undefined)">Ver todos</a>
 				
 				<div class="posteo-ei">
 					<span>Posteadas</span>
@@ -37,13 +37,25 @@
 						<option value="N">NO</option>
 					</select>
 				</div>
+				<div class="posteo-ei">
+					<span>Tipo</span>
+					<select class="field-choices" name="tipo" id="tipo" ng-model="tipoinv" ng-change="listadoEntradas(tipoinv)">
+						<option value="undefined">TODOS</option>
+						<option value="E">Entradas</option>
+						<option value="S">Salidas</option>
+					</select>
+				</div>
 
 				<section class="registrosPanel">
+					<figure class="fig-load [[mostrar]]">
+						<img class="img-load" src="/static/images/loading.gif" alt="">
+					</figure>
 					
 					<table class="listado-table-ei" id="table-ei-listado">
 						<tr class="listado-table-header-ei">
 							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()" > </td>
 							<td>Estatus</td>
+							<td>Tipo</td>
 							<td>Doc. No.</td>
 							<td>Fecha</td>
 							<td>NCF</td>
@@ -56,16 +68,20 @@
 
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
-							<td class="icon-coin posteo-[[entrada.posteo]]"></td>
+							<td class="icon-folder posteo-[[entrada.posteo]]"></td>
+							<td>[[entrada.getTipo]]</td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id, 'entrada')"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
 							<td>[[entrada.suplidor]]</td>
 							<td>[[entrada.totalGeneral]]</td>
-							<td><a href="#" class="icon-printer imprimir-icon" ng-click="Imprimir(entrada)"></a> </td>
 							<td>
-								<div ng-if="entrada.posteo == 'N'"> <a href="#" class="icon-blocked icon-eliminar" ng-click="DocFullById(entrada.id, 'salida')"></a></div> 
+								<a ng-if="entrada.getTipo == 'E'" href="#" class="icon-printer imprimir-icon" ng-click="Imprimir(entrada)"></a> 
+								<a ng-if="entrada.getTipo == 'S'" href="#" class="icon-printer imprimir-icon disabled"></a> 
+							</td>
+							<td>
+								<div ng-if="entrada.posteo == 'N' && entrada.getTipo != 'S'"> <a href="#" class="icon-blocked icon-eliminar" ng-click="DocFullById(entrada.id, 'salida')"></a></div> 
 								<div ng-if="entrada.posteo != 'N'"> <a href="#" class="icon-blocked icon-eliminar disabled"></a></div> 
 							</td>
 							
@@ -92,6 +108,13 @@
 
 			<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="guardarEI()" novalidate>
 				<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong> </span>
+
+				<div ng-if="tipoinv == 'S'" class="salida-datos">
+					<p><strong>Numero de Salida: </strong> [[dataH.numeroSalida]]</p>
+					<p><strong>Descripción de Salida: </strong> [[dataH.descripcionSalida]]</p>
+					<p><strong>Fecha de Salida: </strong> [[dataH.fechaSalida | date : 'dd/MM/yyyy hh:MM a']]</p>
+					<p><strong>Salida por el usuario: </strong> [[dataH.usuarioSalida]]</p>
+				</div>
 
 				<div>
 					<div class="content-suplidores-table">
@@ -173,7 +196,6 @@
 							<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
 								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
 							</select>	
-							
 						</div>
 
 						<productosSearch> </productosSearch>
@@ -214,27 +236,24 @@
 							</ul>
 						</div>
 
-						<button ng-if="dataH.posteo == 'N'" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
+						<button ng-if="dataH.posteo == 'N' && tipoinv == 'E'" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
 
-						<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
+						<button ng-if="dataH.posteo != 'N' || tipoinv == 'S'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
 
-						
 					</section>
 				</div>
 			</form>
 		</div>
 
 
-
 		<div class="salida-inventario" ng-show="showSI">
-			
 			<!--SALIDA DE INVENTARIO-->
 			<div class="sub-menu">	
 		
 					Salida de Inventario
 			</div>
 
-			<form name="SalidaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="salidaInventario()" novalidate>
+			<form name="SalidaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="darSalidaInv()" novalidate>
 
 				<div>
 					

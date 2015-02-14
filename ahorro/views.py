@@ -1,4 +1,5 @@
-from datetime import datetime
+import json
+import decimal
 
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView
@@ -9,8 +10,6 @@ from cuenta.models import DiarioGeneral, Cuentas, Auxiliares, TipoDocumento
 from administracion.models import Socio
 from .serializers import interesAhorroSerializer, maestraAhorroSerializer, AhorroSocioSerializer, RetiroAhorroSerializer
 
-import json
-import decimal
 
 class MaestraAhorroView(DetailView):
     queryset = AhorroSocio.objects.all()

@@ -5,9 +5,12 @@
     'cooperativa.nomina',
     'cooperativa.facturacion',
     'cooperativa.inventario',
+    'cooperativa.inventarioRPT',
     'cooperativa.fondoscajas',
     'cooperativa.ahorro',
-    'cooperativa.solicitudprestamo'
+    'cooperativa.solicitudprestamo',
+    'cooperativa.maestraprestamo',
+    'cooperativa.solicitudod'
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){

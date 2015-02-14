@@ -14,18 +14,12 @@ from rest_framework.response import Response
 from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, NominaGeneradaDetalleSerializer
 
 from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina
-from administracion.models import CuotaAhorroSocio, Socio
+from administracion.models import Socio
+
+from acgm.views import LoginRequiredMixin
 
 import json
 import decimal
-
-
-#Mixin for login_required
-class LoginRequiredMixin(object):
-
-	@classmethod
-	def as_view(cls):
-		return login_required(super(LoginRequiredMixin, cls).as_view())
 
 
 # Vista Principal de Nomina
@@ -104,7 +98,7 @@ class generaNominaView(View):
 					pass
 
 				try:
-					ahorro = CuotaAhorroSocio.objects.get(socio=socio)
+					ahorro = Socio.objects.get(socio=socio)
 					if ahorro != None:
 						if nominaH.quincena == 1:
 							montoAhorro = ahorro.cuotaAhorroQ1

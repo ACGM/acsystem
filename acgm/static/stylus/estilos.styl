@@ -4,11 +4,11 @@
 
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonts/icomoon.eot?14unx3');
-	src:url('../fonts/icomoon.eot?#iefix14unx3') format('embedded-opentype'),
-		url('../fonts/icomoon.woff?14unx3') format('woff'),
-		url('../fonts/icomoon.ttf?14unx3') format('truetype'),
-		url('../fonts/icomoon.svg?14unx3#icomoon') format('svg');
+	src:url('../fonts/icomoon.eot?-qo4i3e');
+	src:url('../fonts/icomoon.eot?#iefix-qo4i3e') format('embedded-opentype'),
+		url('../fonts/icomoon.woff?-qo4i3e') format('woff'),
+		url('../fonts/icomoon.ttf?-qo4i3e') format('truetype'),
+		url('../fonts/icomoon.svg?-qo4i3e#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -53,6 +53,14 @@
 
 .icon-file:before {
 	content: "\e911";
+}
+
+.icon-folder:before {
+	content: "\e61a";
+}
+
+.icon-folder-open:before {
+	content: "\e61b";
 }
 
 .icon-coin:before {
@@ -221,6 +229,7 @@ mamey = #FF5A13
 amarillo = #FFF676
 amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
+colorBordeSubMenu = lightgreen
 
 body
 	font-family "Arial", sans-serif, "serif"
@@ -278,7 +287,7 @@ footer
 	text-align right
 
 .posteo-N
-	color red
+	color mamey
 
 .posteo-S
 	color green
@@ -318,7 +327,14 @@ footer
 	height 2.2em
 	transition .1s !important
 	outline none !important
-						
+
+.boton-genera-reporte //CLASE para botones de generar reporte
+	height 3.5em
+	width 10em
+	margin-left 1em
+	&:before
+		margin-right .4em
+								
 .sub-menu //CLASE para darle formato a la subdivision en la pantalla. Ej: listado y la otra mitad el data entry.
 	background verdeSubMenu
 	padding .2em 0 .2em .4em 
@@ -389,8 +405,8 @@ footer
 		color white
 
 .field-choices //CLASE para campos de tiene dropdown/combobox
-	background mamey
-	color white
+	background amarillo
+	color verdeMuyOscuro
 	outline none
 
 .field-short //CLASE para campos cortos
@@ -455,7 +471,7 @@ footer
 
 .cssSlideUp
 	transition .4s linear all
-	height 32em
+	height 33em
 	overflow hidden
 	&.ng-hide
 		height 0
@@ -509,8 +525,23 @@ footer
 	
 	&:before
 		font-size 4.5em
-		
-		
+
+.fig-load
+	position absolute
+	top 7em
+	left 30em
+	z-index 999
+	
+.img-load
+	margin .25em 0 0 .3em
+	width 80px
+
+.mostrar
+	display block
+
+.ocultar
+	display none
+
 // FIN CLASES GENERICAS
 
 // CLASES PREDEFINIDAS DE ANGULARJS
@@ -620,7 +651,7 @@ footer
 //SUB MENU PRESTAMOS
 .sub-menu-prestamos	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
 	margin 1.7em 0 0 1em
 	padding 0
@@ -629,10 +660,10 @@ footer
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
-		left 32%
+		left 25%
 		position relative
 		top -2em
 	
@@ -654,16 +685,16 @@ footer
 //SUB-MENU DE INVENTARIO
 .sub-menu-inventario	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
-	margin 1.7em 0 0 36.5em
+	margin 1.7em 0 0 35.5em
 	padding 0
 	position absolute
 	z-index 800
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
 		left 32%
@@ -688,7 +719,7 @@ footer
 //SUB-MENU DE FACTURACION
 .sub-menu-facturacion	
 	background verde
-	border 3px solid lightgreen
+	border 3px solid colorBordeSubMenu
 	list-style none
 	margin 1.7em 0 0 43em
 	padding 0
@@ -697,7 +728,7 @@ footer
 	
 	&:before
 		border solid
-		border-color transparent transparent lightgreen transparent
+		border-color transparent transparent colorBordeSubMenu transparent
 		border-width 0 9px 9px 9px
 		content ''
 		left 32%
@@ -719,6 +750,40 @@ footer
 			background verdeClarito
 			color white
 
+//SUB-MENU DE NOMINA
+.sub-menu-nomina	
+	background verde
+	border 3px solid colorBordeSubMenu
+	list-style none
+	margin 1.7em 0 0 53.4em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent colorBordeSubMenu transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+			
 
 // MODULO DE NOMINA  **********************************
 .genera-nomina
@@ -979,6 +1044,7 @@ footer
 	display none
 
 .posteo-ei
+	margin-left 1em
 	display inline-block
 	float right	
 	
@@ -989,6 +1055,7 @@ footer
 	margin-bottom 1em
 	margin-top .3em
 	padding-right 1.5em
+	position relative
 
 .listado-table-header-ei
 	background verdeClarito
@@ -1001,19 +1068,21 @@ footer
 		&:nth-child(2)
 			width 2em
 		&:nth-child(3)
-			width 3em
+			width 1em	
 		&:nth-child(4)
-			width 6.5em
+			width 3em
 		&:nth-child(5)
+			width 6.5em
+		&:nth-child(6)
 			width 11em
-		&:nth-child(6) //CAMPO FACTURA
+		&:nth-child(7) //CAMPO FACTURA
 			width 6em
-		&:nth-child(7)
-			width 22em
 		&:nth-child(8)
+			width 22em
+		&:nth-child(9)
 			width 5em
 			text-align center
-		&:nth-child(9)
+		&:nth-child(10)
 			width 2em
 			text-align center
 			
@@ -1026,24 +1095,25 @@ footer
 		border 1px solid black
 		padding .17em 0
 		&:nth-child(1),
-		&:nth-child(2) 
+		&:nth-child(2), 
+		&:nth-child(3) 
 			text-align center
-		&:nth-child(3),
-		&:nth-child(8)
+		&:nth-child(4),
+		&:nth-child(9)
 			text-align right
 			padding 0 .3em
-		&:nth-child(4),
 		&:nth-child(5),
 		&:nth-child(6),
-		&:nth-child(7)
-			padding 0 .3em
+		&:nth-child(7),
 		&:nth-child(8)
+			padding 0 .3em
+		&:nth-child(9)
 			width 7em
 			font-size 1.2em
 			font-weight bold
 			color mamey
-		&:nth-child(9),
-		&:nth-child(10)
+		&:nth-child(10),
+		&:nth-child(11)
 			text-align center		
 		
 	// Para poner un color de fondo en cada registro de forma intercalada
@@ -1218,6 +1288,7 @@ footer
 	text-align right
 	font-weight bold
 	color verde
+
 .boton-guarda-inventario
 	height 3em
 	width 7.5em
@@ -1230,10 +1301,101 @@ footer
 	height 4em
 	width 11em
 	position relative
-	// margin-bottom 3em
 	top -1.83em
 	&:before
 		margin-right .4em
+
+//***Para Reporte Existencia
+.busqueda-existencia-inventario
+	margin 1em 0 1em 1em
+
+.busqueda,.almacen
+	display inline-block
+
+.busqueda-producto
+	margin 1em 0 0 1em
+
+.busqueda-categoria
+	margin 1em 0 1em 1em
+
+.section-categorias
+	border 2px solid verde
+	width 90%
+	padding 1em
+	margin .4em 0 0 0
+	height 10em
+	overflow scroll
+
+.content-categorias-productos
+	margin 0
+	display inline-block
+	list-style none
+	
+	& li
+		color verdeMuyOscuro
+		width 17em
+		padding .2em
+	
+
+.caja-productos
+	margin-top 1em
+	
+.content-productos
+	padding 0
+	margin 0 0 0 1em
+
+.categoria-producto
+	padding .4em 0 0 0
+	background lightgray
+	list-style none
+	font-size 1.1em
+	font-weight bold
+	width 52em
+
+.content-productos-header
+	display block
+	list-style none
+	overflow hidden
+
+	& li
+		border 1px solid black
+	
+	&-1
+		float left
+		padding .2em 0 .2em .2em
+		width 6em
+	&-2
+		float left
+		padding .2em 0 .2em .2em
+		width 40em
+	&-3
+		float left
+		padding .2em 0 .2em .2em
+		width 10em
+		text-align right
+
+.content-productos-detail
+	display block
+	list-style none
+	overflow hidden
+	
+	& li
+		border 1px solid black
+	
+	&-1
+		float left
+		width 6em
+		padding .2em 0 .2em .2em
+	&-2
+		float left
+		padding .2em 0 .2em .2em
+		width 40em
+	&-3
+		padding .2em 0 .2em .2em
+		float left
+		width 10em
+		text-align right
+
 			
 //MODULO DE FACTURACION
 	
@@ -1306,7 +1468,7 @@ footer
 	top 5.5em
 	left 6em
 	width 40em
-	z-index 100
+	z-index 900
 	& tr
 		&:first-child
 			text-align center
@@ -1429,7 +1591,7 @@ footer
 
 	//Detalle del prestamo*****
 .data-entry-section-sp
-	overflow hidden
+	// overflow scroll
 	
 .data-detalle-prestamo-header
 	margin .5em 0 0 1em
@@ -1458,7 +1620,7 @@ footer
 	width 17.35em
 	margin-bottom .4em
 .descrp-repr
-	width 13.27em
+	width 16.5em
 	
 .prestamo-codigo-field-t
 	width 5.7em
@@ -1795,21 +1957,21 @@ footer
 	float left
 
 .boton-aprobar-sp
-	height 3em
-	width 8em
+	height 3.5em
+	width 9em
 	margin-bottom 1em
 	margin-right 1em
 	padding .5em 1em
 	&:before
-		margin-right .4em
+		margin-right .2em
 
 .boton-rechazar-sp
-	height 3em
-	width 8em
+	height 3.5em
+	width 9em
 	margin-bottom 1em
 	padding .5em 1em
 	&:before
-		margin-right .4em
+		margin-right .2em
 
 
 .sub-menu-sp
@@ -2350,6 +2512,13 @@ footer
 		&-cuentas
 			width 50em	
 			margin 0.5em 1.5em 1em 2em
+
+.Listado-ahorro
+	background verdeClarito
+	color white
+	& td
+		padding 5em
+	
 			
 .utils
 	&-block

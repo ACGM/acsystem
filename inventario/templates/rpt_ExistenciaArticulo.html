@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %} Reporte de Existencia {% endblock title %}
+
+{% block content %}
+
+
+	<div class="ExistenciaArticulo" ng-controller="RPTExistenciaArticuloCtrl">
+
+		<!-- <mensajeerror> </mensajeerror> -->
+		<!-- <mensajeinfo> </mensajeinfo>				 -->
+		
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
+			</div>
+				<a href="#">Reporte de Existencia de Articulo(s)</a>
+			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+		</div>
+
+		<section ng-init="getCategoriasProductos()">
+
+			<div class="busqueda-existencia-inventario">
+				<div class="busqueda">
+					<span>Busqueda por:</span>
+					<select name="busqueda" id="busqueda" ng-model="busquedaValor" ng-change="busquedaPor()">
+						<option value="producto">Producto</option>
+						<option value="categoria">Categoria</option>
+					</select>
+				</div>
+				
+				<div class="almacen">
+					<span>Almacen</span>
+					<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+						<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+					</select>	
+				</div>
+			</div>
+
+			<div ng-if="busquedaValor == 'producto'" class="busqueda-producto">
+				<div class="producto-find-ei">
+					<span>Producto</span>
+					<input type="text" ng-model="$parent.producto" ng-keypress="existenciaPorProducto($event)" class="producto-field-ei">
+				</div>
+			</div>
+
+			<div ng-if="busquedaValor == 'categoria'" class="busqueda-categoria">
+
+				<span>Seleccione la(s) categoria(s): </span> 
+				<a href="#" class=[[iconcheck]] ng-click="seleccionAll()" title="Seleccionar todas las categorias"></a>
+
+				<button class="Boton" ng-click="toggleCategorias()">Mostrar</button>
+
+				<div class="section-categorias" ng-show="mostrarCategorias">
+					<ul ng-repeat="categoria in categorias" class="content-categorias-productos">
+						<li><input type="checkbox" value="[[categoria.id]]" ng-checked="valoresChk[categoria.id]" ng-model="reg[categoria.id]" ng-click="selectedReg(categoria)"> [[categoria.descripcion]]</li>
+					</ul>
+				</div>
+			</div>
+			<button class="Boton boton-genera-reporte" ng-click="existencia()">Generar Reporte</button>
+
+			<div class="caja-productos">
+				<ul ng-repeat="registro in registros" class="content-productos">
+					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+
+					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header">
+						<li class="content-productos-header-1"><strong>CODIGO</strong></li>
+						<li class="content-productos-header-2"><strong>PRODUCTO</strong></li>
+						<li class="content-productos-header-3"><strong>CANTIDAD</strong></li>
+					</div>
+
+					<div class="content-productos-detail">
+						<li class="content-productos-detail-1">[[registro.codigo]]</li>
+						<li class="content-productos-detail-2">[[registro.producto]]</li>
+						<li class="content-productos-detail-3">[[registro.total | number : 2]]</li>
+						</tr>
+					</div>
+				</ul>
+			</div>
+
+		</section>
+
+		
+	</div>
+
+{% endblock content %}

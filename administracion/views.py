@@ -1,3 +1,5 @@
+# VIEWS de Administracion
+
 from django.shortcuts import render
 
 from rest_framework import viewsets, serializers
@@ -7,10 +9,13 @@ from rest_framework.response import Response
 from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
 						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
 						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer, \
-						AutorizadoresSerializer, EmpresasSerializer
+						AutorizadoresSerializer, EmpresasSerializer, RepresentantesSerializer, \
+						CategoriasProductosSerializer
+
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, \
-					CategoriaPrestamo, CuotaPrestamo, Autorizador, Empresa
+					CategoriaPrestamo, CuotaPrestamo, Autorizador, Empresa, Representante, \
+					CategoriaProducto
 
 
 # Productos Busqueda (GENERICO)
@@ -21,6 +26,11 @@ def productosSearch(request):
 class ProductoViewSet(viewsets.ModelViewSet):
 	queryset=Producto.objects.all().order_by('descripcion')
 	serializer_class=ProductoSerializer
+
+
+class CategoriaProductoViewSet(viewsets.ModelViewSet):
+	queryset=CategoriaProducto.objects.all().order_by('descripcion')
+	serializer_class=CategoriasProductosSerializer
 
 
 class SuplidorTipoViewSet(viewsets.ModelViewSet):
@@ -67,6 +77,13 @@ class EmpresasViewSet(viewsets.ModelViewSet):
 
 	queryset = Empresa.objects.all()
 	serializer_class = EmpresasSerializer
+
+
+# Representantes
+class RepresentantesViewSet(viewsets.ModelViewSet):
+
+	queryset = Representante.objects.all()
+	serializer_class = RepresentantesSerializer
 
 
 # Categoria de Prestamo por Descripcion

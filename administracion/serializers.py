@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, CategoriaPrestamo, \
-					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa
+					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, Representante, CategoriaProducto
 
 
 # Listado de Productos
@@ -16,6 +16,7 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
 		ordering = ('descripcion',)
 
 
+# Listado de Tipos de Suplidores
 class SuplidorTipoSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
@@ -23,6 +24,7 @@ class SuplidorTipoSerializer(serializers.HyperlinkedModelSerializer):
 		fields=('descripcion',)
 
 
+# Listado de Suplidores
 class SuplidorSerializer(serializers.ModelSerializer):
 
 	class Meta:
@@ -43,6 +45,7 @@ class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model=Departamento
 		fields=('centroCosto', 'descripcion')
+
 
 class CoBeneficiarioSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -82,5 +85,20 @@ class EmpresasSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Empresa
-		fields = ('nombre', 'rnc', 'bancoAsign')
+		fields = ('id', 'nombre', 'rnc', 'bancoAsign')
+
+		
+# Representantes
+class RepresentantesSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Representante
+		fields = ('id', 'nombre',)
+
+# Categorias de Productos
+class CategoriasProductosSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = CategoriaProducto
+		fields = ('id', 'descripcion',)
 		

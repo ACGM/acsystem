@@ -9,8 +9,8 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('administracion', '0005_auto_20150211_2334'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0004_auto_20150129_2057'),
     ]
 
     operations = [
@@ -31,6 +31,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('cantidadAnterior', models.DecimalField(default=0, max_digits=12, decimal_places=2)),
                 ('fecha', models.DateField(auto_now=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
@@ -63,15 +64,18 @@ class Migration(migrations.Migration):
                 ('fecha', models.DateField(default=datetime.datetime.now)),
                 ('orden', models.CharField(max_length=30, null=True, blank=True)),
                 ('factura', models.CharField(max_length=12, null=True, blank=True)),
-                ('diasPlazo', models.CharField(default=b'30', choices=[(b'30', b'30'), (b'60', b'60'), (b'120', b'120')], max_length=3, blank=True, null=True, verbose_name=b'Dias de Plazo')),
+                ('diasPlazo', models.CharField(max_length=3, null=True, verbose_name=b'Dias de Plazo', blank=True)),
                 ('nota', models.TextField(null=True, blank=True)),
                 ('ncf', models.CharField(max_length=25, null=True, verbose_name=b'NCF', blank=True)),
                 ('descripcionSalida', models.CharField(max_length=255, null=True, verbose_name=b'Descripci\xc3\xb3n de Salida', blank=True)),
+                ('fechaSalida', models.DateTimeField(null=True, verbose_name=b'Fecha de Salida', blank=True)),
+                ('numeroSalida', models.PositiveIntegerField(null=True, blank=True)),
                 ('posteo', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'NO'), (b'S', b'SI')])),
                 ('condicion', models.CharField(default=b'CO', max_length=2, choices=[(b'CO', b'Contado'), (b'CR', b'Credito')])),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('suplidor', models.ForeignKey(blank=True, to='administracion.Suplidor', null=True)),
                 ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('usuarioSalida', models.ForeignKey(related_name='+', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ('-id',),
@@ -93,6 +97,22 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['producto'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='TransferenciasAlmacenes',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('fechaTransf', models.DateField()),
+                ('desdeAlmacen', models.ForeignKey(related_name='+', to='inventario.Almacen')),
+                ('hastaAlmacen', models.ForeignKey(related_name='+', to='inventario.Almacen')),
+                ('producto', models.ForeignKey(to='administracion.Producto')),
+                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ('fechaTransf',),
             },
             bases=(models.Model,),
         ),
