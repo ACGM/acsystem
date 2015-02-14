@@ -4,104 +4,70 @@
 
 {% block content %}
 
-	<div class="MaestraPrestamo" ng-app="cooperativa">
-		
-		<div class="sub-menu" ng-controller="facturacion">	
+	<div class="MaestraPrestamo" ng-controller="MaestraPrestamosCtrl">
 
-				Maestra de Prestamos
-			<a class="DownArrow" href="#"></a>
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
+		
+		<div class="sub-menu">	
+				<a href="#" ng-click="toggleLP()">Maestra de Prestamos</a>
+			<a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a>
 		</div>
 
-		<section class="listado-reg-prestamos">
-			<div class="busqueda-by-field">
-				<div class="by-prestamo">
-					<span> Prestamo No. </span>
-					<input type="text" id="PrestamoNo">		
-				</div>	
-				<div class="by-socio">
-					<span> Socio </span>
-					<input type="text" id="Socio">
+		<div id="listado" class="listado-maestra-prestamo cssSlideUp" ng-show="showLP" ng-init="listadoPrestamos()">
+			
+			<section class="listado-reg-prestamos">
+				<div class="busqueda-by-field">
+					<div class="by-prestamo">
+						<span> Prestamo No. </span>
+						<input type="text" id="PrestamoNo" ng-model="NoPrestamo" class="doc-no-ei" ng-keypress="buscarPrestamo($event, NoPrestamo)">		
+					</div>	
+					<div class="by-socio">
+						<span> Socio </span>
+						<input type="text" id="Socio" ng-model="codigoSocio" placeholder="Codigo de Empleado" ng-keypress="buscarPrestamoBySocio($event, codigoSocio)">
+					</div>
+
+					<span class="error-ei"> [[NoFoundDoc]]</span>
+					<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoPrestamos(undefined)">Ver todos</a>
+
 				</div>
-			</div>
-			
 
-			<table class="listado-table">
-				<tr class="listado-table-header">
-					<td><input type="checkbox"> </td>
-					<td>Estatus</td>
-					<td>Prestamo</td>
-					<td>Factura</td>
-					<td>Codigo</td>
-					<td>Socio</td>
-					<td>Monto Prestamo</td>
-					<td>Tipo Prestamo</td>
-					<td>Cancelar</td>
-				</tr>
+				<section class="registrosPanel">
+					<table class="listado-table">
+						<tr class="listado-table-header">
+							<td><input type="checkbox"> </td>
+							<td>Estatus</td>
+							<td>Prestamo</td>
+							<td>Factura</td>
+							<td>Codigo</td>
+							<td>Socio</td>
+							<td>Monto Prestamo</td>
+							<td>Tipo Prestamo</td>
+							<td>Cancelar</td>
+						</tr>
 
-				<tr class="listado-prestamos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td><a class="prestamo-field-detalle" href="#">00034453</a></td>
-					<td>0003234</td>
-					<td>241099</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td>PRESTAMO PERSONAL</td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-prestamos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td><a class="prestamo-field-detalle" href="#">00034453</a></td>
-					<td>0003234</td>
-					<td>241099</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td>PRESTAMO PERSONAL</td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-prestamos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td><a class="prestamo-field-detalle" href="#">00034453</a></td>
-					<td>0003234</td>
-					<td>241099</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td>PRESTAMO PERSONAL</td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-prestamos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td><a class="prestamo-field-detalle" href="#">00034453</a></td>
-					<td>0003234</td>
-					<td>241099</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td>PRESTAMO PERSONAL</td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-				<tr class="listado-prestamos-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td><a class="prestamo-field-detalle" href="#">00034453</a></td>
-					<td>0003234</td>
-					<td>241099</td>
-					<td>Jose Rafael Montero Nolasco</td>
-					<td>43,500.66</td>
-					<td>PRESTAMO PERSONAL</td>
-					<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
-				</tr>
-			</table>
+						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
+							<td><input type="checkbox"> </td>
+							<td class="icon-folder"></td>
+							<td><a class="prestamo-field-detalle" href="#">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
+							<td>[[prestamo.factura | numberFixedLen : 8]]</td>
+							<td>[[prestamo.codigoSocio]]</td>
+							<td>[[prestamo.socio]]</td>
+							<td>[[prestamo.montoInicial | number : 2]]</td>
+							<td>[[prestamo.categoriaPrestamo]]</td>
+							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
+						</tr>
+					</table>
+				</section>
 
-			<div class="botones-acciones-prestamos">
-				<button class="Boton boton-generar-solicitud-cheque"> Generar Solicitud Cheque</button>
-				<button class="Boton boton-postear-prestamos"> Postear Prestamos</button>
-				<button class="Boton boton-postear-prestamos-od"> Postear Prestamos por Ordenes</button>	
-			</div>
-			
-		</section>
+				<div class="botones-acciones-prestamos">
+					<button class="Boton boton-generar-solicitud-cheque"> Generar Solicitud Cheque</button>
+					<button class="Boton boton-postear-prestamos"> Postear Prestamos</button>
+					<button class="Boton boton-postear-prestamos-od"> Postear Prestamos por Ordenes</button>	
+				</div>
+				
+			</section>
+		</div>
 
 		<!--DETALLE DEL PRESTAMO-->
 		<div class="sub-menu">	

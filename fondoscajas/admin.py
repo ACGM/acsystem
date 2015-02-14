@@ -29,7 +29,7 @@ class DesembolsoDInline(admin.StackedInline):
 
 @admin.register(DesembolsoH)
 class DesembolsoHAdmin(admin.ModelAdmin):
-	list_display = ['id','beneficiario', 'fecha', 'distrito', 'estatus', 'totalGeneral', 'userLog', 'impreso']
+	list_display = ['id','beneficiario', 'fecha', 'localidad', 'estatus', 'totalGeneral', 'userLog', 'impreso']
 	list_editable = ('beneficiario', 'estatus',)
 
 	def save_model(self, request, obj, form, change):

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-import datetime
 
 
 class Migration(migrations.Migration):
@@ -15,14 +14,118 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='ArchivoBanco',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('bancoAsign', models.CharField(max_length=5)),
+                ('tipoServicio', models.CharField(max_length=2)),
+                ('envio', models.CharField(max_length=4)),
+                ('secuencia', models.PositiveIntegerField()),
+                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ArchivoBancoDetailN',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tipoRegistro', models.CharField(default=b'N', max_length=1, blank=True)),
+                ('idCompania', models.CharField(max_length=15)),
+                ('secuencia', models.CharField(max_length=7)),
+                ('secuenciaTrans', models.CharField(max_length=7)),
+                ('cuentaDestino', models.CharField(max_length=20)),
+                ('tipoCuentaDestino', models.CharField(max_length=1)),
+                ('monedaDestino', models.CharField(default=b'214', max_length=3)),
+                ('codBancoDestino', models.CharField(default=b'10101070', max_length=8)),
+                ('digiVerBancoDestino', models.CharField(default=b'8', max_length=1)),
+                ('codigoOperacion', models.CharField(default=b'22', max_length=2)),
+                ('montoTransaccion', models.CharField(max_length=13)),
+                ('tipoIdentificacion', models.CharField(default=b'CE', max_length=2)),
+                ('identificacion', models.CharField(max_length=15)),
+                ('nombre', models.CharField(default=b'', max_length=35)),
+                ('numeroReferencia', models.CharField(default=b'', max_length=12, blank=True)),
+                ('descrpEstadoDestino', models.CharField(default=b'', max_length=40, blank=True)),
+                ('fechaVencimiento', models.CharField(default=b'', max_length=4, blank=True)),
+                ('formaContacto', models.CharField(default=b' ', max_length=1)),
+                ('emailBenef', models.CharField(default=b'', max_length=40, blank=True)),
+                ('faxTelefonoBenef', models.CharField(default=b'', max_length=12, blank=True)),
+                ('filler', models.CharField(default=b'00', max_length=2)),
+                ('numeroAut', models.CharField(default=b'', max_length=15, blank=True)),
+                ('codRetornoRemoto', models.CharField(default=b'   ', max_length=3)),
+                ('codRazonRemoto', models.CharField(default=b'   ', max_length=3)),
+                ('codRazonInterno', models.CharField(default=b'   ', max_length=3)),
+                ('procTransaccion', models.CharField(default=b' ', max_length=1)),
+                ('estatusTransaccion', models.CharField(default=b' ', max_length=2)),
+                ('filler2', models.CharField(default=b'', max_length=52, blank=True)),
+                ('lineaFormateadaN', models.CharField(max_length=320, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ArchivoBancoDetailR',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tipoRegistro', models.CharField(default=b'R', max_length=1)),
+                ('idCompania', models.CharField(max_length=15)),
+                ('secuencia', models.CharField(max_length=7)),
+                ('secuenciaTrans', models.CharField(max_length=7)),
+                ('numeroCtaDestino', models.CharField(max_length=20)),
+                ('numeroDocumento', models.CharField(max_length=15)),
+                ('tipoDocumento', models.CharField(max_length=2)),
+                ('fechaDocumento', models.CharField(max_length=8)),
+                ('montoDocumento', models.CharField(max_length=13)),
+                ('montoDescuento', models.CharField(max_length=11)),
+                ('montoImpuesto', models.CharField(max_length=11)),
+                ('netoDocumento', models.CharField(max_length=13)),
+                ('descripcion', models.CharField(max_length=50)),
+                ('filler', models.CharField(max_length=146, blank=True)),
+                ('lineaFormateadaR', models.CharField(max_length=319)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ArchivoBancoHeader',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tipoRegistro', models.CharField(max_length=1)),
+                ('idCompania', models.CharField(max_length=15)),
+                ('nombreCompania', models.CharField(max_length=35)),
+                ('secuencia', models.CharField(max_length=7)),
+                ('tipoServicio', models.CharField(max_length=2)),
+                ('fechaEfectiva', models.CharField(max_length=8)),
+                ('cantidadDB', models.CharField(max_length=11)),
+                ('montoTotalDB', models.CharField(max_length=13)),
+                ('cantidadCR', models.CharField(max_length=11)),
+                ('montoTotalCR', models.CharField(max_length=13)),
+                ('numeroAfiliacion', models.CharField(max_length=15, blank=True)),
+                ('fecha', models.CharField(max_length=8)),
+                ('hora', models.CharField(max_length=4)),
+                ('correo', models.CharField(max_length=40)),
+                ('estatus', models.CharField(max_length=1, blank=True)),
+                ('cuentaEmpresa', models.CharField(max_length=1)),
+                ('filler', models.CharField(max_length=107, blank=True)),
+                ('lineaFormateadaH', models.CharField(max_length=292, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Autorizador',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('clave', models.CharField(max_length=4)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
             ],
             options={
                 'ordering': ['usuario'],
-                'verbose_name_plural': 'Autorizadores',
+                'verbose_name_plural': 'Config 3.1) Autorizadores',
             },
             bases=(models.Model,),
         ),
@@ -35,6 +138,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['nombre'],
+                'verbose_name_plural': 'Config 2.1) Bancos',
             },
             bases=(models.Model,),
         ),
@@ -55,7 +159,18 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['descripcion'],
                 'verbose_name': 'Categoria de Prestamo',
-                'verbose_name_plural': 'Categorias de Prestamos',
+                'verbose_name_plural': 'Config 6.1) Categorias de Prestamos',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CategoriaProducto',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('descripcion', models.CharField(max_length=25)),
+            ],
+            options={
+                'verbose_name_plural': 'Config 4.2) Categorias de Productos',
             },
             bases=(models.Model,),
         ),
@@ -74,8 +189,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['nombre'],
-                'verbose_name': '2) Co-Beneficiario',
-                'verbose_name_plural': '2) Co-Beneficiarios',
+                'verbose_name': 'Co-Beneficiario',
+                'verbose_name_plural': 'Co-Beneficiarios',
             },
             bases=(models.Model,),
         ),
@@ -89,23 +204,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['usuario'],
-                'verbose_name_plural': 'Cobradores',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='CuotaAhorroSocio',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
-                ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
-                ('fechaInicioAhorro', models.DateField(default=datetime.datetime(2015, 1, 29, 20, 57, 14, 713367), auto_now_add=True)),
-                ('fechaModificacion', models.DateField(default=datetime.datetime(2015, 1, 29, 20, 57, 14, 713392), auto_now=True)),
-            ],
-            options={
-                'ordering': ['socio'],
-                'verbose_name': '3) Cuota Ahorro Socio',
-                'verbose_name_plural': '3) Cuotas Ahorros Socios',
+                'verbose_name_plural': 'Config 3.2) Cobradores',
             },
             bases=(models.Model,),
         ),
@@ -116,14 +215,13 @@ class Migration(migrations.Migration):
                 ('montoDesde', models.DecimalField(verbose_name=b'Monto Desde', max_digits=18, decimal_places=2)),
                 ('montoHasta', models.DecimalField(verbose_name=b'Monto Hasta', max_digits=18, decimal_places=2)),
                 ('cantidadQuincenas', models.PositiveIntegerField(verbose_name=b'Cantidad de Quincenas')),
-                ('cantidadMeses', models.PositiveIntegerField(verbose_name=b'Cnatidad de Meses')),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-montoDesde'],
                 'verbose_name': 'Cuota de Ordenes',
-                'verbose_name_plural': 'Cuotas de Ordenes',
+                'verbose_name_plural': 'Config 6.3) Cuotas de Ordenes',
             },
             bases=(models.Model,),
         ),
@@ -140,7 +238,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['-montoDesde'],
                 'verbose_name': 'Cuota de Prestamo',
-                'verbose_name_plural': 'Cuotas de Prestamos',
+                'verbose_name_plural': 'Config 6.2) Cuotas de Prestamos',
             },
             bases=(models.Model,),
         ),
@@ -153,17 +251,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['descripcion'],
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Distrito',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('descripcion', models.CharField(max_length=150)),
-            ],
-            options={
-                'ordering': ['descripcion'],
+                'verbose_name_plural': 'Config 1.4) Departamentos',
             },
             bases=(models.Model,),
         ),
@@ -177,7 +265,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['documento', 'cuenta'],
                 'verbose_name': 'Documento relacionado a Cuentas',
-                'verbose_name_plural': 'Documentos relacionados a Cuentas',
+                'verbose_name_plural': 'Config 7.2) Documentos relacionados a Cuentas',
             },
             bases=(models.Model,),
         ),
@@ -185,9 +273,12 @@ class Migration(migrations.Migration):
             name='Empresa',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nombre', models.CharField(max_length=100)),
+                ('nombre', models.CharField(max_length=50)),
+                ('rnc', models.CharField(max_length=15, null=True, blank=True)),
+                ('bancoAsign', models.CharField(max_length=5, null=True, blank=True)),
             ],
             options={
+                'verbose_name_plural': 'Config 2.2) Empresas',
             },
             bases=(models.Model,),
         ),
@@ -199,7 +290,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['descripcion'],
-                'verbose_name_plural': 'Localidades',
+                'verbose_name_plural': 'Config 2.6) Localidades',
             },
             bases=(models.Model,),
         ),
@@ -208,11 +299,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('descripcion', models.CharField(max_length=80)),
+                ('valor', models.CharField(default=b'true', max_length=5)),
                 ('tipo', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Principal'), (b'S', b'Secundario')])),
             ],
             options={
                 'ordering': ['descripcion'],
-                'verbose_name_plural': 'Opciones',
+                'verbose_name_plural': 'Config 3.3) Opciones',
             },
             bases=(models.Model,),
         ),
@@ -220,12 +312,11 @@ class Migration(migrations.Migration):
             name='Perfil',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('perfilCod', models.CharField(unique=True, max_length=10, verbose_name=b'Codigo Perfil')),
-                ('opcion', models.ForeignKey(to='administracion.Opcion')),
+                ('perfilCod', models.CharField(unique=True, max_length=15, verbose_name=b'Codigo Perfil')),
             ],
             options={
                 'ordering': ['perfilCod'],
-                'verbose_name_plural': 'Perfiles',
+                'verbose_name_plural': 'Config 3.4) Perfiles',
             },
             bases=(models.Model,),
         ),
@@ -239,6 +330,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['-agno'],
+                'verbose_name_plural': 'Config 7.3) Periodos',
             },
             bases=(models.Model,),
         ),
@@ -246,15 +338,17 @@ class Migration(migrations.Migration):
             name='Producto',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('codigo', models.CharField(max_length=10)),
+                ('codigo', models.CharField(max_length=10, editable=False)),
                 ('descripcion', models.CharField(max_length=50)),
                 ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('costo', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('foto', models.ImageField(null=True, upload_to=b'productos', blank=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
+                ('categoria', models.ForeignKey(to='administracion.CategoriaProducto', null=True)),
             ],
             options={
                 'ordering': ['descripcion'],
+                'verbose_name_plural': 'Config 4.1) Productos',
             },
             bases=(models.Model,),
         ),
@@ -265,6 +359,7 @@ class Migration(migrations.Migration):
                 ('nombre', models.CharField(max_length=50)),
             ],
             options={
+                'verbose_name_plural': 'Config 2.3) Representantes',
             },
             bases=(models.Model,),
         ),
@@ -288,19 +383,22 @@ class Migration(migrations.Migration):
                 ('fechaIngresoEmpresa', models.DateField(verbose_name=b'Fecha de Ingreso Empresa')),
                 ('correo', models.EmailField(max_length=75, blank=True)),
                 ('estatus', models.CharField(default=b'S', max_length=2, choices=[(b'S', b'Socio'), (b'E', b'Empleado'), (b'I', b'Inactivo')])),
-                ('salario', models.DecimalField(default=0, null=True, max_digits=12, decimal_places=2)),
-                ('cuentaBancaria', models.CharField(max_length=20, verbose_name=b'Cuenta Bancaria', blank=True)),
+                ('salario', models.DecimalField(default=0, null=True, max_digits=12, decimal_places=2, blank=True)),
+                ('cuentaBancaria', models.CharField(max_length=20, null=True, verbose_name=b'Cuenta Bancaria', blank=True)),
+                ('tipoCuentaBancaria', models.CharField(default=b'1', max_length=1, null=True, verbose_name=b'Tipo Cuenta Bancaria', blank=True)),
                 ('foto', models.ImageField(null=True, upload_to=b'administracion', blank=True)),
                 ('nombreCompleto', models.CharField(verbose_name=b'Nombre Completo', max_length=80, editable=False)),
+                ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
+                ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),
                 ('departamento', models.ForeignKey(to='administracion.Departamento')),
-                ('distrito', models.ForeignKey(to='administracion.Distrito')),
+                ('localidad', models.ForeignKey(to='administracion.Localidad')),
                 ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['codigo'],
-                'verbose_name': '1) Socio',
-                'verbose_name_plural': '1) Socios',
+                'verbose_name': 'Socio',
+                'verbose_name_plural': 'Config 1.1) Socios',
             },
             bases=(models.Model,),
         ),
@@ -312,11 +410,12 @@ class Migration(migrations.Migration):
                 ('cedulaRNC', models.CharField(unique=True, max_length=25)),
                 ('nombre', models.CharField(max_length=60)),
                 ('direccion', models.TextField(blank=True)),
-                ('sector', models.CharField(max_length=40, blank=True)),
-                ('ciudad', models.CharField(max_length=40, blank=True)),
-                ('contacto', models.CharField(max_length=50, blank=True)),
-                ('telefono', models.CharField(max_length=50, blank=True)),
-                ('fax', models.CharField(max_length=50, blank=True)),
+                ('sector', models.CharField(max_length=40, null=True, blank=True)),
+                ('ciudad', models.CharField(max_length=40, null=True, blank=True)),
+                ('contacto', models.CharField(max_length=50, null=True, blank=True)),
+                ('telefono', models.CharField(max_length=50, null=True, blank=True)),
+                ('correo', models.CharField(max_length=40, null=True, blank=True)),
+                ('fax', models.CharField(max_length=50, null=True, blank=True)),
                 ('intereses', models.DecimalField(default=0, null=True, max_digits=5, decimal_places=2, blank=True)),
                 ('clase', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'Normal'), (b'S', b'SuperCoop')])),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
@@ -325,7 +424,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['nombre'],
-                'verbose_name_plural': 'Suplidores',
+                'verbose_name_plural': 'Config 4.4) Suplidores',
             },
             bases=(models.Model,),
         ),
@@ -338,6 +437,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['descripcion'],
+                'verbose_name_plural': 'Config 7.1) Tipos de Documentos',
             },
             bases=(models.Model,),
         ),
@@ -362,7 +462,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['descripcion'],
                 'verbose_name': 'Tipo de Suplidor',
-                'verbose_name_plural': 'Tipos de Suplidores',
+                'verbose_name_plural': 'Config 4.5) Tipos de Suplidores',
             },
             bases=(models.Model,),
         ),
@@ -375,7 +475,20 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'Unidad',
-                'verbose_name_plural': 'Unidades',
+                'verbose_name_plural': 'Config 4.3) Unidades',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UserExtra',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('localidad', models.ForeignKey(to='administracion.Localidad')),
+                ('perfil', models.ForeignKey(to='administracion.Perfil')),
+                ('usuario', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ('usuario',),
             },
             bases=(models.Model,),
         ),
@@ -403,32 +516,16 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
-        migrations.AlterUniqueTogether(
-            name='producto',
-            unique_together=set([('codigo',)]),
+        migrations.AddField(
+            model_name='opcion',
+            name='perfil',
+            field=models.ForeignKey(to='administracion.Perfil'),
+            preserve_default=True,
         ),
         migrations.AddField(
             model_name='documentocuentas',
             name='documento',
             field=models.ForeignKey(to='administracion.TipoDocumento'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='distrito',
-            name='localidad',
-            field=models.ForeignKey(to='administracion.Localidad'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='cuotaahorrosocio',
-            name='socio',
-            field=models.ForeignKey(to='administracion.Socio', unique=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='cuotaahorrosocio',
-            name='userLog',
-            field=models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -446,7 +543,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='autorizador',
             name='usuario',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, unique=True),
             preserve_default=True,
         ),
     ]

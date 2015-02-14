@@ -3,6 +3,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db.models import Sum, Count
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, ListView, DetailView
 
@@ -16,13 +17,54 @@ from administracion.models import Suplidor, Producto
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
 							ExistenciaProductoSerializer
 
+from acgm.views import LoginRequiredMixin
+
 import json
 import math
 import decimal
+import datetime
+
+
+# Transferencia de Inventario
+class TransferenciaInvView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'transferenciainv.html'
+
+
+# Imprimir Entrada de Inventario
+class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_entrada.html'
+
+
+# Reporte de Entrada/Salida de Articulo(s)
+class RPTEntradaSalidaArticuloView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_EntradaSalidaArticulo.html'
+
+
+# Reporte de Existencia de Articulo(s)
+class RPTExistenciaArticuloView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_ExistenciaArticulo.html'
+
+
+# Listado de Entradas de inventario
+class ListadoEntradasInvView(viewsets.ModelViewSet):
+
+	queryset = InventarioH.objects.all()
+	serializer_class = EntradasInventarioSerializer
+
+
+# Listado de Almacenes
+class ListadoAlmacenesView(viewsets.ModelViewSet):
+
+	queryset = Almacen.objects.all()
+	serializer_class = AlmacenesSerializer
 
 
 # Retornar un documento con todo su detalle 
-class EntradaInventarioById(ListView):
+class EntradaInventarioById(LoginRequiredMixin, ListView):
 
 	queryset = InventarioH.objects.all()
 
@@ -55,6 +97,11 @@ class EntradaInventarioById(ListView):
 				'nota': inventario.nota,
 				'posteo': inventario.posteo,
 				'usuario': inventario.userLog.username,
+				'tipo': inventario.getTipo,
+				'numeroSalida': inventario.numeroSalida,
+				'descripcionSalida': inventario.descripcionSalida,
+				'fechaSalida': inventario.fechaSalida,
+				'usuarioSalida': inventario.usuarioSalida.username if inventario.usuarioSalida != None else '',
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -84,7 +131,7 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 
 
 # Entrada de Inventario
-class InventarioView(TemplateView):
+class InventarioView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'inventario.html'
 
@@ -140,26 +187,6 @@ class InventarioView(TemplateView):
 			return HttpResponse(e)
 
 
-# Transferencia de Inventario
-class TransferenciaInvView(TemplateView):
-
-	template_name = 'transferenciainv.html'
-
-
-# Listado de Entradas de inventario
-class ListadoEntradasInvView(viewsets.ModelViewSet):
-
-	queryset = InventarioH.objects.all()
-	serializer_class = EntradasInventarioSerializer
-
-
-# Listado de Almacenes
-class ListadoAlmacenesView(viewsets.ModelViewSet):
-
-	queryset = Almacen.objects.all()
-	serializer_class = AlmacenesSerializer
-
-
 # Existencia de un producto en especifico
 class getExistenciaByProductoView(APIView):
 
@@ -172,7 +199,100 @@ class getExistenciaByProductoView(APIView):
 		return Response(response.data)
 
 
-#Imprimir Entrada de Inventario
-class ImprimirEntradaInventarioView(TemplateView):
+# Existencia productos (filtro: Almacen)
+class getExistenciaRPT(ListView):
 
-	template_name = 'print_entrada.html'
+	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion','almacen__descripcion').annotate(total=Sum('cantidad'))
+	def get(self, request, *args, **kwargs):
+		
+		almacen = self.request.GET.get('almacen')
+		format = self.request.GET.get('format')
+		producto = self.request.GET.get('producto')
+
+		if producto != None:
+			# Busqueda para tipo producto
+			if almacen != None:
+				if producto != None:
+					self.object_list = self.get_queryset().filter(almacen=almacen, producto__descripcion__contains=producto)
+				else:
+					self.object_list = self.get_queryset().filter(almacen=almacen)
+			else:
+				self.object_list = self.get_queryset().filter(producto__descripcion__contains=producto)
+
+		else:
+			# Busqueda para tipo categoria
+			if self.request.GET.get('categorias') != None:
+				categoriasList = list(self.request.GET.get('categorias'))
+				categorias = list()
+
+				for categoria in categoriasList:
+					if categoria != ',':
+						categorias.append(categoria)
+
+				if almacen != None:
+					if categorias != None:
+						self.object_list = self.get_queryset().filter(almacen=almacen, producto__categoria__id__in=categorias)
+					else:
+						self.object_list = self.get_queryset().filter(almacen=almacen)
+				else:
+					if categorias != None:
+						self.object_list = self.get_queryset().filter(producto__categoria__id__in=categorias)
+			else:
+				self.object_list = self.get_queryset()
+
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for existencia in self.object_list:
+			data.append({
+				'categoria': existencia['producto__categoria__descripcion'],
+				'codigo': existencia['producto__codigo'],
+				'producto': existencia['producto__descripcion'],
+				'almacen': existencia['almacen__descripcion'] if existencia['almacen__descripcion'] != None else '',
+				'total': existencia['total'],
+				})
+
+		return JsonResponse(data, safe=False)
+
+
+# Salida de Inventario
+class SalidaInventarioView(TemplateView):
+
+	template_name = 'inventario.html'
+
+	# @login_required
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			nota = data['nota']
+			entradaNo = int(data['entradaNo'])
+
+			# Traer el ultimo numero de Salida para incrementar
+			lastNum = InventarioH.objects.latest('numeroSalida').numeroSalida
+
+			invH = InventarioH.objects.get(id=entradaNo)
+			invH.numeroSalida = lastNum + 1
+			invH.descripcionSalida = nota
+			invH.fechaSalida = datetime.datetime.now()
+			invH.usuarioSalida = User.objects.get(username=request.user)
+			invH.save()
+
+			invD = InventarioD.objects.filter(inventario=invH)
+
+			for item in invD:
+				d = InventarioD.objects.get(id=item.id)
+				d.tipoAccion = 'S'
+				d.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)

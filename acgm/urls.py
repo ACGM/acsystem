@@ -6,29 +6,39 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
-from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView
+
+from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView, \
+                                SalidaInventarioView, RPTEntradaSalidaArticuloView, RPTExistenciaArticuloView
+
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
-from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, MaestraPrestamosView, \
+
+from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
                             SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
 
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
+
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet,\
                                 ListadoCategoriasPrestamosViewSet
+
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
+
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
-                                AutorizadoresViewSet, EmpresasViewSet
+                                AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet, \
+                                CategoriaProductoViewSet
+
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 
@@ -36,9 +46,13 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
                                     ProductoByDescrpView
-from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView
+
+from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
+                                getExistenciaRPT
+
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
+from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
 
 admin.site.site_header = 'COOPERATIVA'
@@ -71,6 +85,8 @@ router.register(r'departamento', DepartamentoViewSet)
 router.register(r'CoBeneficiario', CoBeneficiarioViewSet)
 router.register(r'autorizador', AutorizadoresViewSet)
 router.register(r'empresa', EmpresasViewSet)
+router.register(r'representante', RepresentantesViewSet)
+router.register(r'categoriasProductos', CategoriaProductoViewSet)
 
 #conciliacion
 router.register(r'Solicitud_Cheque',SolicitudViewSet)
@@ -93,7 +109,7 @@ router.register(r'nominasgeneradas', ListadoNominasGeneradasViewSet)
 router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 
 #prestamos
-# router.register(r'solicitudesprestamos', SolicitudesPrestamosView)
+# router.register(r'maestraprestamos', PrestamosEnMaestraView)
 
 urlpatterns = patterns('',
 
@@ -127,11 +143,18 @@ urlpatterns = patterns('',
     
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
+    url(r'^inventario/salida/$', SalidaInventarioView.as_view(), name='Inventario_salida'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
+    #Inventario#Reportes
+    url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
+    url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+
+    url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
+
 
 
     #Facturacion    
@@ -152,8 +175,9 @@ urlpatterns = patterns('',
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
+    url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
     
-    url(r'^prestamos/solicitudP/AprobarRechazar$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
+    url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
 
     url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
 
@@ -161,6 +185,8 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
     url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
+    url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
 
     
 

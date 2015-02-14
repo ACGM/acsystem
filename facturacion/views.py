@@ -1,3 +1,5 @@
+# VIEWS de Facturacion
+
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -15,6 +17,8 @@ from .models import Factura, Detalle, OrdenDespachoSuperCoop
 from administracion.models import Producto, Socio, CategoriaPrestamo
 from inventario.models import Existencia, Almacen
 
+from acgm.views import LoginRequiredMixin
+
 import json
 import math
 import decimal
@@ -31,7 +35,7 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 
 
 # Retornar una factura con todo su detalle  -- url(r'^facturajson/$',
-class FacturaById(DetailView):
+class FacturaById(LoginRequiredMixin, DetailView):
 
 	queryset = Factura.objects.all()
 
@@ -94,7 +98,7 @@ class FacturaById(DetailView):
 
 
 # Vista para presentar la pantalla de facturacion y a la vez contiene el POST para guardar la factura.
-class FacturacionView(TemplateView):
+class FacturacionView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'facturacion.html'
 
@@ -224,7 +228,7 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 
 
 #Imprimir Factura
-class ImprimirFacturaView(TemplateView):
+class ImprimirFacturaView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'print_factura.html'
 

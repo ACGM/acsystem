@@ -45,11 +45,13 @@
 			<li ng-hide="{{facturacion}}" class="menu-item" id="menu8"> <a class="menu-opcion" ng-click="ShowSubMenuFact(true)" ng-mouseleave="ShowSubMenuFact(false)" href="#">Facturacion</a> </li>
 
 			<li class="menu-item" id="menu9"> <a class="menu-opcion" href="#">Conciliacion</a></li>
-			<li class="menu-item" id="menu10"> <a class="menu-opcion" href="/nomina">Nomina</a></li>
+			<li ng-hide="{{nomina}}" class="menu-item" id="menu10"> <a class="menu-opcion" ng-click="ShowSubMenuNomina(true)" ng-mouseleave="ShowSubMenuNomina(false)" href="#">Nomina</a> </li>
+
 			<li class="menu-item" id="menu11"> <a class="menu-opcion" href="#">CxP</a></li>
 			<li class="menu-item" id="menu12"> <a class="menu-opcion"  href="/admin">Administracion</a></li>
 		</ul>
 
+	<!-- SUB MENU DE PRESTAMOS -->
 	<ul class="sub-menu-prestamos" ng-show="SubMPrestamo" ng-mouseover="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)">
 		<li><a href="/prestamos/solicitudP">Solicitud de Prestamo</a></li>
 		<li><a href="/prestamos/solicitudOD">Solicitud de Orden de Despacho</a></li>
@@ -58,20 +60,52 @@
 		<li><a href="/prestamos/nd">Nota de Debito</a></li>
 		<li><a href="/prestamos/nc">Nota de Credito</a></li>
 		<li><a href="/prestamos/nce">Nota de Credito Especial</a></li>
+		<li><hr/></li>
+		<li><a href="/prestamos/reporte/solPrestamos">Solicitudes de Prestamos Emitidas</a></li>
+		<li><a href="/prestamos/reporte/solOD">Solicitudes Orden de Despacho</a></li>
+		<li><a href="/prestamos/reporte/prestamoSaldado">Consulta Prestamo Saldado</a></li>
+		<li><a href="/prestamos/reporte/prestamosClasif">Prestamo por Clasificacion (Resumido)</a></li>
+		<li><a href="/prestamos/reporte/nc">Reporte Notas de Creditos</a></li>
+		<li><a href="/prestamos/reporte/nd">Reporte Notas de Debitos</a></li>
+		<li><a href="/prestamos/reporte/cartera">Cartera General de Prestamos</a></li>
+		<li><a href="/prestamos/reporte/prestamosPosteados">Prestamos Posteados</a></li>
 	</ul>
 
+	<!-- SUB MENU DE INVENTARIO -->
 	<ul class="sub-menu-inventario" ng-show="SubMInventario" ng-mouseover="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)">
 		<li><a href="/inventario">Entrada de Inventario</a></li>
-		<li><a href="/inventario/salida">Salida del Inventario</a></li>
+		<li><a href="/inventario/ajuste">Ajuste de Inventario</a></li>
 		<li><a href="/inventario/transferencia">Transferencia entre Almacenes</a></li>
+		<li><hr></li>
+		<li><a href="/inventario/reportes/entradaSalidaArticulo">Reporte de Entrada/Salida de articulo</a></li>
+		<li><a href="/inventario/reportes/ajuste">Reporte Ajuste de Inventario</a></li>
+		<li><a href="/inventario/reportes/conteoFisico">Reporte Conteo Fisico sin existencia</a></li>
+		<li><a href="/inventario/reportes/existenciaArticulo/">Reporte de Existencia de Articulo</a></li>
+		<li><a href="/inventario/reportes/valor">Reporte Valor de Inventario</a></li>
+		<li><a href="/inventario/reportes/histMovArt">Historico Movimiento de Articulo</a></li>
+
 	</ul>
 
+	<!-- SUB MENU DE FACTURACION -->
 	<ul class="sub-menu-facturacion" ng-show="SubMFacturacion" ng-mouseover="ShowSubMenuFact(true)" ng-mouseleave="ShowSubMenuFact(false)">
 		<li><a href="/facturacion">Crear/Modificar Factura</a></li>
-		<li><a href="/facturacion/solicitudOD">Anular Factura</a></li>
 		<li><hr/></li>
 		<li><a href="/prestamos/maestra">Reporte de Facturas</a></li>
 	</ul>
+
+	<!-- SUB MENU DE NOMINA -->
+	<ul class="sub-menu-nomina" ng-show="SubMNomina" ng-mouseover="ShowSubMenuNomina(true)" ng-mouseleave="ShowSubMenuNomina(false)">
+		<li><a href="/nomina/">Generar Nomina</a></li>
+		<li><a href="/nomina/prestamos" title="Generar archivo de prestamos regulares para nomina Empresa">Nomina de Prestamos Regulares</a></li>
+		<li><a href="/nomina/ahorros" title="Generar archivo de ahorro de socios para nomina Empresa">Nomina de Ahorros</a></li>
+		<li><a href="/nomina/regalia">Nomina de Regalia</a></li>
+		<li><a href="/nomina/vacaciones">Nomina de Vacaciones</a></li>
+		<li><a href="/nomina/bonificacion">Nomina de Bonificacion</a></li>
+		<li><a href="/nomina/rifas">Nomina de Rifas</a></li>
+		<li><hr/></li>
+		<li><a href="/nomina/reporte/general">Reporte de Nomina</a></li>
+	</ul>
+
 
 	</nav>
 
@@ -94,11 +128,18 @@
 	<script type="text/javascript" src={% static "js/lib/angular.min.js" %} ></script>
 	<script type="text/javascript" src={% static "js/lib/angular-router.min.js" %} ></script>
 	<script type="text/javascript" src={% static "js/lib/angular-animate.min.js" %} ></script>
+
+	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.js" %}></script>
+	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.standard_fonts_metrics.js" %}></script> 
+	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.split_text_to_size.js" %}></script>
+	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.from_html.js" %}></script>
+
 	<script type="text/javascript" src={% static "js/app.js" %} ></script>
 	<script type="text/javascript" src={% static "js/menu.js" %} ></script>
 	<script type="text/javascript" src={% static "js/nomina.js" %} ></script>
 	<script type="text/javascript" src={% static "js/facturacion.js" %} ></script>
 	<script type="text/javascript" src={% static "js/inventario.js" %} ></script>
+	<script type="text/javascript" src={% static "js/rpt_inventario.js" %} ></script>
 	<script type="text/javascript" src={% static "js/fondoscajas.js" %} ></script>
 	<script type="text/javascript" src={% static "js/solicitudprestamo.js" %} ></script>
 	<script type="text/javascript" src={% static "js/solicitudordendespacho.js" %} ></script>

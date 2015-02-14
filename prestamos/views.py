@@ -13,27 +13,24 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
-from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio
+from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
+
+from acgm.views import LoginRequiredMixin
 
 import json
 import math
 import decimal
 import datetime
 
-#Vista para Maestra de Prestamos
-class MaestraPrestamosView(TemplateView):
-
-	template_name = 'maestraprestamos.html'
-
 
 #Vista para Desembolso Electronico de Prestamos
-class DesembolsoPrestamosView(TemplateView):
+class DesembolsoPrestamosView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'desembolsoelectronico.html'
 
 
 #Vista para Solicitud de Prestamo  -- El POST guarda la Solicitud de Prestamo
-class SolicitudPrestamoView(TemplateView):
+class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'solicitudprestamo.html'
 
@@ -52,7 +49,6 @@ class SolicitudPrestamoView(TemplateView):
 			socio = Socio.objects.get(codigo=solicitante['codigoEmpleado'])
 			cobrador = Cobrador.objects.get(userLog=User.objects.get(username=solicitante['cobrador']))
 			representante = Representante.objects.get(id=solicitante['representanteCodigo'])
-			# auxiliar = Auxiliar.objects.get()
 			categoriaPrest = CategoriaPrestamo.objects.get(id=solicitud['categoriaPrestamoId'])
 
 			if solicitudNo > 0:
@@ -68,6 +64,7 @@ class SolicitudPrestamoView(TemplateView):
 			SolPrestamo.fechaSolicitud = fechaSolicitud
 			SolPrestamo.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',','')) if solicitante['salario'] != None else 0
 			SolPrestamo.representante = representante
+			SolPrestamo.autorizadoPor = User.objects.get(username=solicitante['autorizadoPor'])
 			SolPrestamo.cobrador = cobrador
 
 			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
@@ -96,27 +93,48 @@ class SolicitudPrestamoView(TemplateView):
 
 
 #Vista para Solicitud de Ordenes de Despacho
-class SolicitudOrdenDespachoView(TemplateView):
+class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'solicitudordendespacho.html'
 
 
 #Vista para Notas de Debito
-class NotaDeDebitoView(TemplateView):
+class NotaDeDebitoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notasdebito.html'
 
 
 #Vista para Notas de Credito
-class NotaDeCreditoView(TemplateView):
+class NotaDeCreditoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notascredito.html'
 
 
 #Vista para Notas de Credito Especiales
-class NotaDeCreditoEspView(TemplateView):
+class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notacreditoespecial.html'
+
+
+# Verificar Autorizador
+class validarAutorizadorView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		data = json.loads(request.body)
+
+		autorizador = data['autorizador']
+		pin = data['pin']
+
+		try:
+			usuario = User.objects.get(username=autorizador)
+
+			AU = Autorizador.objects.get(usuario=usuario, clave=pin)
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
 
 
 # Listado de Solicitudes de Prestamos
@@ -150,7 +168,7 @@ class SolicitudesPrestamosAPIViewByCodigoNombre(APIView):
 
 
 # Desglose de Solicitud de Prestamo
-class SolicitudPrestamoById(DetailView):
+class SolicitudPrestamoById(LoginRequiredMixin, DetailView):
 
 	queryset = SolicitudPrestamo.objects.all()
 
@@ -213,7 +231,7 @@ class SolicitudPrestamoById(DetailView):
 
 
 # Aprobar/Rechazar solicitudes de prestamos
-class AprobarRechazarSolicitudesPrestamosView(View):
+class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 
 	def post(self, request, *args, **kwargs):
 
@@ -228,36 +246,36 @@ class AprobarRechazarSolicitudesPrestamosView(View):
 				oSolicitud.estatus = accion
 				oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
 				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
-				oSolicitud.autorizadoPor = request.user
+				oSolicitud.aprobadoRechazadoPor = request.user
 				oSolicitud.save()
 
-				#Crear prestamo en la maestra de prestamos
-				maestra = MaestraPrestamo()
+				#Crear prestamo en la maestra de prestamos si es APROBADO
+				if oSolicitud.estatus == 'A':
 
-				maestra.noPrestamo = MaestraPrestamo.objects.get_o_create('noPrestamo').latest().noPrestamo
-				maestra.noSolicitudPrestamo = oSolicitud
+					try:
+						maestra = MaestraPrestamo()
+						maestra.noPrestamo = MaestraPrestamo.objects.latest('noPrestamo').noPrestamo + 1
+					except MaestraPrestamo.DoesNotExist:
+						maestra.noPrestamo = 1
 
-				maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
-				maestra.socio = oSolicitud.socio
-				maestra.representante = oSolicitud.representante
-				maestra.oficial = oSolicitud.cobrador
-				# maestra.distrito = oSolicitud.distrito
-				maestra.montoInicial = oSolicitud.netoDesembolsar
-				maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
-				maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
-				maestra.pagoPrestamoAnterior = 0
-				maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-				maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-				maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
-				maestra.fechaDesembolso = oSolicitud.fechaParaDescuento
-				maestra.fechaEntrega = datetime.datetime.now()
-				# maestra.chequeNo
-				maestra.valorGarantizado = oSolicitud.valorGarantizado
-				maestra.userLog = request.user
+					maestra.noSolicitudPrestamo = oSolicitud
+					maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
+					maestra.socio = oSolicitud.socio
+					maestra.representante = oSolicitud.representante
+					maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
+					# maestra.distrito = oSolicitud.distrito
+					maestra.montoInicial = oSolicitud.netoDesembolsar
+					maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
+					maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
+					maestra.pagoPrestamoAnterior = 0
+					maestra.cantidadCuotas = oSolicitud.cantidadCuotas
+					maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+					maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+					maestra.valorGarantizado = oSolicitud.valorGarantizado
+					maestra.balance = oSolicitud.netoDesembolsar
+					maestra.userLog = request.user
 
-
-
-
+					maestra.save()
 
 			return HttpResponse(1)
 

@@ -4,17 +4,17 @@
 
 {% block content %}
 
-	<div class="TransferenciaInv">
+	<div class="TransferenciaInv" ng-controller="TransfInvCtrl">
 		
 		<div class="conteo-fisico">
 			
 			<!--CONTEO FISICO-->
 			<div class="sub-menu">	
-					Conteo Fisico
+					Transferencia entre almacenes
 				<a class="DownArrow" href="#"></a>
 			</div>
 
-			<section class="data-entry-section">
+			<section class="data-entry-section" ng-init="getAlmacen()">
 				<div class="data-entry-transf-header">
 					
 					<table class="data-entry-header-table">
@@ -28,12 +28,9 @@
 						<tr>
 							<td>Almacen</td>
 							<td>
-								<select name="almacen" id="almacen">
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-								</select>
+								<select name="almacen" id="almacen" ng-model="almacen" required>
+									<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+								</select>	
 							</td>
 							<td>Nota</td>
 							<td> <input type="text"> </td>
@@ -116,7 +113,5 @@
 		</div>
 		
 	</div>
-
-
 
 {% endblock content %}

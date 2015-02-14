@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %} Reporte de Entrada/Salida de Articulo(s) {% endblock title %}
+
+{% block content %}
+
+
+	<div class="InventarioEntradaSalida" ng-controller="RPTEntradaSalidaArticuloCtrl">
+
+		<!-- <mensajeerror> </mensajeerror> -->
+		<!-- <mensajeinfo> </mensajeinfo>				 -->
+		
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
+			</div>
+				<a href="#">Reporte de Entrada/Salida de Articulo</a>
+			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+		</div>
+
+		<section>
+			<div>
+				<ul>
+					<li>Fecha Desde: <input type="text" ng-model="fDesde" datepicker></li>
+					<li>Fecha Hasta: <input type="text" ng-model="fHasta" datepicker></li>
+					<li>Producto: <button ng-click="getProducto($event)"> </button>  </li>
+
+				</ul>
+				<button class="Boton boton-genera-reporte">Generar Reporte</button>
+				<productoSearch> </productoSearch>
+			</div>
+		</section>
+
+		
+	</div>
+
+{% endblock content %}

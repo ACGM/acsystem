@@ -290,3 +290,4 @@ class CuotasAhorrosEmpresa(models.Model):
 	fecha = models.DateField(auto_now=True, null=True)
 	nomina = models.DateField(null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+

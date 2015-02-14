@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from cuenta.models import Cuentas
-from administracion.models import Distrito
+from administracion.models import Localidad
 
 import datetime
 
@@ -48,7 +48,7 @@ class DesembolsoH(models.Model):
 	beneficiario = models.CharField(max_length=80)
 	fecha = models.DateField(auto_now=True)
 	fondo = models.ForeignKey(Fondo, null=True)
-	distrito = models.ForeignKey(Distrito, null=True)
+	localidad = models.ForeignKey(Localidad)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 	impreso = models.PositiveIntegerField(default=0, editable=False)
 	cheque = models.PositiveIntegerField(null=True, editable=False)

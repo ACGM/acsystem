@@ -3,7 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from administracion.models import Producto, Socio, CategoriaPrestamo
+from administracion.models import Producto, Socio, CategoriaPrestamo, Localidad
 from inventario.models import Existencia, Movimiento, Almacen
 
 import decimal
@@ -24,6 +24,8 @@ class Factura(models.Model):
 	socio = models.ForeignKey(Socio, null=True)
 	ordenCompra = models.PositiveIntegerField(null=True, blank=True)
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
+	localidad = models.ForeignKey(Localidad, null=True, blank=True)
+
 	impresa = models.PositiveIntegerField(default=0)
 
 	userLog = models.ForeignKey(User)
