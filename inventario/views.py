@@ -11,11 +11,11 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import InventarioH, InventarioD, Almacen, Existencia
+from .models import InventarioH, InventarioD, Almacen, Existencia, AjusteInventarioH, AjusteInventarioD
 from administracion.models import Suplidor, Producto
 
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
-							ExistenciaProductoSerializer
+							ExistenciaProductoSerializer, AjustesInventarioSerializer
 
 from acgm.views import LoginRequiredMixin
 
@@ -47,6 +47,13 @@ class RPTEntradaSalidaArticuloView(LoginRequiredMixin, TemplateView):
 class RPTExistenciaArticuloView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'rpt_ExistenciaArticulo.html'
+
+
+# Listado de Ajustes de inventario
+class ListadoAjustesInvView(viewsets.ModelViewSet):
+
+	queryset = AjusteInventarioH.objects.all().order_by('id')
+	serializer_class = AjustesInventarioSerializer
 
 
 # Listado de Entradas de inventario
@@ -187,6 +194,47 @@ class InventarioView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
+# Ajuste de Inventario
+class AjusteInvView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'ajusteInv.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			dataH = data['cabecera']
+			dataD = data['detalle']
+			fecha = data['fecha']
+
+			numero = dataH['numero']
+
+			if numero > 0:
+				ajusteH = AjusteInventarioH.objects.get(id = numero)
+			else:
+				ajusteH = AjusteInventarioH()
+
+			ajusteH.fecha = fecha
+			ajusteH.notaAjuste = dataH['notaAjuste']
+			ajusteH.usuario = User.objects.get(username=request.user.username)
+			ajusteH.save()
+
+			for item in dataD:
+				ajusteD = AjusteInventarioD()
+				ajusteD.ajusteInvH = ajusteH
+				ajusteD.producto = Producto.objects.get(codigo = item['codigo'])
+				ajusteD.almacen = Almacen.objects.get(id = item['almacen'] )
+				ajusteD.cantidadFisico = decimal.Decimal(item['cantidad'])
+				ajusteD.cantidadTeorico = decimal.Decimal(item['cantidadTeorico'])
+				ajusteD.save()
+
+			return HttpResponse('1')
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
 # Existencia de un producto en especifico
 class getExistenciaByProductoView(APIView):
 
@@ -202,7 +250,8 @@ class getExistenciaByProductoView(APIView):
 # Existencia productos (filtro: Almacen)
 class getExistenciaRPT(ListView):
 
-	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion','almacen__descripcion').annotate(total=Sum('cantidad'))
+	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion','almacen__descripcion')\
+										.annotate(total=Sum('cantidad')).order_by('producto__categoria__descripcion','producto__descripcion')
 	def get(self, request, *args, **kwargs):
 		
 		almacen = self.request.GET.get('almacen')

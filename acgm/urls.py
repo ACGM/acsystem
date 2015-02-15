@@ -7,8 +7,9 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
-from inventario.views import InventarioView, TransferenciaInvView, EntradaInventarioById, ImprimirEntradaInventarioView, \
-                                SalidaInventarioView, RPTEntradaSalidaArticuloView, RPTExistenciaArticuloView
+from inventario.views import InventarioView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
+                                ImprimirEntradaInventarioView, SalidaInventarioView, RPTEntradaSalidaArticuloView, \
+                                RPTExistenciaArticuloView, ListadoAjustesInvView
 
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 
@@ -96,6 +97,7 @@ router.register(r'notas_Conciliacion',NotasConsViewSet)
 #inventario
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
+router.register(r'ajustesInventario', ListadoAjustesInvView)
 router.register(r'producto', ProductoViewSet)
 
 #facturacion
@@ -127,7 +129,6 @@ urlpatterns = patterns('',
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
 
-
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),
@@ -140,13 +141,13 @@ urlpatterns = patterns('',
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
 
-    
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
     url(r'^inventario/salida/$', SalidaInventarioView.as_view(), name='Inventario_salida'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^inventario/ajuste/$', AjusteInvView.as_view(), name='AjusteInventario'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
-    url(r'^api/producto/existencia/(?P<codProd>[\w]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
+    url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
     #Inventario#Reportes

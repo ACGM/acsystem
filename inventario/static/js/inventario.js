@@ -19,6 +19,21 @@
         return deferred.promise;
       }
 
+      //Guardar Ajuste Inventario
+      function guardarAjusteInv(dataH, dataD, fecha) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/ajuste/', JSON.stringify({'cabecera': dataH, 'detalle': dataD, 'fecha': fecha})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
       //Llenar el listado de entradas de inventario
       function all() {
         var deferred = $q.defer();
@@ -188,7 +203,8 @@
         DocumentoById           : DocumentoById,
         getExistenciaByProducto : getExistenciaByProducto,
         SalidaInv               : SalidaInv,
-        allByTipo               : allByTipo
+        allByTipo               : allByTipo,
+        guardarAjusteInv        : guardarAjusteInv
       };
 
     }])
@@ -840,6 +856,113 @@
         });
       }      
 
-    }]);
+    }])
+
+  //****************************************************
+  //CONTROLLERS AJUSTE DE INVENTARIO                   *
+  //****************************************************
+  .controller('AjusteInvCtrl', ['$scope', '$filter', 'InventarioService', function ($scope, $filter, InventarioService) {
+
+    //Inicializacion de variablaes
+    $scope.tableProducto = false;
+    $scope.dataH = {};
+    $scope.dataD = [];
+    $scope.dataH.numero = 0;
+
+    $scope.mostrar = 'ocultar';
+
+    // Funcion para mostrar error por pantalla
+    $scope.mostrarError = function(error) {
+      $scope.errorMsg = error;
+      $scope.errorShow = true;
+    }
+
+    $scope.getAlmacen = function() {
+      InventarioService.almacenes().then(function (data) {
+        $scope.almacenes = data;
+      });
+    }     
+
+    //Traer productos
+    $scope.getProducto = function($event) {
+      $event.preventDefault();
+      var descrp = '';
+
+      if($event.type != 'click') {
+        descrp = $scope.producto;
+      }
+
+      InventarioService.productos(descrp).then(function (data) {
+
+        if(data.length > 0){
+          $scope.productos = data;
+
+          $scope.tableProducto = true;
+          $scope.productoNoExiste = '';
+        } else {
+          $scope.tableProducto = false;
+          $scope.productoNoExiste = 'No existe el producto'
+        }
+      });
+    }
+
+    //Agregar Producto
+    $scope.addProducto = function($event, Prod) {
+      $event.preventDefault();
+
+      if ($scope.almacen == undefined || $scope.almacen == '') {
+        $scope.mostrarError('Debe seleccionar un almacen');
+        throw "almacen";
+      }
+
+      InventarioService.getExistenciaByProducto(Prod.codigo, $scope.almacen).then(function (data) {
+        if(data.length > 0) {
+          Prod.cantidadTeorico = $filter('number')(data[0]['cantidad'], 2);
+        } else {
+          Prod.cantidadTeorico = 0;
+        }
+      });
+
+      Prod.cantidad = 0;
+      Prod.almacen = $scope.almacen;
+
+      $scope.dataD.push(Prod);
+      $scope.tableProducto = false;
+
+      // $scope.calculaTotales();
+    }
+
+   //Eliminar producto de la lista de entradas
+    $scope.delProducto = function($event, prod) {
+      $event.preventDefault();
+      
+      try {
+        $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
+
+        // $scope.calculaTotales();
+        
+      } catch (e) {
+        $scope.mostrarError(e);
+      }
+    }
+
+    //Guardar Ajuste de Inventario
+    $scope.guardarAjusteInv = function() {
+      var fechaP = $scope.dataH.fecha.split('/');
+      var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
+
+      if($scope.AjusteForm.$valid) {
+        InventarioService.guardarAjusteInv($scope.dataH, $scope.dataD, fechaFormatted).then(function (data) {
+          console.log(data);
+          if(data.length > 0) {
+            console.log(data);
+          }
+
+        });
+      }
+    }
+
+
+  }]);
 
 })(_);  

@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
 
 def menu(request):
+	loc = request.session.get('localidad')
 
-	pass
-	return {'valor': request.user}
+	return {'valor': request.user, 'localidad': loc}
 
 	# if request.user != 'AnonymousUser':
 

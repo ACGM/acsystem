@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %} Ajuste Inventario {% endblock title %}
+
+{% block content %}
+
+	<div class="AjusteInv" ng-controller="AjusteInvCtrl">
+		
+		<mensajeerror> </mensajeerror>
+
+		<div class="conteo-fisico">
+			
+			<div class="sub-menu">	
+				<div class="menu-entrada-inventario-listado">
+					<button class="nuevo icon-file" title="Nueva entrada de Ajuste de Inventario" ng-click="nuevaEntrada()"></button>
+				</div>
+				<a href="#" ng-click="toggleLEI()">Listado Ajustes de Inventario</a>
+				<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+			</div>
+
+			<section class="registrosPanel">
+				<figure class="fig-load [[mostrar]]">
+					<img class="img-load" src="/static/images/loading.gif" alt="">
+				</figure>
+				
+				<table class="listado-table-ei" id="table-ei-listado">
+					<tr class="listado-table-header-ei">
+						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()" > </td>
+						<td>Estatus</td>
+						<td>Numero</td>
+						<td>Fecha</td>
+						<td>Eliminar</td>
+					</tr>
+
+					<tr ng-repeat="ajuste in ajustes" ng-init="total=0">
+						<td class="icon-folder posteo-[[entrada.posteo]]"></td>
+						<td> <a href="#" class="sp-field" ng-click="DocFullById(ajuste.id, 'ajuste')"> [[ajuste.id | numberFixedLen: 8]] </a> </td>
+						<td>[[ajuste.fecha | date: 'dd/MM/yyyy']]</td>
+						<td>
+							<a href="#" class="icon-delete icon-eliminar"></a> 
+						</td>
+						
+					</tr>
+
+					<tr>
+						<td colspan="9"> Cantidad de Registros: [[entradas.length]]  </td>
+					</tr>								
+				</table>
+
+			</section>
+
+
+			<!--CONTEO FISICO-->
+			<div class="sub-menu">	
+					Ajuste de Inventario
+				<a class="DownArrow" href="#"></a>
+			</div>
+
+			<section class="data-entry-section" ng-init="getAlmacen()">
+				
+				<form name="AjusteForm" class="data-entry-transf-header" ng-submit="guardarAjusteInv()" novalidate>
+					
+					<table class="data-entry-header-table">
+						<tr>
+							<td>Numero</td>
+							<td> <input type="text" ng-model="dataH.numero" class="input-disabled" readonly> </td>
+							<td>Fecha</td>
+							<td> <input type="text" class="fecha-solicitud-field-t" ng-model="dataH.fecha" datepicker required> </td>
+						</tr>
+						<tr>
+							<td>Nota</td>
+							<td colspan="3">
+								<textarea name="" id="" cols="37" rows="3" ng-model="dataH.notaAjuste"></textarea>
+							 </td>
+						</tr>
+					</table>
+
+					<div class="prod-almacen-ajuste">
+						<div>
+							<span>Almacen</span>
+							<select name="almacen" id="almacen" class="field-choices" ng-model="almacen" required>
+								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+							</select>	
+						</div>
+						<div class="producto-find-ei">
+							<span>Producto</span>
+							<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei" select-on-click>
+							<!-- <a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a>  -->
+						</div>
+					</div>
+					<div class="content-productos">
+						<productosSearch> </productosSearch>
+					</div>
+					
+					<section class="productos-section-transf">
+						<table class="productos-table-transf">
+							<tr ng-if="dataD.length > 0 " class="productos-table-header-transf">
+								<td>Codigo</td>
+								<td>Descripcion</td>
+								<td>Almacen</td>
+								<td>Cantidad</td>
+								<td>Teorico</td>
+								<td>Diferencia</td>
+								<td>Eliminar</td>
+							</tr>
+							<tr class="productos-table-detail" ng-repeat="item in dataD">
+								<td>[[item.codigo]]</td>
+								<td>[[item.descripcion]]</td>
+								<td>[[item.almacen]]</td>
+								<td><input type="text" ng-model="item.cantidad" class="text-field-num-table" select-on-click></td>
+								<td><input type="text" ng-model="item.cantidadTeorico" class="text-field-num-table" readonly></td>
+								<td>[[item.cantidad - item.cantidadTeorico | number : 2]]</td>
+								<td><a class="icon-delete icon-eliminar" href="#" ng-click="delProducto($event, item)"></a></td>
+							</tr>		
+				
+						</table>
+
+						<button class="icon-save Boton boton-guarda-transf" type="submit">Guardar</button>
+					</section>
+
+				</form>
+
+			</section>
+
+		</div>
+		
+	</div>
+
+{% endblock content %}

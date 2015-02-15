@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Almacen, InventarioH, InventarioD, Movimiento, Existencia
+from .models import Almacen, InventarioH, InventarioD, Movimiento, Existencia, AjusteInventarioH, AjusteInventarioD
+
 
 @admin.register(InventarioH)
 class InventarioHAdmin(admin.ModelAdmin):
@@ -19,6 +20,14 @@ class ExistenciaAdmin(admin.ModelAdmin):
 @admin.register(Almacen)
 class AlmacenAdmin(admin.ModelAdmin):
 	list_display = ['id', 'descripcion']
+
+@admin.register(AjusteInventarioH)
+class AjusteInventarioHAdmin(admin.ModelAdmin):
+	list_display = ('id','fecha', 'notaAjuste')
+
+@admin.register(AjusteInventarioD)
+class AjusteInventarioDAdmin(admin.ModelAdmin):
+	list_display = ('ajusteInvH', 'producto', 'almacen', 'cantidadFisico', 'cantidadTeorico')
 	
 admin.site.register(Movimiento)
 

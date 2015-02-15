@@ -1325,6 +1325,7 @@ footer
 	margin .4em 0 0 0
 	height 10em
 	overflow scroll
+	background verdeMuySuave
 
 .content-categorias-productos
 	margin 0
@@ -1343,9 +1344,9 @@ footer
 .content-productos
 	padding 0
 	margin 0 0 0 1em
-
+	
 .categoria-producto
-	padding .4em 0 0 0
+	padding .4em 0 0 .3em
 	background lightgray
 	list-style none
 	font-size 1.1em
@@ -1370,7 +1371,7 @@ footer
 		width 40em
 	&-3
 		float left
-		padding .2em 0 .2em .2em
+		padding .2em
 		width 10em
 		text-align right
 
@@ -1391,12 +1392,23 @@ footer
 		padding .2em 0 .2em .2em
 		width 40em
 	&-3
-		padding .2em 0 .2em .2em
+		padding .2em
 		float left
 		width 10em
 		text-align right
 
-			
+//Para Ajuste de inventario
+.prod-almacen-ajuste
+	display inline-block
+	margin-top 1em
+	& div
+		display block
+		margin-right 1em
+
+.content-productos
+	width 85%
+	position relative
+	
 //MODULO DE FACTURACION
 	
 .listado-table-header-f

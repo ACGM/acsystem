@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Existencia, InventarioH, InventarioD, Almacen
+from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH
 from administracion.models import Suplidor
 
 # Listado de Entradas de Inventario
@@ -30,6 +30,14 @@ class AlmacenesSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Almacen
+
+
+# Ajustes de Inventario
+class AjustesInventarioSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = AjusteInventarioH
+		fields = ('id', 'fecha', 'estatus', 'usuario')
 
 
 # Existencia de Producto

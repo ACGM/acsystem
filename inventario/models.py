@@ -113,11 +113,9 @@ class InventarioD(models.Model):
 			exist.cantidadAnterior = exist.cantidad
 						
 			if self.tipoAccion == 'S':
-				# exist.cantidad -= decimal.Decimal(self.cantidadTeorico)
-				exist.cantidad = 100
+				exist.cantidad -= decimal.Decimal(self.cantidadTeorico)
 			else:
-				# exist.cantidad = decimal.Decimal(exist.cantidad) + decimal.Decimal(self.cantidadTeorico)
-				exist.cantidad = 100
+				exist.cantidad = decimal.Decimal(exist.cantidad) + decimal.Decimal(self.cantidadTeorico)
 
 			exist.save()
 
@@ -204,3 +202,36 @@ class Existencia(models.Model):
 	class Meta:
 		ordering = ['producto']
 		unique_together = ('producto','almacen')
+
+
+#Ajuste de Inventario Cabecera
+class AjusteInventarioH(models.Model):
+
+	fecha = models.DateField()
+	notaAjuste = models.CharField(max_length=200, blank=True, null=True)
+	estatus = models.CharField(max_length=1, default='E') #E = En proceso, P = Procesado
+	
+	usuario = models.ForeignKey(User)
+	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return '%s' % (self.id)
+
+	class Meta:
+		ordering = ('id',)
+
+#Ajuste de Inventario Detalle
+class AjusteInventarioD(models.Model):
+
+	ajusteInvH = models.ForeignKey(AjusteInventarioH)
+	producto = models.ForeignKey(Producto)
+	almacen = models.ForeignKey(Almacen)
+	cantidadFisico = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+	cantidadTeorico = models.DecimalField(max_digits=12, decimal_places=2, blank=True)
+
+	@property
+	def diferencia(self):
+		return self.cantidadFisico - self.cantidadTeorico
+
+	def __unicode__(self):
+		return '%s = %s' % (self.producto, (self.cantidadFisico - self.cantidadTeorico))
