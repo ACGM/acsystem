@@ -89,7 +89,7 @@
 				getRetiroSocio: getRetiroSocio,
 				getAhorroSocio: getAhorroSocio,
 				getAhorroById: getAhorroById,
-				setAhorroReg: setAhorroReg,
+				setAhorroReg: setAhorroReg
 			};
 		}])
 		
@@ -182,7 +182,6 @@
                        
                         return data.id==Id;
                     });
-                    debugger;
                     console.log($scope.MaestraDetalle);
 						}
 				catch (ex){

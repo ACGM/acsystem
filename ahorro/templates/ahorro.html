@@ -24,20 +24,20 @@
 			</section>
 
 			<section class="Ahorro-main-list">
-					<div class="registroPanel">
-						<table id='tabla-ahorros' class='listado-table-ei'>
-							<tr class="listado-table-header-ei">
+					<div class="registrosPanel">
+						<table id='tabla-ahorros' class='listado-table'>
+							<tr class="listado-table-nc-header">
 								<th>Registro</th>
 								<th>Socio</th>
 								<th>Balance</th>
 								<th>Disponible</th>
 								<th>Imprimir</th>
 							</tr>
-							<tr ng-repeat="ahorro in AhorrosPorSocio" class="listado-facturas-detail">
-								<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-noDecoration utils-alingTCenter'>[[ahorro.id]] </a></td>
+							<tr ng-repeat="ahorro in AhorrosPorSocio" class="listado-sp-detail">
+								<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-noDecoration utils-alingTCenter'>[[ahorroid]] </a></td>
 								<td>[[ahorro.socio]] </td>
-								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.balance]]</td>
-								<td class="utils-alingTRight utils-numberRowFormat"> [[ahorro.disponible]] </td>
+								<td class="utils-alingTRight"> [[ahorro.balance]]</td>
+								<td class="utils-alingTRight"> [[ahorro.disponible]] </td>
 								<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer" ng-click="setAhorro()"></a></td>
 							</tr>
 							

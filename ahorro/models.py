@@ -25,7 +25,7 @@ class AhorroSocio(models.Model):
 
 
     def __unicode__(self):
-        return '%s' % (str(self.pk))
+        return '%s-%s' % (str(self.pk), self.socio.nombreCompleto)
 
 
 # Retiros de ahorro
