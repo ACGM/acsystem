@@ -11,11 +11,13 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import InventarioH, InventarioD, Almacen, Existencia, AjusteInventarioH, AjusteInventarioD
+from .models import InventarioH, InventarioD, Almacen, Existencia, AjusteInventarioH, AjusteInventarioD, \
+					TransferenciasAlmacenes
+
 from administracion.models import Suplidor, Producto
 
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
-							ExistenciaProductoSerializer, AjustesInventarioSerializer
+							ExistenciaProductoSerializer, AjustesInventarioSerializer, TransferenciasAlmacenesSerializer
 
 from acgm.views import LoginRequiredMixin
 
@@ -23,12 +25,6 @@ import json
 import math
 import decimal
 import datetime
-
-
-# Transferencia de Inventario
-class TransferenciaInvView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'transferenciainv.html'
 
 
 # Imprimir Entrada de Inventario
@@ -49,11 +45,24 @@ class RPTExistenciaArticuloView(LoginRequiredMixin, TemplateView):
 	template_name = 'rpt_ExistenciaArticulo.html'
 
 
+# Reporte Ajuste de Inventario
+class RPTAjusteInventarioView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_AjusteInv.html'
+
+
 # Listado de Ajustes de inventario
 class ListadoAjustesInvView(viewsets.ModelViewSet):
 
-	queryset = AjusteInventarioH.objects.all().order_by('id')
+	queryset = AjusteInventarioH.objects.all().order_by('-id')
 	serializer_class = AjustesInventarioSerializer
+
+
+# Listado de Ajustes de inventario
+class ListadoTransfInvView(viewsets.ModelViewSet):
+
+	queryset = TransferenciasAlmacenes.objects.all().order_by('-id')
+	serializer_class = TransferenciasAlmacenesSerializer
 
 
 # Listado de Entradas de inventario
@@ -70,7 +79,9 @@ class ListadoAlmacenesView(viewsets.ModelViewSet):
 	serializer_class = AlmacenesSerializer
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
 # Retornar un documento con todo su detalle 
+# # # # # # # # # # # # # # # # # # # # # # #
 class EntradaInventarioById(LoginRequiredMixin, ListView):
 
 	queryset = InventarioH.objects.all()
@@ -126,6 +137,51 @@ class EntradaInventarioById(LoginRequiredMixin, ListView):
 		return JsonResponse(data, safe=False)
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Retornar un ajuste de inventario con todo su detalle
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+class AjusteInventarioById(LoginRequiredMixin, ListView):
+
+	queryset = AjusteInventarioH.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoDoc = self.request.GET.get('numero')
+		
+		self.object_list = self.get_queryset().filter(id=NoDoc)
+
+		format = self.request.GET.get('format')
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for ajuste in self.object_list:
+			data.append({
+				'id': ajuste.id,
+				'fecha': ajuste.fecha,
+				'notaAjuste': ajuste.notaAjuste,
+				'estatus': ajuste.estatus,
+				'usuario': ajuste.usuario.username,
+				'datetimeServer': ajuste.datetimeServer,
+				'productos': [ 
+					{	'codigo': ajusteD.producto.codigo,
+						'descripcion': ajusteD.producto.descripcion,
+						'unidad': ajusteD.producto.unidad.descripcion,
+						'almacen': ajusteD.almacen.id,
+						'almacenDescrp': ajusteD.almacen.descripcion,
+						'cantidad': ajusteD.cantidadFisico,
+						'cantidadTeorico': ajusteD.cantidadTeorico,
+					} 
+					for ajusteD in AjusteInventarioD.objects.filter(ajusteInvH=ajuste.id)]
+				})
+
+		return JsonResponse(data, safe=False)
+
+
 # Eliminar producto del inventario
 def quitar_producto(self, idProd, iCantidad, iAlmacen):
 	try:
@@ -137,7 +193,9 @@ def quitar_producto(self, idProd, iCantidad, iAlmacen):
 		return HttpResponse('No hay existencia para el producto ' + str(idProd))
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
 # Entrada de Inventario
+# # # # # # # # # # # # # # # # # # # # # # #
 class InventarioView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'inventario.html'
@@ -178,7 +236,6 @@ class InventarioView(LoginRequiredMixin, TemplateView):
 			invH.userLog = usuario
 			invH.save()
 
-
 			for item in dataD:
 				invD = InventarioD()
 				invD.inventario = invH
@@ -194,7 +251,62 @@ class InventarioView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
+# Transferencia de Inventario
+# # # # # # # # # # # # # # # # # # # # # # #
+class TransferenciaInvView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'transferenciainv.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			almacenOrigen = data['almacenOrigen']
+			almacenDestino = data['almacenDestino']
+			producto = data['producto']
+			cantidadTransferir = data['cantidadTransferir']
+
+			# Restar al almacen ORIGEN
+			existOrigen = Existencia.objects.get(producto__codigo=producto, almacen__id=almacenOrigen)
+			existOrigen.cantidadAnterior = existOrigen.cantidad
+			existOrigen.cantidad = existOrigen.cantidad - decimal.Decimal(cantidadTransferir)
+			existOrigen.save()
+
+			# Sumar al almacen DESTINO
+			try:				
+				existDestino = Existencia.objects.get(producto__codigo=producto, almacen__id=almacenDestino)
+				existDestino.cantidadAnterior = existDestino.cantidad
+				existDestino.cantidad = existDestino.cantidad + decimal.Decimal(cantidadTransferir)
+				
+			except Existencia.DoesNotExist:
+				existDestino = Existencia()
+				existDestino.producto = Producto.objects.get(codigo=producto)
+				existDestino.almacen = Almacen.objects.get(id=almacenDestino)
+				existDestino.cantidadAnterior = 0
+				existDestino.cantidad = decimal.Decimal(cantidadTransferir)
+
+			existDestino.save()
+
+			# Registrar transferencia en la tabla de transferenciasAlmacenes
+			transf = TransferenciasAlmacenes()
+			transf.desdeAlmacen = Almacen.objects.get(id=almacenOrigen)
+			transf.hastaAlmacen = Almacen.objects.get(id=almacenDestino)
+			transf.producto = Producto.objects.get(codigo=producto)
+			transf.cantidad = cantidadTransferir
+			transf.userLog = User.objects.get(username=request.user.username)
+			transf.save()
+
+			return HttpResponse('1')
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
 # Ajuste de Inventario
+# # # # # # # # # # # # # # # # # # # # # # #
 class AjusteInvView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'ajusteInv.html'
@@ -212,6 +324,7 @@ class AjusteInvView(LoginRequiredMixin, TemplateView):
 
 			if numero > 0:
 				ajusteH = AjusteInventarioH.objects.get(id = numero)
+				ajusteD = AjusteInventarioD.objects.filter(ajusteInvH=ajusteH).delete()
 			else:
 				ajusteH = AjusteInventarioH()
 
@@ -235,7 +348,9 @@ class AjusteInvView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
 # Existencia de un producto en especifico
+# # # # # # # # # # # # # # # # # # # # # # #
 class getExistenciaByProductoView(APIView):
 
 	serializer_class = ExistenciaProductoSerializer
@@ -247,11 +362,13 @@ class getExistenciaByProductoView(APIView):
 		return Response(response.data)
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
 # Existencia productos (filtro: Almacen)
+# # # # # # # # # # # # # # # # # # # # # # #
 class getExistenciaRPT(ListView):
 
-	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion','almacen__descripcion')\
-										.annotate(total=Sum('cantidad')).order_by('producto__categoria__descripcion','producto__descripcion')
+	queryset = Existencia.objects.all().values('producto__descripcion','producto__codigo','producto__categoria__descripcion')\
+										.annotate(totalCantidad=Sum('cantidad'),totalCosto=Sum('producto__costo')).order_by('producto__categoria__descripcion','producto__descripcion')
 	def get(self, request, *args, **kwargs):
 		
 		almacen = self.request.GET.get('almacen')
@@ -303,14 +420,16 @@ class getExistenciaRPT(ListView):
 				'categoria': existencia['producto__categoria__descripcion'],
 				'codigo': existencia['producto__codigo'],
 				'producto': existencia['producto__descripcion'],
-				'almacen': existencia['almacen__descripcion'] if existencia['almacen__descripcion'] != None else '',
-				'total': existencia['total'],
+				'totalCantidad': existencia['totalCantidad'],
+				'totalCosto': existencia['totalCosto'],
 				})
 
 		return JsonResponse(data, safe=False)
 
 
+# # # # # # # # # # # # # # # # # # # # # # #
 # Salida de Inventario
+# # # # # # # # # # # # # # # # # # # # # # #
 class SalidaInventarioView(TemplateView):
 
 	template_name = 'inventario.html'

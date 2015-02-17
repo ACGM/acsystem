@@ -291,7 +291,10 @@ footer
 
 .posteo-S
 	color green
-	
+
+.quitar-borde
+	border none !important
+	outline none !important
 
 .input-no-editable //CLASE para darle apariencia de no editable a un campo de texto
 	background lightgray
@@ -1339,7 +1342,7 @@ footer
 	
 
 .caja-productos
-	margin-top 1em
+	margin 1em 0 3em 0
 	
 .content-productos
 	padding 0
@@ -1351,7 +1354,7 @@ footer
 	list-style none
 	font-size 1.1em
 	font-weight bold
-	width 52em
+	width 71em
 
 .content-productos-header
 	display block
@@ -1406,9 +1409,124 @@ footer
 		margin-right 1em
 
 .content-productos
-	width 85%
+	width 95%
 	position relative
+
+.listado-ajustes
+	height 15em
+	overflow scroll
+	border 1px solid lightgray
+	margin-bottom 1em
+	maring-left 1em
+	margin-top .3em
+	padding-right 1.5em
+	position relative
+	left 1em
+	width 30%
+
+.acciones-ajuste-inventario
+	position relative
+	& button
+		&:last-child
+			margin-left 2em
+
+//Para Transferencia entre almacenes
+.ul-almacen-transf
+	display inline-block
+	list-style none
+	margin 0 0 1em 0
+	padding 0
 	
+	& li
+		float left
+		padding 0 .5em
+		
+.table-transferencia
+	// position relative
+	
+.transf-almacenes-header
+	& td
+		background verdeMuySuave
+		border 2px solid verde
+		padding 0
+		margin 0
+
+.transf-almacenes-detail
+	& td
+		padding 0
+		margin 0
+		text-align left
+		// border 1px solid black
+		
+		&:nth-child(1) //CODIGO DEL PRODUCTO
+			padding 0
+			margin 0
+			& input[type='text']
+				background lightgray
+				padding .29em
+				width 5em
+				margin 0
+				
+		&:nth-child(2) //PRODUCTO 
+			padding 0
+			margin 0
+			& input[type='text']
+				background amarillo
+				color verde
+				font-weight bold
+				padding .29em
+				width 22em
+				margin 0
+				
+		&:nth-child(3), //Existencia Origen
+		&:nth-child(4) //Existencia Destino
+			& input[type='text']
+				background verdeSuave
+				padding .29em
+				text-align right
+				font-size 1.1em
+				font-weight bold
+				font-family "verdana"
+				width 7em
+
+.cantidad-transferir
+	margin 2em 0 2em 1em
+	position relative
+
+.cantidad-transf-field
+	border 2px solid verdeClarito
+	padding .2em
+	border-radius 7px 7px 7px 7px
+	background amarillo
+	outline none
+	color mamey
+	font-size 1.7em
+	margin 0
+	text-align right
+	
+	
+.boton-transf-cantidad
+	height 3em
+	width 8em
+	left 19em
+	position absolute
+
+.contenedor-productos
+	width 44%	
+	position relative
+
+.productos-section-transf
+	margin 0 0 0 1em
+
+.productos-table-detail-transf
+	& td
+		border 1px solid black
+		padding .2em
+		
+		&:last-child
+			text-align right
+			font-weight bold
+
 //MODULO DE FACTURACION
 	
 .listado-table-header-f

@@ -9,7 +9,8 @@ from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, g
 
 from inventario.views import InventarioView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, SalidaInventarioView, RPTEntradaSalidaArticuloView, \
-                                RPTExistenciaArticuloView, ListadoAjustesInvView
+                                RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
+                                ListadoTransfInvView, RPTAjusteInventarioView
 
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 
@@ -24,7 +25,7 @@ from cuenta.views import CuentasView
 
 #ViewSets (API)
 from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
+# from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet,\
                                 ListadoCategoriasPrestamosViewSet
@@ -33,7 +34,7 @@ from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewS
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
-from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
+# from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -67,9 +68,9 @@ router.register(r'diario', DiarioViewSet)
 router.register(r'tipoDocDiario',TipoDocViewSet)
 
 #CXP
-router.register(r'ordenCompra',OrdenViewSet)
-router.register(r'detalleOrder',DetalleOrderViewSet)
-router.register(r'CxpSuperCoop',CxpSuperViewSet)
+# router.register(r'ordenCompra',OrdenViewSet)
+# router.register(r'detalleOrder',DetalleOrderViewSet)
+# router.register(r'CxpSuperCoop',CxpSuperViewSet)
 
 #ahorro
 router.register(r'MaestraAhorros',MaestraAhorroViewSet)
@@ -98,6 +99,7 @@ router.register(r'notas_Conciliacion',NotasConsViewSet)
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'ajustesInventario', ListadoAjustesInvView)
+router.register(r'transfAlmacenes', ListadoTransfInvView)
 router.register(r'producto', ProductoViewSet)
 
 #facturacion
@@ -146,6 +148,7 @@ urlpatterns = patterns('',
     url(r'^inventario/salida/$', SalidaInventarioView.as_view(), name='Inventario_salida'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^inventario/ajuste/$', AjusteInvView.as_view(), name='AjusteInventario'),
+    url(r'^inventario/ajustejson/$', AjusteInventarioById.as_view(), name='AjusteInventarioById'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
@@ -153,6 +156,10 @@ urlpatterns = patterns('',
     #Inventario#Reportes
     url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+    
+    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
+    url(r'^inventario/reportes/conteoFisico/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_conteoFisico'),
+    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'),
 
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
 

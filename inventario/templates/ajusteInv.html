@@ -11,40 +11,32 @@
 		<div class="conteo-fisico">
 			
 			<div class="sub-menu">	
-				<div class="menu-entrada-inventario-listado">
-					<button class="nuevo icon-file" title="Nueva entrada de Ajuste de Inventario" ng-click="nuevaEntrada()"></button>
-				</div>
-				<a href="#" ng-click="toggleLEI()">Listado Ajustes de Inventario</a>
-				<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+				
+				<a href="#" ng-click="toggleLAI()">Listado Ajustes de Inventario</a>
+				<a class="[[ArrowLAI]]" href="#" ng-click="toggleLAI()"></a>
 			</div>
 
-			<section class="registrosPanel">
+			<section class="listado-ajustes" ng-init="ListadoAjustes()">
 				<figure class="fig-load [[mostrar]]">
 					<img class="img-load" src="/static/images/loading.gif" alt="">
 				</figure>
 				
 				<table class="listado-table-ei" id="table-ei-listado">
 					<tr class="listado-table-header-ei">
-						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()" > </td>
 						<td>Estatus</td>
 						<td>Numero</td>
 						<td>Fecha</td>
 						<td>Eliminar</td>
 					</tr>
 
-					<tr ng-repeat="ajuste in ajustes" ng-init="total=0">
+					<tr ng-repeat="ajuste in ajustes" class="productos-table-detail" ng-init="total=0">
 						<td class="icon-folder posteo-[[entrada.posteo]]"></td>
-						<td> <a href="#" class="sp-field" ng-click="DocFullById(ajuste.id, 'ajuste')"> [[ajuste.id | numberFixedLen: 8]] </a> </td>
+						<td> <a href="#" class="sp-field" ng-click="DocFullById(ajuste.id)"> [[ajuste.id | numberFixedLen: 8]] </a> </td>
 						<td>[[ajuste.fecha | date: 'dd/MM/yyyy']]</td>
 						<td>
 							<a href="#" class="icon-delete icon-eliminar"></a> 
 						</td>
-						
 					</tr>
-
-					<tr>
-						<td colspan="9"> Cantidad de Registros: [[entradas.length]]  </td>
-					</tr>								
 				</table>
 
 			</section>
@@ -53,11 +45,9 @@
 			<!--CONTEO FISICO-->
 			<div class="sub-menu">	
 					Ajuste de Inventario
-				<a class="DownArrow" href="#"></a>
 			</div>
 
 			<section class="data-entry-section" ng-init="getAlmacen()">
-				
 				<form name="AjusteForm" class="data-entry-transf-header" ng-submit="guardarAjusteInv()" novalidate>
 					
 					<table class="data-entry-header-table">
@@ -78,7 +68,7 @@
 					<div class="prod-almacen-ajuste">
 						<div>
 							<span>Almacen</span>
-							<select name="almacen" id="almacen" class="field-choices" ng-model="almacen" required>
+							<select name="almacen" id="almacen" class="field-choices" ng-model="almacen">
 								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
 							</select>	
 						</div>
@@ -107,16 +97,19 @@
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
 								<td>[[item.almacen]]</td>
-								<td><input type="text" ng-model="item.cantidad" class="text-field-num-table" select-on-click></td>
+								<td><input type="text" ng-model="item.cantidad" class="text-field-num-table" select-on-click required></td>
 								<td><input type="text" ng-model="item.cantidadTeorico" class="text-field-num-table" readonly></td>
 								<td>[[item.cantidad - item.cantidadTeorico | number : 2]]</td>
 								<td><a class="icon-delete icon-eliminar" href="#" ng-click="delProducto($event, item)"></a></td>
 							</tr>		
 				
 						</table>
-
-						<button class="icon-save Boton boton-guarda-transf" type="submit">Guardar</button>
 					</section>
+					
+					<div class="acciones-ajuste-inventario">
+						<button class="icon-save Boton boton-guarda-transf" type="submit">Guardar</button>
+						<button class="icon-file Boton boton-guarda-transf" ng-click="clearFields($event)">Nuevo</button>
+					</div>
 
 				</form>
 

@@ -150,7 +150,7 @@ class TransferenciasAlmacenes(models.Model):
 	hastaAlmacen = models.ForeignKey(Almacen, related_name='+')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	producto = models.ForeignKey(Producto)
-	fechaTransf = models.DateField()
+	fechaTransf = models.DateField(auto_now_add=True)
 	userLog = models.ForeignKey(User)
 
 	def __unicode__(self):
