@@ -18,14 +18,10 @@ class ConceptoDesembolsoAdmin(admin.ModelAdmin):
 		obj.save()
 
 
-@admin.register(DesembolsoD)
-class DesembolsoDAdmin(admin.ModelAdmin):
-	list_display = ['id','desembolso', 'concepto', 'monto']
-	list_editable = ('desembolso', 'concepto', 'monto')
-
 class DesembolsoDInline(admin.StackedInline):
 	model = DesembolsoD
 	extra = 2
+
 
 @admin.register(DesembolsoH)
 class DesembolsoHAdmin(admin.ModelAdmin):

@@ -65,7 +65,7 @@ class EmpleadoCoop(models.Model):
 	tipoCobro = models.CharField("Tipo de Cobro", max_length=1, choices=tipo_empleado_choices, default='Q')
 	tipoPago = models.CharField("Tipo de Pago", max_length=1, choices=tipo_pago_choices, default='B')
 	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=18, decimal_places=2)
-	sueldoAnterior = models.DecimalField("Sueldo Anterior", max_digits=18, decimal_places=2, blank=True)
+	sueldoAnterior = models.DecimalField("Sueldo Anterior", max_digits=18, decimal_places=2, blank=True, null=True)
 	activo = models.BooleanField(default=True)
 	fechaSalida = models.DateField("Fecha de Salida", null=True, blank=True)
 
@@ -232,15 +232,16 @@ class NominaCoopD(models.Model):
 
 	nomina = models.ForeignKey(NominaCoopH)
 	empleado = models.ForeignKey(EmpleadoCoop)
-	salario = models.DecimalField(max_digits=18, decimal_places=2)
-	isr = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	afp = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	ars = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	cafeteria = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	vacaciones = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	otrosIngresos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0)
-	descAhorros = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
-	descPrestamos = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
+	salario = models.DecimalField(max_digits=12, decimal_places=2)
+	isr = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	afp = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	ars = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	cafeteria = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	vacaciones = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	otrosIngresos = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	horasExtras = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
+	descAhorros = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
+	descPrestamos = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0) #Este actualizado a traves del proceso especial
 	tipoPago = models.CharField(max_length=1, choices=tipo_pago_choices, default='B')
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 

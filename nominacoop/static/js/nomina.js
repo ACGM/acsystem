@@ -183,8 +183,13 @@
             }
 
             NominaService.generaNomina(fechaFormatted,tipo,quincena,nota).then(function (data) {
+              console.log(data);
               if(data == -1) {
                 $scope.mostrarError("Existe una nomina generada en la fecha que ha seleccionado.");
+                throw data;
+              }
+              if(isNaN(data)) {
+                $scope.mostrarError(data);
                 throw data;
               }
               $scope.getNominasGeneradas();
@@ -198,9 +203,7 @@
 
           } else {
             throw "Verifique que ha completado toda la información requerida.";
-
           }
-
         } catch (e) {
           $scope.mostrarError(e);
         }
@@ -262,6 +265,7 @@
           $scope.empleado.descPrestamos = $filter('number')(data[0].descPrestamos,2);
           $scope.empleado.descAhorros = $filter('number')(data[0].descAhorros,2);
           $scope.empleado.cafeteria = $filter('number')(data[0].cafeteria,2);
+          $scope.empleado.horasExtras = $filter('number')(data[0].horasExtras,2);
 
           $scope.empleado.codigo = data[0]['getcodigo'];
           $scope.empleado.empleado = data[0]['empleado'];

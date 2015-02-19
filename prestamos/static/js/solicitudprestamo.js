@@ -479,8 +479,8 @@
 
         $scope.solicitud.categoriaPrestamoId = cp.id;
         $scope.solicitud.categoriaPrestamo = cp.descripcion;
-        $scope.solicitud.tasaInteresAnual = cp.interesAnualSocio;
-        $scope.solicitud.tasaInteresMensual = cp.interesAnualSocio / 12;
+        $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
+        $scope.solicitud.tasaInteresMensual = $filter('number')(cp.interesAnualSocio / 12, 2);
         $scope.showCP = false;
       }
 

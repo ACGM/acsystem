@@ -529,6 +529,116 @@ footer
 	&:before
 		font-size 4.5em
 
+//Para Mensaje INFO
+.fondo-opaco
+	position absolute
+	left 0
+	right 0
+	top 0
+	bottom 0
+	background black
+	opacity .6
+	z-index 999
+	
+.cssSlideUpInfo
+	background verdeMuySuave
+	border-bottom 3px solid verde
+	color verdeMuyOscuro
+	height 30em
+	left 0
+	overflow hidden
+	padding .3em 0 0 .3em
+	position fixed
+	right 0
+	top 0
+	transition .3s linear all
+	z-index 9999
+	overflow scroll
+	opacity .989
+	
+	& span
+		float left
+	
+	&.ng-hide
+		height 0
+
+.content-cuentas-posteo
+	display inline-block
+	
+.section-agregar-cuenta
+	display inline-block
+	margin 1.5em 0 0 1em
+	position relative
+	
+.posteo-cuenta-agregar
+	list-style none
+	display inline-block
+	margin 0
+	
+	& li
+		float left
+		padding-right .4em
+	
+.boton-agregar-cuenta-posteo
+	position relative
+	top -.5em
+	padding 0 2em
+	margin-left 1em
+	height 2.6em
+			
+.codigo-cuenta-posteo
+	color verdeMuyOscuro
+	font-size 1.2em
+	width 9em
+	
+.descrp-cuenta-posteo
+	color verdeMuyOscuro
+	font-size 1.2em
+	width 20em	
+	
+.table-posteo-cuentas
+	border 2px solid verde
+	margin 0 0 0 4em
+	padding 1em
+	height 15em
+	overflow scroll
+	
+.table-posteo-cuentas-header
+	& td
+		border 2px solid verdeClarito
+		background verde
+		color verdeMuySuave
+		font-size 1.2em
+		padding .2em .4em
+
+.table-posteo-cuentas-detail
+	& td
+		border 1px solid verdeClarito
+		padding .2em
+		font-size 1.2em
+		
+		&:nth-child(4), //DEBITO
+		&:nth-child(5) //CREDITO
+			text-align right
+			color mamey
+			font-weight bold
+			font-size 1.5em
+		
+		&:nth-child(6) //QUITAR
+			text-align center
+			font-size 1.7em
+			
+
+.accion-posteo
+	margin 1em 0 0 4em
+
+.boton-llevar-contab
+	height 3em
+	padding 0 .8em
+	font-size 1.3em
+	
+//FIN mensaje Info
+
 .fig-load
 	position absolute
 	top 7em
@@ -1339,14 +1449,15 @@ footer
 		color verdeMuyOscuro
 		width 17em
 		padding .2em
-	
 
 .caja-productos
 	margin 1em 0 3em 0
 	
-.content-productos
-	padding 0
+.content-productos-exist
 	margin 0 0 0 1em
+	padding 0
+	position relative
+	width 95%
 	
 .categoria-producto
 	padding .4em 0 0 .3em
@@ -1354,7 +1465,7 @@ footer
 	list-style none
 	font-size 1.1em
 	font-weight bold
-	width 71em
+	width 56.5em
 
 .content-productos-header
 	display block
@@ -1371,11 +1482,11 @@ footer
 	&-2
 		float left
 		padding .2em 0 .2em .2em
-		width 40em
+		width 30em
 	&-3
 		float left
 		padding .2em
-		width 10em
+		width 8em
 		text-align right
 
 .content-productos-detail
@@ -1393,11 +1504,11 @@ footer
 	&-2
 		float left
 		padding .2em 0 .2em .2em
-		width 40em
+		width 30em
 	&-3
 		padding .2em
 		float left
-		width 10em
+		width 8em
 		text-align right
 
 //Para Ajuste de inventario
@@ -1407,10 +1518,6 @@ footer
 	& div
 		display block
 		margin-right 1em
-
-.content-productos
-	width 95%
-	position relative
 
 .listado-ajustes
 	height 15em
@@ -1539,7 +1646,6 @@ footer
 		border 1px solid black
 		padding .16em .4em
 		
-
 .listado-reg-facturas
 	margin 1em 1em 0 1em
 	display inline-block
@@ -1555,8 +1661,8 @@ footer
 			padding-left .2em
 		&:nth-child(4)
 			width 3em
-		&:nth-child(5)
-			width 3.6em
+		&:nth-child(5) //ORDEN C.
+			width 4.9em
 		&:nth-child(6),&:nth-child(8)
 			text-align right
 			padding 0 .3em

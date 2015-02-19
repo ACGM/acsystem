@@ -4,7 +4,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 #Vistas 
-from fondoscajas.views import DesembolsoView, DesembolsoByCheque
+from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
 from inventario.views import InventarioView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
@@ -134,6 +134,9 @@ urlpatterns = patterns('',
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),
+    #Fondos de Cajas (Desembolsos) # Imprimir
+    url(r'^desembolso/print/(?P<desembolso>[\d]+)/$', ImprimirDesembolsoView.as_view(), name='desembolso_print'),
+
     
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),

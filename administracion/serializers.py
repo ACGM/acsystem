@@ -59,7 +59,7 @@ class ListadoCategoriaPrestamoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = CategoriaPrestamo
-		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio', 'interesAnualEmpleado', 'interesAnualDirectivo')
+		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio')
 		ordering = ('id',)
 
 

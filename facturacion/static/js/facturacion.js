@@ -659,7 +659,7 @@
         }  
       }
 
-        //Imprimir factura
+      //Imprimir factura
       $scope.ImprimirFactura = function(factura) {
         $window.sessionStorage['factura'] = JSON.stringify(factura);
         $window.open('/facturacion/print/{factura}'.replace('{factura}',factura.noFactura), target='_blank'); 

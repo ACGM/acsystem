@@ -28,8 +28,8 @@ class Fondo(models.Model):
 class ConceptoDesembolso(models.Model):
 
 	descripcion = models.CharField(max_length=255)
-	cuentaDebito = models.ForeignKey(Cuentas, related_name='+')
-	cuentaCredito = models.ForeignKey(Cuentas, related_name='+')
+	cuentaDebito = models.ForeignKey(Cuentas, related_name='+', verbose_name='Cuenta Debito')
+	cuentaCredito = models.ForeignKey(Cuentas, related_name='+', verbose_name='Cuenta Credito')
 
 	userLog = models.ForeignKey(User, null=True, editable=False)
 
@@ -62,8 +62,8 @@ class DesembolsoH(models.Model):
 		return '%i' % (self.id)
 
 	class Meta:
-		verbose_name = "Desembolso Cabecera"
-		verbose_name_plural = "Desembolsos Cabecera"
+		verbose_name = "Desembolso Caja Chica"
+		verbose_name_plural = "Desembolsos Caja Chica"
 		ordering = ['-id',]
 
 	@property

@@ -94,18 +94,15 @@ class generaNominaView(View):
 
 				try:
 					socio = Socio.objects.get(codigo=empleado.codigo)
-				except socio.DoesNotExist:
-					pass
 
-				try:
-					ahorro = Socio.objects.get(socio=socio)
-					if ahorro != None:
-						if nominaH.quincena == 1:
-							montoAhorro = ahorro.cuotaAhorroQ1
-						else:
-							montoAhorro = ahorro.cuotaAhorroQ2
-				except ahorro.DoesNotExist:
-					montoAhorro = 0
+					if nominaH.quincena == 1:
+						montoAhorro = socio.cuotaAhorroQ1
+					else:
+						montoAhorro = socio.cuotaAhorroQ2
+
+				except socio.DoesNotExist:
+					raise Exception("Este empleado aun no es socio activo de la cooperativa.")
+
 				nominaD.descAhorros = montoAhorro
 				
 				# try:
@@ -162,6 +159,7 @@ class guardarDetalleEmpleado(View):
 			nominaD.cafeteria = detalle['cafeteria'].replace(',','') if detalle['cafeteria'] != None else 0
 			nominaD.vacaciones = detalle['vacaciones'].replace(',','') if detalle['vacaciones'] != None else 0
 			nominaD.otrosingresos = detalle['otrosIngresos'].replace(',','') if detalle['otrosIngresos'] !=None else 0
+			nominaD.horasExtras = detalle['horasExtras'].replace(',','') if detalle['horasExtras'] !=None else 0
 			nominaD.save()
 			
 			return HttpResponse(detalle['codigo'])
@@ -206,3 +204,5 @@ class GenerarArchivoView(View):
 class PostearNominaCoopView(View):
 
 	pass
+
+	
