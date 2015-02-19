@@ -23,17 +23,15 @@ from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
 
 #ViewSets (API)
-from cuenta.views import CuentasViewSet, AuxiliarViewSet, DiarioViewSet, TipoDocViewSet
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpSuperViewSet
+from cuenta.views import DiarioViewSet, TipoDocViewSet
 
-from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, SuplidorTipoViewSet,\
-                                ListadoCategoriasPrestamosViewSet
+from administracion.views import ListadoCategoriasPrestamosViewSet
 
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
-from cxp.views import OrdenViewSet, DetalleOrderViewSet #, DetalleCuentaViewSet
+from cxp.views import OrdenViewSet, DetalleOrderViewSet , CxpOrdenView
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -69,7 +67,7 @@ router.register(r'tipoDocDiario',TipoDocViewSet)
 #CXP
 router.register(r'ordenCompra',OrdenViewSet)
 router.register(r'detalleOrder',DetalleOrderViewSet)
-router.register(r'CxpSuperCoop',CxpSuperViewSet)
+#router.register(r'CxpSuperCoop',CxpSuperViewSet)
 
 #ahorro
 router.register(r'MaestraAhorros',MaestraAhorroViewSet)
@@ -198,6 +196,10 @@ urlpatterns = patterns('',
 
     #Cuentas
     url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
+
+    #CXP
+    url(r'^cxpOrdenJson/$',CxpOrdenView.as_view(), name='Cxp_Ordenes'),
+   # url(r'^cxpSuperJson/$',CxpSuperViewSet.as_view(), name='Cxp_SuperCoop'),
 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
