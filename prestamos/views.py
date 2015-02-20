@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView, View
 from django.http import HttpResponse, JsonResponse
+from django.db import transaction
 
 from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
@@ -13,7 +14,7 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
-from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
+from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra
 
 from acgm.views import LoginRequiredMixin
 
@@ -37,6 +38,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 	def post(self, request, *args, **kwargs):
 
 		try:
+
 			data = json.loads(request.body)
 
 			solicitante = data['solicitante']
@@ -82,6 +84,8 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.cantidadCuotas = solicitud['cantidadCuotas']
 			SolPrestamo.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
 
+			SolPrestamo.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
+
 			SolPrestamo.userLog = User.objects.get(username=request.user.username)
 
 			SolPrestamo.save()
@@ -90,7 +94,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
 		except Exception as e:
 			return HttpResponse(e)
-
+		
 
 #Vista para Solicitud de Ordenes de Despacho
 class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
@@ -235,49 +239,57 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 
 	def post(self, request, *args, **kwargs):
 
-		try:
-			data = json.loads(request.body)
+		with transaction.atomic():
 
-			solicitudes = data['solicitudes']
-			accion = data['accion']
+			try:
 
-			for solicitud in solicitudes:
-				oSolicitud = SolicitudPrestamo.objects.get(noSolicitud=solicitud['noSolicitud'])
-				oSolicitud.estatus = accion
-				oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
-				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
-				oSolicitud.aprobadoRechazadoPor = request.user
-				oSolicitud.save()
+				data = json.loads(request.body)
 
-				#Crear prestamo en la maestra de prestamos si es APROBADO
-				if oSolicitud.estatus == 'A':
+				solicitudes = data['solicitudes']
+				accion = data['accion']
 
-					try:
-						maestra = MaestraPrestamo()
-						maestra.noPrestamo = MaestraPrestamo.objects.latest('noPrestamo').noPrestamo + 1
-					except MaestraPrestamo.DoesNotExist:
-						maestra.noPrestamo = 1
+				for solicitud in solicitudes:
+					oSolicitud = SolicitudPrestamo.objects.get(noSolicitud=solicitud['noSolicitud'])
+					oSolicitud.estatus = accion
+					oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
+					oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
+					oSolicitud.aprobadoRechazadoPor = request.user
+					oSolicitud.save()
 
-					maestra.noSolicitudPrestamo = oSolicitud
-					maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
-					maestra.socio = oSolicitud.socio
-					maestra.representante = oSolicitud.representante
-					maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
-					# maestra.distrito = oSolicitud.distrito
-					maestra.montoInicial = oSolicitud.netoDesembolsar
-					maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
-					maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
-					maestra.pagoPrestamoAnterior = 0
-					maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-					maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-					maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
-					maestra.valorGarantizado = oSolicitud.valorGarantizado
-					maestra.balance = oSolicitud.netoDesembolsar
-					maestra.userLog = request.user
+					#Crear prestamo en la maestra de prestamos si es APROBADO
+					if oSolicitud.estatus == 'A':
 
-					maestra.save()
+						try:
+							maestra = MaestraPrestamo()
+							maestra.noPrestamo = MaestraPrestamo.objects.latest('noPrestamo').noPrestamo + 1
+						except MaestraPrestamo.DoesNotExist:
+							maestra.noPrestamo = 1
 
-			return HttpResponse(1)
+						maestra.noSolicitudPrestamo = oSolicitud
+						maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
+						maestra.socio = oSolicitud.socio
+						maestra.representante = oSolicitud.representante
+						maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
+						maestra.localidad = oSolicitud.localidad
+						maestra.montoInicial = oSolicitud.netoDesembolsar
+						maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
+						maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
+						maestra.pagoPrestamoAnterior = 0
+						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
+						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+						maestra.valorGarantizado = oSolicitud.valorGarantizado
+						maestra.balance = oSolicitud.netoDesembolsar
+						maestra.userLog = request.user
 
-		except Exception as e:
-			return HttpResponse(e)
+						maestra.save()
+
+						#Guardar No. de Prestamo en la Solicitud
+						oSolicitud.prestamo = maestra.noPrestamo
+						oSolicitud.save()
+
+				return HttpResponse(1)
+
+			except Exception as e:
+				return HttpResponse(e)
+

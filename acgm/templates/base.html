@@ -17,6 +17,7 @@
 	<link rel="shortcut icon" type="image/png" href={% static "images/logoCoop.png" %} />
 
 </head>
+
 <body ng-app="cooperativa">
 	<header class="header">
 		<figure class="content-logo">
@@ -24,7 +25,7 @@
 			
 		</figure>
 
-		<div class="icon-user usuario"> {{user}} : {{localidad}}</div>
+		<div class="icon-user usuario"> {{user}} | {{localidad}}</div>
 
 		<div class="content-title">
 			<p class="titleCoop"> Cooperativa de Ahorros, Creditos y Servicios Multiples, INC.</p>
@@ -32,6 +33,7 @@
 		</div>
 
 	</header>
+	
 	<nav class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
@@ -132,6 +134,7 @@
 	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.standard_fonts_metrics.js" %}></script> 
 	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.split_text_to_size.js" %}></script>
 	<script type="text/javascript" src={% static "js/lib/jspdf/jspdf.plugin.from_html.js" %}></script>
+	<script type="text/javascript" src={% static "js/lib/NumeroALetras.js" %}></script>
 
 	<script type="text/javascript" src={% static "js/app.js" %} ></script>
 	<script type="text/javascript" src={% static "js/menu.js" %} ></script>

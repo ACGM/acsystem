@@ -692,9 +692,14 @@
             $scope.solicitudesSeleccionadas.push(solicitud);
           }
 
+debugger;
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
+            console.log(data);
             if(data == 1) {
               $scope.listadoSolicitudes();
+            } else {
+              $scope.mostrarError(data);
+              throw data;
             }
           },
           function() {
@@ -704,6 +709,7 @@
 
         } catch (e) {
           $scope.mostrarError(e);
+          console.log(e);
         }
       }
 

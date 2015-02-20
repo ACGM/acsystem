@@ -51,6 +51,7 @@ class SolicitudPrestamo(models.Model):
 	fechaRechazo = models.DateField(null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	prestamo = models.PositiveIntegerField(null=True)
+	localidad = models.ForeignKey(Localidad, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
