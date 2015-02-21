@@ -473,14 +473,14 @@
         $scope.tableSocio = false;
       }
 
-      //Seleccionar Socio
+      //Seleccionar Categoria de Prestamo
       $scope.selCP = function($event, cp) {
         $event.preventDefault();
 
         $scope.solicitud.categoriaPrestamoId = cp.id;
         $scope.solicitud.categoriaPrestamo = cp.descripcion;
         $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
-        $scope.solicitud.tasaInteresMensual = $filter('number')(cp.interesAnualSocio / 12, 2);
+        $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
         $scope.showCP = false;
       }
 

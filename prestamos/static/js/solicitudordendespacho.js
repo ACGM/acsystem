@@ -2,38 +2,13 @@
 
   angular.module('cooperativa.solicitudod', ['ngAnimate'])
 
-    .filter('estatusSolicitud', function() {
-      return function (input) {
-        if (!input) return "";
+    .factory('SolicitudOrdenDespachoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
-        input = input
-                .replace('A', true)
-                .replace('R', true)
-                .replace('C', true);
-        return input;
-      }
-    })
-
-    .filter('estatusName', function() {
-      return function (input) {
-        if (!input) return "";
-
-        input = input
-                .replace('A', 'Aprobado')
-                .replace('P', 'En Proceso')
-                .replace('R', 'Rechazado')
-                .replace('C', 'Cancelado');
-        return input;
-      }
-    })
-
-    .factory('SolicitudPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
-
-      //Guardar Solicitud de Prestamo
-      function guardaSolicitudPrestamo(solicitante, solicitud, fechaSolicitud, fechaDescuento) {
+      //Guardar Solicitud de Orden de Despacho
+      function guardaSolicitudOD(solicitante, solicitud, fechaSolicitud, fechaDescuento) {
         var deferred = $q.defer();
 
-        $http.post('/prestamos/solicitudP/', JSON.stringify({'solicitante': solicitante, 
+        $http.post('/prestamos/solicitudOD/', JSON.stringify({'solicitante': solicitante, 
                                                               'solicitud': solicitud, 
                                                               'fechaSolicitud': fechaSolicitud,
                                                               'fechaDescuento': fechaDescuento})).
@@ -47,25 +22,12 @@
         return deferred.promise;
       }
 
-      // Validar Autorizador
-      function ValidaAutorizador(autorizador, pin) {
-        var deferred = $q.defer();
-
-        $http.post('/prestamos/validaAutorizador/', JSON.stringify({'autorizador': autorizador, 'pin': pin})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
-
+  
       // Aprobar/Rechazar solicitudes de prestamos.
       function AprobarRechazarSolicitudes(solicitudes, accion) {
         var deferred = $q.defer();
 
-        $http.post('/prestamos/solicitudP/AprobarRechazar/', JSON.stringify({'solicitudes': solicitudes, 'accion': accion})).
+        $http.post('/prestamos/solicitudOD/AprobarRechazar/', JSON.stringify({'solicitudes': solicitudes, 'accion': accion})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -77,12 +39,12 @@
       }
 
       //Llenar el listado de Solicitudes
-      function solicitudesprestamos(noSolicitud) {
+      function solicitudesOD(noSolicitud) {
         var deferred = $q.defer();
-        var url = "/api/prestamos/solicitudes/prestamos/?format=json";
+        var url = "/api/prestamos/solicitudes/od/?format=json";
 
         if (noSolicitud != undefined) {
-            url = "/api/prestamos/solicitudes/prestamos/noSolicitud/?format=json".replace('noSolicitud', noSolicitud);
+            url = "/api/prestamos/solicitudes/od/noSolicitud/?format=json".replace('noSolicitud', noSolicitud);
         }
 
         $http.get(url)
@@ -232,18 +194,17 @@
 
 
       return {
-        solicitudesprestamos          : solicitudesprestamos,
+        solicitudesOD                 : solicitudesOD,
         solicitudesprestamosBySocio   : solicitudesprestamosBySocio,
         solicitudesprestamosByEstatus : solicitudesprestamosByEstatus,
         SocioByCodigoEmpleado         : SocioByCodigoEmpleado,
         categoriasPrestamos           : categoriasPrestamos,
         cantidadCuotasPrestamoByMonto : cantidadCuotasPrestamoByMonto,
-        guardaSolicitudPrestamo       : guardaSolicitudPrestamo,
+        guardaSolicitudOD             : guardaSolicitudOD,
         AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
         SolicitudPById                : SolicitudPById,
         getAutorizadores              : getAutorizadores,
-        getRepresentantes             : getRepresentantes,
-        ValidaAutorizador             : ValidaAutorizador
+        getRepresentantes             : getRepresentantes
       };
 
     }])
@@ -252,8 +213,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', 'SolicitudPrestamoService', 'FacturacionService',
-                                        function ($scope, $filter, SolicitudPrestamoService, FacturacionService) {
+    .controller('SolicitudODCtrl', ['$scope', '$filter', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 'InventarioService',
+                                function ($scope, $filter, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -266,6 +227,8 @@
       $scope.regAll = false;
       $scope.estatus = 'T';
 
+      $scope.totalGeneralArticulos = 0;
+      $scope.dataD = [];
       $scope.item = {};
       $scope.solicitudes = {};
 
@@ -300,10 +263,9 @@
         $scope.valoresChk = [];
         $scope.estatus = 'T';
 
-        SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
+        SolicitudOrdenDespachoService.solicitudesOD(noSolicitud).then(function (data) {
           $scope.solicitudes = data;
           $scope.regAll = false;
-
 
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
@@ -321,7 +283,7 @@
 
         if($event.keyCode == 13) {
 
-          SolicitudPrestamoService.solicitudesprestamosBySocio(socio).then(function (data) {
+          SolicitudOrdenDespachoService.solicitudesprestamosBySocio(socio).then(function (data) {
 
             if(data.length > 0) {
               $scope.solicitudes = data;
@@ -334,7 +296,6 @@
           },
             function() {
               $scope.NoFoundDoc = 'No se encontró el socio : ' + socio;
-
             }
           );
         }
@@ -343,7 +304,7 @@
       $scope.solicitudesprestamosEstatus = function(estatus) {
 
         try {
-          SolicitudPrestamoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
+          SolicitudOrdenDespachoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
 
             if(data.length > 0) {
               $scope.solicitudes = data;
@@ -364,7 +325,7 @@
         }
       }
 
-      //Traer todas las categorias de prestamos (de tipo PRESTAMO)
+      //Traer todas las categorias de Prestamos (de tipo ORDEN DESPACHO)
       $scope.categoriasPrestamos = function(id, $event) {
         $event.preventDefault();
         var descrp = '';
@@ -374,8 +335,7 @@
         }
 
         try {
-
-          SolicitudPrestamoService.categoriasPrestamos(id, descrp).then(function (data) {
+          SolicitudOrdenDespachoService.categoriasPrestamos(id, descrp).then(function (data) {
             if(data.length > 0) {
               $scope.categoriasP = data;
               $scope.showCP = true;
@@ -383,17 +343,48 @@
             else {
               $scope.showCP = false;
             }
-
           });
         } catch (e) {
           $scope.mostrarError(e);
         }
       }
 
+      //Traer suplidores
+      $scope.getSuplidor = function($event) {
+        $event.preventDefault();
+        var suplidor = '';
+
+        if($event.type != 'click') {
+          suplidor = $scope.solicitud.suplidorNombre;
+        }
+
+        InventarioService.suplidores(suplidor).then(function (data) {
+
+          if(data.length > 0) {
+            $scope.suplidores = data;
+
+            $scope.tableSuplidor = true;
+            $scope.suplidorNoExiste = '';
+          } else {
+            $scope.tableSuplidor = false;
+            $scope.suplidorNoExiste = 'No existe el suplidor';
+          }
+        });
+      }
+
+      //Seleccionar Suplidor
+      $scope.selSuplidor = function($event, supl) {
+        $event.preventDefault();
+
+        $scope.solicitud.idSuplidor = supl.id;
+        $scope.solicitud.suplidorNombre = supl.nombre;
+        $scope.tableSuplidor = false;
+      }
+
       //Cantidad de cuotas (parametro: monto)
       $scope.getCantidadCuotasPrestamo = function(monto) {
         try {
-          SolicitudPrestamoService.cantidadCuotasPrestamoByMonto(monto).then(function (data) {
+          SolicitudOrdenDespachoService.cantidadCuotasPrestamoByMonto(monto).then(function (data) {
             if(data.length > 0) {
               $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
 
@@ -452,7 +443,6 @@
               $scope.tableSocio = false;
               $scope.socioNoExiste = 'No existe el socio';
             }
-
           });
         } else {
           FacturacionService.socios().then(function (data) {
@@ -479,8 +469,8 @@
 
         $scope.solicitud.categoriaPrestamoId = cp.id;
         $scope.solicitud.categoriaPrestamo = cp.descripcion;
-        $scope.solicitud.tasaInteresAnual = cp.interesAnualSocio;
-        $scope.solicitud.tasaInteresMensual = cp.interesAnualSocio / 12;
+        $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
+        $scope.solicitud.tasaInteresMensual = $filter('number')(cp.interesAnualSocio / 12, 2);
         $scope.showCP = false;
       }
 
@@ -592,7 +582,7 @@
             $scope.solicitud.prestacionesLaborales = '0';
           }
 
-          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante, $scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
+          SolicitudOrdenDespachoService.guardaSolicitudOD($scope.solicitante, $scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
             if(isNaN(parseInt(data))) {
               $scope.mostrarError(data);
               throw data;
@@ -608,6 +598,7 @@
           },
           (function () {
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
+            throw 'Hubo un error. Contacte al administrador del sistema.';
           }
           ));
 
@@ -683,7 +674,7 @@
       }
 
       // Aprobar/Rechazar solicitudes de prestamos
-      $scope.AprobarRechazarSolicitudesPrestamos = function($event, accion, solicitud) {
+      $scope.AprobarRechazarSolicitudesOD = function($event, accion, solicitud) {
         $event.preventDefault();
 
         try {
@@ -692,7 +683,7 @@
             $scope.solicitudesSeleccionadas.push(solicitud);
           }
 
-          SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
+          SolicitudOrdenDespachoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
             if(data == 1) {
               $scope.listadoSolicitudes();
             }
@@ -779,6 +770,53 @@
         }
 
         $scope.toggleLSP();
+      }
+
+      //Llenar listado de articulos
+      $scope.getArticulos = function() {
+
+      }
+
+      //Agregar Articulo de Orden Despacho
+      $scope.agregarArticulo = function($event) {
+        $event.preventDefault();
+
+        var item = {};
+        item.articulo = $scope.articulo.toUpperCase();
+
+        if($event.type == 'keyup' && $event.keyCode == 13 || $event.type == 'click') {
+          if(item.articulo.length > 0) {
+            $scope.dataD.push(item);
+            $scope.articulo = '';
+          }
+        }
+      }
+
+      //Eliminar articulo de la lista de entradas
+      $scope.eliminarArticulo = function($event, item) {
+        $event.preventDefault();
+        
+        try {
+          $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {articulo: item.articulo}));
+
+          $scope.calculaTotales();
+          
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Calcula total de articulos ingresados
+      $scope.calculaTotales = function () {
+        $scope.totalGeneralArticulos = 0;
+
+        $scope.dataD.forEach(function (item) {
+          valor = item.cantidad * item.precio;
+
+          if(!isNaN(valor)) {
+            $scope.totalGeneralArticulos += valor;
+          }
+        });
       }
 
     }]);

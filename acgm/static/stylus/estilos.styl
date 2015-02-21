@@ -310,7 +310,7 @@ footer
 .Boton //CLASE para darle formato a los botones
 	background verdeClarito
 	border 0
-	border-bottom .35em solid green
+	border-bottom .3rem solid green
 	border-radius 3px 3px 4px 4px
 	color white
 	height 2.2em
@@ -324,7 +324,7 @@ footer
 .Boton-disabled //CLASE para darle apariencia deshabilitado a botones
 	background lightgray !important
 	border 0 !important
-	border-bottom .3em solid gray !important
+	border-bottom .3rem solid gray !important
 	border-radius 3px 3px 3px 3px !important
 	color black !important
 	height 2.2em
@@ -688,8 +688,6 @@ footer
 	& li
 		&:last-child
 			float right
-			// background red
-			// font-size 1.3em
 		
 .menu-item
 	display block
@@ -699,7 +697,8 @@ footer
 	&:last-child a
 		color amarillo
 		font-weight 300
-		
+	
+	&:nth-child(11),
 	&:last-child
 		border-right none	
 
@@ -2227,7 +2226,6 @@ footer
 	&:before
 		margin-right .2em
 
-
 .sub-menu-sp
 	background amarilloOscuro
 	color white
@@ -2276,7 +2274,7 @@ footer
 				padding-bottom .5em
 			&:nth-child(2)
 				padding-bottom .25em
-
+	
 .datos-prestamo-content
 	display block
 	// overflow hidden
@@ -2383,7 +2381,7 @@ footer
 	height 4em
 	width 10em
 	float left
-	margin-bottom 3em
+	margin-bottom .5em
 	&:before
 		margin-right .4em
 
@@ -2391,7 +2389,7 @@ footer
 	height 4em
 	width 10em
 	float right
-	margin-bottom 3em
+	margin-bottom .5em
 	&:before
 		margin-right .4em
 
@@ -2536,6 +2534,106 @@ footer
 		&:first-child
 			text-align center
 
+//SOLICITUD ORDEN DE DESPACHO
+
+.content-suplidores-table-od
+	position relative
+	top 1.45em
+	margin-bottom .2em
+
+.detalle-OD
+	position relative	
+
+.sc-detalle-od
+	display block
+	height 29em
+
+.detalle-orden-despacho
+	margin .5em 0 0 0
+	padding-bottom 6em
+	height 25em
+	background verdeSuave
+	
+	& h2
+		background verdeMuyOscuro
+		font-weight normal
+		padding .15em 0
+
+.title-od
+	padding 1em 0 0 .5em
+	color verdeMuySuave
+
+.agregar-articulo
+	margin 0 0 0 1em
+
+.articulo-od-field
+	border none
+	padding .2em
+	width 25em
+
+.boton-agregar-articulo
+	padding 0 2em	
+
+.table-articulo-orden-despacho
+	margin 1em 0 0 4.5em
+
+.table-articulo-orden-despacho-header
+	& td
+		border 1px solid verdeSubMenu
+		padding .4em .3em
+		background verde
+		color white
+
+.table-articulo-orden-despacho-detail
+	& td
+		border 1px solid verde
+		padding .2em
+	
+		&:nth-child(4)
+			text-align right
+			padding 0 .2em
+		
+		&:nth-child(5)
+			text-align center
+
+.table-articulo-orden-despacho-footer
+	& td 
+		border none
+		background verde
+		color white
+		
+		&:first-child
+			padding .2em 0 .2em .5em
+			
+		&:nth-child(2)
+			color amarillo
+			text-align right
+			font-weight bold
+			
+.valor-field-od
+	border none
+	margin 0
+	outline none
+	padding .1em 0
+	text-align right
+	font-weight bold
+
+	&.cantidad
+		width 4em
+	&.precio
+		width 6em					
+	&.sub-total
+		width 8em
+		background transparent
+
+.acciones-od
+	margin 1.4em 0 0 4.5em
+	
+	& button
+		height 3.5em
+		width 9em
+		&:before
+			margin-right .45em
 //TRANSFERENCIA INVENTARIO
 
 .producto-find

@@ -1,4 +1,4 @@
-# VIEWS de Prestamos
+# VIEWS de Solicitud de Prestamo
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -95,11 +95,6 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 		except Exception as e:
 			return HttpResponse(e)
 		
-
-#Vista para Solicitud de Ordenes de Despacho
-class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'solicitudordendespacho.html'
 
 
 #Vista para Notas de Debito

@@ -77,8 +77,10 @@ class SolicitudOrdenDespachoH(models.Model):
 	representante = models.ForeignKey(Representante)
 	cobrador = models.ForeignKey(Cobrador)
 	autorizadoPor = models.ForeignKey(User)
+	localidad = models.ForeignKey(Localidad)
 
 	suplidor = models.ForeignKey(Suplidor)
+
 	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
 	valorGarantizdo = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
@@ -98,6 +100,9 @@ class SolicitudOrdenDespachoH(models.Model):
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
+	@property
+	def codigoSocio(self):
+		return self.socio.codigo
 
 # Solicitud de Orden de Despacho Detalle
 class SolicitudOrdenDespachoD(models.Model):

@@ -10,6 +10,15 @@ class SolicitudPrestamoAdmin(admin.ModelAdmin):
 	list_display = ['id', 'noSolicitud', 'fechaSolicitud', 'socio', 'salarioSocio', 'representante', 'cobrador', 'autorizadoPor', \
 					'montoSolicitado', 'valorGarantizado', 'netoDesembolsar', 'categoriaPrestamo']
 
+
+@admin.register(SolicitudOrdenDespachoH)
+class SolicitudOrdenDespachoHAdmin(admin.ModelAdmin):
+
+	list_display = ['id', ]
+	# 'noSolicitud', 'fechaSolicitud', 'socio', 'salarioSocio', 'representante', 'cobrador', 'autorizadoPor', \
+					# 'montoSolicitado', 'valorGarantizado', 'netoDesembolsar', 'categoriaPrestamo']
+
+
 @admin.register(MaestraPrestamo)
 class MaestraPrestamoAdmin(admin.ModelAdmin):
 

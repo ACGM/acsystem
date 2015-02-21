@@ -141,7 +141,7 @@
 							<select name="autorizador" id="autorizador" ng-model="solicitante.autorizadoPor" ng-change="selectAutorizador()" ng-init="autorizadores()" required>
 								<option ng-repeat="autorizador in autorizadores" value="[[autorizador.userName]]">[[autorizador.userName]]</option>
 							</select>
-							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" ng-disabled="solicitante.pinValido">
+							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" autocomplete="off" ng-disabled="solicitante.pinValido">
 						</td>
 					</tr>
 				</table>

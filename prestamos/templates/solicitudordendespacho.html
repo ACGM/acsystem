@@ -4,20 +4,21 @@
 
 {% block content %}
 
-	<div class="SolicitudPrestamo" ng-controller="SolicitudPrestamoCtrl">
+	<div class="SolicitudOrdenDespacho" ng-controller="SolicitudODCtrl">
 		
 		<mensajeerror> </mensajeerror>
 		<mensajeinfo> </mensajeinfo>		
 
 		<div class="sub-menu">	
 			<div class="menu-entrada-sp-listado">
-				<button class="nuevo icon-file" title="Nueva Solicitud de Prestamo" ng-click="nuevaEntrada('{{user}}')"></button>
+				<button class="nuevo icon-file" title="Nueva Orden de Despacho" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
-				<a href="#" ng-click="toggleLSP()">Listado de Solicitudes de Prestamos</a>
+				<a href="#" ng-click="toggleLSP()">Listado de Solicitudes de Ordenes de Despacho</a>
 			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
 		</div>
 
-		<section class="listado-reg-sp cssSlideUp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
+
+		<section ng-show="showLSP" class="listado-reg-sp cssSlideUp"  ng-init="listadoSolicitudes(undefined)"> 
 				<span>Codigo</span>
 				<input type="text" class="doc-no-ei" ng-model="socioCodigo" ng-keypress="solicitudesprestamosBySocio($event, socioCodigo)">
 
@@ -65,7 +66,7 @@
 						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
 						<td><a class="icon-printer icon-imprimir" href="#"></a></td>
 						<td>
-							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesPrestamos($event,'C', solicitud)"></a> </div>
+							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesOD($event,'C', solicitud)"></a> </div>
 							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>
 							
 						</td>
@@ -75,17 +76,16 @@
 			</section>
 
 				<div class="botones-acciones-solicitud-prestamo-listado">
-					<button class="icon-cog Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'A', undefined)"> Aprobar</button>
-					<button class="icon-blocked Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesPrestamos($event,'R', undefined)"> Rechazar</button>
+					<button class="icon-cog Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'A', undefined)"> Aprobar</button>
+					<button class="icon-blocked Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'R', undefined)"> Rechazar</button>
 					
 				</div>
 		</section>
 
-
-		<form name="SolicitudForm" class="datosprestamos" ng-hide="showLSP" ng-submit="guardarSolicitud($event)" novalidate>
+		<form name="SolicitudForm" class="datosprestamos" ng-hide="showLSP"  ng-submit="guardarSolicitud($event)" novalidate>
 			<!--DETALLE OD-->
 			<div class="sub-menu">	
-					Solicitud de Prestamo
+					Solicitud de Orden de Despacho
 			</div>
 
 			<section class="data-entry-section-sp">
@@ -167,7 +167,7 @@
 
 			</section>			
 		
-			<section class="sp-datos-prestamo">
+			<section class="sc-detalle-od">
 				<div class="sub-menu-sp">	
 					Datos de Solicitud Orden de Despacho
 				</div>
@@ -234,11 +234,31 @@
 						</table>
 					</div>
 
-						
 
 					<div class="datos-prestamo-2">
 
-						<div class="content-suplidores-table">
+						<!-- CATEGORIAS DE PRESTAMOS -->
+						<div class="content-table-categorias-prestamos" ng-show="showCP">
+							<table class="categorias-prestamos-table">
+								<tr>
+									<td colspan="2" class="cerrar-table">
+										<a href="#" class="icon-delete" ng-click="showCP=false"></a>
+									</td>
+								</tr>
+								<tr>
+									<td>ID</td>
+									<td>Categoria de Prestamo</td>
+								</tr>
+								<tr ng-repeat="categoria in categoriasP">
+									<td><a class="select-item" href="#" ng-click="selCP($event, categoria)">[[categoria.id]]</a></td>
+									<td><a class="select-item" href="#" ng-click="selCP($event, categoria)">[[categoria.descripcion]]</a></td>
+								</tr>
+							</table>
+
+						</div>
+
+						<!-- SUPLIDORES -->
+						<div class="content-suplidores-table-od">
 							<table class="suplidores-table-search" ng-show="tableSuplidor">
 								<tr>
 									<td class="cerrar-table" colspan="3">
@@ -258,7 +278,6 @@
 							</table>
 						</div>
 
-
 						<table class="datos-prestamo-2-table">
 							<tr>
 								<td>Categoria Prestamo</td>
@@ -270,6 +289,20 @@
 								</td>
 								</td>
 							</tr>
+
+							<tr>
+								<td>Suplidor</td>
+								<td> 
+									<input type="text" class="input-disabled cod-repr" ng-model="solicitud.idSuplidor" required readonly> 
+									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSuplidor=false" ng-click="tableSuplidor=false; errorShow=false;"> 
+								<td>
+									<a href="#" class="icon-uniE601 icon-buscar" ng-click="getSuplidor($event)"></a> 
+								</td>	
+								</td>
+
+								<span class="error-ei"> [[suplidorNoExiste]]</span>
+							</tr>
+
 							<tr>
 								<td>Fecha para descuento</td>
 								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" datepicker required></td>
@@ -285,7 +318,7 @@
 										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresAnual" readonly></td>
 									</tr>
 									<tr>
-										<td>Tasa de interes mensual</td>
+										<td>Tasa de int. mensual</td>
 										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresMensual" readonly></td>
 									</tr>
 									<tr>
@@ -293,7 +326,7 @@
 										<td><input type="text" class="field-short" ng-model="solicitud.cantidadCuotas" readonly required></td>
 									</tr>
 									<tr>
-										<td>Valor de Cuotas capital</td>
+										<td>Valor de Cuotas</td>
 										<td><input type="text" ng-model="solicitud.valorCuotas" readonly required></td>
 									</tr>
 
@@ -322,10 +355,51 @@
 						</div>
 					</div>
 
-				</section> 
-		</form>				
+			</section> 	
+
+			<!-- DETALLE DE LA ORDEN DE COMPRA -->
+				<!-- ************************************* -->
+
+			<section ng-show="solicitud.solicitudNo > 0" class="detalle-orden-despacho">
+				<form name="ArticuloODForm" ng-submit="guardarDO" novalidate>
+					<h2><span class="title-od">Detalle de la Orden de Despacho</span></h2>
+
+					<div class="agregar-articulo">
+						<span>Articulo</span>
+						<input type="text" class="articulo-od-field" ng-model="articulo" ng-keyup="agregarArticulo($event)">
+						<button class="Boton boton-agregar-articulo" ng-click="agregarArticulo($event)">Agregar</button>
+					</div>
+
+					<table class="table-articulo-orden-despacho" ng-init="getArticulos()">
+						<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-header">
+							<td>Descripción</td>
+							<td>Cantidad</td>
+							<td>Precio</td>
+							<td>Sub-Total</td>
+							<td>Eliminar</td>
+						</tr>
+						<tr class="table-articulo-orden-despacho-detail" ng-repeat="item in dataD">
+							<td>[[item.articulo]]</td>
+							<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad" ng-change="calculaTotales()" class="valor-field-od cantidad" required></td>
+							<td><input type="text" ng-model="item.precio" ng-bind="item.precio" ng-change="calculaTotales()" class="valor-field-od precio" required></td>
+							<td> [[item.cantidad * item.precio | number : 2]]</td>
+							<td><a href="#" class="icon-delete icon-eliminar" ng-click="eliminarArticulo($event, item)"></a></td>
+						</tr>
+						<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-footer">
+							<td colspan="3">TOTAL: </td>
+							<td>[[totalGeneralArticulos | number : 2]]</td>
+							<td> </td>
+						</tr>
+						
+					</table>
+
+					<div ng-if="dataD.length > 0" class="acciones-od">
+						<button class="icon-save Boton" type="submit">Guardar</button>
+					</div>
+				</form>
+			</section>	
+		</form>	
 
 	</div>
-
 
 {% endblock content %}

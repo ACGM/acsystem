@@ -16,10 +16,13 @@ from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView,
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
-                            SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
-                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
+                            SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
+                            AprobarRechazarSolicitudesPrestamosView
+
+from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView
 
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView
+
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
 
@@ -188,16 +191,25 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
     url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
     
-    url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
 
     url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
-
+    #Prestamos -- Solicitudes Prestamos
+    url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
     url(r'^api/prestamos/solicitudes/prestamos/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
     url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    
+    #Prestamos -- Solicitudes Orden Despacho
+    url(r'^prestamos/solicitudOD/AprobarRechazar/$', AprobarRechazarSolicitudesODView.as_view(), name='Solicitud_de_OD_accion'),
+    url(r'^api/prestamos/solicitudes/od/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
+    url(r'^api/prestamos/solicitudes/od/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
+    url(r'^api/prestamos/solicitudes/od/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
+    
     url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
     url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
+
 
     
 
