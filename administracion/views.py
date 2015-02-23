@@ -10,12 +10,12 @@ from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSer
 						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
 						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer, \
 						AutorizadoresSerializer, EmpresasSerializer, RepresentantesSerializer, \
-						CategoriasProductosSerializer
+						CategoriasProductosSerializer, CantidadCuotasODSerializer
 
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, \
-					CategoriaPrestamo, CuotaPrestamo, Autorizador, Empresa, Representante, \
-					CategoriaProducto
+					CategoriaPrestamo, CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, \
+					CategoriaProducto, Representante
 
 
 # Productos Busqueda (GENERICO)
@@ -91,7 +91,7 @@ class CategoriaPrestamoByDescrpView(APIView):
 
 	serializer_class = ListadoCategoriaPrestamoSerializer
 
-	def get(self, request, descrp=None):
+	def get(self, request, descrp=None,):
 		
 		categorias = CategoriaPrestamo.objects.filter(descripcion__contains=descrp)
 
@@ -107,6 +107,19 @@ class CantidadCuotasPrestamosView(APIView):
 	def get(self, request, monto=None):
 		
 		monto = CuotaPrestamo.objects.filter(montoDesde__lte=monto, montoHasta__gte=monto)
+
+		response = self.serializer_class(monto, many=True)
+		return Response(response.data)
+
+
+# Cantidad de Cuotas (parametro: Monto)
+class CantidadCuotasODView(APIView):
+
+	serializer_class = CantidadCuotasODSerializer
+
+	def get(self, request, monto=None):
+		
+		monto = CuotaOrdenes.objects.filter(montoDesde__lte=monto, montoHasta__gte=monto)
 
 		response = self.serializer_class(monto, many=True)
 		return Response(response.data)

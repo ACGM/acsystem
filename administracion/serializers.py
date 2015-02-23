@@ -72,6 +72,15 @@ class CantidadCuotasPrestamosSerializer(serializers.ModelSerializer):
 		ordering = ('-montoDesde',)
 
 
+# Cantidad de Cuotas de Ordenes (parametro Monto)
+class CantidadCuotasODSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = CuotaOrdenes
+		fields = ('montoDesde', 'montoHasta', 'cantidadQuincenas')
+		ordering = ('-montoDesde',)
+
+
 # Autorizadores de: Prestamos,
 class AutorizadoresSerializer(serializers.ModelSerializer):
 

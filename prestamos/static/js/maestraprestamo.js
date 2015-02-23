@@ -48,7 +48,7 @@
       //   return deferred.promise;
       // }
 
-      //Llenar el listado de facturas
+      //Llenar el listado de prestamos
       function all() {
         var deferred = $q.defer();
 
@@ -94,18 +94,17 @@
       // }
 
 
-      // //Buscar un documento en especifico (Desglose)
-      // function DocumentoById(NoFact) {
-      //   var deferred = $q.defer();
-      //   var doc = NoFact != undefined? NoFact : 0;
+      //Buscar un prestamo en especifico (Desglose)
+      function PrestamoById(NoPrestamo) {
+        var deferred = $q.defer();
+        var doc = NoPrestamo != undefined? NoPrestamo : 0;
 
-      //   $http.get('/facturajson/?nofact={NoFact}&format=json'.replace('{NoFact}', doc))
-      //     .success(function (data) {
-      //       deferred.resolve(data);
-      //     });
-
-      //   return deferred.promise;
-      // }
+        $http.get('/maestraPrestamojson/?noprestamo={NoPrestamo}&format=json'.replace('{NoPrestamo}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
 
       //Buscar un numero de prestamo en especifico en listado de prestamos
       function byNoPrestamo(NoPrestamo) {
@@ -146,8 +145,8 @@
       return {
         all: all,
         byNoPrestamo: byNoPrestamo,
-        PrestamosbySocio: PrestamosbySocio
-        // socios: socios,
+        PrestamosbySocio: PrestamosbySocio,
+        PrestamoById: PrestamoById
         // guardarFact: guardarFact,
         // DocumentoById: DocumentoById,
         // categoriasPrestamos: categoriasPrestamos,
@@ -175,6 +174,8 @@
       $scope.prestamosSeleccionados = [];
       $scope.reg = [];
       $scope.valoresChk = [];
+      $scope.dataH = {};
+      $scope.prestamo = {};
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLP = 'UpArrow';
@@ -268,418 +269,75 @@
         }
       }
 
-      // //Guardar Factura
-      // $scope.guardarFactura = function($event) {
-      //   $event.preventDefault();
 
-      //   try {
-      //     if (!$scope.FacturaForm.$valid) {
-      //       throw "Verifique que todos los campos esten completados correctamente.";
-      //     }
-
-      //     var fechaP = $scope.dataH.fecha.split('/');
-      //     var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
-
-      //     var dataH = new Object();
-
-      //     dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : 0;
-      //     dataH.fecha = fechaFormatted;
-      //     dataH.terminos = $scope.dataH.terminos;
-      //     dataH.vendedor = $scope.dataH.vendedor;
-      //     dataH.almacen = $scope.dataH.almacen;
-      //     dataH.socio = $scope.socioCodigo != undefined? $scope.socioCodigo : null;
-      //     dataH.orden = $scope.orden != undefined? $scope.orden : null;
-
-      //     if ($scope.dataD.length == 0) {
-      //       throw "Debe agregar un producto al menos.";
-      //     }
-
-      //     FacturacionService.guardarFact(dataH,$scope.dataD).then(function (data) {
-
-      //       if(isNaN(data)) {
-      //         $rootScope.mostrarError(data);
-      //         throw data;
-      //       }
-
-      //       $rootScope.factura = data;
-      //       $scope.dataH.factura = $filter('numberFixedLen')(data, 8)
-
-      //       $scope.errorShow = false;
-      //       $scope.listadoFacturas();
-
-      //       //SI ES A CREDITO LA FACTURA SE DEBE CREAR UNA ORDEN DE DESPACHO SUPERRCOOP
-      //       if($scope.dataH.terminos == "CR") {
-
-      //         $scope.mostrarOrden(true);
-      //         $scope.disabledButton = 'Boton-disabled';
-      //         $scope.disabledButtonBool = true;
-
-      //         $rootScope.total = $scope.total;
-      //         $rootScope.getCategoriaPrestamo($scope.dataH.vendedor);
-
-      //         if ($rootScope.oid > 0) {
-      //           $rootScope.guardarOrden($event);
-      //         }
-
-      //         } else {              
-      //           $scope.nuevaEntrada();
-      //           $scope.toggleLF();
-      //         }
-      //     },
-      //     (function () {
-      //       $rootScope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
-      //     }
-      //     ));
-
-      //   }
-      //   catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
-      // }
-
-      // // Visualizar Documento (Factura Existente - desglose)
-      // $scope.FactFullById = function(NoFact, usuario) {
-      //   try {
-
-      //     FacturacionService.DocumentoById(NoFact).then(function (data) {
-
-      //       if(data.length > 0) {
-      //         //completar los campos
-      //         $scope.nuevaEntrada();
-
-      //         $scope.errorMsg = '';
-      //         $scope.errorShow = false;
-
-      //         $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
-      //         $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-      //         $scope.socioCodigo = data[0]['socioCodigo'];
-      //         $scope.socioNombre = data[0]['socioNombre'];
-      //         $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
-      //         $scope.dataH.terminos = data[0]['terminos'];
-      //         $scope.dataH.vendedor = data[0]['vendedor'];
-      //         $scope.dataH.posteo = data[0]['posteo'];
-      //         $scope.dataH.impresa = data[0]['impresa'];
-
-      //         data[0]['productos'].forEach(function (item) {
-      //           $scope.dataD.push(item);
-      //           $scope.dataH.almacen = item['almacen'];
-      //         })
-      //         $scope.calculaTotales();
-
-      //         if(data[0]['orden'] > 0) {
-      //           $rootScope.clearOrden();
-      //           $rootScope.FullOrden(data[0]['ordenDetalle']);
-      //         }
-      //       }
-
-      //     }, 
-      //       (function () {
-      //         $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
-      //       }
-      //     ));
-      //   }
-      //   catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
-
-      //   $scope.toggleLF();
-      // }
-
-
-      // //Eliminar producto de la lista de entradas
-      // $scope.delProducto = function($event, prod) {
-      //   $event.preventDefault();
-      //   try {
-      //     $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
-
-      //     $scope.calculaTotales();
-          
-      //   } catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }
-      // }
-
-      // //Traer almacenes
-      // $scope.getAlmacenes = function() {
-      //   InventarioService.almacenes().then(function (data) {
-      //     $scope.almacenes = data;
-      //   });
-      // }
-
-      // //Filtrar las facturas por posteo (SI/NO)
-      // $scope.filtrarPosteo = function() {
-      //   $scope.facturasSeleccionadas = [];
-      //   $scope.valoresChk = [];
-      //   $scope.regAll = false;
-
-      //   if($scope.posteof != '*') {
-      //     FacturacionService.byPosteo($scope.posteof).then(function (data) {
-      //       $scope.facturas = data;
-
-      //       if(data.length > 0){
-      //         $scope.verTodos = '';
-      //       }
-      //   });
-      //   } else {
-      //     $scope.listadoFacturas();
-      //   }        
-      // }
-
-      
-
-      // // Mostrar/Ocultar error
-      // $scope.toggleError = function() {
-      //   $scope.errorShow = !$scope.errorShow;
-      // }
-
-      // // Funcion para mostrar error por pantalla
-      // $rootScope.mostrarError = function(error) {
-      //   $scope.errorMsg = error;
-      //   $scope.errorShow = true;
-
-      //   // $timeout($scope.toggleError(), 3000);
-        
-      // }
-
-      // //Cuando se le de click al checkbox del header.
-      // $scope.seleccionAll = function() {
-
-      //   $scope.facturas.forEach(function (data) {
-      //     if (data.posteo == 'N') {
-      //       if ($scope.regAll === true){
-
-      //         $scope.valoresChk[data.id] = true;
-      //         $scope.facturasSeleccionadas.push(data);
-      //       }
-      //       else{
-
-      //         $scope.valoresChk[data.id] = false;
-      //         $scope.facturasSeleccionadas.splice(data);
-      //       }
-      //     }
-
-      //   });
-      // }
-
-      
-      // //Cuando se le de click a un checkbox de la lista
-      // $scope.selectedReg = function(iReg) {
-        
-      //   index = $scope.facturas.indexOf(iReg);
-
-      //   if ($scope.reg[$scope.facturas[index].id] === true){
-      //     $scope.facturasSeleccionadas.push($scope.facturas[index]);
-      //   }
-      //   else{
-
-      //     $scope.facturasSeleccionadas.splice($scope.facturasSeleccionadas[index],1);
-      //   }
-      // }
-
-      // //Nueva Entrada de Factura
-      // $scope.nuevaEntrada = function(usuario) {
-      //   $scope.producto = '';
-      //   $scope.almacen = '';
-      //   $scope.subtotal = '';
-      //   $scope.descuento = '';
-      //   $scope.total = '';
-
-      //   $scope.socioCodigo = '';
-      //   $scope.socioNombre = '';
-        
-      //   $scope.dataH = {};
-      //   $scope.dataD = [];
-      //   $scope.productos = [];
-
-      //   $rootScope.mostrarOrden(false);
-      //   $scope.showLF = false;
-      //   $scope.ArrowLF = 'DownArrow';
-      //   $scope.BotonOrden = '';
-      //   $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-      //   $scope.dataH.vendedor = usuario;
-      //   $scope.dataH.terminos = 'CO';
-      //   $scope.dataH.posteo = 'N';
-
-      //   $scope.disabledButton = 'Boton';
-      //   $scope.disabledButtonBool = false;
-
-      //   $rootScope.clearOrden();
-      // }
-
-
-      // //Traer productos
-      // $scope.getProducto = function($event) {
-      //   $event.preventDefault();
-
-      //   $scope.tableProducto = true;
-
-      //   if($scope.producto != undefined) {
-      //     InventarioService.productos().then(function (data) {
-      //       $scope.productos = data.filter(function (registro) {
-      //         return $filter('lowercase')(registro.descripcion
-      //                             .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
-      //       });
-
-      //       if($scope.productos.length > 0){
-      //         $scope.tableProducto = true;
-      //         $scope.productoNoExiste = '';
-      //       } else {
-      //         $scope.tableProducto = false;
-      //         $scope.productoNoExiste = 'No existe el producto'
-      //       }
-
-      //     });
-      //   } else {
-      //     InventarioService.productos().then(function (data) {
-      //       $scope.productos = data;
-      //     });
-      //   }
-      // }
-
-      // //Traer Socios
-      // $scope.getSocio = function($event) {
-      //   $event.preventDefault();
-
-      //   $scope.tableSocio = true;
-
-      //   if($scope.socioNombre != undefined) {
-      //     FacturacionService.socios().then(function (data) {
-      //       $scope.socios = data.filter(function (registro) {
-      //         return $filter('lowercase')(registro.nombreCompleto
-      //                             .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-      //       });
-
-      //       if($scope.socios.length > 0){
-      //         $scope.tableSocio = true;
-      //         $scope.socioNoExiste = '';
-      //       } else {
-      //         $scope.tableSocio = false;
-      //         $scope.socioNoExiste = 'No existe el socio';
-      //       }
-
-      //     });
-      //   } else {
-      //     FacturacionService.socios().then(function (data) {
-      //       $scope.socios = data;
-      //       $scope.socioCodigo = '';
-      //     });
-      //   }
-      // }
-
-      // //Agregar Producto
-      // $scope.addProducto = function($event, Prod) {
-      //   $event.preventDefault();
-      //   $scope.errorShow = false;
-
-      //   try {
-
-      //     //Debe seleccionar un almacen.
-      //     if ($scope.dataH.almacen == undefined || $scope.dataH.almacen == '') {
-      //       $scope.mostrarError('Debe seleccionar un almacen');
-      //       throw "Debe seleccionar un almacen";
-      //     }
-
-      //     //No agregar el producto si ya existe
-      //     $scope.dataD.forEach(function (item) {
-      //       if(item.codigo == Prod.codigo) {
-      //         $scope.mostrarError("No puede agregar mas de una vez el producto : " + item.descripcion);
-      //         throw "No puede agregar mas de una vez el producto : " + item.descripcion;
-      //       }
-      //     });
-
-
-      //     var existencia = 0;
-
-      //     InventarioService.getExistenciaByProducto(Prod.codigo, $scope.dataH.almacen).then(function (data) {
-
-      //       if(data.length > 0) {
-      //         existencia = data[0]['cantidad'];
-
-      //         //Si en algun momento existe un producto con disponibilidad en negativo no puede permitir agregarlo.
-      //         if(existencia <= 0) {
-      //           $scope.mostrarError('No hay disponibilidad para el producto : ' + Prod.descripcion);
-      //           throw 'No hay disponibilidad para el producto : ' + Prod.descripcion;
-      //         }
-
-      //         if(existencia < 11 && existencia > 0) {
-      //           $scope.mostrarError('El producto ' + Prod.descripcion + ' tiene una existencia de ' + data[0]['cantidad']);
-      //         }
-
-      //         Prod.descuento = 0;
-      //         Prod.cantidad = 1;
-      //         Prod.existencia = existencia;
-
-      //         $scope.dataD.push(Prod);
-      //         $scope.tableProducto = false;
-
-      //         $scope.calculaTotales();
-
-      //       } else {
-      //         $scope.mostrarError('Este producto (' + Prod.descripcion + ') no tiene existencia.');
-      //         throw 'Este producto (' + Prod.descripcion + ') no tiene existencia.';
-      //       }
-      //     });
-      //   } catch(e) {
-      //     $scope.mostrarError(e);
-      //   }
-
-      // }
-
-      // //Seleccionar Socio
-      // $scope.selSocio = function($event, s) {
-      //   $event.preventDefault();
-
-      //   $scope.socioNombre = s.nombreCompleto;
-      //   $scope.socioCodigo = s.codigo;
-      //   $scope.tableSocio = false;
-      // }
-
-      // // Calcula los totales para los productos
-      // $scope.calculaTotales = function() {
-      //   try {          
-      //     var total = 0.0;
-      //     var subtotal = 0.0;
-      //     var total_descuento = 0.0;
-      //     var descuento = 0.0;
-
-      //     if($scope.existError == true) {
-      //       $scope.errorShow = false;
-      //       $scope.existError = false;
-      //     } 
-
-      //     $scope.dataD.forEach(function (item) {
-      //       if (item.descuento != undefined && item.descuento > 0) {
-      //         descuento = parseFloat(item.descuento/100);
-      //         descuento = (item.precio * descuento * item.cantidad);
-      //       }
-
-      //       //Verificar si la cantidad no excede la existencia disponible
-      //       if(parseFloat(item.cantidad) > parseFloat(item.existencia)) {
-      //         $scope.existError = true;
-      //         $scope.mostrarError('No puede digitar una cantidad mayor a la disponibilidad : ' + item.existencia);
-      //         throw 'No puede digitar una cantidad mayor a la disponibilidad : ' + item.existencia;
-      //       } 
-
-      //       subtotal += (item.cantidad * item.precio);
-      //       total = subtotal - descuento;
-      //       total_descuento += descuento;
-
-      //     });
-
-      //     $scope.subtotal = $filter('number')(subtotal, 2);
-      //     $scope.total = $filter('number')(total, 2);
-      //     $scope.descuento = $filter('number')(total_descuento, 2);
-
-      //   } catch (e) {
-      //     $rootScope.mostrarError(e);
-      //   }  
-      // }
-
-      //   //Imprimir factura
-      // $scope.ImprimirFactura = function(factura) {
-      //   $window.sessionStorage['factura'] = JSON.stringify(factura);
-      //   $window.open('/facturacion/print/{factura}'.replace('{factura}',factura.noFactura), target='_blank'); 
-      // }
+      // Visualizar Prestamo (desglose)
+      $scope.PrestamoFullById = function($event, prestamo) {
+        $event.preventDefault();
+
+        try {
+          MaestraPrestamoService.PrestamoById(prestamo).then(function (data) {
+            if(data.length > 0) {
+              $scope.errorMsg = '';
+              $scope.errorShow = false;
+
+              //completar los campos
+              // $scope.nuevaEntrada();
+
+              var solicitudNo = data[0]['noSolicitudPrestamo'] == ''? data[0]['noSolicitudOD'] : data[0]['noSolicitudPrestamo'];
+
+              $scope.dataH.noPrestamo = $filter('numberFixedLen')(data[0]['noPrestamo'],9);
+              $scope.dataH.factura = data[0]['factura'];
+              $scope.dataH.categoriaPrestamoDescrp = data[0]['categoriaPrestamoDescrp'];
+              $scope.dataH.representanteCod = data[0]['representanteCodigo'];
+              $scope.dataH.representanteDescrp = data[0]['representanteNombre'];
+              $scope.dataH.socioCodigo = data[0]['socioCodigo'];
+              $scope.dataH.socioNombre = data[0]['socioNombre'];
+              $scope.dataH.socioCedula = data[0]['socioCedula'];
+              $scope.dataH.pagarPor = ''; //data[0]['oficial'];
+              $scope.dataH.oficial = data[0]['oficial'];
+              $scope.dataH.localidad = data[0]['localidad'];
+              $scope.dataH.estatus = data[0]['estatus'];
+              $scope.dataH.posteadoFecha = data[0]['posteadoFecha'];
+
+              $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
+              $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
+              $scope.prestamo.tasaInteresAnual = data[0]['tasaInteresAnual'];
+              $scope.prestamo.tasaInteresMensual = data[0]['tasaInteresMensual'];
+              $scope.prestamo.pagoPrestamoAnterior = data[0]['pagoPrestamoAnterior'];
+              $scope.prestamo.cantidadCuotas = data[0]['cantidadCuotas'];
+              $scope.prestamo.montoCuotaQ1 = $filter('number')(data[0]['montoCuotaQ1'], 2);
+              $scope.prestamo.montoCuotaQ2 = $filter('number')(data[0]['montoCuotaQ2'], 2);
+              $scope.prestamo.fechaDesembolso = data[0]['fechaDesembolso'];
+              $scope.prestamo.fechaEntrega = data[0]['fechaEntrega'];
+              $scope.prestamo.fechaVencimiento = ''; //data[0][''];
+              $scope.prestamo.chequeNo = data[0]['chequeNo'];
+              $scope.prestamo.valorGarantizado = $filter('number')(data[0]['valorGarantizado'], 2);
+              $scope.prestamo.balance = $filter('number')(data[0]['balance'], 2);
+
+
+              // if(data[0]['estatus'] == 'P') {
+              //   $scope.disabledButton = 'Boton';
+              //   $scope.disabledButtonBool = false;
+              // } else {
+              //   $scope.disabledButton = 'Boton-disabled';
+              //   $scope.disabledButtonBool = true;
+              // }
+
+            }
+
+          }, 
+            (function () {
+              $scope.mostrarError('No pudo encontrar el desglose del prestamo #' + prestamo);
+            }
+          ));
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+
+        $scope.toggleLP();
+      }
+     
 
     }])
 

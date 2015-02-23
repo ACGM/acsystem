@@ -82,7 +82,10 @@ class SolicitudOrdenDespachoH(models.Model):
 	suplidor = models.ForeignKey(Suplidor)
 
 	montoSolicitado = models.DecimalField(max_digits=12, decimal_places=2)
-	valorGarantizdo = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	ahorrosCapitalizados = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar los ahorros capitalizados al momento de realizar esta solicitud
+	deudasPrestamos = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar las deudas de prestamos al momento de realizar esta solicitud
+	prestacionesLaborales = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
 	observacion = models.TextField()
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
@@ -166,7 +169,7 @@ class PrestamoUnificado(models.Model):
 
 
 # Cuotas de Pago de Prestamos
-class CuotasPrestamo(models.Model):
+class PagoCuotasPrestamo(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),('N','Nota de Credito'),)
 
@@ -183,7 +186,7 @@ class NotaDeCreditoPrestamo(models.Model):
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
 
 	fecha = models.DateField(auto_now=True)
-	aplicadoACuota = models.ForeignKey(CuotasPrestamo)
+	aplicadoACuota = models.ForeignKey(PagoCuotasPrestamo)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)

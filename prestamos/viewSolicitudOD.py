@@ -74,7 +74,7 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			SolOrdenDespacho.suplidor = suplidor
 			SolOrdenDespacho.fechaParaDescuento = fechaDescuento
 
-			SolOrdenDespacho.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual'])
+			SolOrdenDespacho.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual']) if solicitud['tasaInteresAnual'] > 0 else 0
 			SolOrdenDespacho.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
 			SolOrdenDespacho.cantidadCuotas = solicitud['cantidadCuotas']
 			SolOrdenDespacho.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
@@ -91,19 +91,36 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
-# Listado de Solicitudes de Ordenes de Despacho
-class SolicitudesODAPIView(APIView):
+#Vista para guardar Detalle de solicitud de Orden de Despacho
+class SolicitudOrdenDespachoDetalleView(LoginRequiredMixin, View):
 
-	serializer_class = SolicitudesOrdenesDespachoSerializer
+	# template_name = 'solicitudordendespacho.html'
+	def post(self, request, *args, **kwargs):
 
-	def get(self, request, solicitud=None):
-		if solicitud != None:
-			solicitudes = SolicitudOrdenDespachoH.objects.filter(noSolicitud=solicitud)
-		else:
-			solicitudes = SolicitudOrdenDespachoH.objects.all().order_by('-noSolicitud')
+		try:
+			data = json.loads(request.body)
 
-		response = self.serializer_class(solicitudes, many=True)
-		return Response(response.data)
+			articulos = data['articulos']
+			solicitudNo = data['solicitudNo']
+			solHeader = SolicitudOrdenDespachoH.objects.get(noSolicitud=solicitudNo)
+
+			try:
+				SolicitudOrdenDespachoD.objects.filter(ordenDespacho=solHeader).delete()
+			except SolicitudOrdenDespachoD.DoesNotExist:
+				pass
+
+			for item in articulos:
+				detalle = SolicitudOrdenDespachoD()
+				detalle.ordenDespacho = solHeader
+				detalle.articulo = item['articulo']
+				detalle.cantidad = item['cantidad']
+				detalle.precio = item['precio']
+				detalle.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
 
 
 # Aprobar/Rechazar solicitudes de Ordenes de Despacho
@@ -121,6 +138,13 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 
 				for solicitud in solicitudes:
 					oSolicitud = SolicitudOrdenDespachoH.objects.get(noSolicitud=solicitud['noSolicitud'])
+					
+					#Si la Orden de Despacho no tiene detalle digitado no puede ser aprobada
+					try:
+						SolicitudOrdenDespachoD.objects.get(ordenDespacho=oSolicitud)
+					except SolicitudOrdenDespachoD.DoesNotExist:
+						raise Exception('La Solicitud No. ' + '{:0>8}'.format(oSolicitud.noSolicitud) + ' no tiene detalle digitado.')
+
 					oSolicitud.estatus = accion
 					oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
 					oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
@@ -165,4 +189,97 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 				return HttpResponse(e)
 
 
+# Listado de Solicitudes de Ordenes de Despacho Por Codigo de Socio
+class SolicitudesODAPIViewByCodigoNombre(APIView):
+
+	serializer_class = SolicitudesOrdenesDespachoSerializer
+
+	def get(self, request, codigo=None, nombre=None):
+		if codigo != None:
+			solicitudes = SolicitudOrdenDespachoH.objects.filter(socio__codigo=codigo).order_by('-noSolicitud')
+		else:
+			solicitudes = SolicitudOrdenDespachoH.objects.filter(socio__nombreCompleto__contains=nombre).order_by('-noSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Listado de Solicitudes de Ordenes de Despacho
+class SolicitudesODAPIView(APIView):
+
+	serializer_class = SolicitudesOrdenesDespachoSerializer
+
+	def get(self, request, solicitud=None):
+		if solicitud != None:
+			solicitudes = SolicitudOrdenDespachoH.objects.filter(noSolicitud=solicitud)
+		else:
+			solicitudes = SolicitudOrdenDespachoH.objects.all().order_by('-noSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Desglose de Solicitud de Orden de Despacho
+class SolicitudODById(LoginRequiredMixin, DetailView):
+
+	queryset = SolicitudOrdenDespachoH.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoSolicitud = self.request.GET.get('nosolicitud')
+
+		self.object_list = self.get_queryset().filter(noSolicitud=NoSolicitud)
+
+		format = self.request.GET.get('format')
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for solicitud in self.object_list:
+			data.append({
+				'noSolicitud': solicitud.noSolicitud,
+				'fechaSolicitud': solicitud.fechaSolicitud,
+				'socioCodigo': solicitud.socio.codigo,
+				'socioNombre': solicitud.socio.nombreCompleto,
+				'socioCedula': solicitud.socio.cedula,
+				'socioSalario': solicitud.salarioSocio if solicitud.salarioSocio != None else 0,
+				'representanteCodigo': solicitud.representante.id,
+				'representanteNombre': solicitud.representante.nombre,
+				'cobrador': solicitud.cobrador.userLog.username,
+				'autorizadoPor': solicitud.autorizadoPor.username if solicitud.autorizadoPor != None else '',
+				'montoSolicitado': solicitud.montoSolicitado,
+				'ahorrosCapitalizados': solicitud.ahorrosCapitalizados,
+				'deudasPrestamos': solicitud.deudasPrestamos,
+				'prestacionesLaborales': solicitud.prestacionesLaborales,
+				'valorGarantizado': solicitud.valorGarantizado,
+				'netoDesembolsar': solicitud.netoDesembolsar,
+				'observacion': solicitud.observacion,
+				'categoriaPrestamoId': solicitud.categoriaPrestamo.id,
+				'categoriaPrestamoDescrp': solicitud.categoriaPrestamo.descripcion,
+				'idSuplidor': solicitud.suplidor.id,
+				'suplidorNombre': solicitud.suplidor.nombre,
+				'fechaParaDescuento': solicitud.fechaParaDescuento,
+				'tasaInteresAnual': solicitud.tasaInteresAnual,
+				'tasaInteresMensual': solicitud.tasaInteresMensual,
+				'cantidadCuotas': solicitud.cantidadCuotas,
+				'valorCuotasCapital': solicitud.valorCuotasCapital,
+				'fechaAprobacion': solicitud.fechaAprobacion if solicitud.fechaAprobacion != None else '',
+				'fechaRechazo': solicitud.fechaRechazo if solicitud.fechaRechazo != None else '',
+				'estatus': solicitud.estatus,
+				'prestamo': solicitud.prestamo,
+				'userLog': solicitud.userLog.username,
+				'datetimeServer': solicitud.datetimeServer,
+				'articulos': [ 
+					{	'articulo': detalle.articulo,
+						'cantidad': detalle.cantidad,
+						'precio': detalle.precio,
+					} 
+					for detalle in SolicitudOrdenDespachoD.objects.filter(ordenDespacho=solicitud)],
+				})
+
+		return JsonResponse(data, safe=False)
 	

@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from administracion.models import Socio, CategoriaPrestamo
 from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DesembolsoElectronico, \
-					MaestraPrestamo, PrestamoUnificado, CuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
-					NotaDeDebitoPrestamo, DistribucionExcedente
+					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, \
+					NotaDeCreditoEspecial, NotaDeDebitoPrestamo, DistribucionExcedente
 
 
 # Listado de Solicitudes de Prestamos

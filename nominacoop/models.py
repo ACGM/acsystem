@@ -5,7 +5,7 @@ from django.db.models import Sum
 from django.contrib.auth.models import User
 
 from administracion.models import Empresa, CoBeneficiario, Socio
-from prestamos.models import MaestraPrestamo, CuotasPrestamo
+from prestamos.models import MaestraPrestamo, PagoCuotasPrestamo
 
 
 class DepartamentoCoop(models.Model):
@@ -273,13 +273,12 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	cuota = models.ForeignKey(CuotasPrestamo)
+	cuota = models.ForeignKey(PagoCuotasPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
 	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
-
 
 # Cuotas Ahorros para Nomina Empresa
 class CuotasAhorrosEmpresa(models.Model):

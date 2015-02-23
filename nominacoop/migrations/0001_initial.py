@@ -46,11 +46,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('valorCapital', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('valorInteres', models.DecimalField(null=True, max_digits=12, decimal_places=2)),
+                ('valorInteres', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('nomina', models.DateField(null=True)),
                 ('fecha', models.DateField(auto_now=True, null=True)),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
-                ('cuota', models.ForeignKey(to='prestamos.CuotasPrestamo')),
+                ('prueba', models.CharField(default=b's', max_length=1)),
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
             ],

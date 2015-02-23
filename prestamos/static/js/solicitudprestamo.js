@@ -513,7 +513,6 @@
         }
         else{
           $scope.solicitudesSeleccionadas = _.without($scope.solicitudesSeleccionadas, _.findWhere($scope.solicitudesSeleccionadas, {id : iReg.id}));
-          // $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
         }
       }
 

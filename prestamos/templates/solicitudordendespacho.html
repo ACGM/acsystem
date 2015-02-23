@@ -7,7 +7,6 @@
 	<div class="SolicitudOrdenDespacho" ng-controller="SolicitudODCtrl">
 		
 		<mensajeerror> </mensajeerror>
-		<mensajeinfo> </mensajeinfo>		
 
 		<div class="sub-menu">	
 			<div class="menu-entrada-sp-listado">
@@ -360,45 +359,50 @@
 			<!-- DETALLE DE LA ORDEN DE COMPRA -->
 				<!-- ************************************* -->
 
-			<section ng-show="solicitud.solicitudNo > 0" class="detalle-orden-despacho">
-				<form name="ArticuloODForm" ng-submit="guardarDO" novalidate>
-					<h2><span class="title-od">Detalle de la Orden de Despacho</span></h2>
-
-					<div class="agregar-articulo">
-						<span>Articulo</span>
-						<input type="text" class="articulo-od-field" ng-model="articulo" ng-keyup="agregarArticulo($event)">
-						<button class="Boton boton-agregar-articulo" ng-click="agregarArticulo($event)">Agregar</button>
-					</div>
-
-					<table class="table-articulo-orden-despacho" ng-init="getArticulos()">
-						<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-header">
-							<td>Descripción</td>
-							<td>Cantidad</td>
-							<td>Precio</td>
-							<td>Sub-Total</td>
-							<td>Eliminar</td>
-						</tr>
-						<tr class="table-articulo-orden-despacho-detail" ng-repeat="item in dataD">
-							<td>[[item.articulo]]</td>
-							<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad" ng-change="calculaTotales()" class="valor-field-od cantidad" required></td>
-							<td><input type="text" ng-model="item.precio" ng-bind="item.precio" ng-change="calculaTotales()" class="valor-field-od precio" required></td>
-							<td> [[item.cantidad * item.precio | number : 2]]</td>
-							<td><a href="#" class="icon-delete icon-eliminar" ng-click="eliminarArticulo($event, item)"></a></td>
-						</tr>
-						<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-footer">
-							<td colspan="3">TOTAL: </td>
-							<td>[[totalGeneralArticulos | number : 2]]</td>
-							<td> </td>
-						</tr>
-						
-					</table>
-
-					<div ng-if="dataD.length > 0" class="acciones-od">
-						<button class="icon-save Boton" type="submit">Guardar</button>
-					</div>
-				</form>
-			</section>	
 		</form>	
+
+		<section ng-show="solicitud.solicitudNo > 0" class="detalle-orden-despacho">
+			<form name="ArticulosODForm" ng-submit="guardarDetalleSolicitud()" novalidate>
+				<h2><span class="title-od">Detalle de la Orden de Despacho</span></h2>
+
+				<div class="agregar-articulo">
+					<span>Articulo</span>
+					<input type="text" class="articulo-od-field" ng-model="articulo" ng-keyup="agregarArticulo($event)">
+					<button ng-if="solicitud.estatus == 'P'" class="Boton boton-agregar-articulo" ng-click="agregarArticulo($event)">Agregar</button>
+					<button ng-if="solicitud.estatus != 'P'" class="Boton-disabled boton-agregar-articulo" ng-disabled="true">Agregar</button>
+				</div>
+
+				<table class="table-articulo-orden-despacho" ng-init="getArticulos()">
+					<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-header">
+						<td>Descripción</td>
+						<td>Cantidad</td>
+						<td>Precio</td>
+						<td>Sub-Total</td>
+						<td>Eliminar</td>
+					</tr>
+					<tr class="table-articulo-orden-despacho-detail" ng-repeat="item in dataD">
+						<td>[[item.articulo]]</td>
+						<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad" ng-change="calculaTotales()" class="valor-field-od cantidad" required></td>
+						<td><input type="text" ng-model="item.precio" ng-bind="item.precio" ng-change="calculaTotales()" class="valor-field-od precio" required></td>
+						<td> [[item.cantidad * item.precio | number : 2]]</td>
+						<td>
+							<div ng-if="solicitud.estatus == 'P'"><a href="#" class="icon-delete icon-eliminar" ng-click="eliminarArticulo($event, item)"></a></div>
+							<div ng-if="solicitud.estatus != 'P'"><a href="#" class="icon-delete icon-eliminar" ng-disabled="true"></a></div>
+						</td>
+					</tr>
+					<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-footer">
+						<td colspan="3">TOTAL: </td>
+						<td>[[totalGeneralArticulos | number : 2]]</td>
+						<td> </td>
+					</tr>
+					
+				</table>
+
+				<div ng-if="dataD.length > 0" class="acciones-od">
+					<button ng-if="solicitud.estatus == 'P' && solicitud.solicitudNo > 0" class="icon-save Boton" type="submit">Guardar</button></div>
+				</div>
+			</form>
+		</section>	
 
 	</div>
 

@@ -48,8 +48,8 @@
 
 						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
 							<td><input type="checkbox"> </td>
-							<td class="icon-folder"></td>
-							<td><a class="prestamo-field-detalle" href="#">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
+							<td class="icon-folder-open posteo-N"></td>
+							<td><a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
 							<td>[[prestamo.factura | numberFixedLen : 8]]</td>
 							<td>[[prestamo.codigoSocio]]</td>
 							<td>[[prestamo.socio]]</td>
@@ -69,136 +69,136 @@
 			</section>
 		</div>
 
-		<!--DETALLE DEL PRESTAMO-->
-		<div class="sub-menu">	
-				Detalle del Prestamo
-			<a class="DownArrow" href="#"></a>
-		</div>
+		<section class="detalle-prestamo" ng-hide="showLP">
 
-		<section class="data-detalle-section">
-			<div class="data-detalle-prestamo-header">
-				
-				<div class="data-detalle-prestamo">
-					<span class="prestamo-prestamo-field">Prestamo No.</span>
-					<span class="prestamo-categoria-field">Categoria</span>
-					<span class="prestamo-representante-field">Representante</span>
-				</div>
-				
-				<div class="data-detalle-prestamo">
-					<span><input class="prestamo-prestamo-field-t" type="text"></span>
-					<span><input class="prestamo-categoria-field-t" type="text"></span>
-					<span><input class="prestamo-representanteCod-field-t" type="text"></span>
-					<span><input class="prestamo-representanteDescrp-field-t" type="text"></span>
-				</div>
-				
-				<div class="data-detalle-prestamo">
-					<span class="prestamo-codigo-field">Codigo</span>
-					<span class="prestamo-socio-field">Nombre Socio</span>
-					<span class="prestamo-cedula-field">Cedula</span>
-					<span class="prestamo-pagarPor-field">Pagar por</span>
-				</div>
-
-				<div class="data-detalle-prestamo">
-					<span><input class="prestamo-codigo-field-t" type="text"></span>
-					<span><input class="prestamo-socio-field-t" type="text"></span>
-					<span><input class="prestamo-cedula-field-t" type="text"></span>
-					<span><input class="prestamo-pagarPor-field-t" type="text"></span>
-				</div>
-
-				<div class="data-detalle-prestamo">
-					<span class="prestamo-oficial-field">Oficial</span>
-					<span class="prestamo-distrito-field">Distrito</span>
-				</div>
-				
-				<div class="data-detalle-prestamo">
-					<span><input class="prestamo-oficial-field-t" type="text"></span>
-					<span><input class="prestamo-distrito-field-t" type="text"></span>
-				</div>
-
-			</div>
-		</section>
-
-		<section class="mas-datos-prestamo-sec">
-			<div class="datos-prestamo">
-				<div class="datos-prestamo-title">
-					<span>Mas datos del prestamo</span>
-				</div>
-
-				<table class="datos-prestamo-table">
-					<tr>
-						<td>Monto Prestamo</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Tasa de Interes Anual</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Tasa de Interes Mensual</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Pago Prestamo Anterior</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Cantidad Cuotas</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Monto de Cuotas</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Tipo de Tabla</td>
-						<td class="tipo-tabla-field">
-							<input type="radio"> Quincenal
-							<input type="radio"> Mensual
-						</td>
-					</tr>
-				</table>
+			<!--DETALLE DEL PRESTAMO-->
+			<div class="sub-menu">	
+					Detalle del Prestamo
 			</div>
 
+			<section class="data-detalle-section">
+				<div class="data-detalle-prestamo-header">
+					
+					<div class="data-detalle-prestamo">
+						<span class="prestamo-prestamo-field">Prestamo No.</span>
+						<span class="prestamo-categoria-field">Categoria</span>
+						<span class="prestamo-representante-field">Representante</span>
+					</div>
+					
+					<div class="data-detalle-prestamo">
+						<span><input type="text" class="prestamo-prestamo-field-t" ng-model="dataH.noPrestamo" readonly></span>
+						<span><input type="text" class="prestamo-categoria-field-t" ng-model="dataH.categoriaPrestamoDescrp" readonly></span>
+						<span><input type="text" class="prestamo-representanteCod-field-t" ng-model="dataH.representanteCod" readonly></span>
+						<span><input type="text" class="prestamo-representanteDescrp-field-t" ng-model="dataH.representanteDescrp" readonly></span>
+					</div>
+					
+					<div class="data-detalle-prestamo">
+						<span class="prestamo-codigo-field">Codigo</span>
+						<span class="prestamo-socio-field">Nombre Socio</span>
+						<span class="prestamo-cedula-field">Cedula</span>
+						<span class="prestamo-pagarPor-field">Pagar por</span>
+					</div>
 
-			<div class="garante">
-				<div class="garante-title">
-					Garante
+					<div class="data-detalle-prestamo">
+						<span><input type="text" class="prestamo-codigo-field-t" ng-model="dataH.socioCodigo" readonly></span>
+						<span><input type="text" class="prestamo-socio-field-t" ng-model="dataH.socioNombre" readonly></span>
+						<span><input type="text" class="prestamo-cedula-field-t" ng-model="dataH.socioCedula" readonly></span>
+						<span><input type="text" class="prestamo-pagarPor-field-t" ng-model="dataH.pagarPor" readonly></span>
+					</div>
+
+					<div class="data-detalle-prestamo">
+						<span class="prestamo-oficial-field">Oficial</span>
+						<span class="prestamo-localidad-field">Localidad</span>
+					</div>
+					
+					<div class="data-detalle-prestamo">
+						<span><input type="text" class="prestamo-oficial-field-t" ng-model="dataH.oficial" readonly></span>
+						<span><input type="text" class="prestamo-localidad-field-t" ng-model="dataH.localidad" readonly></span>
+					</div>
+
+				</div>
+			</section>
+
+			<section class="mas-datos-prestamo-sec">
+				<div class="datos-prestamo">
+					<div class="datos-prestamo-title">
+						<span>Mas datos del prestamo</span>
+					</div>
+
+					<table class="datos-prestamo-table">
+						<tr>
+							<td>Monto Prestamo</td>
+							<td><input type="text" ng-model="prestamo.monto" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Tasa de Interes Anual</td>
+							<td><input type="text" ng-model="prestamo.tasaInteresAnual" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Tasa de Interes Mensual</td>
+							<td><input type="text" ng-model="prestamo.tasaInteresMensual" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Pago Prestamo Anterior</td>
+							<td><input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Cantidad Cuotas</td>
+							<td><input type="text" ng-model="prestamo.cantidadCuotas" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Monto de Cuota Q1</td>
+							<td><input type="text" ng-model="prestamo.montoCuotaQ1" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Monto de Cuota Q2</td>
+							<td><input type="text" ng-model="prestamo.montoCuotaQ2" class="align-right"></td>
+						</tr>
+					</table>
 				</div>
 
-				<table class="garante-table">
-					<tr>
-						<td>Fecha de Desembolso</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Fecha de Entrega</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Fecha de Vencimiento</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Solicitud No.</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Cheque No.</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Valor de la Garantia</td>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td>Balance a la fecha</td>
-						<td><input class="prestamo-balance-actual" type="text"></td>
-					</tr>					
-				</table>
-				
-			</div>
 
-			<button class="icon-save Boton boton-guarda-cambios">Guardar Cambios</button>
+				<div class="garante">
+					<div class="garante-title">
+						mas...
+					</div>
+
+					<table class="garante-table">
+						<tr>
+							<td>Fecha de Desembolso</td>
+							<td><input type="text" ng-model="prestamo.fechaDesembolso"></td>
+						</tr>
+						<tr>
+							<td>Fecha de Entrega</td>
+							<td><input type="text" ng-model="prestamo.fechaEntrega"></td>
+						</tr>
+						<tr>
+							<td>Fecha de Vencimiento</td>
+							<td><input type="text" ng-model="prestamo.fechaVencimiento"></td>
+						</tr>
+						<tr>
+							<td>Solicitud No.</td>
+							<td><input type="text" ng-model="prestamo.noSolicitud"></td>
+						</tr>
+						<tr>
+							<td>Cheque No.</td>
+							<td><input type="text" ng-model="prestamo.chequeNo"></td>
+						</tr>
+						<tr>
+							<td>Valor de la Garantia</td>
+							<td><input type="text" ng-model="prestamo.valorGarantizado" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Balance a la fecha</td>
+							<td><input type="text" class="prestamo-balance-actual align-right" ng-model="prestamo.balance"></td>
+						</tr>					
+					</table>
+					
+				</div>
+
+				<button class="icon-save Boton boton-guarda-cambios">Guardar Cambios</button>
+
+			</section>
 
 		</section>
 		

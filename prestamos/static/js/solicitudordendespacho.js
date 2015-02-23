@@ -22,8 +22,21 @@
         return deferred.promise;
       }
 
-  
-      // Aprobar/Rechazar solicitudes de prestamos.
+       //Guardar Detalle de Solicitud de Orden de Despacho
+      function guardaSolicitudODDetalle(solicitudNo, articulos) {
+        var deferred = $q.defer();
+
+        $http.post('/prestamos/solicitudOD/detalle/', JSON.stringify({'articulos': articulos, 'solicitudNo': solicitudNo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      // Aprobar/Rechazar solicitudes de Ordenes de Despacho.
       function AprobarRechazarSolicitudes(solicitudes, accion) {
         var deferred = $q.defer();
 
@@ -56,14 +69,14 @@
       }
 
       //Filtrar el listado de Solicitudes por Socio
-      function solicitudesprestamosBySocio(dato) {
+      function solicitudesODBySocio(dato) {
         var deferred = $q.defer();
         var url = "";
 
         if(!isNaN(dato)) {
-          url = "/api/prestamos/solicitudes/prestamos/codigo/dato/?format=json".replace("dato", dato);
+          url = "/api/prestamos/solicitudes/od/codigo/dato/?format=json".replace("dato", dato);
         } else {
-          url = "/api/prestamos/solicitudes/prestamos/nombre/dato/?format=json".replace("dato", dato);
+          url = "/api/prestamos/solicitudes/od/nombre/dato/?format=json".replace("dato", dato);
         }
 
         $http.get(url)
@@ -75,10 +88,10 @@
       }
 
       //Filtrar el listado de Solicitudes por estatus
-      function solicitudesprestamosByEstatus(estatus) {
+      function solicitudesODByEstatus(estatus) {
         var deferred = $q.defer();
 
-        solicitudesprestamos(undefined).then(function (data) {
+        solicitudesOD(undefined).then(function (data) {
           var results = data.filter(function (registros) {
             if(estatus == 'T') {
               return registros;
@@ -92,31 +105,11 @@
           } else {
             deferred.reject();
           }
-
         });
-
         return deferred.promise;
       }
 
-      //Socio por Codigo de Empleado
-      function SocioByCodigoEmpleado(codigo) {
-        var deferred = $q.defer();
-
-        if(codigo != undefined) {
-          url = '/api/socio/idempleado/codigo/?format=json'.replace('codigo', codigo);
-        } else {
-          url = '/api/socio/idempleado/?format=json'
-        }
-
-        http.get(url)
-          .success(function (data) {
-            deferred.resolve(data);
-          });
-
-        return deferred.promise;
-      }
-
-      //Categorias de prestamos.
+      //Categorias de prestamos (para ORDENES DE DESPACHO).
       function categoriasPrestamos(id, categoria) {
         var deferred = $q.defer();
 
@@ -131,11 +124,10 @@
             if (id != undefined) {
               deferred.resolve(data.filter(function (item) {
                 return item.id == id;
-
               }));
             } else {
               deferred.resolve(data.filter(function (registros) {
-                return registros.tipo == 'PR';
+                return registros.tipo == 'OD'; //PARA TIPO ORDEN DESPACHO
               }));
             }
           });
@@ -143,8 +135,8 @@
         return deferred.promise;
       }
 
-      //Cantidad de Cuotas de Prestamo (parametro: monto)
-      function cantidadCuotasPrestamoByMonto(monto) {
+      //Cantidad de Cuotas de Ordenes de Despacho (parametro: monto)
+      function cantidadCuotasODByMonto(monto) {
         var deferred = $q.defer();
         var url = "/api/cantidadCuotasPrestamos/monto/?format=json".replace("monto", monto.toString().replace(',',''));
 
@@ -157,54 +149,28 @@
       }
 
       //Buscar una solicitud en especifico (Desglose)
-      function SolicitudPById(NoSolicitud) {
+      function SolicitudODById(NoSolicitud) {
         var deferred = $q.defer();
         var doc = NoSolicitud != undefined? NoSolicitud : 0;
 
-        $http.get('/solicitudPjson/?nosolicitud={solicitud}&format=json'.replace('{solicitud}', doc))
+        $http.get('/solicitudODjson/?nosolicitud={solicitud}&format=json'.replace('{solicitud}', doc))
           .success(function (data) {
             deferred.resolve(data);
           });
 
         return deferred.promise;
       }
-
-      //Autorizadores
-      function getAutorizadores() {
-        var deferred = $q.defer();
-
-        $http.get('/api/autorizador/')
-          .success(function (data) {
-            deferred.resolve(data);
-          });
-
-        return deferred.promise;
-      }
-
-      //Representantes
-      function getRepresentantes() {
-        var deferred = $q.defer();
-
-        $http.get('/api/representante/')
-          .success(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
-
 
       return {
         solicitudesOD                 : solicitudesOD,
-        solicitudesprestamosBySocio   : solicitudesprestamosBySocio,
-        solicitudesprestamosByEstatus : solicitudesprestamosByEstatus,
-        SocioByCodigoEmpleado         : SocioByCodigoEmpleado,
+        solicitudesODBySocio   : solicitudesODBySocio,
+        solicitudesODByEstatus : solicitudesODByEstatus,
         categoriasPrestamos           : categoriasPrestamos,
-        cantidadCuotasPrestamoByMonto : cantidadCuotasPrestamoByMonto,
+        cantidadCuotasODByMonto : cantidadCuotasODByMonto,
         guardaSolicitudOD             : guardaSolicitudOD,
         AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
-        SolicitudPById                : SolicitudPById,
-        getAutorizadores              : getAutorizadores,
-        getRepresentantes             : getRepresentantes
+        SolicitudODById               : SolicitudODById,
+        guardaSolicitudODDetalle      : guardaSolicitudODDetalle
       };
 
     }])
@@ -244,6 +210,10 @@
       $scope.toggleLSP = function() {
         $scope.showLSP = !$scope.showLSP;
 
+        if ($scope.solicitud != undefined) {
+          $scope.solicitud.solicitudNo = '0';
+        }
+
         if($scope.showLSP === true) {
           $scope.ArrowLSP = 'UpArrow';
         } else {
@@ -279,11 +249,11 @@
         });
       }
 
-      $scope.solicitudesprestamosBySocio = function($event, socio) {
+      $scope.solicitudesODBySocio = function($event, socio) {
 
         if($event.keyCode == 13) {
 
-          SolicitudOrdenDespachoService.solicitudesprestamosBySocio(socio).then(function (data) {
+          SolicitudOrdenDespachoService.solicitudesODBySocio(socio).then(function (data) {
 
             if(data.length > 0) {
               $scope.solicitudes = data;
@@ -304,7 +274,7 @@
       $scope.solicitudesprestamosEstatus = function(estatus) {
 
         try {
-          SolicitudOrdenDespachoService.solicitudesprestamosByEstatus(estatus).then(function (data) {
+          SolicitudOrdenDespachoService.solicitudesODByEstatus(estatus).then(function (data) {
 
             if(data.length > 0) {
               $scope.solicitudes = data;
@@ -384,7 +354,7 @@
       //Cantidad de cuotas (parametro: monto)
       $scope.getCantidadCuotasPrestamo = function(monto) {
         try {
-          SolicitudOrdenDespachoService.cantidadCuotasPrestamoByMonto(monto).then(function (data) {
+          SolicitudOrdenDespachoService.cantidadCuotasODByMonto(monto).then(function (data) {
             if(data.length > 0) {
               $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
 
@@ -503,7 +473,7 @@
         }
         else{
 
-          $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
+          $scope.solicitudesSeleccionadas = _.without($scope.solicitudesSeleccionadas, _.findWhere($scope.solicitudesSeleccionadas, {id : iReg.id}));
         }
       }
 
@@ -588,13 +558,13 @@
               throw data;
             }
             $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data, 8)
+            $scope.solicitud.estatus = 'P';
 
             $scope.disabledButton = 'Boton-disabled';
             $scope.disabledButtonBool = true;
 
             $scope.errorShow = false;
             $scope.listadoSolicitudes();
-            $scope.toggleLSP();
           },
           (function () {
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -673,7 +643,7 @@
         }
       }
 
-      // Aprobar/Rechazar solicitudes de prestamos
+      // Aprobar/Rechazar solicitudes de Orden de Despacho
       $scope.AprobarRechazarSolicitudesOD = function($event, accion, solicitud) {
         $event.preventDefault();
 
@@ -686,6 +656,9 @@
           SolicitudOrdenDespachoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
             if(data == 1) {
               $scope.listadoSolicitudes();
+            } else {
+              $scope.mostrarError(data);
+              throw data;
             }
           },
           function() {
@@ -703,9 +676,10 @@
         $event.preventDefault();
 
         try {
-          SolicitudPrestamoService.SolicitudPById(solicitud).then(function (data) {
+          SolicitudOrdenDespachoService.SolicitudODById(solicitud).then(function (data) {
 
             if(data.length > 0) {
+              $scope.dataD = [];
               $scope.errorMsg = '';
               $scope.errorShow = false;
 
@@ -737,6 +711,8 @@
               $scope.solicitud.nota = data[0]['observacion'];
               $scope.solicitud.categoriaPrestamoId = data[0]['categoriaPrestamoId'];
               $scope.solicitud.categoriaPrestamo = data[0]['categoriaPrestamoDescrp'];
+              $scope.solicitud.idSuplidor = data[0]['idSuplidor'];
+              $scope.solicitud.suplidorNombre = data[0]['suplidorNombre'];
               $scope.solicitud.fechaDescuento = $filter('date')(data[0]['fechaParaDescuento'],'dd/MM/yyyy');
               $scope.solicitud.tasaInteresAnual = data[0]['tasaInteresAnual'];
               $scope.solicitud.tasaInteresMensual = data[0]['tasaInteresMensual'];
@@ -747,6 +723,10 @@
               $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data[0]['noSolicitud'],8);
               $scope.solicitud.prestamo = data[0]['prestamo'] != undefined? $filter('numberFixedLen')(data[0]['prestamo'],8) : '';
               $scope.solicitud.estatus = data[0]['estatus'];
+
+              data[0]['articulos'].forEach(function (item) {
+                $scope.dataD.push(item);
+              });
 
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
@@ -770,11 +750,6 @@
         }
 
         $scope.toggleLSP();
-      }
-
-      //Llenar listado de articulos
-      $scope.getArticulos = function() {
-
       }
 
       //Agregar Articulo de Orden Despacho
@@ -817,6 +792,15 @@
             $scope.totalGeneralArticulos += valor;
           }
         });
+      }
+
+      //Guardar detalle de solicitud (articulos)
+      $scope.guardarDetalleSolicitud = function() {
+        if($scope.ArticulosODForm) {
+          SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
+            console.log(data);
+          });
+        }
       }
 
     }]);

@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('administracion', '0007_auto_20150219_2118'),
         ('facturacion', '0001_initial'),
-        ('administracion', '0006_auto_20150219_0451'),
     ]
 
     operations = [
@@ -20,19 +20,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('chequeNo', models.IntegerField()),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Aprobado'), (b'R', b'Rechazado')])),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='CuotasPrestamo',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('valorCapital', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('valorInteres', models.DecimalField(null=True, max_digits=18, decimal_places=2)),
-                ('fechaPago', models.DateField(auto_now_add=True)),
-                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'N', b'Nota de Credito')])),
             ],
             options={
             },
@@ -121,9 +108,6 @@ class Migration(migrations.Migration):
                 ('posteado', models.BooleanField(default=False)),
                 ('fechaPosteo', models.DateField(auto_now=True, null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('aplicadoACuota', models.ForeignKey(to='prestamos.CuotasPrestamo')),
-                ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
-                ('userLog', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -143,6 +127,20 @@ class Migration(migrations.Migration):
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
                 ('userLog', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='PagoCuotasPrestamo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('valorCapital', models.DecimalField(max_digits=18, decimal_places=2)),
+                ('valorInteres', models.DecimalField(null=True, max_digits=18, decimal_places=2)),
+                ('fechaPago', models.DateField(auto_now_add=True)),
+                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'N', b'Nota de Credito')])),
+                ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
             ],
             options={
             },
@@ -179,7 +177,10 @@ class Migration(migrations.Migration):
                 ('fechaSolicitud', models.DateField(auto_now=True)),
                 ('salarioSocio', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('montoSolicitado', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('valorGarantizdo', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
+                ('ahorrosCapitalizados', models.DecimalField(default=0, max_digits=12, decimal_places=2)),
+                ('deudasPrestamos', models.DecimalField(default=0, max_digits=12, decimal_places=2)),
+                ('prestacionesLaborales', models.DecimalField(default=0, max_digits=12, decimal_places=2)),
+                ('valorGarantizado', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('netoDesembolsar', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('observacion', models.TextField()),
                 ('fechaParaDescuento', models.DateField()),
@@ -196,6 +197,7 @@ class Migration(migrations.Migration):
                 ('autorizadoPor', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),
                 ('cobrador', models.ForeignKey(to='administracion.Cobrador')),
+                ('localidad', models.ForeignKey(to='administracion.Localidad')),
                 ('representante', models.ForeignKey(to='administracion.Representante')),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
                 ('suplidor', models.ForeignKey(to='administracion.Suplidor')),
@@ -234,6 +236,7 @@ class Migration(migrations.Migration):
                 ('autorizadoPor', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),
                 ('cobrador', models.ForeignKey(to='administracion.Cobrador')),
+                ('localidad', models.ForeignKey(to='administracion.Localidad', null=True)),
                 ('representante', models.ForeignKey(to='administracion.Representante')),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
                 ('userLog', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
@@ -258,6 +261,24 @@ class Migration(migrations.Migration):
             model_name='prestamounificado',
             name='prestamoUnificado',
             field=models.ForeignKey(related_name='+', to='prestamos.MaestraPrestamo'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='notadecreditoprestamo',
+            name='aplicadoACuota',
+            field=models.ForeignKey(to='prestamos.PagoCuotasPrestamo'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='notadecreditoprestamo',
+            name='noPrestamo',
+            field=models.ForeignKey(to='prestamos.MaestraPrestamo'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='notadecreditoprestamo',
+            name='userLog',
+            field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -324,12 +345,6 @@ class Migration(migrations.Migration):
             model_name='desembolsoelectronico',
             name='userLog',
             field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='cuotasprestamo',
-            name='noPrestamo',
-            field=models.ForeignKey(to='prestamos.MaestraPrestamo'),
             preserve_default=True,
         ),
     ]
