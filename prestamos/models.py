@@ -141,7 +141,7 @@ class MaestraPrestamo(models.Model):
 	montoCuotaQ2 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	fechaDesembolso = models.DateField(null=True, blank=True)
 	fechaEntrega = models.DateField(null=True, blank=True)
-	chequeNo = models.ForeignKey(Cheque, null=True)
+	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 

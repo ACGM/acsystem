@@ -166,7 +166,6 @@
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
       $scope.disabledButtonBool = true;
-      $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLP = true;
       $scope.regAll = false;
@@ -337,7 +336,38 @@
 
         $scope.toggleLP();
       }
-     
+
+      //Cuando se le de click al checkbox del header.
+      $scope.seleccionAll = function() {
+
+        $scope.prestamos.forEach(function (data) {
+          if (data.estatus == 'E') {
+
+            if ($scope.regAll === true){
+              $scope.valoresChk[data.noPrestamo] = true;
+              $scope.prestamosSeleccionados.push(data);
+            }
+            else{
+              $scope.valoresChk[data.noPrestamo] = false;
+              $scope.prestamosSeleccionados.splice(data);
+            }
+          }
+
+        });
+      }
+
+      //Cuando se le de click a un checkbox de la lista
+      $scope.selectedReg = function(iReg) {
+        
+        index = $scope.prestamos.indexOf(iReg);
+
+        if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
+          $scope.prestamosSeleccionados.push($scope.prestamos[index]);
+        }
+        else{
+          $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
+        }
+      }
 
     }])
 

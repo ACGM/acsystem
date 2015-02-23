@@ -35,7 +35,7 @@
 				<section class="registrosPanel">
 					<table class="listado-table">
 						<tr class="listado-table-header">
-							<td><input type="checkbox"> </td>
+							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td>
 							<td>Estatus</td>
 							<td>Prestamo</td>
 							<td>Factura</td>
@@ -47,8 +47,8 @@
 						</tr>
 
 						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
-							<td><input type="checkbox"> </td>
-							<td class="icon-folder-open posteo-N"></td>
+							<td><input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)"></td>
+							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]]"></td>
 							<td><a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
 							<td>[[prestamo.factura | numberFixedLen : 8]]</td>
 							<td>[[prestamo.codigoSocio]]</td>

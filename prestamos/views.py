@@ -288,3 +288,37 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 			except Exception as e:
 				return HttpResponse(e)
 
+
+# Prestamos para Desembolso Electronico
+class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
+
+	queryset = MaestraPrestamo.objects.filter(estatus='P')
+
+	def get(self, request, *args, **kwargs):
+
+		self.object_list = self.get_queryset()
+
+		format = self.request.GET.get('format')
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		for prestamo in self.object_list:
+			data.append({
+				'noPrestamo': prestamo.noPrestamo,
+				'estatus': prestamo.estatus,
+				'socioCodigo': prestamo.socio.codigo,
+				'socioNombre': prestamo.socio.nombreCompleto,
+				'socioCedula': prestamo.socio.cedula,
+				'socioCuentaBancaria': prestamo.socio.cuentaBancaria,
+				'socioTipoCuentaBancaria': prestamo.socio.tipoCuentaBancaria,
+				'netoDesembolsar': prestamo.montoInicial,
+				})
+
+		return JsonResponse(data, safe=False)
+

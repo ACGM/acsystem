@@ -95,3 +95,24 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+#Imprimir Solicitud de Prestamo
+class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_solicitudprestamo.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+			solicitud = data['solicitud']
+
+			# fact = Factura.objects.get(noFactura=factura)
+			# fact.impresa = fact.impresa + 1
+			# fact.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)

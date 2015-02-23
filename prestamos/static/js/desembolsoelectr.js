@@ -9,54 +9,7 @@
       function listadoPrestamos() {
         var deferred = $q.defer();
 
-        $http.get('/api/prestamos/maestra/listado/?format=json')
-          .success(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
-
-      // //Categorias de prestamos, si se pasa el parametro "cp" con valor es filtrada la informacion. 
-      // function categoriasPrestamos(cp) {
-      //   var deferred = $q.defer();
-
-      //   $http.get('/api/categoriasPrestamos/?format=json')
-      //     .success(function (data) {
-      //       if (cp != undefined) {
-      //         deferred.resolve(data.filter( function(item) {
-      //           return item.descripcion == cp;
-
-      //         }));
-      //       } else {
-      //         deferred.resolve(data);
-      //       }
-      //     });
-
-      //   return deferred.promise;
-      // }
-
-      // //Traer el listado de socios
-      // function socios() {
-      //   var deferred = $q.defer();
-
-      //   $http.get('/api/socio/?format=json')
-      //     .success(function (data) {
-      //       deferred.resolve(data.filter( function(socio) {
-      //         return socio.estatus == "E" || socio.estatus == "S";
-
-      //       }));
-      //     });
-
-      //   return deferred.promise;
-      // }
-
-
-      //Buscar un prestamo en especifico (Desglose)
-      function PrestamoById(NoPrestamo) {
-        var deferred = $q.defer();
-        var doc = NoPrestamo != undefined? NoPrestamo : 0;
-
-        $http.get('/maestraPrestamojson/?noprestamo={NoPrestamo}&format=json'.replace('{NoPrestamo}', doc))
+        $http.get('/prestamosDesembolsoElectronicojson/?format=json')
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -66,7 +19,7 @@
       //Buscar un numero de prestamo en especifico en listado de prestamos
       function byNoPrestamo(NoPrestamo) {
         var deferred = $q.defer();
-        all().then(function (data) {
+        listadoPrestamos().then(function (data) {
           var result = data.filter(function (documento) {
             return documento.noPrestamo == NoPrestamo;
           });
@@ -85,7 +38,7 @@
       function PrestamosbySocio(codigoSocio){
         var deferred = $q.defer();
 
-        all().then(function (data) {
+        listadoPrestamos().then(function (data) {
           var results = data.filter(function (registros) {
             return registros.codigoSocio == codigoSocio;
           });
@@ -100,15 +53,10 @@
       }
 
       return {
-        all: all,
-        byNoPrestamo: byNoPrestamo,
-        PrestamosbySocio: PrestamosbySocio,
-        PrestamoById: PrestamoById
-        // guardarFact: guardarFact,
-        // DocumentoById: DocumentoById,
-        // categoriasPrestamos: categoriasPrestamos,
-        // guardarOrdenSC: guardarOrdenSC,
-        // impresionFact: impresionFact
+        listadoPrestamos: listadoPrestamos
+        // byNoPrestamo: byNoPrestamo,
+        // PrestamosbySocio: PrestamosbySocio,
+        // PrestamoById: PrestamoById
       };
 
     }])
@@ -117,8 +65,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('MaestraPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 
-                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService) {
+    .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 
+                                        function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -156,7 +104,7 @@
         $scope.prestamosSeleccionados = [];
         $scope.valoresChk = [];
 
-        MaestraPrestamoService.all().then(function (data) {
+        DesembolsoElectronicoService.listadoPrestamos().then(function (data) {
           $scope.prestamos = data;
           $scope.regAll = false;
 

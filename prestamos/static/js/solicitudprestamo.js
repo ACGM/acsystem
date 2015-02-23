@@ -252,8 +252,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', 'SolicitudPrestamoService', 'FacturacionService',
-                                        function ($scope, $filter, SolicitudPrestamoService, FacturacionService) {
+    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService',
+                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService) {
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -691,7 +691,6 @@
             $scope.solicitudesSeleccionadas.push(solicitud);
           }
 
-debugger;
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
             console.log(data);
             if(data == 1) {
@@ -784,6 +783,12 @@ debugger;
         }
 
         $scope.toggleLSP();
+      }
+
+        //Imprimir solicitud de prestamo
+      $scope.ImprimirSolicitud = function(solicitud) {
+        $window.sessionStorage['solicitud'] = JSON.stringify(solicitud);
+        $window.open('/prestamos/print/solicitudP/', target='_blank'); 
       }
 
     }]);

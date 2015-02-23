@@ -286,11 +286,14 @@ footer
 .align-right
 	text-align right
 
-.posteo-N
+//PARA ICONOS POSTEOS
+.posteo-N, .posteo-E
 	color mamey
 
-.posteo-S
+.posteo-S, .posteo-P, .posteo-S
 	color green
+
+//FIN POSTEOS
 
 .quitar-borde
 	border none !important
@@ -2133,13 +2136,21 @@ footer
 .listado-table-desembolso
 	margin 1em 0 1em 0
 	border 1px solid black
-	& tr
-		& td
-			&:nth-child(3)
-				padding-right 1em
-			&:nth-child(4),&:nth-child(5)
-				text-align right
-			
+				
+.desembolso-header
+	& td
+		&:nth-child(3)
+			text-align left
+
+.listado-prestamos-desembolso-detail
+	& td
+		border 1px solid black
+		padding 0 .3em 
+		&:nth-child(3)
+			text-align right
+			font-size 1.2em
+			color mamey
+			font-weight bold
 
 .botones-acciones-desembolso
 	float left
