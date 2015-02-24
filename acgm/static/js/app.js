@@ -10,7 +10,8 @@
     'cooperativa.ahorro',
     'cooperativa.solicitudprestamo',
     'cooperativa.maestraprestamo',
-    'cooperativa.solicitudod'
+    'cooperativa.solicitudod',
+    'cooperativa.cxp',
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){

@@ -1,15 +1,11 @@
-import json
-import decimal
-
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView
-from rest_framework import viewsets
 
 from .models import OrdenCompra, DetalleOrden, CxpSuperCoop
 from cuenta.models import DiarioGeneral, Cuentas, Auxiliares, TipoDocumento
 from administracion.models import Suplidor
 from .serializers import OrdenSerializer, DetalleOrdenSerializer, CxpSuperCoopSerializer
-
+from rest_framework import viewsets
 
 class CxpOrdenView(DetailView):
     queryset = OrdenCompra.objects.all()
@@ -249,10 +245,8 @@ class DetalleOrderViewSet(viewsets.ModelViewSet):
     serializer_class = DetalleOrdenSerializer
 
 
-# # ViewSet de Cxp de SuperCoop
-# class CxpSuperViewSet(viewsets.ModelViewSet):
-#     queryset = CxpSuperCoop.objects.all()
-#     serializer_class = CxpSuperCoopSerializer
+class CxpView(TemplateView):
+    template_name = 'CxpOrden.html'
 
 
 

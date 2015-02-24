@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %} Cxp Orden de Compra {% endblock title%}
+
+{% block content %}
+	
+	<section ng-controller="cxpController">
+		<div class="sub-menu">
+			CXP Ordenes de Compra
+			<div class="utils utils-alingRight">
+				<button class="nuevo icon-file" title="Crear Registro"></button>	
+			</div>
+			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
+		</div>
+		<table class="data-entry-header-table">
+						<tr>
+							<td>Orden</td>
+							<td> <input type="text" ng-model="dataH.factura" class="input-no-editable" ng-disabled="true"> </td>
+						</tr>
+						<tr>
+							<td>Fecha</td>
+							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
+						</tr>
+						<tr>
+							<td>Socio</td>
+							<td> <input type="text" ng-model="socioCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+								<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+
+								<a href="#" class="icon-uniE601 icon-buscar" ng-click="socioNombre=''; getSocio($event)"></a>
+								
+								<span class="error-ei"> [[socioNoExiste]]</span>
+
+							</td>
+						</tr>
+						<tr>
+							<td>Suplidro</td>
+							<td> <input type="text" ng-model="suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+								<input type="text" ng-model="suplidor" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
+
+								<a href="#" class="icon-uniE601 icon-buscar" ng-click="SuplidorNombre=''; getSuplidor($event)"></a>
+								
+								<span class="error-ei"> [[suplidorNoExiste]]</span>
+
+							</td>
+						</tr>
+						<tr>
+							<td>Monto</td>
+							<td> 
+								<input type="text" ng-model="dataH.monto">
+							</td>
+						</tr>
+						<tr>
+							<td>Cuotas</td>
+							<td> <input type="text" ng-model="dataH.vendedor" readonly class="input-no-editable"> </td>
+						</tr>
+					</table>
+
+					<div class="producto-find-ei">
+						<table class="data-entry-header-table">
+							<tr>Articulo</tr>
+							<tr>Precio</tr>
+						</table>
+
+					</div>
+
+
+	</section>
+{% endblock content%}

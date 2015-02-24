@@ -93,6 +93,8 @@ class CuentasView(DetailView):
         else:
             self.idReg = None
 
+
+
         if format == "json":
             return self.json_to_response()
 
@@ -115,7 +117,7 @@ class CuentasView(DetailView):
                     }
                 )
             else:
-                regCuentas = Cuentas.objects.all()
+                regCuentas = self.object_list
 
                 for item in regCuentas:
                     data.append({

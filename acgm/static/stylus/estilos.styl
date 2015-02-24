@@ -2531,11 +2531,100 @@ footer
 	& td
 		padding 5em
 	
+//SUB-MENU DE CXP
+.sub-menu-cxp	
+	background verde
+	border 3px solid colorBordeSubMenu
+	list-style none
+	margin 1.7em 0 0 58.4em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent colorBordeSubMenu transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
 			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+			
+
+.generic-table //CLASE para darle formato a las tablas 
+	margin 1em 0 1em 0
+	border 1px solid black
+	width: 60em
+	margin .5em 0 .5em 1em
+	
+
+.generic-table-header //CLASE para darle formato a los header de las tablas
+	background verdeClarito
+	color white
+	border-radius 3px
+	& td
+		&:first-child
+			padding 0 .8em
+			width 1em
+			
+		border 1px solid black
+		padding .16em .4em
+
+.btn-guardar
+	height 3em
+	width 10em
+	margin 1em
+	&:before
+		margin-right .4em
+
+.Orden-form
+	margin .5em 
+	margin-bottom 1em
+	
+	
+	&-items
+		background-color lightgray
+		border-radius 3px
+		
+		& td 
+			margin 1em
+			& nth-child(2)
+				margin-left 5em
+	
+.Orden-Detalle
+	margin 1em 0 
+	&-Table
+		border-radius 2px
+
+.Orden-Cuentas
+	background-color darkgray
+.Articulos
+	width 80%
+	
 .utils
 	&-block
 		display block
-
+	
+	&-alingRight
+		position absolute
+		right 4em
+		top 8.9em
+		
 	&-upperBorderR
 		border-radius 3px 3px 0 0
 	
@@ -2582,6 +2671,6 @@ footer
 		display: block;
 		width: 10em;
 		height: 1em;
-		
+	
 		
 	

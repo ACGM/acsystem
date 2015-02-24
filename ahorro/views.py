@@ -233,6 +233,7 @@ class MaestraAhorroView(DetailView):
         self.object_list = self.get_queryset()
 
         format = self.request.GET.get('format')
+        self.tipo = self.request.GET.get('tipo')
 
         if format == "json":
             return self.json_to_response()
@@ -242,7 +243,7 @@ class MaestraAhorroView(DetailView):
 
     def json_to_response(self):
         data = list()
-        if 'AR' == 'AR':
+        if self.tipo == 'AR':
             for ahorro in self.object_list:
                 data.append({
                     'id': ahorro.id,
@@ -277,7 +278,7 @@ class MaestraAhorroView(DetailView):
                         for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
                 })
         else:
-            for retiro in self.object_list:
+            for retiro in RetiroAhorro.objects.all():
                 data.append({
                     'id': retiro.id,
                     'socio': retiro.socio.nombres + ' ' + retiro.socio.apellidos,
