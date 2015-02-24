@@ -10,15 +10,197 @@
 <section class="PrintSolicitudP" ng-controller="ImprimirSolicitudPCtrl">
 
 	<div class="cabecera-sp">
-		<span><h2>COOPERATIVA INDUSTRIAS NACIONALES</h2></span>
-		<span>SOLICITUD DE PRESTAMO</span>
-		<span>EN PROCESO</span>
+		<span><h3>COOPERATIVA INDUSTRIAS NACIONALES</h3></span>
+		<span class="sol-prest">SOLICITUD DE PRESTAMO</span>
+		<span class="sol-estatus">EN PROCESO</span>
 	</div>
 
-	<article>
-		<div class="titulo">Datos Personales</div>
-	</article>
-	
+	<div class="datos-personales">
+		<span class="subtitulo-sp"><h4>DATOS PERSONALES</h4></span>
+		<div class="datos-personales-desglose">
+			<table class="table-datos-personales">
+				<tr>
+					<td>Apellidos</td>
+					<td>MERCEDES SANTANA</td>
+					<td>Cedula</td>
+					<td>000-00000000-1</td>
+				</tr>
+				<tr>
+					<td>Nombres</td>
+					<td>RAFAEL</td>
+					<td>Telefono</td>
+					<td>000-000-0000</td>
+				</tr>
+				<tr>
+					<td>Codigo</td>
+					<td>241000</td>
+					<td>Localidad</td>
+					<td>PIDI</td>
+				</tr>
+				<tr>
+					<td>Departamento</td>
+					<td>TECNOLOGIA DE LA INFORMACION</td>
+					<td>Fecha Ing. Coop.</td>
+					<td>02/02/2016</td>
+				</tr>
+				<tr>
+					<td>Fecha Ing. Cia.</td>
+					<td>01/01/1987</td>
+				</tr>
+			</table>
+		</div> <!-- FIN Seccion de Datos Personales -->
+
+		<span class="subtitulo-sp"><h4>DATOS DEL PRESTAMO</h4></span>
+		<div class="datos-prestamo">
+			<table class="table-datos-prestamo">
+				<tr>
+					<td>Categoria</td>
+					<td>0033 ADELANTO BONO VEHICULO</td>
+					<td>Tasa Interes Mensual</td>
+					<td class="align-right">9.00</td>
+				</tr>
+				<tr>
+					<td>Representante</td>
+					<td>0002 MERSANT CORPORATIONS</td>
+					<td>Cantidad Cuotas</td>
+					<td class="align-right">1</td>
+				</tr>
+				<tr>
+					<td>Auxiliar</td>
+					<td>0003 RAFAEL MERCEDES SANTANA</td>
+					<td>Valor de las Cuotas</td>
+					<td class="align-right">44,333.54</td>
+				</tr>
+				<tr>
+					<td colspan="4"> <hr/> </td>
+				</tr>
+				<tr>
+					<td>Ahorros Capitalizados</td>
+					<td class="align-right padding-right-6">10,233.45</td>
+					<td>Monto Solicitado</td>
+					<td class="align-right">33,444.54</td>
+				</tr>
+				<tr>
+					<td>Prestaciones Laborales</td>
+					<td class="align-right padding-right-6">0.00</td>
+					<td>Bce. Otros Prestamos</td>
+					<td class="align-right">0.00</td>
+				</tr>
+				<tr>
+					<td>Garantizado por Garante</td>
+					<td class="align-right padding-right-6">0.00</td>
+					<td>Garantia Disponible</td>
+					<td class="align-right">10,233.45</td>
+				</tr>
+				<tr>
+					<td>Menos Deudas Prestamos</td>
+					<td class="align-right padding-right-6">88,444.33</td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>MONTO AL QUE APLICA</td>
+					<td class="align-right padding-right-6">0.00</td>
+					<td>NETO A DESEMBOLSAR</td>
+					<td class="align-right">12,333.22</td>
+				</tr>
+				<tr>
+					<td colspan="4"><h5>***[[12333.22 | NumLetra]]***</h5></td>
+				</tr>
+				<tr>
+					<td colspan="4"> <hr/> </td>
+				</tr>
+			</table>
+
+			<table class="table-datos-prestamo-2">
+				<tr>
+					<td colspan="2" class="align-right padding-right-6">Primera Quincena</td>
+					<td class="align-right">Segunda Quincena</td>
+					<td class="align-right">Sueldo Mensual</td>
+				</tr>
+				<tr>
+					<td colspan="4"><hr/></td>
+				</tr>
+				<tr>
+					<td>Cuota de Ahorros</td>
+					<td class="padding-right-6">200.00</td>
+					<td class="align-right">100.00</td>
+					<td>54,433.45</td>
+				</tr>
+				<tr>
+					<td>Cuota de Prestamos</td>
+					<td class="padding-right-6">4,455.45</td>
+					<td class="align-right">4,544.43</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Total</td>
+					<td class="padding-right-6">5,544.45</td>
+					<td class="align-right">5,566.45</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>% Endeudamiento</td>
+					<td class="padding-right-6">40%</td>
+					<td class="align-right">42%</td>
+				</tr>
+			</table>
+		</div> 
+
+		<div class="datos-garante">
+			<span class="subtitulo-sp"><h4>DATOS DEL GARANTE</h4></span>
+			<div class="datos-garante-texto">
+				<span class="carnet">Carnet</span> <span class="nombre">Nombre y Apellidos</span>
+				<p>El(los) Garante(s) arriba firmante(s) garantiza(n) solidariamente con su(s) ahorros las sumas indicadas, en el entendido de que dichos ahorros quedan automaticamente congelados por monto garantizado. Hasta la liberacion de dicha garantia.</p>
+				<p>NOTA. De ser aprobada la presente solicitud acepto que hasta la cancelacion de la misma queden afectadas las cuotas mensuales de mi cheque de nomina regalia pascual, bonificacion y/o las prestaciones laborales que reciba o pudiera recibir de la empresa.</p>
+
+				<table class="table-firmas">
+					<tr>
+						<td>_______________________________</td>
+						<td>_______________________________</td>
+					</tr>
+					<tr>
+						<td>Firma del Garante</td>
+						<td>Firma y Sello GM</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<span class="subtitulo-sp"><h4>DESCRIPCION DE GARANTIA</h4></span>
+		<div class="descripcion-garantia">
+			
+		</div>
+		<span class="observacion-sp">Observacion:</span>
+
+		<div class="firmas-finales">
+
+			<table class="table-firmas-finales">
+				<tr>
+					<td>___________________________</td>
+					<td>___________________________</td>
+				</tr>
+				<tr>
+					<td>Solicitante</td>
+					<td>Auxiliar de Contabilidad</td>
+				</tr>
+			</table>
+
+			<table class="table-firmas-finales-2">
+				<tr>
+					<td>___________________________</td>
+					<td>___________________________</td>
+					<td>___________________________</td>
+				</tr>
+				<tr>
+					<td>Consejo Administrativo</td>
+					<td>Comite de Credito</td>
+					<td>Comite de Vigilancia</td>
+				</tr>
+			</table>
+
+		</div>
+	</div>
 
 </section>	
 

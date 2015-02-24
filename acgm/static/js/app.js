@@ -75,6 +75,14 @@
       }
   });
 
+  app.filter('NumLetra', function() {
+      return function (input) {
+        if (!input) return "";
+
+        return NumeroALetras(input);
+      }
+  });
+
   app.directive('datepicker', function() {
     return {
         restrict: 'A',
