@@ -50,7 +50,7 @@
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(item.id)">[[item.cheque | numberFixedLen: 8]] </a></td>
 							<td>[[item.localidad]]</td>
 							<td>[[item.fecha | date: 'dd/MM/yyyy']]</td>
-							<td>[[item.totalGeneral]]</td>
+							<td class="resaltar-valor align-right">[[item.totalGeneral]]</td>
 							<td>[[item.beneficiario]]</td>
 							<td><a href="#" class="icon-printer imprimir-icon" ng-click="printD(item)"></a> </td>
 							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>

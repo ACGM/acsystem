@@ -40,7 +40,7 @@
 
         listadoPrestamos().then(function (data) {
           var results = data.filter(function (registros) {
-            return registros.codigoSocio == codigoSocio;
+            return registros.socioCodigo == codigoSocio;
           });
 
           if(results.length > 0) {
@@ -53,9 +53,9 @@
       }
 
       return {
-        listadoPrestamos: listadoPrestamos
-        // byNoPrestamo: byNoPrestamo,
-        // PrestamosbySocio: PrestamosbySocio,
+        listadoPrestamos: listadoPrestamos,
+        byNoPrestamo: byNoPrestamo,
+        PrestamosbySocio: PrestamosbySocio
         // PrestamoById: PrestamoById
       };
 
@@ -65,8 +65,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 
-                                        function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService) {
+    .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -123,7 +123,7 @@
       //Buscar un prestamo en especifico
       $scope.filtrarPorNoPrestamo = function(NoPrestamo) {
         try {
-          MaestraPrestamoService.byNoPrestamo(NoPrestamo).then(function (data) {
+          DesembolsoElectronicoService.byNoPrestamo(NoPrestamo).then(function (data) {
             $scope.prestamos = data;
 
             if(data.length > 0) {
@@ -150,7 +150,7 @@
       //Buscar prestamos en especifico por socio
       $scope.filtrarPorSocio = function(codigoSocio) {
         try {
-          MaestraPrestamoService.PrestamosbySocio(codigoSocio).then(function (data) {
+          DesembolsoElectronicoService.PrestamosbySocio(codigoSocio).then(function (data) {
             $scope.prestamos = data;
 
             if(data.length > 0) {
@@ -174,73 +174,54 @@
         }
       }
 
-
-      // Visualizar Prestamo (desglose)
-      $scope.PrestamoFullById = function($event, prestamo) {
+      //Marcar Prestamo como Cheque
+      $scope.marcarPrestamoDC = function($event, accion) {
         $event.preventDefault();
 
-        try {
-          MaestraPrestamoService.PrestamoById(prestamo).then(function (data) {
-            if(data.length > 0) {
-              $scope.errorMsg = '';
-              $scope.errorShow = false;
+        MaestraPrestamoService.MarcarPrestamoDC($scope.prestamosSeleccionados, accion).then(function (data) {
+          if(data == 1) {
+            $scope.listadoPrestamos();
+          } else {
+            $scope.mostrarError(data);
+          }
+        }, function() {
+          $scope.mostrarError("Hubo un error interno en la aplicacion, contacte al administrador.");
+        })
+      }
 
-              //completar los campos
-              // $scope.nuevaEntrada();
+      //Cuando se le de click al checkbox del header.
+      $scope.seleccionAll = function() {
 
-              var solicitudNo = data[0]['noSolicitudPrestamo'] == ''? data[0]['noSolicitudOD'] : data[0]['noSolicitudPrestamo'];
+        $scope.prestamos.forEach(function (data) {
+          if ($scope.regAll === true){
 
-              $scope.dataH.noPrestamo = $filter('numberFixedLen')(data[0]['noPrestamo'],9);
-              $scope.dataH.factura = data[0]['factura'];
-              $scope.dataH.categoriaPrestamoDescrp = data[0]['categoriaPrestamoDescrp'];
-              $scope.dataH.representanteCod = data[0]['representanteCodigo'];
-              $scope.dataH.representanteDescrp = data[0]['representanteNombre'];
-              $scope.dataH.socioCodigo = data[0]['socioCodigo'];
-              $scope.dataH.socioNombre = data[0]['socioNombre'];
-              $scope.dataH.socioCedula = data[0]['socioCedula'];
-              $scope.dataH.pagarPor = ''; //data[0]['oficial'];
-              $scope.dataH.oficial = data[0]['oficial'];
-              $scope.dataH.localidad = data[0]['localidad'];
-              $scope.dataH.estatus = data[0]['estatus'];
-              $scope.dataH.posteadoFecha = data[0]['posteadoFecha'];
+            $scope.valoresChk[data.noPrestamo] = true;
+            $scope.prestamosSeleccionados.push(data);
+          }
+          else{
 
-              $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
-              $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
-              $scope.prestamo.tasaInteresAnual = data[0]['tasaInteresAnual'];
-              $scope.prestamo.tasaInteresMensual = data[0]['tasaInteresMensual'];
-              $scope.prestamo.pagoPrestamoAnterior = data[0]['pagoPrestamoAnterior'];
-              $scope.prestamo.cantidadCuotas = data[0]['cantidadCuotas'];
-              $scope.prestamo.montoCuotaQ1 = $filter('number')(data[0]['montoCuotaQ1'], 2);
-              $scope.prestamo.montoCuotaQ2 = $filter('number')(data[0]['montoCuotaQ2'], 2);
-              $scope.prestamo.fechaDesembolso = data[0]['fechaDesembolso'];
-              $scope.prestamo.fechaEntrega = data[0]['fechaEntrega'];
-              $scope.prestamo.fechaVencimiento = ''; //data[0][''];
-              $scope.prestamo.chequeNo = data[0]['chequeNo'];
-              $scope.prestamo.valorGarantizado = $filter('number')(data[0]['valorGarantizado'], 2);
-              $scope.prestamo.balance = $filter('number')(data[0]['balance'], 2);
+            $scope.valoresChk[data.noPrestamo] = false;
+            $scope.prestamosSeleccionados.splice(data);
+          }
+        });
+      }
 
+      //Cuando se le de click a un checkbox de la lista
+      $scope.selectedReg = function(iReg) {
+        index = $scope.prestamos.indexOf(iReg);
 
-              // if(data[0]['estatus'] == 'P') {
-              //   $scope.disabledButton = 'Boton';
-              //   $scope.disabledButtonBool = false;
-              // } else {
-              //   $scope.disabledButton = 'Boton-disabled';
-              //   $scope.disabledButtonBool = true;
-              // }
-
-            }
-
-          }, 
-            (function () {
-              $scope.mostrarError('No pudo encontrar el desglose del prestamo #' + prestamo);
-            }
-          ));
+        if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
+          $scope.prestamosSeleccionados.push($scope.prestamos[index]);
         }
-        catch (e) {
-          $scope.mostrarError(e);
+        else{
+          $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
         }
+      }
 
-        $scope.toggleLP();
+      //Imprimir Recibido Conforme
+      $scope.imprimirRC = function(prestamo) {
+      $window.sessionStorage['prestamoRC'] = JSON.stringify(prestamo);
+        $window.open('/prestamos/print/recibidoconforme/', target='_blank'); 
       }
      
 
@@ -249,11 +230,14 @@
   //****************************************************
   //CONTROLLERS PRINT DOCUMENT                         *
   //****************************************************
-  .controller('ImprimirSolicitudPCtrl', ['$scope', '$filter', '$window', 'DesembolsoElectronicoService', 
+  .controller('ImprimirDesembolsoElectronicoCtrl', ['$scope', '$filter', '$window', 'DesembolsoElectronicoService', 
                                           function ($scope, $filter, $window, DesembolsoElectronicoService) {
     // $scope.factura = JSON.parse($window.sessionStorage['des']);
     $scope.dataH = {};
     $scope.dataD = [];
+
+    
+
 
 
   }]);

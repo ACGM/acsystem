@@ -292,6 +292,32 @@ footer
 .padding-right-6
 	padding-right 6em !important
 
+.resaltar-valor
+	width 7em
+	font-size 1.2em
+	font-weight bold
+	color mamey
+
+.verde
+	color verde !important
+
+.comoCheque
+	position relative
+	&:hover
+		&:after
+			content attr(data-info)
+			color verdeMuyOscuro
+			font-weight bold
+			border 2px solid verde
+			background verdeSuave
+			height 1.5em
+			width 12em
+			position absolute
+			left -12.4em
+			top -.3em
+			z-index 1999
+			border-radius 5px 5px 5px 5px
+
 //PARA ICONOS POSTEOS
 .posteo-N, .posteo-E
 	color mamey
@@ -1246,11 +1272,6 @@ footer
 		&:nth-child(7),
 		&:nth-child(8)
 			padding 0 .3em
-		&:nth-child(9)
-			width 7em
-			font-size 1.2em
-			font-weight bold
-			color mamey
 		&:nth-child(10),
 		&:nth-child(11)
 			text-align center		
@@ -1694,11 +1715,7 @@ footer
 			padding 0 .3em
 		&:nth-child(7)
 			width 23em
-		&:nth-child(8) //Valor
-			width 4em
-			font-size 1.2em
-			font-weight bold
-			color mamey
+		
 		&:nth-child(4),&:nth-child(5),&:nth-child(7)
 			padding 0 .3em
 		
@@ -1821,14 +1838,6 @@ footer
 	& td
 		padding .15em .15em
 		border 1px solid black
-		&:nth-child(1),&:nth-child(2) 
-			text-align center
-		&:nth-child(7)
-			text-align right
-			padding 0 .3em
-		
-		&:nth-child(9),&:nth-child(10)
-			text-align center			
 			
 .prestamo-field-detalle
 	text-decoration none
@@ -2152,25 +2161,32 @@ footer
 	& td
 		border 1px solid black
 		padding 0 .3em 
-		&:nth-child(3)
-			text-align right
-			font-size 1.2em
-			color mamey
-			font-weight bold
 
 .botones-acciones-desembolso
-	float left
 	& button
 		float left
 		margin 1em 1em 0 0
+	
+		&:last-child
+			width 12em
+			float right
+			padding 0
+			
+			&:before
+				font-weight bold
+				font-size 1.2em
 		
-.boton-generar-desembolso,.boton-preparar-archivo,.boton-recibido-conforme
+.botones-desembolso-electr
 	height 3.6em
 	width 11em
 	margin-bottom 3em
 	padding .5em 1em
+	transition .4s
 	&:before
 		margin-right .4em
+	&:hover
+		transform scale(1.1,1.1)
+	
 
 //SOLICITUD DE PRESTAMO
 .estatus-p
@@ -2799,11 +2815,7 @@ footer
 		&:nth-child(5) //Fecha
 			width 5.6em
 		&:nth-child(6) //Valor
-			text-align right
-			padding 0 .3em
-			font-weight bold
-			color mamey
-			font-size 1.2em
+			padding-right .2em
 			
 		&:nth-child(3),&:nth-child(4),&:nth-child(5),&:nth-child(7)
 			padding 0 .5em

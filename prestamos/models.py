@@ -119,7 +119,7 @@ class SolicitudOrdenDespachoD(models.Model):
 #Maestra de Prestamos
 class MaestraPrestamo(models.Model):
 
-	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'),)
+	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'), ('C', 'Cheque'), ('D','Desembolso'))
 
 	noPrestamo = models.PositiveIntegerField(unique=True)
 	noSolicitudPrestamo = models.ForeignKey(SolicitudPrestamo, null=True, blank=True)

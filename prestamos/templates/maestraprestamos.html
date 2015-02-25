@@ -42,20 +42,24 @@
 							<td>Codigo</td>
 							<td>Socio</td>
 							<td>Monto Prestamo</td>
+							<td>Balance</td>
 							<td>Tipo Prestamo</td>
-							<td>Cancelar</td>
+							<td>Cheque</td>
 						</tr>
 
 						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
-							<td><input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)"></td>
-							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]]"></td>
+							<td class="align-center"><input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)"></td>
+							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]] align-center"></td>
 							<td><a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
 							<td>[[prestamo.factura | numberFixedLen : 8]]</td>
 							<td>[[prestamo.codigoSocio]]</td>
 							<td>[[prestamo.socio]]</td>
-							<td>[[prestamo.montoInicial | number : 2]]</td>
+							<td class="resaltar-valor align-right">[[prestamo.montoInicial | number : 2]]</td>
+							<td class="resaltar-valor align-right verde">[[prestamo.balance | number : 2]]</td>
 							<td>[[prestamo.categoriaPrestamo]]</td>
-							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
+							<td class="align-center">
+								<a ng-if="prestamo.estatus == 'E'" href="#" class="icon-coin icon-imprimir comoCheque" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque"></a> 
+							</td>
 						</tr>
 					</table>
 				</section>
@@ -128,23 +132,23 @@
 					<table class="datos-prestamo-table">
 						<tr>
 							<td>Monto Prestamo</td>
-							<td><input type="text" ng-model="prestamo.monto" class="align-right"></td>
+							<td><input type="text" ng-model="prestamo.monto" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Tasa de Interes Anual</td>
-							<td><input type="text" ng-model="prestamo.tasaInteresAnual" class="align-right"></td>
+							<td><input type="text" ng-model="prestamo.tasaInteresAnual" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Tasa de Interes Mensual</td>
-							<td><input type="text" ng-model="prestamo.tasaInteresMensual" class="align-right"></td>
+							<td><input type="text" ng-model="prestamo.tasaInteresMensual" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Pago Prestamo Anterior</td>
-							<td><input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right"></td>
+							<td><input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Cantidad Cuotas</td>
-							<td><input type="text" ng-model="prestamo.cantidadCuotas" class="align-right"></td>
+							<td><input type="text" ng-model="prestamo.cantidadCuotas" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Monto de Cuota Q1</td>
@@ -166,31 +170,31 @@
 					<table class="garante-table">
 						<tr>
 							<td>Fecha de Desembolso</td>
-							<td><input type="text" ng-model="prestamo.fechaDesembolso"></td>
+							<td><input type="text" ng-model="prestamo.fechaDesembolso" readonly></td>
 						</tr>
 						<tr>
 							<td>Fecha de Entrega</td>
-							<td><input type="text" ng-model="prestamo.fechaEntrega"></td>
+							<td><input type="text" ng-model="prestamo.fechaEntrega" readonly></td>
 						</tr>
 						<tr>
 							<td>Fecha de Vencimiento</td>
-							<td><input type="text" ng-model="prestamo.fechaVencimiento"></td>
+							<td><input type="text" ng-model="prestamo.fechaVencimiento" readonly></td>
 						</tr>
 						<tr>
 							<td>Solicitud No.</td>
-							<td><input type="text" ng-model="prestamo.noSolicitud"></td>
+							<td><input type="text" ng-model="prestamo.noSolicitud" readonly></td>
 						</tr>
 						<tr>
 							<td>Cheque No.</td>
-							<td><input type="text" ng-model="prestamo.chequeNo"></td>
+							<td><input type="text" ng-model="prestamo.chequeNo" readonly></td>
 						</tr>
 						<tr>
 							<td>Valor de la Garantia</td>
-							<td><input type="text" ng-model="prestamo.valorGarantizado" class="align-right"></td>
+							<td><input type="text" ng-model="prestamo.valorGarantizado" class="align-right" readonly></td>
 						</tr>
 						<tr>
 							<td>Balance a la fecha</td>
-							<td><input type="text" class="prestamo-balance-actual align-right" ng-model="prestamo.balance"></td>
+							<td><input type="text" class="prestamo-balance-actual align-right" ng-model="prestamo.balance" readonly></td>
 						</tr>					
 					</table>
 					

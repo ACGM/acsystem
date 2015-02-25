@@ -14,38 +14,50 @@
 			<div class="busqueda-by-field">
 				<div class="by-prestamo">
 					<span> Prestamo No. </span>
-					<input type="text" id="PrestamoNo" class="field-short">		
+					<input type="text" ng-model="prestamoNo" class="field-short" ng-keyup="buscarPrestamo($event, prestamoNo)">		
 				</div>	
 				<div class="by-socio">
 					<span> Socio </span>
-					<input type="text" id="Socio" class="field-short">
+					<input type="text" ng-model="socioCod" placeholder="Codigo" class="field-short" ng-keyup="buscarPrestamoBySocio($event, socioCod)">
 				</div>
 			</div>
-			
+			<span class="error-ei"> [[NoFoundDoc]]</span>
+			<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoPrestamos()">Ver todos</a>
 
-			<table class="listado-table-desembolso" ng-init="listadoPrestamos()">
-				<tr class="listado-table-header desembolso-header">
-					<td><input type="checkbox"> </td>
-					<td>Prestamo</td>
-					<td>Monto</td>
-					<td>Socio</td>
-					<td>Cuenta Banco</td>
-				</tr>
+			<div class="registrosPanel">
+				<table class="listado-table-desembolso" ng-init="listadoPrestamos()">
+					<tr class="listado-table-header desembolso-header">
+						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
+						<td>Prestamo</td>
+						<td>Codigo Socio</td>
+						<td>Nombre Socio</td>
+						<td>Cuenta Banco</td>
+						<td>Banco Codigo</td>
+						<td>Banco Nombre</td>
+						<td>Monto</td>
+						<td>Imprimir</td>
+					</tr>
 
-				<tr class="listado-prestamos-desembolso-detail" ng-repeat="prestamo in prestamos">
-					<td><input type="checkbox"> </td>
-					<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
-					<td>[[prestamo.netoDesembolsar | number : 2]]</td>
-					<td>[[prestamo.socioNombre]]</td>
-					<td>[[prestamo.socioCuentaBancaria]]</td>
-				</tr>
-				
-			</table>
+					<tr class="listado-prestamos-desembolso-detail" ng-repeat="prestamo in prestamos">
+						<td class="align-center"><input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)"> </td>
+						<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+						<td>[[prestamo.socioCodigo]]</td>
+						<td>[[prestamo.socioNombre]]</td>
+						<td>[[prestamo.socioCuentaBancaria]]</td>
+						<td>[[prestamo.bancoCodigo]]</td>
+						<td>[[prestamo.bancoNombre]]</td>
+						<td class="resaltar-valor align-right">[[prestamo.netoDesembolsar | number : 2]]</td>
+						<td class="align-center"><a href="#" class="icon-printer imprimir-icon" ng-click="imprimirRC(prestamo)"></a></td>
+
+					</tr>
+					
+				</table>
+			</div>
 
 			<div class="botones-acciones-desembolso">
-				<button class="Boton boton-generar-desembolso"> Generar Desembolso</button>
-				<button class="Boton boton-preparar-archivo"> Preparar Archivo para Enviar</button>
-				<button class="Boton boton-recibido-conforme"> Recibido Conforme</button>	
+				<button class="Boton botones-desembolso-electr" ng-click="marcarPrestamoDC($event,'D')">Marcar como Desembolso</button>
+				<button class="Boton botones-desembolso-electr">Preparar Archivo para Enviar</button>
+				<button class="icon-document Boton botones-desembolso-electr">Imprimir Listado</button>	
 			</div>
 
 		</section>

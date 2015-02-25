@@ -51,30 +51,6 @@
       }
   });
 
-  app.filter('posteoMP', function() {
-      return function (input) {
-        if (!input) return "";
-
-        input = input
-                .replace('E', false)
-                .replace('P', true)
-                .replace('S', true);
-        return input;
-      }
-  });
-
-  app.filter('OpenCloseMP', function() {
-      return function (input) {
-        if (!input) return "";
-
-        input = input
-                .replace('E', 'icon-folder-open')
-                .replace('P', 'icon-folder')
-                .replace('S', 'icon-folder');
-        return input;
-      }
-  });
-
   app.filter('NumLetra', function() {
       return function (input) {
         if (!input) return "";
@@ -82,6 +58,12 @@
         return NumeroALetras(input);
       }
   });
+
+  app.filter('currentdate',['$filter',  function($filter) {
+    return function() {
+        return $filter('date')(new Date(), 'dd/MM/yyyy');
+    };
+  }]);
 
   app.directive('datepicker', function() {
     return {

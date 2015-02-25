@@ -343,10 +343,7 @@
         } catch (e) {
           console.log(e);
 
-        } finally {
-          // $scope.mostrar = 'ocultar';
-        }
-
+        } 
       }
 
       //Buscar una entrada de inventario en especifico

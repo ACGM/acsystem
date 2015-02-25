@@ -256,6 +256,7 @@
                                         function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService) {
       
       //Inicializacion de variables
+      $scope.mostrar = 'mostrar';
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
       $scope.tableSocio = false; //Mostrar tabla que contiene los socios
       $scope.showLSP = true; //Mostrar el listado de solicitudes
@@ -296,6 +297,7 @@
 
       //Listado de todas las solicitudes de prestamos
       $scope.listadoSolicitudes = function(noSolicitud) {
+        $scope.mostrar = 'mostrar';
         $scope.solicitudesSeleccionadas = [];
         $scope.valoresChk = [];
         $scope.estatus = 'T';
@@ -303,7 +305,6 @@
         SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
           $scope.solicitudes = data;
           $scope.regAll = false;
-
 
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
@@ -313,7 +314,10 @@
               $scope.valoresChk[i] = false;
               i++;
             });
+            $scope.mostrar = 'ocultar';
           }
+        }, function() {
+          $scope.mostrar = 'ocultar';
         });
       }
 
@@ -692,7 +696,6 @@
           }
 
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
-            console.log(data);
             if(data == 1) {
               $scope.listadoSolicitudes();
             } else {

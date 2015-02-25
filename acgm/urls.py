@@ -17,12 +17,13 @@ from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView,
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
-                            AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico
+                            AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
+                            ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView
 
-from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, ImprimirSolicitudPView
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
@@ -191,8 +192,11 @@ urlpatterns = patterns('',
     url(r'^prestamosDesembolsoElectronicojson/$', PrestamosDesembolsoElectronico.as_view(), name='prestamos_desembolso_electronico'),
 
     url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
+    url(r'^prestamos/maestra/marcarcomo/$', MarcarPrestamoComoDCView.as_view(), name='marcar_prestamo_como'),
+    
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),
+    url(r'^prestamos/print/recibidoconforme/$', ImprimirRecibidoConformeView.as_view(), name='Recibido_Conforme_print'),
 
 
     #Prestamos -- Solicitudes Prestamos
