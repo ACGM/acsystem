@@ -4,26 +4,32 @@ from django.contrib import admin
 from rest_framework import routers
 
 #Vistas 
-from fondoscajas.views import DesembolsoView, DesembolsoByCheque
+from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
 from inventario.views import InventarioView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, SalidaInventarioView, RPTEntradaSalidaArticuloView, \
-                                RPTExistenciaArticuloView, ListadoAjustesInvView
+                                RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
+                                ListadoTransfInvView, RPTAjusteInventarioView
 
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
-                            SolicitudOrdenDespachoView, SolicitudesPrestamosAPIViewByCodigoNombre, \
-                            SolicitudPrestamoById, AprobarRechazarSolicitudesPrestamosView
+                            SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
+                            AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico
 
-from prestamos.viewMaestraPrestamos import MaestraPrestamosView
+from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
+                                        SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView
+
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, ImprimirSolicitudPView
+
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView
 from cxp.views import CxpView
 
 #ViewSets (API)
+
 from cuenta.views import DiarioViewSet, TipoDocViewSet
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
@@ -32,7 +38,9 @@ from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewS
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
+
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
+
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -44,8 +52,8 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 
 #APIView (API)
-from administracion.views import CantidadCuotasPrestamosView, CategoriaPrestamoByDescrpView, SuplidorByNombreView, \
-                                    ProductoByDescrpView
+from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
+                                SuplidorByNombreView, ProductoByDescrpView
 
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
                                 getExistenciaRPT
@@ -66,8 +74,10 @@ router.register(r'diario', DiarioViewSet)
 router.register(r'tipoDocDiario',TipoDocViewSet)
 
 #CXP
+
 router.register(r'ordenCompra',OrdenViewSet)
 router.register(r'detalleOrder',DetalleOrderViewSet)
+
 
 #ahorro
 router.register(r'MaestraAhorros',MaestraAhorroViewSet)
@@ -96,6 +106,7 @@ router.register(r'notas_Conciliacion',NotasConsViewSet)
 router.register(r'inventario', ListadoEntradasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'ajustesInventario', ListadoAjustesInvView)
+router.register(r'transfAlmacenes', ListadoTransfInvView)
 router.register(r'producto', ProductoViewSet)
 
 #facturacion
@@ -130,6 +141,9 @@ urlpatterns = patterns('',
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),
+    #Fondos de Cajas (Desembolsos) # Imprimir
+    url(r'^desembolso/print/(?P<desembolso>[\d]+)/$', ImprimirDesembolsoView.as_view(), name='desembolso_print'),
+
     
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
@@ -144,6 +158,7 @@ urlpatterns = patterns('',
     url(r'^inventario/salida/$', SalidaInventarioView.as_view(), name='Inventario_salida'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
     url(r'^inventario/ajuste/$', AjusteInvView.as_view(), name='AjusteInventario'),
+    url(r'^inventario/ajustejson/$', AjusteInventarioById.as_view(), name='AjusteInventarioById'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     #Inventario#Imprimir
@@ -151,10 +166,12 @@ urlpatterns = patterns('',
     #Inventario#Reportes
     url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+    
+    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
+    url(r'^inventario/reportes/conteoFisico/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_conteoFisico'),
+    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'),
 
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
-
-
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
@@ -163,8 +180,6 @@ urlpatterns = patterns('',
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     
-    # url(r'^categoriasPrestamos/(?P<id>[\d]+)/$', ListadoCategoriasPrestamosViewSet, name='CategoriaPrestamo'),
-    # url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioByIdo'),
 
     #Prestamos
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota_de_Debito'),
@@ -174,18 +189,35 @@ urlpatterns = patterns('',
     url(r'^prestamos/desembolso/$', DesembolsoPrestamosView.as_view(), name='Desembolso_Prestamos'),
     url(r'^prestamos/solicitudP/$', SolicitudPrestamoView.as_view(), name='Solicitud_de_Prestamo'),
     url(r'^prestamos/solicitudOD/$', SolicitudOrdenDespachoView.as_view(), name='Solicitud_de_Orden_Despacho'),
+    url(r'^prestamos/solicitudOD/detalle/$', SolicitudOrdenDespachoDetalleView.as_view(), name='Solicitud_de_Orden_Despacho_Detalle'),
+
+    url(r'^prestamosDesembolsoElectronicojson/$', PrestamosDesembolsoElectronico.as_view(), name='prestamos_desembolso_electronico'),
+
     url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
-    
+    #Prestamos#Imprimir
+    url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),
+
+
+    #Prestamos -- Solicitudes Prestamos
     url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
-
-    url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
-
     url(r'^api/prestamos/solicitudes/prestamos/codigo/(?P<codigo>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
     url(r'^api/prestamos/solicitudes/prestamos/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
     url(r'^api/prestamos/solicitudes/prestamos/(?P<solicitud>[\d]+)/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
     url(r'^api/prestamos/solicitudes/prestamos/$', SolicitudesPrestamosAPIView.as_view(), name='solicitud_prestamos_api'),
+    url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
+    
+    #Prestamos -- Solicitudes Orden Despacho
+    url(r'^prestamos/solicitudOD/AprobarRechazar/$', AprobarRechazarSolicitudesODView.as_view(), name='Solicitud_de_OD_accion'),
+    url(r'^api/prestamos/solicitudes/od/codigo/(?P<codigo>[\d]+)/$', SolicitudesODAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
+    url(r'^api/prestamos/solicitudes/od/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesODAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
+    # url(r'^api/prestamos/solicitudes/od/(?P<solicitud>[\d]+)/$', SolicitudODById.as_view(), name='solicitud_od_api'),
+    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
+    url(r'^solicitudODjson/$', SolicitudODById.as_view(), name='Solicitud_ODById'),
+
+    #Maestra Prestamos    
     url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
     url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
+    url(r'^maestraPrestamojson/$', PrestamoById.as_view(), name='Maestra_Prestamo'),
 
     
 

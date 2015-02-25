@@ -86,7 +86,7 @@ class CategoriaProducto(models.Model):
 # PRODUCTOS para registrarlos en la facturacion
 class Producto(models.Model):
 	
-	codigo = models.CharField(max_length=10, editable=False)
+	codigo = models.CharField(max_length=10, editable=False, unique=True)
 	descripcion = models.CharField(max_length=50)
 	unidad = models.ForeignKey(Unidad)
 	categoria = models.ForeignKey(CategoriaProducto, null=True)
@@ -104,7 +104,11 @@ class Producto(models.Model):
 		self.descripcion = self.descripcion.upper()
 
 		sec = Producto.objects.all().count() + 1
-		self.codigo = self.descripcion[:3].upper() + ('0000' + str(sec))[-4:]
+		
+		try:
+			p = Producto.objects.get(id=self.id)
+		except Producto.DoesNotExist:
+			self.codigo = self.descripcion[:3].upper() + ('0000' + str(sec))[-4:]
 
 		super(Producto, self).save(*args, **kwargs)
 
@@ -197,8 +201,8 @@ class Socio(models.Model):
 	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
-	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, null=True, blank=True)
-	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, null=True, blank=True)
+	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, default=0)
+	cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, default=0)
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetime_server = models.DateTimeField(auto_now_add=True)

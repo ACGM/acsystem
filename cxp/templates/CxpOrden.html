@@ -5,21 +5,64 @@
 {% block content %}
 	
 	<section ng-controller="cxpController">
-		<div class="sub-menu">
-			CXP Ordenes de Compra
-			<div class="utils utils-alingRight">
-				<button class="nuevo icon-file" title="Crear Registro"></button>	
+		
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
+				<a href="#" ng-click="toggleLF()">CXP Ordenes de Compra</a>
+			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
+		</div>
+		
+		<div class="sub-menu">
+			Crear Orden
 			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
 		</div>
+		<section class="Orden-Registro">
+				<div class="content-socios-table">
+						<table class="socios-table-search" ng-show="tableSocio">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
+							</tr>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+							</tr>
+						</table>
+		<div class="content-suplidor-table">
+						<table class="suplidor-table-search" ng-show="tableSuplidor">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+							</tr>
+							<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+								
+							</tr>
+						</table>
+					</div>
 		<table class="data-entry-header-table">
 						<tr>
 							<td>Orden</td>
-							<td> <input type="text" ng-model="dataH.factura" class="input-no-editable" ng-disabled="true"> </td>
+							<td> <input type="text" ng-model="cxpFilterData.orden" class="input-no-editable" ng-disabled="true"> </td>
 						</tr>
 						<tr>
 							<td>Fecha</td>
-							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
+							<td> <input type="text" ng-model="getdate" value="[[cxpFilterData.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
 						</tr>
 						<tr>
 							<td>Socio</td>
@@ -34,8 +77,8 @@
 						</tr>
 						<tr>
 							<td>Suplidro</td>
-							<td> <input type="text" ng-model="suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
-								<input type="text" ng-model="suplidor" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
+							<td> <input type="text" ng-model="suplidorCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+								<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
 
 								<a href="#" class="icon-uniE601 icon-buscar" ng-click="SuplidorNombre=''; getSuplidor($event)"></a>
 								
@@ -46,19 +89,27 @@
 						<tr>
 							<td>Monto</td>
 							<td> 
-								<input type="text" ng-model="dataH.monto">
+								<input type="text" ng-model="cxpFilterData.monto" class="input-no-editable">
 							</td>
 						</tr>
 						<tr>
 							<td>Cuotas</td>
-							<td> <input type="text" ng-model="dataH.vendedor" readonly class="input-no-editable"> </td>
+							<td> <input type="text" ng-model="cxpFilterData.Cuotas" readonly class="input-no-editable"> </td>
 						</tr>
 					</table>
+		</section>
+	
 
 					<div class="producto-find-ei">
+						<div class="sub-menu">
+							Detalle de Ordenes
+							<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
+						</div>
 						<table class="data-entry-header-table">
-							<tr>Articulo</tr>
-							<tr>Precio</tr>
+							<tr>
+								<td>Articulo</td>
+								<td>Precio</td>
+							</tr>
 						</table>
 
 					</div>

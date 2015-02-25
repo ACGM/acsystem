@@ -52,14 +52,13 @@
 
 			<div class="nominas" ng-show="showCN" ng-init="getNominasGeneradas()">
 				
-				<div class="nominas-select">
+<!-- 				<div class="nominas-select">
 					<div class="nomina-sel">Nomina</div>
-					
 					<select class="nomina-sel-text" name="NominaSel" ng-model="nominaS" ng-init="getNominasGeneradas()">
 						<option ng-repeat="item in nominas" value="[[item.fechaNomina]]"> [[item.fechaNomina | date: 'dd/MM/yyyy']]</option>
 					</select>
 				</div>
-				
+ -->				
 				<div class="nominas-content">
 					<table class="consultar-nominas-table">
 						<tr class="nomina-sel-header">
@@ -85,7 +84,7 @@
 
 						<tr class="nomina-sel-detail" ng-repeat="item in nominas">
 							<td>[[item.estatus]]</td>
-							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
+							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)" title="[[item.nota]]">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
 							<td>[[item.cntEmpleados]]</td>
 							<td>[[item.valorNomina | number: 2]]</td>
 							<td>[[item.ISR | number : 2]]</td>
@@ -100,7 +99,7 @@
 							<td>[[item.quincena]]</td>
 							<!-- <td>[[item.tipoPago]]</td> -->
 							<td><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
-							<td><a href="#" class="icon-delete icon-delete-nomina" ng-click="eliminarNominaSel(item.fechaNomina, item.tipoNomina)"></a></td>
+							<td><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
 							<td><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
 						</tr>
 
@@ -153,7 +152,7 @@
 							</tr>
 							<tr>
 								<td class="first-row">Salario</td>
-								<td> <input type="text" ng-bind="empleado.salario" ng-model="empleado.salario" readonly> </td>
+								<td> <input type="text" ng-bind="empleado.salario" ng-model="empleado.salario" select-on-click> </td>
 								<td class="egreso-field">ARS </td>
 								<td> <input type="text" ng-bind="empleado.ars" ng-model="empleado.ars" select-on-click> </td>
 							</tr>
@@ -170,16 +169,17 @@
 								<td> <input type="text" ng-bind="empleado.isr" ng-model="empleado.isr" select-on-click> </td>
 							</tr>
 							<tr>
-								<td><!-- Incentivos --></td>
-								<td> <!-- <input type="text"> --> </td>
+								<td>Horas Extras</td>
+								<td> <input type="text" ng-bind="empleado.horasExtras" ng-model="empleado.horasExtras" select-on-click> </td>
+								
 								<td class="egreso-field">Prestamos</td>
-								<td> <input type="text" ng-bind="empleado.descPrestamos" ng-model="empleado.descPrestamos" readonly> </td>
+								<td> <input type="text" ng-bind="empleado.descPrestamos" ng-model="empleado.descPrestamos" select-on-click> </td>
 							</tr>													
 							<tr>
 								<td></td>
 								<td> </td>
 								<td class="egreso-field">Ahorros</td>
-								<td> <input type="text" ng-bind="empleado.descAhorros" ng-model="empleado.descAhorros" readonly> </td>
+								<td> <input type="text" ng-bind="empleado.descAhorros" ng-model="empleado.descAhorros" select-on-click> </td>
 							</tr>
 							<tr>
 								<td></td>

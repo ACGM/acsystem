@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from .serializers import DesembolsosCajasSerializer
 from .models import DesembolsoH, DesembolsoD
 
+from acgm.views import LoginRequiredMixin
+
 
 # Vista de desembolsos
 class DesembolsoView(TemplateView):
@@ -67,3 +69,9 @@ class ListadoDesembolsosViewSet(viewsets.ModelViewSet):
 
 	queryset = DesembolsoH.objects.all()
 	serializer_class = DesembolsosCajasSerializer
+
+
+# Imprimir Desembolso
+class ImprimirDesembolsoView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_desembolso.html'

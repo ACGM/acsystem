@@ -89,8 +89,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('DesembolsosCajasCtrl', ['$scope', '$filter', 'FondosCajasService', 
-                                        function ($scope, $filter, FondosCajasService) {
+    .controller('DesembolsosCajasCtrl', ['$scope', '$filter', '$window', 'FondosCajasService', 
+                                        function ($scope, $filter, $window, FondosCajasService) {
       
       //Inicializacion de variables
       $scope.showLD = true;
@@ -166,6 +166,12 @@
         if($event.keyCode == 13) {
           $scope.filtrarPorNoCheque(NoCheque);
         }
+      }
+
+      //Imprimir Desembolso
+      $scope.printD = function(desembolso) {
+        $window.sessionStorage['desembolso'] = JSON.stringify(desembolso);
+        $window.open('/desembolso/print/{desembolso}'.replace('{desembolso}',desembolso.id), target='_blank'); 
       }
 
     }])

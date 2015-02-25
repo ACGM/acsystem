@@ -9,9 +9,7 @@
 		<!-- <mensajeinfo> </mensajeinfo>				 -->
 		
 		<div class="sub-menu">	
-			<div class="menu-entrada-inventario-listado">
-				<button class="nuevo icon-file" title="Nueva entrada de Inventario" ng-click="nuevaEntrada('{{user}}')"></button>
-			</div>
+			
 				<a href="#">Reporte de Existencia de Articulo(s)</a>
 			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
 		</div>
@@ -58,20 +56,24 @@
 			<button class="Boton boton-genera-reporte" ng-click="existencia()">Generar Reporte</button>
 
 			<div class="caja-productos">
-				<ul ng-repeat="registro in registros" class="content-productos">
+				<ul ng-repeat="registro in registros" class="content-productos-exist">
+
 					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
 
 					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header">
 						<li class="content-productos-header-1"><strong>CODIGO</strong></li>
 						<li class="content-productos-header-2"><strong>PRODUCTO</strong></li>
 						<li class="content-productos-header-3"><strong>CANTIDAD</strong></li>
+						<li class="content-productos-header-3"><strong>COSTO</strong></li>
+						<li class="content-productos-header-3"><strong>VALOR</strong></li>
 					</div>
 
 					<div class="content-productos-detail">
 						<li class="content-productos-detail-1">[[registro.codigo]]</li>
 						<li class="content-productos-detail-2">[[registro.producto]]</li>
-						<li class="content-productos-detail-3">[[registro.total | number : 2]]</li>
-						</tr>
+						<li class="content-productos-detail-3">[[registro.totalCantidad | number : 2]]</li>
+						<li class="content-productos-detail-3">[[registro.totalCosto | number : 2]]</li>
+						<li class="content-productos-detail-3">[[registro.totalCantidad * registro.totalCosto | number : 2]]</li>
 					</div>
 				</ul>
 			</div>

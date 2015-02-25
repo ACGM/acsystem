@@ -12,6 +12,7 @@
     'cooperativa.maestraprestamo',
     'cooperativa.solicitudod',
     'cooperativa.cxp',
+    'cooperativa.desembolsoelectronico'
     ]);
 
 	app.config(function($interpolateProvider,$httpProvider){
@@ -48,6 +49,38 @@
                 .replace('N', false)
                 .replace('S', true);
         return input;
+      }
+  });
+
+  app.filter('posteoMP', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('E', false)
+                .replace('P', true)
+                .replace('S', true);
+        return input;
+      }
+  });
+
+  app.filter('OpenCloseMP', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('E', 'icon-folder-open')
+                .replace('P', 'icon-folder')
+                .replace('S', 'icon-folder');
+        return input;
+      }
+  });
+
+  app.filter('NumLetra', function() {
+      return function (input) {
+        if (!input) return "";
+
+        return NumeroALetras(input);
       }
   });
 

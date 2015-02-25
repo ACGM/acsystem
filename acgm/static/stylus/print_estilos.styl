@@ -1,7 +1,9 @@
 @import 'normalize'
 
 //CLASES GENERICAS
-// @media print 
+@media print
+	.head, .pie
+		display none
 
 .displayNone
 	display none
@@ -215,3 +217,171 @@
 	position absolute
 	opacity .1
 	-webkit-transform rotate(55deg)
+
+// MODULO FONDO DE CAJAS (DESEMBOLSO)
+.Desembolso 
+	margin 1em
+	
+.cabecera-desembolso
+	margin 1em 0 0 0 
+
+.fondo-d, .a-orden-d, .detalle-d
+	display block
+
+.paguese-valor-d
+	margin-left 11em
+
+.detalle-d
+	margin-top 1em
+	width 25em
+
+.detalle-d-text
+	margin-left 5em
+
+.cabecera-desembolso-2
+	float right
+
+.firmas-d
+	margin 2em 0 0 0 
+	
+
+
+// SOLICITUD DE PRESTAMO
+.PrintSolicitudP
+	font-family "Courier"
+	font-size 12px
+	
+	h4
+		margin 0
+	
+.cabecera-sp
+	font-size 12px
+	
+	h3
+		margin 0
+		text-align center
+	
+.sol-prest
+	margin 0
+	padding 0
+	display block
+	text-align center
+	
+.sol-estatus
+	text-align center
+	display block
+
+.subtitulo-sp
+	text-align center
+	display block
+	margin-top 1em
+	
+.datos-personales
+	
+	.datos-personales-desglose
+		border 1px solid black
+		padding .3em
+
+.table-datos-personales
+	font-size 12px
+	width 90%
+	& tr
+		& td
+			&:nth-child(odd)
+				font-weight bold
+
+.datos-prestamo
+	width 98%
+	padding .3em
+	border 1px solid black
+	
+	h5
+		margin 0
+			
+	.table-datos-prestamo
+		width 99%
+		font-size 12px
+		& tr
+			&:nth-child(1),
+			&:nth-child(2),
+			&:nth-child(3),
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7),
+			&:nth-child(8),
+			&:nth-child(9)
+				& td
+					&:nth-child(1), 
+					&:nth-child(3),
+					&:nth-child(5),
+					&:nth-child(7),
+					&:nth-child(9)
+						font-weight bold
+	.table-datos-prestamo-2
+		width 99%
+		font-size 12px
+		& tr
+			&:nth-child(1)
+				& td
+					font-weight bold
+			&:nth-child(3),
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6)
+				& td
+					&:nth-child(even)
+						text-align right
+			&:nth-child(4)
+				& td
+					&:nth-child(2),
+					&:nth-child(3)
+						text-decoration underline
+.datos-garante-texto
+	border 1px solid black
+	padding .3em
+	
+	.carnet, .nombre
+		font-weight bold
+		margin-right 6em
+		
+	.table-firmas
+		width 100%
+		font-size 12px
+		& tr
+			&:first-child
+				& td
+					padding 0 4em
+			&:last-child
+				& td
+					text-align center
+.descripcion-garantia
+	width 99%
+	height 5em
+	border 1px solid black
+
+.observacion-sp
+	margin-top .4em
+	display block
+	font-weight bold	
+
+.table-firmas-finales
+	margin-top 3em
+	width 100%
+	font-size 12px
+	& tr
+		& td
+			padding 0 .4em
+			text-align center
+	
+.table-firmas-finales-2
+	margin-top 3em
+	font-size 12px
+	width 100%
+	& tr
+		& td
+			padding 0 .4em
+			text-align center
+			
+		
+	

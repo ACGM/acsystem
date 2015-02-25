@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from administracion.models import Socio, CategoriaPrestamo
 from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DesembolsoElectronico, \
-					MaestraPrestamo, PrestamoUnificado, CuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
-					NotaDeDebitoPrestamo, DistribucionExcedente
+					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, \
+					NotaDeCreditoEspecial, NotaDeDebitoPrestamo, DistribucionExcedente
 
 
 # Listado de Solicitudes de Prestamos
@@ -21,8 +21,13 @@ class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 
 # Listado de Solicitudes de Ordenes de Despacho
 class SolicitudesOrdenesDespachoSerializer(serializers.HyperlinkedModelSerializer):
+	socio = serializers.StringRelatedField(read_only=True)
+	categoriaPrestamo = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = SolicitudOrdenDespachoH
+		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus')
+		ordering = ('-noSolicitud',)
 
 
 # Listado de Prestamos (Maestra de Prestamos)

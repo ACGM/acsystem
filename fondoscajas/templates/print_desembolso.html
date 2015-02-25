@@ -13,99 +13,64 @@
 			<span class="localidad-f"> ZONA IND. LA ISABELA </span>
 		</div>
 
-		<section class="cabecera-factura">
-			<span class="vendido-f"> Vendido a: </span>
-			<span class="socio-f"> <strong> [[socioCodigo]]-[[socioNombre]] </strong> </span>
-			<span class="vendedor-f">Vendedor: [[dataH.vendedor]]</span>
-			<span class="terminos-f">Terminos: [[dataH.terminos]]</span>
-			<span class="hora">Hora: [[hora() | date : 'h:mm:a']]</timer> </span>
+		<section class="cabecera-desembolso">
+			<span class="fondo-d">1 Caja Chica [[DESCRIPCION DEL FONDO SELECCIONADO]]</span>
+			<span class="a-orden-d">A la orden de: [[dataH.concepto]]</span>
+			<span class="paguese-d">Paguese la Suma de *** QUINIENTOS CON 00/100</span> <span class="paguese-valor-d">500.00</span>
+			<span class="detalle-d">Detalle : <span class="detalle-d-text"> Asignacion de combustible a Herrero para cotizar puerta y ventana de hierro Cooperativa PID, segun anexo.</span> </span>
 		</section>
 
-		<section class="cabecera-factura-2">
+		<section class="cabecera-desembolso-2">
 			<table>
-				<tr><td colspan="2">FACTURA</td></tr>
 				<tr>
-					<td>Fecha:</td>
-					<td>[[dataH.fecha]]</td>
+					<td>Numero: 000039[[dataH.id]]</td>
 				</tr>
 				<tr>
-					<td>Numero:</td>
-					<td>[[dataH.factura]]</td>
-				</tr>
-				<tr>
-					<td>Orden No.:</td>
-					<td>[[dataH.orden]]</td>
+					<td>Fecha: 12/12/2015[[dataH.fecha]]</td>
 				</tr>
 			</table>
-
 		</section>
-		<section class="detalle-factura">
-			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
+
+		<section class="detalle-desembolso">
+
 			<table class="table-producto-factura">
 				<tr>
-					<td>Codigo</td>
-					<td>Unidad</td>
-					<td>Descripcion</td>
-					<td>Cantidad</td>
-					<td>Precio</td>
-					<td>% Descuento</td>
-					<td>Monto</td>
+					<td>Beneficiario</td>
+					<td>Concepto</td>
+					<td>Valor</td>
 				</tr>
-				<tr ng-repeat="producto in dataD">
-					<td>[[producto.codigo]]</td>
-					<td>[[producto.unidad]]</td>
-					<td>[[producto.descripcion]]</td>
-					<td>[[producto.cantidad | number : 2]]</td>
-					<td>[[producto.precio | number : 2]]</td>
-					<td>[[producto.descuento]]%</td>
-					<td>[[producto.subtotal | number : 2]]</td>
+				<tr ng-repeat="desembolso in dataD">
+					<td>[[desembolso.beneficiario]]</td>
+					<td>[[desembolso.concepto]]</td>
+					<td>[[desembolso.valor]]</td>
 				</tr>
 				<tr>
-					<td colspan="5">TOTALES:</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
+					<td colspan="2">TOTALES:</td>
 					<td>[[totalValor_ | number : 2]]</td>
 				</tr>
 			</table>
 		</section>
 
-		<section class="firmas-f">
-			<div class="firma1-f">
+		<section class="firmas-d">
+			<div class="firma1-d">
 				<span>____________________________</span>
-				<span>Firma del Socio</span>
+				<span>Solicitado por</span>
+				<span>Asistente Administrativo</span>
 			</div>
 
-			<div class="firma2-f">
-				<span>____________________________</span>
-				<span>Firma Autorizada</span>
+			<div class="firma2-d">
+				<span>Recibido __________________________</span>
+				<span>Cedula   __________________________</span>
 			</div>
-		</section>
-		<section class="totales-f">
-			<table>
-				<tr>
-					<td>SubTotal</td>
-					<td>[[totalValor_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td>Descuento</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
-				<tr>
-					<td>Total RD$</td>
-					<td>[[totalValor_ - totalDescuento_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
 
-			</table>
-		</section>
+			<div class="firma3-d">
+				<span>_____________________________</span>
+				<span>Autorizado Por</span>
+				<span>Gte. Cooperativa</span>
+			</div>
 
+		</section>
+		
 	</div>
 
 <div class="pie">

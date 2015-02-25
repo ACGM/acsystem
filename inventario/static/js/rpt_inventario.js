@@ -170,10 +170,12 @@
         if($scope.busquedaValor == 'categoria') {
           InventarioServiceRPT.existencia($scope.almacen, $scope.categoriasSeleccionadas).then(function (data) {
             $scope.registros = data;
+            console.log(data)
           });
         } else {
           InventarioServiceRPT.existenciaByProducto($scope.almacen, $scope.producto).then(function (data) {
             $scope.registros = data;
+            console.log(data)
           });
         }
       }

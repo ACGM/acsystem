@@ -15,7 +15,7 @@ var gulp = require('gulp'),
 //Servidor web para gulp
 gulp.task('server',function(){
 	connect.server({
-		root: './ahorro',
+		root: './cxp',
 		host: '0.0.0.0',
 		port: 8080,
 		livereload: true,
@@ -28,19 +28,19 @@ gulp.task('server',function(){
 
 //tarea para manejar la cache de los template de angular
 gulp.task('templatesAhorro',function(){
-	gulp.src('./ahorro/templates/*.html')
+	gulp.src('./cxp/templates/*.html')
 	.pipe(templateCache({
 		root:'templates',
-		module: 'cooperativa.Ahorro',
+		module: 'cooperativa.cxp',
 		standalone:true
 	}))
-	.pipe(gulp.dest('./ahorro/static/js'));
+	.pipe(gulp.dest('./cxp/static/js'));
 });
 //tarea uglifucadora para JS
-gulp.task('jsAhorro',function(){
-	gulp.src('./ahorro/static/js/libs')
+gulp.task('jsCxp',function(){
+	gulp.src('./cxp/static/js/libs')
 		.pipe(gulpif('*.js',uglify({mangle:false})))
-		.pipe(gulp.dest('./ahorro/static/js'));
+		.pipe(gulp.dest('./cxp/static/js'));
 });
 
 //tarea de Stylus para css
@@ -52,14 +52,14 @@ gulp.task('css', function(){
 	});
 
 //Recarga el servidor web cuando haya cambios en el HTML.
-gulp.task('htmlAhorro',function(){
-	gulp.src('./ahorro/templates/*.html')
+gulp.task('htmlCxp',function(){
+	gulp.src('./cxp/templates/*.html')
 		.pipe(connect.reload());
 	});
 
 //busca errores en el JavaScript y "Los muestra en pantalla ", ay que probarlo jajajaja
-gulp.task('jshintAhorro',function(){
-	return gulp.src('./ahorro/static/js/libs/*.js')
+gulp.task('jshintCxp',function(){
+	return gulp.src('./cxp/static/js/libs/*.js')
 			.pipe(jshint())
 			.pipe(jshint.reporter('jshint-stylish'))
 			.pipe(jshint.reporter('fail'));
@@ -68,16 +68,16 @@ gulp.task('jshintAhorro',function(){
 //Lanza las tareas cuando detecta cambios
 gulp.task('watch', function(){
 
-	gulp.watch(['./ahorro/static/js/libs/*.js'],['jsAhorro']);
+	gulp.watch(['./cxp/static/js/libs/*.js'],['jsCxp']);
 
 	//proceso de watch para css
-	gulp.watch(['./acgm/static/stylus/*.styl'],['css']);
+	//gulp.watch(['./acgm/static/stylus/*.styl'],['css']);
 
 	//Proceso de watch para ahorro
-	gulp.watch(['./ahorro/templates/*.html'],['htmlAhorro']);
+	gulp.watch(['./cxp/templates/*.html'],['htmlCxp']);
 
 	//Proceso de watch para jshint
-	gulp.watch(['./ahorro/static/js/libs/*.js','./Gulpfile.js'],['jshintAhorro']);
+	gulp.watch(['./cxp/static/js/libs/*.js','./Gulpfile.js'],['jshintCxp']);
 
 	});
 

@@ -97,21 +97,22 @@
 
                     }));
                   });
+                  return deferred.promise;
+            }
 
-            function suplidor(){
+             function suplidor(){
                 var deferred =$q.defer();
 
-                $http.get('api/suplidor/?format=json')
+                $http.get('/api/suplidor/?format=json')
                 .success(function (data){
                     deferred.resolve(data);})
                 .error(function (err){
                     deferred.resource(err);
                 });
-
+                
+                return deferred.promise;
             }
-
-        return deferred.promise;
-      }
+      
 
             return {
                 getAll: getAll,
@@ -119,22 +120,24 @@
                 getCxpByDate: getCxpByDate,
                 getCxpBySocio: getCxpBySocio,
                 getCxpBySuplidor: getCxpBySuplidor,
-                socios:socios,
-                suplidor:suplidor
+                socios: socios,
+                suplidor: suplidor
+                
             };
 
         }])
         .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout',
             function($scope, $filter, $rootScope, cxpService, $timeout){
-                $scope.cxpData=[];
-                $scope.cxpFilterData=[];
-                $scope.fechaI=null;
-                $scope.fechaF=null;
-                $scope.socioId=null;
-                $scope.suplidorId=null;
+                $scope.cxpData = [];
+                $scope.cxpFilterData = [];
+                $scope.fechaI = null;
+                $scope.fechaF = null;
+                $scope.socioId = null;
+                $scope.suplidorId = null;
+                $scope.tableSocio = false;
                 $scope.ArrowLF = 'UpArrow';
                 $scope.showLF = true;
-                $scope.getdate=$filter('date')(Date.now(),'dd/MM/yyyy');
+                $scope.getdate = $filter('date')(Date.now(),'dd/MM/yyyy');
 
                 $scope.toggleLF= function(){
                     $scope().showLF = !$scope.showLF;
@@ -148,13 +151,43 @@
                     }
                 };
 
+                  $scope.getSuplidor = function($event){
+                     $event.preventDefault();
+
+                    $scope.tableSuplidor = true;
+                    $scope.tableSocio = false;
+                    if($scope.suplidorNombre !== undefined) {
+                      cxpService.suplidor().then(function (data) {
+                        $scope.suplidor = data.filter(function (registro) {
+                           return $filter('lowercase')(registro.nombre
+                                              .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
+                        });
+
+                        if($scope.suplidor.length > 0){
+                          $scope.tableSuplidor = true;
+                          $scope.suplidorNoExiste = '';
+                        } else {
+                          $scope.tableSuplidor = false;
+                          $scope.suplidorNoExiste = 'No existe el socio';
+                        }
+
+                      });
+                    } else {
+                      cxpService.suplidor().then(function (data) {
+                        $scope.suplidor = data;
+                        $scope.suplidorCodigo = '';
+                      });
+                    }
+                  };
+                  
                   $scope.getSocio = function($event) {
                     $event.preventDefault();
 
                     $scope.tableSocio = true;
+                    $scope.tableSuplidor = false;
 
-                    if($scope.socioNombre != undefined) {
-                      FacturacionService.socios().then(function (data) {
+                    if($scope.socioNombre !== undefined) {
+                      cxpService.socios().then(function (data) {
                         $scope.socios = data.filter(function (registro) {
                           return $filter('lowercase')(registro.nombreCompleto
                                               .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
@@ -170,12 +203,12 @@
 
                       });
                     } else {
-                      FacturacionService.socios().then(function (data) {
+                      cxpService.socios().then(function (data) {
                         $scope.socios = data;
                         $scope.socioCodigo = '';
                       });
                     }
-                  }
+                  };
                          //Seleccionar Socio
               $scope.selSocio = function($event, s) {
                 $event.preventDefault();
@@ -183,7 +216,15 @@
                 $scope.socioNombre = s.nombreCompleto;
                 $scope.socioCodigo = s.codigo;
                 $scope.tableSocio = false;
-              }
+              };
+
+               $scope.selSuplidor = function($event, s) {
+                $event.preventDefault();
+
+                $scope.suplidorNombre = s.nombre;
+                $scope.suplidorCodigo = s.id;
+                $scope.tableSuplidor= false;
+              };
 
                 $scope.getAllData = function(){
                     $scope.cxpData=cxpService.getAll();

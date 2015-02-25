@@ -41,7 +41,7 @@ class InventarioH(models.Model):
 	descripcionSalida = models.CharField("Descripción de Salida", max_length=255, blank=True, null=True)
 	fechaSalida = models.DateTimeField("Fecha de Salida", blank=True, null=True)
 	usuarioSalida = models.ForeignKey(User, related_name='+', null=True, blank=True)
-	numeroSalida = models.PositiveIntegerField(null=True, blank=True,)
+	numeroSalida = models.PositiveIntegerField(null=True, blank=True, default=0)
 
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	condicion = models.CharField(max_length=2, choices=condicion_choices, default='CO')
@@ -150,7 +150,7 @@ class TransferenciasAlmacenes(models.Model):
 	hastaAlmacen = models.ForeignKey(Almacen, related_name='+')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	producto = models.ForeignKey(Producto)
-	fechaTransf = models.DateField()
+	fechaTransf = models.DateField(auto_now_add=True)
 	userLog = models.ForeignKey(User)
 
 	def __unicode__(self):

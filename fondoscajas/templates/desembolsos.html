@@ -4,7 +4,7 @@
 
 {% block content %}
 
-	<div class="Desembolso" ng-controller="DesembolsosCajasCtrl">
+	<div class="DesembolsoCH" ng-controller="DesembolsosCajasCtrl">
 		
 		<mensajeerror> </mensajeerror>
 		<mensajeinfo> </mensajeinfo>
@@ -36,7 +36,7 @@
 							<td><input type="checkbox"> </td>
 							<td>Estatus</td>
 							<td>Cheque</td>
-							<td>Distrito</td>
+							<td>Localidad</td>
 							<td>Fecha</td>
 							<td>Valor</td>
 							<td>Concepto</td>
@@ -48,11 +48,11 @@
 							<td><input type="checkbox" name="c[[item.id]]" ng-checked="valoresChk[item.id]" ng-model="reg[item.id]" ng-click="selectedReg(item)"> </td>
 							<td class="icon-coin"></td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(item.id)">[[item.cheque | numberFixedLen: 8]] </a></td>
-							<td>[[item.distrito]]</td>
-							<td>[[item.fecha | date: 'dd-MM-yyyy']]</td>
+							<td>[[item.localidad]]</td>
+							<td>[[item.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[item.totalGeneral]]</td>
 							<td>[[item.beneficiario]]</td>
-							<td><a href="#" class="icon-printer imprimir-icon"></a> </td>
+							<td><a href="#" class="icon-printer imprimir-icon" ng-click="printD(item)"></a> </td>
 							<td><a href="#" class="icon-delete icon-eliminar"></a> </td>
 						</tr>
 

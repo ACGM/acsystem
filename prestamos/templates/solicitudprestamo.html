@@ -63,7 +63,7 @@
 						<td>[[solicitud.socio]]</td>
 						<td>[[solicitud.montoSolicitado | number : 2]]</td>
 						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
-						<td><a class="icon-printer icon-imprimir" href="#"></a></td>
+						<td><a class="icon-printer icon-imprimir" href="#" ng-click="ImprimirSolicitud(solicitud)"></a></td>
 						<td>
 							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesPrestamos($event,'C', solicitud)"></a> </div>
 							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>
@@ -141,7 +141,7 @@
 							<select name="autorizador" id="autorizador" ng-model="solicitante.autorizadoPor" ng-change="selectAutorizador()" ng-init="autorizadores()" required>
 								<option ng-repeat="autorizador in autorizadores" value="[[autorizador.userName]]">[[autorizador.userName]]</option>
 							</select>
-							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" ng-disabled="solicitante.pinValido">
+							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" autocomplete="off" ng-disabled="solicitante.pinValido">
 						</td>
 					</tr>
 				</table>

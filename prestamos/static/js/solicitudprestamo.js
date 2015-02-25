@@ -252,8 +252,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', 'SolicitudPrestamoService', 'FacturacionService',
-                                        function ($scope, $filter, SolicitudPrestamoService, FacturacionService) {
+    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService',
+                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService) {
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -473,14 +473,14 @@
         $scope.tableSocio = false;
       }
 
-      //Seleccionar Socio
+      //Seleccionar Categoria de Prestamo
       $scope.selCP = function($event, cp) {
         $event.preventDefault();
 
         $scope.solicitud.categoriaPrestamoId = cp.id;
         $scope.solicitud.categoriaPrestamo = cp.descripcion;
-        $scope.solicitud.tasaInteresAnual = cp.interesAnualSocio;
-        $scope.solicitud.tasaInteresMensual = cp.interesAnualSocio / 12;
+        $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
+        $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
         $scope.showCP = false;
       }
 
@@ -513,7 +513,6 @@
         }
         else{
           $scope.solicitudesSeleccionadas = _.without($scope.solicitudesSeleccionadas, _.findWhere($scope.solicitudesSeleccionadas, {id : iReg.id}));
-          // $scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas[index],1);
         }
       }
 
@@ -693,8 +692,12 @@
           }
 
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
+            console.log(data);
             if(data == 1) {
               $scope.listadoSolicitudes();
+            } else {
+              $scope.mostrarError(data);
+              throw data;
             }
           },
           function() {
@@ -704,6 +707,7 @@
 
         } catch (e) {
           $scope.mostrarError(e);
+          console.log(e);
         }
       }
 
@@ -779,6 +783,12 @@
         }
 
         $scope.toggleLSP();
+      }
+
+        //Imprimir solicitud de prestamo
+      $scope.ImprimirSolicitud = function(solicitud) {
+        $window.sessionStorage['solicitud'] = JSON.stringify(solicitud);
+        $window.open('/prestamos/print/solicitudP/', target='_blank'); 
       }
 
     }]);

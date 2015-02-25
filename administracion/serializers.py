@@ -59,7 +59,7 @@ class ListadoCategoriaPrestamoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = CategoriaPrestamo
-		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio', 'interesAnualEmpleado', 'interesAnualDirectivo')
+		fields = ('id','descripcion','montoDesde', 'montoHasta', 'tipo', 'interesAnualSocio')
 		ordering = ('id',)
 
 
@@ -68,6 +68,15 @@ class CantidadCuotasPrestamosSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = CuotaPrestamo
+		fields = ('montoDesde', 'montoHasta', 'cantidadQuincenas')
+		ordering = ('-montoDesde',)
+
+
+# Cantidad de Cuotas de Ordenes (parametro Monto)
+class CantidadCuotasODSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = CuotaOrdenes
 		fields = ('montoDesde', 'montoHasta', 'cantidadQuincenas')
 		ordering = ('-montoDesde',)
 

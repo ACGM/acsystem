@@ -234,7 +234,7 @@ colorBordeSubMenu = lightgreen
 body
 	font-family "Arial", sans-serif, "serif"
 	font-size 13px
-
+	
 footer
 	background verdeMuyOscuro
 	color white
@@ -284,14 +284,26 @@ footer
 	cursor default
 
 .align-right
-	text-align right
+	text-align right !important
 
-.posteo-N
+.align-center
+	text-align center !important
+
+.padding-right-6
+	padding-right 6em !important
+
+//PARA ICONOS POSTEOS
+.posteo-N, .posteo-E
 	color mamey
 
-.posteo-S
+.posteo-S, .posteo-P, .posteo-S
 	color green
-	
+
+//FIN POSTEOS
+
+.quitar-borde
+	border none !important
+	outline none !important
 
 .input-no-editable //CLASE para darle apariencia de no editable a un campo de texto
 	background lightgray
@@ -307,7 +319,7 @@ footer
 .Boton //CLASE para darle formato a los botones
 	background verdeClarito
 	border 0
-	border-bottom .35em solid green
+	border-bottom .3rem solid green
 	border-radius 3px 3px 4px 4px
 	color white
 	height 2.2em
@@ -321,7 +333,7 @@ footer
 .Boton-disabled //CLASE para darle apariencia deshabilitado a botones
 	background lightgray !important
 	border 0 !important
-	border-bottom .3em solid gray !important
+	border-bottom .3rem solid gray !important
 	border-radius 3px 3px 3px 3px !important
 	color black !important
 	height 2.2em
@@ -526,6 +538,116 @@ footer
 	&:before
 		font-size 4.5em
 
+//Para Mensaje INFO
+.fondo-opaco
+	position absolute
+	left 0
+	right 0
+	top 0
+	bottom 0
+	background black
+	opacity .6
+	z-index 999
+	
+.cssSlideUpInfo
+	background verdeMuySuave
+	border-bottom 3px solid verde
+	color verdeMuyOscuro
+	height 30em
+	left 0
+	overflow hidden
+	padding .3em 0 0 .3em
+	position fixed
+	right 0
+	top 0
+	transition .3s linear all
+	z-index 9999
+	overflow scroll
+	opacity .989
+	
+	& span
+		float left
+	
+	&.ng-hide
+		height 0
+
+.content-cuentas-posteo
+	display inline-block
+	
+.section-agregar-cuenta
+	display inline-block
+	margin 1.5em 0 0 1em
+	position relative
+	
+.posteo-cuenta-agregar
+	list-style none
+	display inline-block
+	margin 0
+	
+	& li
+		float left
+		padding-right .4em
+	
+.boton-agregar-cuenta-posteo
+	position relative
+	top -.5em
+	padding 0 2em
+	margin-left 1em
+	height 2.6em
+			
+.codigo-cuenta-posteo
+	color verdeMuyOscuro
+	font-size 1.2em
+	width 9em
+	
+.descrp-cuenta-posteo
+	color verdeMuyOscuro
+	font-size 1.2em
+	width 20em	
+	
+.table-posteo-cuentas
+	border 2px solid verde
+	margin 0 0 0 4em
+	padding 1em
+	height 15em
+	overflow scroll
+	
+.table-posteo-cuentas-header
+	& td
+		border 2px solid verdeClarito
+		background verde
+		color verdeMuySuave
+		font-size 1.2em
+		padding .2em .4em
+
+.table-posteo-cuentas-detail
+	& td
+		border 1px solid verdeClarito
+		padding .2em
+		font-size 1.2em
+		
+		&:nth-child(4), //DEBITO
+		&:nth-child(5) //CREDITO
+			text-align right
+			color mamey
+			font-weight bold
+			font-size 1.5em
+		
+		&:nth-child(6) //QUITAR
+			text-align center
+			font-size 1.7em
+			
+
+.accion-posteo
+	margin 1em 0 0 4em
+
+.boton-llevar-contab
+	height 3em
+	padding 0 .8em
+	font-size 1.3em
+	
+//FIN mensaje Info
+
 .fig-load
 	position absolute
 	top 7em
@@ -571,6 +693,10 @@ footer
 	padding 0
 	margin 0
 	// border-bottom 2px solid transparent
+	
+	& li
+		&:last-child
+			float right
 		
 .menu-item
 	display block
@@ -580,7 +706,8 @@ footer
 	&:last-child a
 		color amarillo
 		font-weight 300
-		
+	
+	&:nth-child(11),
 	&:last-child
 		border-right none	
 
@@ -611,17 +738,17 @@ footer
 
 .logo
 	margin .25em 0 0 .3em
-	width 80px
+	width 60px
 
 .content-title
 	display inline-block
 	
 &.titleCoop
-	font-size 1.3em
+	font-size 1rem
 	font-weight bold
-	margin 1.2em 0 0 .2em
+	margin .9rem 0 0 .2rem
 	&.titleCoop2
-		margin 0 0 0 .2em
+		margin 0 0 0 .2rem
 		
 .usuario
 	float right
@@ -871,6 +998,18 @@ footer
 		&:nth-child(16),	
 		&:nth-child(17)	
 			text-align center
+		
+		&:nth-child(4),
+		&:nth-child(5),
+		&:nth-child(6),
+		&:nth-child(7),
+		&:nth-child(8),
+		&:nth-child(9),
+		&:nth-child(10),
+		&:nth-child(11),
+		&:nth-child(12)
+			text-align right
+
 
 .icon-delete-nomina
 	text-decoration none
@@ -1336,14 +1475,15 @@ footer
 		color verdeMuyOscuro
 		width 17em
 		padding .2em
-	
 
 .caja-productos
-	margin-top 1em
+	margin 1em 0 3em 0
 	
-.content-productos
-	padding 0
+.content-productos-exist
 	margin 0 0 0 1em
+	padding 0
+	position relative
+	width 95%
 	
 .categoria-producto
 	padding .4em 0 0 .3em
@@ -1351,7 +1491,7 @@ footer
 	list-style none
 	font-size 1.1em
 	font-weight bold
-	width 52em
+	width 56.5em
 
 .content-productos-header
 	display block
@@ -1368,11 +1508,11 @@ footer
 	&-2
 		float left
 		padding .2em 0 .2em .2em
-		width 40em
+		width 30em
 	&-3
 		float left
 		padding .2em
-		width 10em
+		width 8em
 		text-align right
 
 .content-productos-detail
@@ -1390,11 +1530,11 @@ footer
 	&-2
 		float left
 		padding .2em 0 .2em .2em
-		width 40em
+		width 30em
 	&-3
 		padding .2em
 		float left
-		width 10em
+		width 8em
 		text-align right
 
 //Para Ajuste de inventario
@@ -1405,10 +1545,121 @@ footer
 		display block
 		margin-right 1em
 
-.content-productos
-	width 85%
+.listado-ajustes
+	height 15em
+	overflow scroll
+	border 1px solid lightgray
+	margin-bottom 1em
+	maring-left 1em
+	margin-top .3em
+	padding-right 1.5em
 	position relative
+	left 1em
+	width 30%
+
+.acciones-ajuste-inventario
+	position relative
+	& button
+		&:last-child
+			margin-left 2em
+
+//Para Transferencia entre almacenes
+.ul-almacen-transf
+	display inline-block
+	list-style none
+	margin 0 0 1em 0
+	padding 0
 	
+	& li
+		float left
+		padding 0 .5em
+		
+.table-transferencia
+	// position relative
+	
+.transf-almacenes-header
+	& td
+		background verdeMuySuave
+		border 2px solid verde
+		padding 0
+		margin 0
+
+.transf-almacenes-detail
+	& td
+		padding 0
+		margin 0
+		text-align left
+		// border 1px solid black
+		
+		&:nth-child(1) //CODIGO DEL PRODUCTO
+			padding 0
+			margin 0
+			& input[type='text']
+				background lightgray
+				padding .29em
+				width 5em
+				margin 0
+				
+		&:nth-child(2) //PRODUCTO 
+			padding 0
+			margin 0
+			& input[type='text']
+				background amarillo
+				color verde
+				font-weight bold
+				padding .29em
+				width 22em
+				margin 0
+				
+		&:nth-child(3), //Existencia Origen
+		&:nth-child(4) //Existencia Destino
+			& input[type='text']
+				background verdeSuave
+				padding .29em
+				text-align right
+				font-size 1.1em
+				font-weight bold
+				font-family "verdana"
+				width 7em
+
+.cantidad-transferir
+	margin 2em 0 2em 1em
+	position relative
+
+.cantidad-transf-field
+	border 2px solid verdeClarito
+	padding .2em
+	border-radius 7px 7px 7px 7px
+	background amarillo
+	outline none
+	color mamey
+	font-size 1.7em
+	margin 0
+	text-align right
+	
+	
+.boton-transf-cantidad
+	height 3em
+	width 8em
+	left 19em
+	position absolute
+
+.contenedor-productos
+	width 44%	
+	position relative
+
+.productos-section-transf
+	margin 0 0 0 1em
+
+.productos-table-detail-transf
+	& td
+		border 1px solid black
+		padding .2em
+		
+		&:last-child
+			text-align right
+			font-weight bold
+
 //MODULO DE FACTURACION
 	
 .listado-table-header-f
@@ -1421,7 +1672,6 @@ footer
 		border 1px solid black
 		padding .16em .4em
 		
-
 .listado-reg-facturas
 	margin 1em 1em 0 1em
 	display inline-block
@@ -1437,8 +1687,8 @@ footer
 			padding-left .2em
 		&:nth-child(4)
 			width 3em
-		&:nth-child(5)
-			width 3.6em
+		&:nth-child(5) //ORDEN C.
+			width 4.9em
 		&:nth-child(6),&:nth-child(8)
 			text-align right
 			padding 0 .3em
@@ -1662,10 +1912,10 @@ footer
 .prestamo-oficial-field-t
 	width 27.1em
 
-.prestamo-distrito-field
+.prestamo-localidad-field
 	margin-left 24.8em
 
-.prestamo-distrito-field-t
+.prestamo-localidad-field-t
 	margin-left .15em
 	width 28.1em
 
@@ -1892,13 +2142,21 @@ footer
 .listado-table-desembolso
 	margin 1em 0 1em 0
 	border 1px solid black
-	& tr
-		& td
-			&:nth-child(3)
-				padding-right 1em
-			&:nth-child(4),&:nth-child(5)
-				text-align right
-			
+				
+.desembolso-header
+	& td
+		&:nth-child(3)
+			text-align left
+
+.listado-prestamos-desembolso-detail
+	& td
+		border 1px solid black
+		padding 0 .3em 
+		&:nth-child(3)
+			text-align right
+			font-size 1.2em
+			color mamey
+			font-weight bold
 
 .botones-acciones-desembolso
 	float left
@@ -1985,7 +2243,6 @@ footer
 	&:before
 		margin-right .2em
 
-
 .sub-menu-sp
 	background amarilloOscuro
 	color white
@@ -2034,7 +2291,7 @@ footer
 				padding-bottom .5em
 			&:nth-child(2)
 				padding-bottom .25em
-
+	
 .datos-prestamo-content
 	display block
 	// overflow hidden
@@ -2141,7 +2398,7 @@ footer
 	height 4em
 	width 10em
 	float left
-	margin-bottom 3em
+	margin-bottom .5em
 	&:before
 		margin-right .4em
 
@@ -2149,7 +2406,7 @@ footer
 	height 4em
 	width 10em
 	float right
-	margin-bottom 3em
+	margin-bottom .5em
 	&:before
 		margin-right .4em
 
@@ -2294,6 +2551,106 @@ footer
 		&:first-child
 			text-align center
 
+//SOLICITUD ORDEN DE DESPACHO
+
+.content-suplidores-table-od
+	position relative
+	top 1.45em
+	margin-bottom .2em
+
+.detalle-OD
+	position relative	
+
+.sc-detalle-od
+	display block
+	height 29em
+
+.detalle-orden-despacho
+	margin .5em 0 0 0
+	padding-bottom 6em
+	height 25em
+	background verdeSuave
+	
+	& h2
+		background verdeMuyOscuro
+		font-weight normal
+		padding .15em 0
+
+.title-od
+	padding 1em 0 0 .5em
+	color verdeMuySuave
+
+.agregar-articulo
+	margin 0 0 0 1em
+
+.articulo-od-field
+	border none
+	padding .2em
+	width 25em
+
+.boton-agregar-articulo
+	padding 0 2em	
+
+.table-articulo-orden-despacho
+	margin 1em 0 0 4.5em
+
+.table-articulo-orden-despacho-header
+	& td
+		border 1px solid verdeSubMenu
+		padding .4em .3em
+		background verde
+		color white
+
+.table-articulo-orden-despacho-detail
+	& td
+		border 1px solid verde
+		padding .2em
+	
+		&:nth-child(4)
+			text-align right
+			padding 0 .2em
+		
+		&:nth-child(5)
+			text-align center
+
+.table-articulo-orden-despacho-footer
+	& td 
+		border none
+		background verde
+		color white
+		
+		&:first-child
+			padding .2em 0 .2em .5em
+			
+		&:nth-child(2)
+			color amarillo
+			text-align right
+			font-weight bold
+			
+.valor-field-od
+	border none
+	margin 0
+	outline none
+	padding .1em 0
+	text-align right
+	font-weight bold
+
+	&.cantidad
+		width 4em
+	&.precio
+		width 6em					
+	&.sub-total
+		width 8em
+		background transparent
+
+.acciones-od
+	margin 1.4em 0 0 4.5em
+	
+	& button
+		height 3.5em
+		width 9em
+		&:before
+			margin-right .45em
 //TRANSFERENCIA INVENTARIO
 
 .producto-find
@@ -2577,49 +2934,37 @@ footer
 	background verdeClarito
 	color white
 	border-radius 3px
-	& td
+	td
 		&:first-child
 			padding 0 .8em
-			width 1em
-			
+		
 		border 1px solid black
 		padding .16em .4em
 
-.btn-guardar
-	height 3em
-	width 10em
-	margin 1em
-	&:before
-		margin-right .4em
+.suplidor-table-search	
+	border 1px solid black
+	position absolute
+	top 7.2em
+	left 6em
+	width 40em
+	z-index 900
+	& tr
+		&:first-child
+			text-align center
 
-.Orden-form
-	margin .5em 
-	margin-bottom 1em
+.Orden
+	margin-top 0.3em
 	
-	
-	&-items
-		background-color lightgray
-		border-radius 3px
-		
-		& td 
-			margin 1em
-			& nth-child(2)
-				margin-left 5em
-	
-.Orden-Detalle
-	margin 1em 0 
-	&-Table
-		border-radius 2px
+	&-Registro
+		margin .5em 0 .5em .7em
 
-.Orden-Cuentas
-	background-color darkgray
-.Articulos
-	width 80%
-	
 .utils
 	&-block
 		display block
-	
+		
+	&-smallPadding
+		padding .16em .4em
+		
 	&-alingRight
 		position absolute
 		right 4em
