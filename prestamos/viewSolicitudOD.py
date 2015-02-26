@@ -141,7 +141,7 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 					
 					#Si la Orden de Despacho no tiene detalle digitado no puede ser aprobada
 					try:
-						SolicitudOrdenDespachoD.objects.get(ordenDespacho=oSolicitud)
+						SolicitudOrdenDespachoD.objects.filter(ordenDespacho=oSolicitud)
 					except SolicitudOrdenDespachoD.DoesNotExist:
 						raise Exception('La Solicitud No. ' + '{:0>8}'.format(oSolicitud.noSolicitud) + ' no tiene detalle digitado.')
 

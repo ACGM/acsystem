@@ -18,6 +18,12 @@ class SolicitudOrdenDespachoHAdmin(admin.ModelAdmin):
 					'montoSolicitado', 'valorGarantizado', 'netoDesembolsar', 'categoriaPrestamo']
 
 
+@admin.register(SolicitudOrdenDespachoD)
+class SolicitudOrdenDespachoDAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'ordenDespacho', 'articulo', 'cantidad', 'precio']
+
+
 @admin.register(MaestraPrestamo)
 class MaestraPrestamoAdmin(admin.ModelAdmin):
 

@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0007_auto_20150219_2118'),
-        ('facturacion', '0001_initial'),
+        ('facturacion', '__first__'),
+        ('administracion', '__first__'),
     ]
 
     operations = [
@@ -68,11 +68,12 @@ class Migration(migrations.Migration):
                 ('fechaEntrega', models.DateField(null=True, blank=True)),
                 ('valorGarantizado', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('balance', models.DecimalField(default=0, max_digits=12, decimal_places=2, blank=True)),
-                ('estatus', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'En proceso'), (b'P', b'Posteado'), (b'S', b'Saldado')])),
+                ('prueba', models.CharField(default=b'3', max_length=3)),
+                ('estatus', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'En proceso'), (b'P', b'Posteado'), (b'S', b'Saldado'), (b'C', b'Cheque'), (b'D', b'Desembolso')])),
                 ('posteadoFecha', models.DateField(auto_now=True, null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),
-                ('chequeNo', models.ForeignKey(to='prestamos.Cheque', null=True)),
+                ('chequeNo', models.ForeignKey(blank=True, to='prestamos.Cheque', null=True)),
                 ('factura', models.ForeignKey(blank=True, to='facturacion.Factura', null=True)),
                 ('localidad', models.ForeignKey(to='administracion.Localidad')),
             ],
@@ -250,6 +251,10 @@ class Migration(migrations.Migration):
             name='ordenDespacho',
             field=models.ForeignKey(to='prestamos.SolicitudOrdenDespachoH'),
             preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='solicitudordendespachod',
+            unique_together=set([('id', 'ordenDespacho')]),
         ),
         migrations.AddField(
             model_name='prestamounificado',

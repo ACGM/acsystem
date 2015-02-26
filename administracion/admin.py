@@ -6,7 +6,7 @@ from administracion.models import Localidad, Departamento, Representante, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
 								 TipoDocumento, Periodo, Empresa, Cobrador, DocumentoCuentas, \
 								 CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN, \
-								 UserExtra
+								 UserExtra, ArchivoBanco
 
 
 
@@ -18,6 +18,10 @@ class OpcionInline(admin.StackedInline):
 	model = Opcion
 	extra = 2
 
+
+@admin.register(ArchivoBanco)
+class ArchivoBancoAdmin(admin.ModelAdmin):
+	list_display = ['id', 'bancoAsign', 'tipoServicio', 'envio', 'secuencia']
 
 @admin.register(ArchivoBancoHeader)
 class ArchivoBancoHeaderAdmin(admin.ModelAdmin):

@@ -107,6 +107,9 @@ class SolicitudOrdenDespachoH(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	def __unicode__(self):
+		return '%s' % (str(self.noSolicitud))
+
 # Solicitud de Orden de Despacho Detalle
 class SolicitudOrdenDespachoD(models.Model):
 
@@ -114,6 +117,9 @@ class SolicitudOrdenDespachoD(models.Model):
 	articulo = models.CharField(max_length=80, default='No especificado')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
+
+	class Meta:
+		unique_together = ('id','ordenDespacho')
 
 
 #Maestra de Prestamos
@@ -144,6 +150,7 @@ class MaestraPrestamo(models.Model):
 	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
+	fechaAprobacion = models.DateField(auto_now_add=True, null=True)
 
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 

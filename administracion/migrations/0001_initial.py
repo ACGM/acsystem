@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('bancoAsign', models.CharField(max_length=5)),
                 ('tipoServicio', models.CharField(max_length=2)),
                 ('envio', models.CharField(max_length=4)),
-                ('secuencia', models.PositiveIntegerField()),
+                ('secuencia', models.PositiveIntegerField(default=0)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
             ],
             options={
@@ -135,6 +135,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('codigo', models.CharField(max_length=25)),
                 ('nombre', models.CharField(max_length=100)),
+                ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
             ],
             options={
                 'ordering': ['nombre'],
@@ -150,9 +151,7 @@ class Migration(migrations.Migration):
                 ('montoDesde', models.DecimalField(verbose_name=b'Monto Desde', max_digits=18, decimal_places=2, blank=True)),
                 ('montoHasta', models.DecimalField(verbose_name=b'Monto Hasta', max_digits=18, decimal_places=2, blank=True)),
                 ('tipo', models.CharField(max_length=2, choices=[(b'OD', b'Orden de Despacho'), (b'PR', b'Prestamo'), (b'SC', b'SuperCoop')])),
-                ('interesAnualSocio', models.DecimalField(null=True, verbose_name=b'Intereses Anual Socio', max_digits=6, decimal_places=2, blank=True)),
-                ('interesAnualEmpleado', models.DecimalField(null=True, verbose_name=b'Intereses Anual Empleado', max_digits=6, decimal_places=2, blank=True)),
-                ('interesAnualDirectivo', models.DecimalField(null=True, verbose_name=b'Intereses Anual Directivo', max_digits=6, decimal_places=2, blank=True)),
+                ('interesAnualSocio', models.DecimalField(null=True, verbose_name=b'Intereses Anual Socio %', max_digits=6, decimal_places=2, blank=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
@@ -275,7 +274,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(max_length=50)),
                 ('rnc', models.CharField(max_length=15, null=True, blank=True)),
+                ('cuentaBanco', models.CharField(max_length=20, null=True)),
                 ('bancoAsign', models.CharField(max_length=5, null=True, blank=True)),
+                ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
             ],
             options={
                 'verbose_name_plural': 'Config 2.2) Empresas',
@@ -338,7 +339,7 @@ class Migration(migrations.Migration):
             name='Producto',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('codigo', models.CharField(max_length=10, editable=False)),
+                ('codigo', models.CharField(unique=True, max_length=10, editable=False)),
                 ('descripcion', models.CharField(max_length=50)),
                 ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('costo', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
@@ -357,6 +358,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(max_length=50)),
+                ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
             ],
             options={
                 'verbose_name_plural': 'Config 2.3) Representantes',
@@ -388,8 +390,8 @@ class Migration(migrations.Migration):
                 ('tipoCuentaBancaria', models.CharField(default=b'1', max_length=1, null=True, verbose_name=b'Tipo Cuenta Bancaria', blank=True)),
                 ('foto', models.ImageField(null=True, upload_to=b'administracion', blank=True)),
                 ('nombreCompleto', models.CharField(verbose_name=b'Nombre Completo', max_length=80, editable=False)),
-                ('cuotaAhorroQ1', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2, blank=True)),
-                ('cuotaAhorroQ2', models.DecimalField(null=True, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2, blank=True)),
+                ('cuotaAhorroQ1', models.DecimalField(default=0, verbose_name=b'Cuota Ahorro Q1', max_digits=12, decimal_places=2)),
+                ('cuotaAhorroQ2', models.DecimalField(default=0, verbose_name=b'Cuota Ahorro Q2', max_digits=12, decimal_places=2)),
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),
                 ('departamento', models.ForeignKey(to='administracion.Departamento')),
                 ('localidad', models.ForeignKey(to='administracion.Localidad')),
@@ -406,8 +408,8 @@ class Migration(migrations.Migration):
             name='Suplidor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('tipoIdentificacion', models.CharField(default=b'C', max_length=1, choices=[(b'C', b'Cedula'), (b'R', b'RNC')])),
-                ('cedulaRNC', models.CharField(unique=True, max_length=25)),
+                ('tipoIdentificacion', models.CharField(default=b'C', max_length=1, verbose_name=b'Tipo de Identificacion', choices=[(b'C', b'Cedula'), (b'R', b'RNC')])),
+                ('cedulaRNC', models.CharField(unique=True, max_length=25, verbose_name=b'Cedula o RNC')),
                 ('nombre', models.CharField(max_length=60)),
                 ('direccion', models.TextField(blank=True)),
                 ('sector', models.CharField(max_length=40, null=True, blank=True)),
@@ -416,7 +418,7 @@ class Migration(migrations.Migration):
                 ('telefono', models.CharField(max_length=50, null=True, blank=True)),
                 ('correo', models.CharField(max_length=40, null=True, blank=True)),
                 ('fax', models.CharField(max_length=50, null=True, blank=True)),
-                ('intereses', models.DecimalField(default=0, null=True, max_digits=5, decimal_places=2, blank=True)),
+                ('intereses', models.DecimalField(decimal_places=2, default=0, max_digits=5, blank=True, null=True, verbose_name=b'Intereses %')),
                 ('clase', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'Normal'), (b'S', b'SuperCoop')])),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
@@ -492,6 +494,10 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.AlterUniqueTogether(
+            name='userextra',
+            unique_together=set([('usuario', 'localidad', 'perfil')]),
+        ),
         migrations.AddField(
             model_name='suplidor',
             name='tipoSuplidor',
@@ -527,6 +533,10 @@ class Migration(migrations.Migration):
             name='documento',
             field=models.ForeignKey(to='administracion.TipoDocumento'),
             preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='documentocuentas',
+            unique_together=set([('documento', 'cuenta', 'accion')]),
         ),
         migrations.AddField(
             model_name='cobeneficiario',

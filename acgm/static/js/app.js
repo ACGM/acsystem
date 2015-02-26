@@ -14,6 +14,27 @@
     'cooperativa.desembolsoelectronico'
     ]);
 
+  app.factory('appService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
+
+    function generarArchivoBanco(header, detalle) {
+      var deferred = $q.defer();
+
+      $http.post('/generarArchivoBanco/', JSON.stringify({'CABECERA': header, 'DETALLE': detalle})).
+        success(function (data) {
+          deferred.resolve(data);
+        }).
+        error(function (data) {
+          deferred.resolve(data)
+        });
+      return deferred.promise;
+    }
+
+    return {
+      generarArchivoBanco: generarArchivoBanco
+    };
+
+  }]);
+
 	app.config(function($interpolateProvider,$httpProvider){
   	  $interpolateProvider.startSymbol('[[').endSymbol(']]');
 

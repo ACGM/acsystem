@@ -315,7 +315,7 @@ class MarcarPrestamoComoDCView(LoginRequiredMixin, View):
 # Prestamos para Desembolso Electronico
 class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 
-	queryset = MaestraPrestamo.objects.filter(estatus='E')
+	queryset = MaestraPrestamo.objects.filter(estatus='E', noSolicitudPrestamo__gt=0).order_by('-noPrestamo')
 
 	def get(self, request, *args, **kwargs):
 
@@ -348,6 +348,7 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				})
 
 		return JsonResponse(data, safe=False)
+
 
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):

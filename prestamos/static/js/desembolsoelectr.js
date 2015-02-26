@@ -65,8 +65,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 'MaestraPrestamoService',
-                                        function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService, MaestraPrestamoService) {
+    .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService, MaestraPrestamoService, appService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -105,6 +105,7 @@
         $scope.valoresChk = [];
 
         DesembolsoElectronicoService.listadoPrestamos().then(function (data) {
+          console.log(data)
           $scope.prestamos = data;
           $scope.regAll = false;
 
@@ -189,6 +190,62 @@
         })
       }
 
+      //Generar archivo para el banco
+      $scope.GeneraArchivoBanco = function($event) {
+        $event.preventDefault();
+
+        //Al metodo principal deben ser pasado los siguientes parametros:
+        // 1) tipoServicio (01 Nomina Automatica, 02 Pago a Suplidores, ..., 06 Transferencia a Cta)
+        // 2) fechaEfectiva YYYYMMDD
+        // 3) cantidadDB
+        // 4) montoTotalDB
+        // 5) cantidadCR
+        // 6) montoTotalCR
+        // 7) numeroAfiliacion
+        // 8) fechaEnvio YYYYMMDD
+        // 9) horaEnvio HHMM
+        var totalDB=0;
+        var Cabecera = {};
+        var Detalle = [];
+
+        $scope.prestamosSeleccionados.forEach(function (item) {
+          totalDB += item.netoDesembolsar;
+        });
+
+        Cabecera.tipoServicio = '01';
+        Cabecera.fechaEfectiva = $filter('date')(Date.now(), 'yyyyMMdd');
+        Cabecera.cantidadDB = $scope.prestamosSeleccionados.length;
+        Cabecera.montoTotalDB = totalDB;
+        Cabecera.cantidadCR = 0;
+        Cabecera.montoTotalCR = 0;
+        Cabecera.numeroAfiliacion = '';
+        Cabecera.fechaEnvio = $filter('date')(Date.now(), 'yyyyMMdd');
+        Cabecera.horaEnvio = $filter('date')(Date.now(), 'HHmm');
+
+        // Para el registro N son necesarios los siguientes campos
+        /*
+          1) cuentaDestino
+          2) monedaDestino = 214 para peso dominicano
+          3) montoTransaccion
+          4) codigoSocio / suplidorId
+        */
+        $scope.prestamosSeleccionados.forEach(function (registroN) {
+          var item = {};
+
+          item.cuentaDestino = registroN.socioCuentaBancaria;
+          item.monedaDestino = '214';
+          item.montoTransaccion = registroN.netoDesembolsar;
+          item.socioCodigo = registroN.socioCodigo;
+
+          Detalle.push(item);
+        });
+
+        //Enviar para crear registros para archivo.
+        appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
+          console.log(data);
+        });
+      }
+
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
 
@@ -223,7 +280,6 @@
       $window.sessionStorage['prestamoRC'] = JSON.stringify(prestamo);
         $window.open('/prestamos/print/recibidoconforme/', target='_blank'); 
       }
-     
 
     }])
 
@@ -235,10 +291,6 @@
     // $scope.factura = JSON.parse($window.sessionStorage['des']);
     $scope.dataH = {};
     $scope.dataD = [];
-
-    
-
-
 
   }]);
    

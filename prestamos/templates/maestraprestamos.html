@@ -32,12 +32,13 @@
 
 				</div>
 
-				<section class="registrosPanel">
+				<section class="registrosPanel grande">
 					<table class="listado-table">
 						<tr class="listado-table-header">
 							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td>
 							<td>Estatus</td>
 							<td>Prestamo</td>
+							<td>Sol.</td>
 							<td>Factura</td>
 							<td>Codigo</td>
 							<td>Socio</td>
@@ -48,9 +49,18 @@
 						</tr>
 
 						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
-							<td class="align-center"><input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)"></td>
+							<td class="align-center">
+								<input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)">
+							</td>
+							
 							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]] align-center"></td>
-							<td><a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a></td>
+							<td>
+								<a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a>
+							</td>
+							<td class="align-center">
+								<span ng-if="prestamo.noSolicitudPrestamo > 0" class="icon-dollar icon-prestamo" title="Solicitud de Prestamo: [[prestamo.noSolicitudPrestamo | numberFixedLen : 8]]"></span>
+								<span ng-if="prestamo.noSolicitudOD > 0" class="icon-truck icon-OD" title="Solicitud Orden de Despacho: [[prestamo.noSolicitudOD | numberFixedLen : 8]]"></span>
+							</td>
 							<td>[[prestamo.factura | numberFixedLen : 8]]</td>
 							<td>[[prestamo.codigoSocio]]</td>
 							<td>[[prestamo.socio]]</td>
@@ -58,16 +68,14 @@
 							<td class="resaltar-valor align-right verde">[[prestamo.balance | number : 2]]</td>
 							<td>[[prestamo.categoriaPrestamo]]</td>
 							<td class="align-center">
-								<a ng-if="prestamo.estatus == 'E'" href="#" class="icon-coin icon-imprimir comoCheque" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque"></a> 
+								<a ng-if="prestamo.estatus == 'E' && prestamo.noSolicitudPrestamo > 0" href="#" class="icon-coin icon-imprimir comoCheque" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque Prestamo No. [[prestamo.noPrestamo | numberFixedLen : 9]]"></a> 
 							</td>
 						</tr>
 					</table>
 				</section>
 
 				<div class="botones-acciones-prestamos">
-					<button class="Boton boton-generar-solicitud-cheque"> Generar Solicitud Cheque</button>
 					<button class="Boton boton-postear-prestamos"> Postear Prestamos</button>
-					<button class="Boton boton-postear-prestamos-od"> Postear Prestamos por Ordenes</button>	
 				</div>
 				
 			</section>

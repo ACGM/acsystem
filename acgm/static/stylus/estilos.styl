@@ -4,11 +4,11 @@
 
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonts/icomoon.eot?-qo4i3e');
-	src:url('../fonts/icomoon.eot?#iefix-qo4i3e') format('embedded-opentype'),
-		url('../fonts/icomoon.woff?-qo4i3e') format('woff'),
-		url('../fonts/icomoon.ttf?-qo4i3e') format('truetype'),
-		url('../fonts/icomoon.svg?-qo4i3e#icomoon') format('svg');
+	src:url('../fonts/icomoon.eot?2pfodq');
+	src:url('../fonts/icomoon.eot?#iefix2pfodq') format('embedded-opentype'),
+		url('../fonts/icomoon.woff?2pfodq') format('woff'),
+		url('../fonts/icomoon.ttf?2pfodq') format('truetype'),
+		url('../fonts/icomoon.svg?2pfodq#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -81,6 +81,14 @@
 
 .icon-cog:before {
 	content: "\e90a";
+}
+
+.icon-list:before {
+	content: "\e61e";
+}
+
+.icon-list2:before {
+	content: "\e61f";
 }
 
 .icon-download:before {
@@ -195,12 +203,32 @@
 	content: "\e913";
 }
 
+.icon-moneybag:before {
+	content: "\e61c";
+}
+
+.icon-dollar:before {
+	content: "\e61d";
+}
+
 .icon-uniE601:before {
 	content: "\e901";
 }
 
+.icon-news:before {
+	content: "\e620";
+}
+
+.icon-note:before {
+	content: "\e621";
+}
+
 .icon-banknote:before {
 	content: "\e904";
+}
+
+.icon-truck:before {
+	content: "\e622";
 }
 
 .icon-printer:before {
@@ -213,6 +241,14 @@
 
 .icon-help:before {
 	content: "\e60f";
+}
+
+.icon-text:before {
+	content: "\e623";
+}
+
+.icon-text2:before {
+	content: "\e624";
 }
 //FIN FONTS
 
@@ -307,14 +343,13 @@ footer
 		&:after
 			content attr(data-info)
 			color verdeMuyOscuro
-			font-weight bold
 			border 2px solid verde
 			background verdeSuave
-			height 1.5em
-			width 12em
+			height 2.4em
+			width 14em
 			position absolute
-			left -12.4em
-			top -.3em
+			left -14.4em
+			top -.6em
 			z-index 1999
 			border-radius 5px 5px 5px 5px
 
@@ -1221,6 +1256,9 @@ footer
 	margin-top .3em
 	padding-right 1.5em
 	position relative
+	
+	.grande
+		height 40em
 
 .listado-table-header-ei
 	background verdeClarito
@@ -1833,12 +1871,24 @@ footer
 	display inline-block
 
 .listado-table
+	font-size .9em
 	margin .3em 0 .7em 0
 .listado-prestamos-detail
+	&:nth-child(odd)
+		& td
+			background verdeMuySuave
 	& td
 		padding .15em .15em
 		border 1px solid black
-			
+	.icon-prestamo
+		&:before
+			font-size 1.3em
+			margin-right .2em
+	.icon-OD
+		&:before
+			font-size 1.3em
+			margin-right .2em
+
 .prestamo-field-detalle
 	text-decoration none
 	color verde
@@ -1852,13 +1902,17 @@ footer
 		float left
 		margin 0 1em 0 0
 		
-.boton-generar-solicitud-cheque,.boton-postear-prestamos,.boton-postear-prestamos-od
+.boton-postear-prestamos
 	height 3.4em
 	width 11em
 	margin-bottom 3em
 	padding .5em 1em
+	transition .2s
 	&:before
 		margin-right .4em
+	
+	&:hover
+		transform scale(1.1,1.1)
 
 	//Detalle del prestamo*****
 .data-entry-section-sp

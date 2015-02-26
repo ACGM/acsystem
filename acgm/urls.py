@@ -44,7 +44,7 @@ from cuenta.views import CuentasViewSet, AuxiliarViewSet
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
                                 AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet, \
-                                CategoriaProductoViewSet
+                                CategoriaProductoViewSet, GenerarArchivoBancoView
 
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
@@ -135,6 +135,8 @@ urlpatterns = patterns('',
     url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
+    
+    url(r'^generarArchivoBanco/$', GenerarArchivoBancoView.as_view(), name='generar_archivo_banco'),
 
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
