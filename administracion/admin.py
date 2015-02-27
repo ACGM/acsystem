@@ -29,7 +29,8 @@ class ArchivoBancoHeaderAdmin(admin.ModelAdmin):
 
 @admin.register(ArchivoBancoDetailN)
 class ArchivoBancoDetailNAdmin(admin.ModelAdmin):
-	list_display = ['id','tipoRegistro','idCompania','secuencia','secuenciaTrans']
+	list_display = ['id','tipoRegistro','idCompania','secuencia','secuenciaTrans', 'lineaFormateadaN']
+	list_editable = ('lineaFormateadaN',)
 	
 @admin.register(Localidad)
 class LocalidadAdmin(admin.ModelAdmin):

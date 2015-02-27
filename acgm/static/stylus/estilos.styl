@@ -336,6 +336,21 @@ footer
 
 .verde
 	color verde !important
+		
+.registrosPanel //Para paneles que contiene las tablas con registros como maestra de prestamo, entrada de inventario, facturas registradas, ....
+	height 25em
+	overflow scroll
+	border 1px solid lightgray
+	margin-bottom 1em
+	margin-top .3em
+	padding-right 1.5em
+	position relative
+	
+	&--grande
+		height 30rem
+		overflow scroll
+		border 1px solid lightgray
+		display inline-block
 
 .comoCheque
 	position relative
@@ -549,6 +564,13 @@ footer
 	&.ng-hide
 		height 0
 
+.cssSlideUp--Maestra
+	transition .4s linear all
+	height 38rem
+	overflow hidden
+	&.ng-hide
+		height 0
+		
 .cssFade
 	transition .5s
 	opacity 1
@@ -1247,19 +1269,7 @@ footer
 	margin-left 1em
 	display inline-block
 	float right	
-	
-.registrosPanel
-	height 25em
-	overflow scroll
-	border 1px solid lightgray
-	margin-bottom 1em
-	margin-top .3em
-	padding-right 1.5em
-	position relative
-	
-	.grande
-		height 40em
-
+		
 .listado-table-header-ei
 	background verdeClarito
 	color white
@@ -1856,6 +1866,9 @@ footer
 //*******************************************
 
 //SECCION MAESTRA DE PRESTAMOS
+.listado-maestra-prestamo
+	position relative
+	overflow hidden
 .listado-reg-prestamos
 	margin .8em
 	display inline-block
@@ -1870,9 +1883,11 @@ footer
 	margin-left 5em
 	display inline-block
 
-.listado-table
+.listado-table-maestraprestamo
+	width 98%
 	font-size .9em
 	margin .3em 0 .7em 0
+	
 .listado-prestamos-detail
 	&:nth-child(odd)
 		& td
@@ -1896,13 +1911,9 @@ footer
 		color mamey
 		font-weight bold
 		
-.botones-acciones-prestamos
-	float left
-	& button
-		float left
-		margin 0 1em 0 0
-		
 .boton-postear-prestamos
+	position absolute
+	left 2em
 	height 3.4em
 	width 11em
 	margin-bottom 3em
@@ -2217,6 +2228,8 @@ footer
 		padding 0 .3em 
 
 .botones-acciones-desembolso
+	position relative
+	background red
 	& button
 		float left
 		margin 1em 1em 0 0
@@ -2240,7 +2253,10 @@ footer
 		margin-right .4em
 	&:hover
 		transform scale(1.1,1.1)
-	
+
+.desembolso-ejecutado
+	float left
+	color verde
 
 //SOLICITUD DE PRESTAMO
 .estatus-p

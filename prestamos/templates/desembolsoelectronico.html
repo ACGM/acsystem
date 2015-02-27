@@ -6,6 +6,8 @@
 
 	<div class="DesembolsoPrestamos" ng-controller="DesembolsoPrestamosCtrl">
 		
+		<mensajeerror> </mensajeerror>
+
 		<div class="sub-menu">	
 			Prestamos para generar desembolsos electronicos
 		</div>
@@ -20,11 +22,11 @@
 					<span> Socio </span>
 					<input type="text" ng-model="socioCod" placeholder="Codigo" class="field-short" ng-keyup="buscarPrestamoBySocio($event, socioCod)">
 				</div>
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoPrestamos()">Ver todos</a>
 			</div>
-			<span class="error-ei"> [[NoFoundDoc]]</span>
-			<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoPrestamos()">Ver todos</a>
 
-			<div class="registrosPanel">
+			<div class="registrosPanel--grande">
 				<table class="listado-table-desembolso" ng-init="listadoPrestamos()">
 					<tr class="listado-table-header desembolso-header">
 						<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
@@ -46,7 +48,7 @@
 						<td>[[prestamo.socioCuentaBancaria]]</td>
 						<td>[[prestamo.bancoCodigo]]</td>
 						<td>[[prestamo.bancoNombre]]</td>
-						<td class="resaltar-valor align-right">[[prestamo.netoDesembolsar | number : 2]]</td>
+						<td class="resaltar-valor align-right"><span ng-if="prestamo.fechaDesembolso.length > 0 " class="icon-document desembolso-ejecutado" title="Este prestamo fue generado en un archivo para el banco."></span>[[prestamo.netoDesembolsar | number : 2]]</td>
 						<td class="align-center"><a href="#" class="icon-printer imprimir-icon" ng-click="imprimirRC(prestamo)"></a></td>
 
 					</tr>

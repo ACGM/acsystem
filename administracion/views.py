@@ -1,5 +1,6 @@
 # VIEWS de Administracion
 
+from django.core.files import File
 from django.shortcuts import render
 from django.views.generic import View
 from django.contrib.auth.models import User
@@ -8,6 +9,8 @@ from django.http import HttpResponse
 from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from prestamos.models import MaestraPrestamo
 
 from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSerializer, \
 						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
@@ -167,6 +170,8 @@ class GenerarArchivoBancoView(View):
 	def post(self, request, *args, **kwargs):
 
 		try:
+			nombreArchivoFinal = ''
+			contenidoArchivoFinal = ''
 
 			data = json.loads(request.body)
 
@@ -187,6 +192,10 @@ class GenerarArchivoBancoView(View):
 			archivoB.userLog = User.objects.get(username=request.user.username)
 			archivoB.save()
 
+			nombreArchivoFinal = archivoB.archivoNombre #El nombre del archivo que sera creado (.txt)
+			pathFile = open(nombreArchivoFinal, 'w')
+			sysFile = File(pathFile)
+
 			# Preparar cabecera de archivo de Banco
 			aCabecera = ArchivoBancoHeader()
 			aCabecera.idCompania = empresa.bancoAsign
@@ -204,6 +213,8 @@ class GenerarArchivoBancoView(View):
 			aCabecera.correo = empresa.correoHeader
 			aCabecera.cuentaEmpresa = empresa.cuentaBanco
 			aCabecera.save()
+
+			sysFile.write(aCabecera.lineaFormateadaH) # Escribir la linea de header en el archivo .TXT
 
 			# Preparar el detalle del archivo de Banco
 			icount = 0
@@ -235,6 +246,19 @@ class GenerarArchivoBancoView(View):
 				registro.emailBenef = linea['emailBenef'] if linea.has_key('emailBenef') else ''
 				registro.faxTelefonoBenef = linea['faxTelefonoBenef'] if linea.has_key('faxTelefonoBenef') else ''
 				registro.save()
+
+				sysFile.write(registro.lineaFormateadaN) # Escribir registro N en el archivo .TXT
+
+				#Esta linea es exclusiva para desembolso de prestamos
+				if linea.has_key('prestamoNo'):
+					m = MaestraPrestamo.objects.get(noPrestamo=linea['prestamoNo'])
+					m.fechaDesembolso = datetime.date.today()
+					m.save()
+
+			sysFile.close()
+
+
+			# PENDIENTE -- Implementacion de Registros R -> para pago a Suplidores
 
 			return HttpResponse(1)
 

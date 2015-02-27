@@ -9,7 +9,7 @@
         input = input
                 .replace('E', false)
                 .replace('D', false)
-                .replace('C', true)
+                .replace('C', false)
                 .replace('P', true)
                 .replace('S', true);
         return input;
@@ -368,7 +368,6 @@
 
       //Cuando se le de click a un checkbox de la lista
       $scope.selectedReg = function(iReg) {
-        console.log(iReg)
         index = $scope.prestamos.indexOf(iReg);
 
         if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
@@ -377,8 +376,8 @@
         else{
           $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
         }
+
       }
-      console.log($scope.prestamosSeleccionados)
 
     }])
 

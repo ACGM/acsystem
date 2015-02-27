@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                 ('envio', models.CharField(max_length=4)),
                 ('secuencia', models.PositiveIntegerField(default=0)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
+                ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -135,6 +136,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('codigo', models.CharField(max_length=25)),
                 ('nombre', models.CharField(max_length=100)),
+                ('digitoVerificador', models.CharField(default=b'8', max_length=1)),
+                ('codigoOperacion', models.CharField(default=b'22', max_length=2)),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
             ],
             options={
@@ -274,8 +277,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(max_length=50)),
                 ('rnc', models.CharField(max_length=15, null=True, blank=True)),
-                ('cuentaBanco', models.CharField(max_length=20, null=True)),
+                ('cuentaBanco', models.CharField(max_length=1, null=True)),
                 ('bancoAsign', models.CharField(max_length=5, null=True, blank=True)),
+                ('correoHeader', models.CharField(max_length=40, null=True, blank=True)),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
             ],
             options={
@@ -408,9 +412,10 @@ class Migration(migrations.Migration):
             name='Suplidor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('tipoIdentificacion', models.CharField(default=b'C', max_length=1, verbose_name=b'Tipo de Identificacion', choices=[(b'C', b'Cedula'), (b'R', b'RNC')])),
+                ('tipoIdentificacion', models.CharField(default=b'C', max_length=1, verbose_name=b'Tipo de Identificacion', choices=[(b'CE', b'Cedula'), (b'RN', b'RNC')])),
                 ('cedulaRNC', models.CharField(unique=True, max_length=25, verbose_name=b'Cedula o RNC')),
                 ('nombre', models.CharField(max_length=60)),
+                ('sexo', models.CharField(default=b'M', max_length=1, choices=[(b'M', b'Masculino'), (b'F', b'Femenino')])),
                 ('direccion', models.TextField(blank=True)),
                 ('sector', models.CharField(max_length=40, null=True, blank=True)),
                 ('ciudad', models.CharField(max_length=40, null=True, blank=True)),
@@ -420,6 +425,8 @@ class Migration(migrations.Migration):
                 ('fax', models.CharField(max_length=50, null=True, blank=True)),
                 ('intereses', models.DecimalField(decimal_places=2, default=0, max_digits=5, blank=True, null=True, verbose_name=b'Intereses %')),
                 ('clase', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'Normal'), (b'S', b'SuperCoop')])),
+                ('tipoCuentaBancaria', models.CharField(max_length=2, null=True, verbose_name=b'Tipo Cuenta Bancaria', blank=True)),
+                ('cuentaBancaria', models.CharField(max_length=20, null=True, verbose_name=b'Cuenta Bancaria', blank=True)),
                 ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activo'), (b'I', b'Inactivo')])),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('auxiliar', models.ForeignKey(to='cuenta.Auxiliares', null=True)),

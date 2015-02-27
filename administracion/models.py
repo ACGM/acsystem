@@ -462,7 +462,7 @@ class Empresa(models.Model):
 
 	nombre = models.CharField(max_length=50)
 	rnc = models.CharField(max_length=15, blank=True, null=True)
-	cuentaBanco = models.CharField(max_length=20, null=True)
+	cuentaBanco = models.CharField(max_length=1, null=True)
 	bancoAsign = models.CharField(max_length=5, blank=True, null=True)
 	correoHeader = models.CharField(max_length=40, blank=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
@@ -531,9 +531,15 @@ class ArchivoBanco(models.Model):
 	tipoServicio = models.CharField(max_length=2) #Tipo de Servicio de dos posiciones
 	envio = models.CharField(max_length=4) # MMDD mes y dia en que se envia el archivo
 	secuencia = models.PositiveIntegerField(default=0) # Secuencia del header de siete posiciones
+	archivoNombre = models.CharField(max_length=25, null=True, blank=True)
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 	userLog = models.ForeignKey(User, editable=False)
+
+	def save(self, *args, **kwargs):
+		self.archivoNombre = 'PE{0}{1}{2}{3}E.TXT'.format('{:0>5}'.format(self.bancoAsign), self.tipoServicio, self.envio, '{:0>7}'.format(self.secuencia))
+
+		super(ArchivoBanco, self).save(*args, **kwargs)
 
 
 # Cabecera Contenido Archivo de Banco
@@ -559,6 +565,9 @@ class ArchivoBancoHeader(models.Model):
 	lineaFormateadaH	= models.CharField(max_length=292, blank=True) # Aqui ira la linea formateada para el TXT
 
 	def save(self, *args, **kwargs):
+		montoDB = str(self.montoTotalDB).replace('.','').replace(',','')[:13]
+		montoCR = str(self.montoTotalCR).replace('.','').replace(',','')[:13]
+
 		self.tipoRegistro		= 'H'
 		self.idCompania 		= '{:<15}'.format(self.idCompania)
 		self.nombreCompania 	= '{:<35}'.format(self.nombreCompania)
@@ -566,9 +575,9 @@ class ArchivoBancoHeader(models.Model):
 		self.tipoServicio		= self.tipoServicio
 		self.fechaEfectiva		= self.fechaEfectiva
 		self.cantidadDB 		= '{:0>11}'.format(self.cantidadDB)
-		self.montoTotalDB		= '{:0>13}'.format(str(self.montoTotalDB).replace('.',''))
+		self.montoTotalDB		= '{:0>13}'.format(int(montoDB))
 		self.cantidadCR			= '{:0>11}'.format(self.cantidadCR)
-		self.montoTotalCR 		= '{:0>13}'.format( str(self.montoTotalCR).replace('.',''))
+		self.montoTotalCR 		= '{:0>13}'.format(int(montoCR))
 		self.numeroAfiliacion	= '{:0>15}'.format(self.numeroAfiliacion)
 		self.fecha				= self.fecha
 		self.hora				= self.hora
@@ -631,6 +640,7 @@ class ArchivoBancoDetailN(models.Model):
 	lineaFormateadaN 	= models.CharField(max_length=320, blank=True,)
 
 	def save(self, *args, **kwargs):
+		montoT = str(self.montoTransaccion).replace('.','').replace(',','')[:13]
 
 		self.tipoRegistro		= 'N'
 		self.idCompania 		= '{:<15}'.format(self.idCompania)
@@ -642,7 +652,7 @@ class ArchivoBancoDetailN(models.Model):
 		self.codBancoDestino	= self.codBancoDestino
 		self.digiVerBancoDestino= self.digiVerBancoDestino
 		self.codigoOperacion	= self.codigoOperacion
-		self.montoTransaccion	= '{:<13}'.format(self.montoTransaccion.replace('.',''))
+		self.montoTransaccion	= '{:0>13}'.format(int(montoT))
 		self.tipoIdentificacion	= self.tipoIdentificacion
 		self.identificacion		= '{:<15}'.format(self.identificacion)
 		self.nombre				= '{:<35}'.format(self.nombre)

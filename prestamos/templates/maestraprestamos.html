@@ -14,7 +14,7 @@
 			<a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a>
 		</div>
 
-		<div id="listado" class="listado-maestra-prestamo cssSlideUp" ng-show="showLP" ng-init="listadoPrestamos()">
+		<div id="listado" class="listado-maestra-prestamo cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
 			
 			<section class="listado-reg-prestamos">
 				<div class="busqueda-by-field">
@@ -32,8 +32,8 @@
 
 				</div>
 
-				<section class="registrosPanel grande">
-					<table class="listado-table">
+				<section class="registrosPanel--grande">
+					<table class="listado-table-maestraprestamo">
 						<tr class="listado-table-header">
 							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td>
 							<td>Estatus</td>
@@ -42,7 +42,7 @@
 							<td>Factura</td>
 							<td>Codigo</td>
 							<td>Socio</td>
-							<td>Monto Prestamo</td>
+							<td>Monto Inicial</td>
 							<td>Balance</td>
 							<td>Tipo Prestamo</td>
 							<td>Cheque</td>
@@ -73,13 +73,11 @@
 						</tr>
 					</table>
 				</section>
-
-				<div class="botones-acciones-prestamos">
-					<button class="Boton boton-postear-prestamos"> Postear Prestamos</button>
-				</div>
-				
 			</section>
+			
+			<button class="Boton boton-postear-prestamos"> Postear Prestamos</button>
 		</div>
+		
 
 		<section class="detalle-prestamo" ng-hide="showLP">
 

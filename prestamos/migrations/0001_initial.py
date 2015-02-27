@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('administracion', '0001_initial'),
         ('facturacion', '__first__'),
-        ('administracion', '__first__'),
     ]
 
     operations = [
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ('fechaEntrega', models.DateField(null=True, blank=True)),
                 ('valorGarantizado', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('balance', models.DecimalField(default=0, max_digits=12, decimal_places=2, blank=True)),
-                ('prueba', models.CharField(default=b'3', max_length=3)),
+                ('fechaAprobacion', models.DateField(auto_now_add=True, null=True)),
                 ('estatus', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'En proceso'), (b'P', b'Posteado'), (b'S', b'Saldado'), (b'C', b'Cheque'), (b'D', b'Desembolso')])),
                 ('posteadoFecha', models.DateField(auto_now=True, null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),

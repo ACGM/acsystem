@@ -345,6 +345,7 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				'bancoCodigo': banco.codigo,
 				'bancoNombre': banco.nombre,
 				'netoDesembolsar': prestamo.montoInicial,
+				'fechaDesembolso': prestamo.fechaDesembolso,
 				})
 
 		return JsonResponse(data, safe=False)
