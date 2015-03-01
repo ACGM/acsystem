@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DesembolsoElectronico, \
+from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DistribucionExcedente, \
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
-					NotaDeDebitoPrestamo, DistribucionExcedente
+					NotaDeDebitoPrestamo
 
 @admin.register(SolicitudPrestamo)
 class SolicitudPrestamoAdmin(admin.ModelAdmin):

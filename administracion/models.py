@@ -84,6 +84,7 @@ class CategoriaProducto(models.Model):
 
 	class Meta:
 		verbose_name_plural = 'Config 4.2) Categorias de Productos'
+		ordering = ('descripcion',)
 
 
 # PRODUCTOS para registrarlos en la facturacion

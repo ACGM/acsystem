@@ -2,6 +2,7 @@
 
   angular.module('cooperativa.maestraprestamo', ['ngAnimate'])
 
+    // Filtro para manejo de bloqueo de seleccion de prestamo segun el estatus (checkbox)
     .filter('posteoMP', function() {
       return function (input) {
         if (!input) return "";
@@ -16,6 +17,7 @@
       }
     })
 
+    // Filtro para imagenes a mostrar por cada estatus del prestamo.
     .filter('OpenCloseMP', function() {
       return function (input) {
         if (!input) return "";

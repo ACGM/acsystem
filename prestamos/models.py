@@ -146,6 +146,7 @@ class MaestraPrestamo(models.Model):
 	montoCuotaQ1 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	montoCuotaQ2 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	fechaDesembolso = models.DateField(null=True, blank=True)
+	usuarioDesembolso = models.ForeignKey(User, related_name='+', null=True)
 	fechaEntrega = models.DateField(null=True, blank=True)
 	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
@@ -244,21 +245,6 @@ class NotaDeDebitoPrestamo(models.Model):
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 
-# Desembolsos Electronicos
-class DesembolsoElectronico(models.Model):
-
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
-
-	fecha = models.DateField(auto_now_add=True)
-	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	monto = models.DecimalField(max_digits=18, decimal_places=2)
-	banco = models.ForeignKey(Banco)
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
-
-	userLog = models.ForeignKey(User, related_name='+')
-	datetimeServer = models.DateTimeField(auto_now_add=True)
-
-
 # Distribuccion de Excedentes -- Este proceso se corre una vez al agno
 # Consiste en repartir un % de los interes retenidos por la cooperativa entre los socios, depositandolo directamente en los ahorros.
 class DistribucionExcedente(models.Model):
@@ -268,3 +254,6 @@ class DistribucionExcedente(models.Model):
 	porcentaje = models.DecimalField(max_digits=6, decimal_places=2)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	fechaPosteo = models.DateField(auto_now=True, null=True)
+
+	userLog = models.ForeignKey(User, editable=False)
+	datetimeServer = models.DateTimeField(auto_now_add=True)

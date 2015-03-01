@@ -15,7 +15,20 @@
           error(function (data) {
             deferred.resolve(data);
           });
+        return deferred.promise;
+      }
 
+      //Eliminar Entrada Inventario
+      function eliminarEI(entradaNo) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/eliminar/', JSON.stringify({'entradaNo': entradaNo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
         return deferred.promise;
       }
 
@@ -51,7 +64,7 @@
       }
 
       //Llenar el listado de entradas de inventario
-      function all() {
+      function allEntradas() {
         var deferred = $q.defer();
 
         $http.get('/api/inventario/?format=json')
@@ -99,10 +112,10 @@
       }
 
       //Llenar el listado de entradas de inventario
-      function allByTipo(tipo) {
+      function allEntradasByTipo(tipo) {
         var deferred = $q.defer();
 
-        all().then(function (data) {
+        allEntradas().then(function (data) {
           var results = data.filter(function (item) {
             return item.getTipo == tipo;
           });
@@ -195,7 +208,7 @@
       //Buscar un numero de documento en especifico en listado de documentos
       function byNoDoc(NoDoc) {
         var deferred = $q.defer();
-        all().then(function (data) {
+        allEntradas().then(function (data) {
           var result = data.filter(function (documento) {
             return documento.id == NoDoc;
           });
@@ -214,7 +227,7 @@
       function byPosteo(valor){
         var deferred = $q.defer();
 
-        all().then(function (data) {
+        allEntradas().then(function (data) {
           var results = data.filter(function (registros) {
             return registros.posteo == valor;
           });
@@ -229,11 +242,23 @@
         return deferred.promise;
       }
 
-      // Dar Salida a Inventario
-      function SalidaInv(entradaNo, nota) {
+      //Llenar el listado de salidas de inventario
+      function allSalidas() {
         var deferred = $q.defer();
 
-        $http.post('/inventario/salida/', JSON.stringify({'entradaNo': entradaNo, 'nota': nota})).
+        $http.get('/api/inventariosalidas/?format=json')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      // Dar Salida a Inventario
+      function SalidaInv(cabecera, detalle, almacen) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/salida/', JSON.stringify({'cabecera': cabecera, 'detalle': detalle, 'almacen': almacen})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -244,8 +269,71 @@
         return deferred.promise;
       }
 
+      //Eliminar Salida Inventario
+      function eliminarSI(salidaNo) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/salida/eliminar/', JSON.stringify({'salidaNo': salidaNo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Buscar por tipo de posteo (Salidas)
+      function SalidasByPosteo(valor){
+        var deferred = $q.defer();
+
+        allSalidas().then(function (data) {
+          var results = data.filter(function (registros) {
+            return registros.posteo == valor;
+          });
+
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
+      //Buscar un documento en especifico (Desglose) -- Salida
+      function DocumentoSalidaById(NoDoc) {
+        var deferred = $q.defer();
+
+        var doc = NoDoc != undefined? NoDoc : 0;
+
+        $http.get('/inventariosalidajson/?nodoc={NoDoc}&format=json'.replace('{NoDoc}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Buscar un numero de documento de salida en especifico en listado de documentos
+      function byNoDocSalida(NoDoc) {
+        var deferred = $q.defer();
+        allSalidas().then(function (data) {
+          var result = data.filter(function (documento) {
+            return documento.id == NoDoc;
+          });
+
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
+
       return {
-        all                     : all,
+        allEntradas             : allEntradas,
         byPosteo                : byPosteo,
         byNoDoc                 : byNoDoc,
         suplidores              : suplidores,
@@ -255,19 +343,25 @@
         DocumentoById           : DocumentoById,
         getExistenciaByProducto : getExistenciaByProducto,
         SalidaInv               : SalidaInv,
-        allByTipo               : allByTipo,
+        allEntradasByTipo       : allEntradasByTipo,
         guardarAjusteInv        : guardarAjusteInv,
         AjustesInvListado       : AjustesInvListado,
         AjusteInvById           : AjusteInvById,
         guardarTransfInv        : guardarTransfInv,
-        TransfInvListado        : TransfInvListado
+        TransfInvListado        : TransfInvListado,
+        allSalidas              : allSalidas,
+        SalidasByPosteo         : SalidasByPosteo,
+        DocumentoSalidaById     : DocumentoSalidaById,
+        eliminarEI              : eliminarEI,
+        eliminarSI              : eliminarSI,
+        byNoDocSalida           : byNoDocSalida
       };
 
     }])
 
 
     //****************************************************
-    //CONTROLLERS                                        *
+    //CONTROLLERS    ENTRADA DE INVENTARIO               *
     //****************************************************
     .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', function ($scope, $filter, $window, $rootScope, InventarioService) {
       
@@ -278,7 +372,6 @@
       $scope.errorShow = false;
       $scope.showLEI = true;
       $scope.showEI = false;
-      $scope.showSI = false;
       $scope.regAll = false;
       $scope.tableProducto = false;
       $scope.condicionBool = true;
@@ -296,8 +389,39 @@
       $scope.ArrowLEI = 'UpArrow';
 
       
-       //Listado de todas las entradas de inventario
-      $scope.listadoEntradas = function(tipo) {
+      // Mostrar/Ocultar panel de Listado de Entrada Inventario
+      $scope.toggleLEI = function() {
+        $scope.showLEI = !$scope.showLEI;
+
+        if($scope.showLEI === true) {
+          $scope.ArrowLEI = 'UpArrow';
+          $scope.showEI = false;
+        } else {
+          $scope.ArrowLEI = 'DownArrow';
+          $scope.showEI = true;
+        }
+      }
+
+      // Mostrar/Ocultar panel de listado de Salida de Inventario
+      $scope.toggleLEI = function() {
+        $scope.showLEI = !$scope.showLEI;
+
+        if($scope.showLEI === true) {
+          $scope.ArrowLEI = 'UpArrow';
+          $scope.showEI = false;
+        } else {
+          $scope.ArrowLEI = 'DownArrow';
+          $scope.showEI = true;
+        }
+      }      
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
+      //Listado de todas las entradas de inventario
+      $scope.listadoEntradas = function() {
         $scope.mostrar = 'mostrar';
         $scope.NoFoundDoc = '';
         $scope.entradasSeleccionadas = [];
@@ -305,44 +429,26 @@
         $scope.regAll = false;
 
         try {
-          if(tipo == undefined || tipo == 'undefined') {
-            InventarioService.all().then(function (data) {
-              $scope.entradas = data;
+          InventarioService.allEntradas().then(function (data) {
+            $scope.entradas = data;
 
-              if(data.length > 0) {
-                $scope.verTodos = 'ver-todos-ei';
+            if(data.length > 0) {
+              $scope.verTodos = 'ver-todos-ei';
 
-                var i = 0;
-                data.forEach(function (data) {
-                  $scope.valoresChk[i] = false;
-                  i++;
-                });
-              }
+              var i = 0;
+              data.forEach(function (data) {
+                $scope.valoresChk[i] = false;
+                i++;
+              });
+            
               $scope.mostrar = 'ocultar';
-            }, function() {
-                $scope.mostrar = 'ocultar';
-            });
-          } else {
-            InventarioService.allByTipo(tipo).then(function (data) {
-              $scope.entradas = data;
+            }
 
-              if(data.length > 0) {
-                $scope.verTodos = 'ver-todos-ei';
-
-                var i = 0;
-                data.forEach(function (data) {
-                  $scope.valoresChk[i] = false;
-                  i++;
-                });
-              }
+          }, function() {
               $scope.mostrar = 'ocultar';
-            }, function() {
-                $scope.mostrar = 'ocultar';
-            });
-          }
+          });
         } catch (e) {
-          console.log(e);
-
+          $scope.mostrarError(e);
         } 
       }
 
@@ -444,7 +550,7 @@
               throw data;
             } else {
               $scope.errorShow = false;
-              $scope.listadoEntradas('E');
+              $scope.listadoEntradas();
 
               $scope.nuevaEntrada();
               $scope.toggleLEI();
@@ -456,32 +562,33 @@
           }
           ));
         }
-
         catch (e) {
           $scope.mostrarError(e);
         }
       }
 
-      //Traer almacenes
-      $scope.darSalidaInv = function() {
-        if($scope.SalidaInventarioForm.$valid == true){
-          InventarioService.SalidaInv($scope.dataH.entradaNo, $scope.dataH.notaSalida).then(function (data) {
+      //Eliminar Entrada de Inventario (Borra el detalle y pone ELIMINADO, pero el registro sigue en base de datos)
+      $scope.eliminarEntradaInv = function($event) {
+        $event.preventDefault();
+
+        try {
+          InventarioService.eliminarEI($scope.dataH.entradaNo).then(function (data) {
             if(data == 1) {
               $scope.errorShow = false;
-              $scope.showSI = false;
-              $scope.showLEI = true;
-              $scope.listadoEntradas('S');
-              $scope.tipoinv = 'S';
+              $scope.listadoEntradas();
+              $scope.nuevaEntrada();
+              $scope.toggleLEI();
+            } else {
+              $scope.mostrarError(data);
             }
           });
-        } else {
-          $scope.mostrarError('Verifique que puso un comentario de salida.');
-
+        } catch (e) {
+          $scope.mostrarError(e);
         }
       }
 
       // Visualizar Documento (Entrada de Inventario Existente - desglose)
-      $scope.DocFullById = function(NoDoc, tipo) {
+      $scope.DocFullById = function(NoDoc) {
         try {
 
           InventarioService.DocumentoById(NoDoc).then(function (data) {
@@ -489,16 +596,8 @@
             $scope.nuevaEntrada();
 
             if(data.length > 0) {
-              //Decidir que renglon mostrar
-              if(tipo == 'salida') {
-                $scope.showSI = true;
-                $scope.showLEI = false;
-                $scope.showEI = false
-              } else {
-                $scope.showEI = true;
-                $scope.showLEI = false;
-                $scope.showSI = false;
-              }
+              $scope.showLEI = false;
+              $scope.showEI = true;
 
               $scope.errorMsg = '';
               $scope.errorShow = false;
@@ -515,14 +614,8 @@
               $scope.dataH.nota = data[0]['nota'];
               $scope.dataH.posteo = data[0]['posteo'];
               $scope.dataH.usuario = data[0]['usuario'];
-
-              $scope.tipoinv = data[0]['tipo'];
-
-              //Datos de salida
-              $scope.dataH.numeroSalida = data[0]['numeroSalida'];
-              $scope.dataH.descripcionSalida = data[0]['descripcionSalida'];
-              $scope.dataH.fechaSalida = data[0]['fechaSalida'];
-              $scope.dataH.usuarioSalida = data[0]['usuarioSalida'];
+              $scope.dataH.borrado = data[0]['borrado'];
+              $scope.dataH.borradoPor = data[0]['borradoPor'];
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
@@ -532,10 +625,8 @@
               if (data[0]['diasPlazo'] != '') {
                 $scope.venceFecha();
               }
-
               $scope.calculaTotales();
             }
-
           }, 
             (function () {
               $scope.mostrarError('No pudo encontrar el desglose del documento #' + NoDoc);
@@ -563,9 +654,7 @@
 
         } catch (e) {
           $scope.mostrarError(e);
-
         }
-        
       }
 
       //Eliminar producto de la lista de entradas
@@ -588,14 +677,12 @@
         $scope.almacen = '';
         $scope.subtotal = '';
         $scope.total = '';
-        $scope.tipoinv = 'E';
         
         $scope.dataH = {};
         $scope.dataD = [];
         $scope.productos = [];
 
         $scope.showLEI = false;
-        $scope.showSI = false;
         $scope.showEI = true;
 
         $scope.ArrowLEI = 'DownArrow';
@@ -603,6 +690,8 @@
         $scope.dataH.usuario = usuario;
         $scope.dataH.condicion = 'CO';
         $scope.dataH.posteo = 'N';
+        $scope.dataH.borrado = false;
+
 
         $scope.disabledButton = 'Boton';
 
@@ -625,7 +714,6 @@
         } catch (e) {
           $scope.mostrarError(e);
         }
-        
       }
 
       //Traer almacenes
@@ -634,7 +722,6 @@
           $scope.almacenes = data;
         });
       }
-
 
       //Traer suplidores
       $scope.getSuplidor = function($event) {
@@ -739,26 +826,6 @@
         $scope.tableProducto = false;
 
         $scope.calculaTotales();
-      }
-
-      
-      // Mostrar/Ocultar panel de Listado de Entrada Inventario
-      $scope.toggleLEI = function() {
-        $scope.showLEI = !$scope.showLEI;
-
-        if($scope.showLEI === true) {
-          $scope.ArrowLEI = 'UpArrow';
-          $scope.showSI = false;
-          $scope.showEI = false;
-        } else {
-          $scope.ArrowLEI = 'DownArrow';
-          $scope.showEI = true;
-        }
-      }
-
-      // Mostrar/Ocultar error
-      $scope.toggleError = function() {
-        $scope.errorShow = !$scope.errorShow;
       }
 
       //Cuando se le de click al checkbox del header.
@@ -1251,8 +1318,400 @@
         $scope.mostrarError(e);
       }
     }
+  }])
 
+    //****************************************************
+    //CONTROLLERS   SALIDA DE INVENTARIO                 *
+    //****************************************************
+    .controller('ListadoSalidaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', function ($scope, $filter, $window, $rootScope, InventarioService) {
+      
+      //Inicializacion de variables
+      $scope.mostrar = 'mostrar';
+      $scope.posteof = '*';
+      $scope.errorShow = false;
+      $scope.showLSI = true;
+      $scope.showSI = false;
+      $scope.tableProducto = false;
+      $scope.condicionBool = true;
 
-  }]);
+      $scope.item = {};
+      $scope.entradas = {};
+      $scope.dataH = {};
+
+      $scope.dataD = [];
+
+      $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      $scope.ArrowLSI = 'UpArrow';
+
+      
+      // Mostrar/Ocultar panel de Listado de Salida Inventario
+      $scope.toggleLSI = function() {
+        $scope.showLSI = !$scope.showLSI;
+
+        if($scope.showLSI === true) {
+          $scope.ArrowLSI = 'UpArrow';
+          $scope.showSI = false;
+        } else {
+          $scope.ArrowLSI = 'DownArrow';
+          $scope.showSI = true;
+        }
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
+
+      //Listado de todas las salidas de inventario
+      $scope.listadoSalidas = function(tipo) {
+        $scope.mostrar = 'mostrar';
+        $scope.NoFoundDoc = '';
+
+        try {
+          InventarioService.allSalidas().then(function (data) {
+            $scope.salidas = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = 'ver-todos-ei';
+            }
+
+            $scope.mostrar = 'ocultar';
+          }, function() {
+              $scope.mostrar = 'ocultar';
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        } 
+      }
+
+      //Filtrar las salidas de inventario por posteo (SI/NO)
+      $scope.filtrarPosteoSalidas = function() {
+        try {
+
+          if($scope.posteof != '*') {
+            InventarioService.SalidasByPosteo($scope.posteof).then(function (data) {
+              $scope.salidas = data;
+
+              if(data.length > 0){
+                $scope.verTodos = '';
+              }
+            });
+          } else {
+            $scope.listadoSalidas();
+          }        
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Guardar Salida Inventario
+      $scope.guardarSI = function() {
+        try {
+          if (!$scope.SalidaInventarioForm.$valid) {
+            throw "Verifique que todos los campos esten completados correctamente.";
+          }
+
+          var dataH = new Object();
+
+          dataH.suplidor = $scope.dataH.idSuplidor;
+          dataH.entradaNo = $scope.dataH.entradaNo != undefined? $scope.dataH.entradaNo : 0;
+          dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : '';
+          dataH.orden = $scope.dataH.ordenNo != undefined? $scope.dataH.ordenNo : '';
+          dataH.ncf = $scope.dataH.ncf != undefined? $scope.dataH.ncf : '';
+          dataH.fecha = fechaFormatted;
+          dataH.condicion = $scope.dataH.condicion;
+          dataH.diasPlazo = $scope.dataH.venceDias != undefined? $scope.dataH.venceDias : '';
+          dataH.nota = $scope.dataH.nota != undefined? $scope.dataH.nota : '';
+          dataH.vence = fechaVFormatted != undefined? fechaVFormatted: '';
+          dataH.userlog = $scope.dataH.usuario;
+
+          if ($scope.dataD.length == 0) {
+            throw "Debe agregar un producto al menos.";
+          }
+
+          InventarioService.guardarSI(dataH,$scope.dataD,$scope.almacen).then(function (data) {
+            if (data != '1') {
+              $scope.mostrarError(data);
+              throw data;
+            } else {
+              $scope.errorShow = false;
+              $scope.listadoSalidas('E');
+
+              $scope.nuevaSalida();
+              $scope.toggleLSI();
+            }
+
+          },
+          (function () {
+            $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
+          }
+          ));
+        }
+
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      // Visualizar Documento (Salida de Inventario Existente - desglose)
+      $scope.DocFullById = function(NoDoc) {
+        try {
+
+          InventarioService.DocumentoSalidaById(NoDoc).then(function (data) {
+            //completar los campos
+            $scope.nuevaSalida();
+
+            if(data.length > 0) {
+              $scope.showLSI = false;
+              $scope.showSI = true;
+
+              $scope.errorMsg = '';
+              $scope.errorShow = false;
+
+              $scope.dataH.salidaNo = $filter('numberFixedLen')(NoDoc, 8);
+              $scope.dataH.fecha = $filter('date')(data[0]['fecha'],'dd/MM/yyyy');
+              $scope.dataH.nota = data[0]['descripcionSalida'];
+              $scope.dataH.usuario = data[0]['usuarioSalida'];
+              $scope.dataH.borrado = data[0]['borrado'];
+              $scope.dataH.borradoPor = data[0]['borradoPor'];
+
+              data[0]['productos'].forEach(function (item) {
+                $scope.dataD.push(item);
+                $scope.almacen = item['almacen'];
+              })
+              
+              $scope.calculaTotales();
+            }
+          }, 
+            (function () {
+              $scope.mostrarError('No pudo encontrar el desglose del documento #' + NoDoc);
+            }
+          ));
+        }
+        catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      // Calcula los totales para los productos
+      $scope.calculaTotales = function() {
+        try {
+          var total = 0.0;
+          var subtotal = 0.0;
+
+          $scope.dataD.forEach(function (item) {
+            total += (parseFloat(item.cantidad) * parseFloat(item.costo));
+          });
+
+          $scope.subtotal = $filter('number')(total, 2);
+          $scope.total = $filter('number')(total, 2);
+
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Eliminar producto de la lista de entradas
+      $scope.delProducto = function($event, prod) {
+        $event.preventDefault();
+        
+        try {
+          $scope.dataD = _.without($scope.dataD, _.findWhere($scope.dataD, {codigo: prod.codigo}));
+
+          $scope.calculaTotales();
+          
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Nueva Salida de Inventario
+      $scope.nuevaSalida = function(usuario) {
+        $scope.producto = '';
+        $scope.almacen = '';
+        $scope.subtotal = '';
+        $scope.total = '';
+        
+        $scope.dataH = {};
+        $scope.dataD = [];
+        $scope.productos = [];
+
+        $scope.showLSI = false;
+        $scope.showSI = true;
+        $scope.errorShow = false;
+
+        $scope.ArrowLSI = 'DownArrow';
+        $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.dataH.usuario = usuario;
+        $scope.dataH.condicion = 'CO';
+        $scope.dataH.posteo = 'N';
+        $scope.dataH.salidaNo = '0';
+        $scope.dataH.borrado = false;
+
+        $scope.disabledButton = 'Boton';
+
+      }
+
+      //Traer almacenes
+      $scope.getAlmacenes = function() {
+        InventarioService.almacenes().then(function (data) {
+          $scope.almacenes = data;
+        });
+      }
+
+      //Traer productos
+      $scope.getProducto = function($event) {
+        $event.preventDefault();
+        var descrp = '';
+
+        if($event.type != 'click') {
+          descrp = $scope.producto;
+        }
+
+        InventarioService.productos(descrp).then(function (data) {
+
+          if(data.length > 0){
+            $scope.productos = data;
+
+            $scope.tableProducto = true;
+            $scope.productoNoExiste = '';
+          } else {
+            $scope.tableProducto = false;
+            $scope.productoNoExiste = 'No existe el producto'
+          }
+        });
+      }
+
+      //Existencia de Producto
+      $scope.existenciaProducto = function(prod, almacen) {
+
+        try {
+          InventarioService.getExistenciaByProducto(prod, almacen).then(function (data) {
+
+            if(data.length > 0) {
+              if(data[0]['cantidad'] < 11) {
+                $scope.mostrarError('El producto ' + prod + ' tiene una existencia de ' + data[0]['cantidad']);
+              }
+            } else {
+              $scope.mostrarError('Este producto (' + prod + ') no tiene existencia.');
+              throw data;
+            }
+
+          }, function() {
+            throw data;
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Agregar Producto
+      $scope.addProducto = function($event, Prod) {
+        $event.preventDefault();
+
+        if ($scope.almacen == undefined || $scope.almacen == '') {
+          $scope.mostrarError('Debe seleccionar un almacen');
+          throw "almacen";
+        }
+
+        //No agregar el producto si ya existe
+        $scope.dataD.forEach(function (item) {
+          if(item.codigo == Prod.codigo) {
+            $scope.mostrarError("No puede agregar mas de una vez el producto : " + item.descripcion);
+            throw "No puede agregar mas de una vez el producto : " + item.descripcion;
+          }
+        });
+
+        $scope.existenciaProducto(Prod.codigo, $scope.almacen);
+
+        Prod.cantidad = 1;
+        $scope.dataD.push(Prod);
+        $scope.tableProducto = false;
+
+        $scope.calculaTotales();
+      }
+      
+      //Dar Salida a productos.
+      $scope.darSalidaInv = function() {
+        try {
+          if($scope.SalidaInventarioForm.$valid == true){
+            
+            InventarioService.SalidaInv($scope.dataH, $scope.dataD, $scope.almacen).then(function (data) {
+              if(data == 1) {
+                $scope.errorShow = false;
+                $scope.showSI = false;
+                $scope.showLSI = true;
+                $scope.listadoSalidas();
+              } else {
+                $scope.mostrarError(data);
+              }
+            });
+          } else {
+            $scope.mostrarError("Verifique que todos los campos esten completados correctamente.");
+          }
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Eliminar Salida de Inventario (Borra el detalle y pone ELIMINADO, pero el registro sigue en base de datos)
+      $scope.eliminarSalidaInv = function($event, salidaNo) {
+        $event.preventDefault();
+
+        try {
+          InventarioService.eliminarSI(salidaNo).then(function (data) {
+            if(data == 1) {
+              $scope.errorShow = false;
+              $scope.listadoSalidas();
+              $scope.nuevaSalida();
+              $scope.toggleLSI();
+            } else {
+              $scope.mostrarError(data);
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Buscar una salida de inventario en especifico
+      $scope.filtrarPorNoDocSalida = function(NoDoc) {
+        try {
+          InventarioService.byNoDocSalida(NoDoc).then(function (data) {
+            $scope.salidas = data;
+
+            if(data.length > 0) {
+              $scope.verTodos = '';
+              $scope.NoFoundDoc = '';
+            }
+          }, 
+            (function () {
+              $scope.NoFoundDoc = 'No se encontró el documento #' + NoDoc;
+            }
+          ));          
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
+      //Buscar Documento por ENTER
+      $scope.buscarDocSalida = function($event, NoDoc) {
+        if($event.keyCode == 13) {
+          $scope.filtrarPorNoDocSalida(NoDoc);
+        }
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postear = function(){
+
+      }
+
+    }])
 
 })(_);  

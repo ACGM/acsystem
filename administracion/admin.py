@@ -21,7 +21,7 @@ class OpcionInline(admin.StackedInline):
 
 @admin.register(ArchivoBanco)
 class ArchivoBancoAdmin(admin.ModelAdmin):
-	list_display = ['id', 'bancoAsign', 'tipoServicio', 'envio', 'secuencia']
+	list_display = ['id', 'bancoAsign', 'tipoServicio', 'envio', 'secuencia', 'userLog']
 
 @admin.register(ArchivoBancoHeader)
 class ArchivoBancoHeaderAdmin(admin.ModelAdmin):

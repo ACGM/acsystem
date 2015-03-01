@@ -126,6 +126,8 @@
               $scope.valoresChk[i] = false;
               i++;
             });
+          } else {
+            $scope.NoFoundDoc = "No existen registros para mostrar.";
           }
         });
       }

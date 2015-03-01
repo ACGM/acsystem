@@ -61,6 +61,7 @@
     };
   });
 
+  // Para color de icono de posteo ---> N = Mamey ----> S = Verde
   app.filter('posteo', function() {
       return function (input) {
         if (!input) return "";
@@ -72,6 +73,19 @@
       }
   });
 
+  // Para Posteos S / N  --> N = No posteado ---> S = Si posteado (Folder abierto/cerrado)
+  app.filter('posteoFolderIcon', function() {
+    return function (input) {
+      if (!input) return "";
+
+      input = input
+              .replace('N', 'icon-folder-open')
+              .replace('S', 'icon-folder')
+      return input;
+    }
+  });
+
+  // Filtro para llevar de numeros a letras.
   app.filter('NumLetra', function() {
       return function (input) {
         if (!input) return "";
@@ -80,12 +94,14 @@
       }
   });
 
+  // Filtro para retornar la fecha actual
   app.filter('currentdate',['$filter',  function($filter) {
     return function() {
         return $filter('date')(new Date(), 'dd/MM/yyyy');
     };
   }]);
 
+  // Directiva para obtener el calendario cuando hay un focus en un campo de ese tipo
   app.directive('datepicker', function() {
     return {
         restrict: 'A',
@@ -105,6 +121,7 @@
     }
   });
 
+  // Directiva para los mensajes de error (estandarizacion)
   app.directive('mensajeerror', function () {
     return {
       restrict: 'E',
@@ -112,6 +129,7 @@
     }
   });
 
+  // Directiva para los mensajes de posteo a contabilidad (estandarizacion)
   app.directive('mensajeinfo', function () {
     return {
       restrict: 'E',
@@ -119,6 +137,7 @@
     }
   });
 
+  // Directiva para tabla de productos en caso de presentar el costo y no el precio.
   app.directive('productossearch', function () {
     return {
       restrict: 'E',
@@ -126,6 +145,7 @@
     }
   });
 
+  // Directiva para cuando se haya focus en un campo se seleccione todo el texto automaticamente.
   app.directive('selectOnClick', function () {
     return {
         restrict: 'A',
@@ -137,6 +157,7 @@
     };
   });
 
+  // Directiva para darle formato numerico con separadores de miles mientras se escribe en un campo.
   app.directive('format', ['$filter', function ($filter) {
     return {
         require: '?ngModel',

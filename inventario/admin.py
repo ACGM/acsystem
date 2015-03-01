@@ -6,7 +6,7 @@ from .models import Almacen, InventarioH, InventarioD, Movimiento, Existencia, A
 
 @admin.register(InventarioH)
 class InventarioHAdmin(admin.ModelAdmin):
-	list_display = ['id','fecha','suplidor','orden','factura','diasPlazo','ncf','posteo','nota','descripcionSalida','totalGeneral']
+	list_display = ['id','fecha','suplidor','orden','factura','diasPlazo','ncf','posteo','nota','totalGeneral']
 	# readonly_fields = ('total',)
 
 @admin.register(InventarioD)

@@ -249,10 +249,11 @@ class GenerarArchivoBancoView(View):
 
 				sysFile.write(registro.lineaFormateadaN) # Escribir registro N en el archivo .TXT
 
-				#Esta linea es exclusiva para desembolso de prestamos
+				#Estas lineas son exclusiva para desembolso de prestamos (actualizacion en la MaestraPrestamo)
 				if linea.has_key('prestamoNo'):
 					m = MaestraPrestamo.objects.get(noPrestamo=linea['prestamoNo'])
 					m.fechaDesembolso = datetime.date.today()
+					m.usuarioDesembolso = request.user
 					m.save()
 
 			sysFile.close()

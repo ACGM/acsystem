@@ -26,13 +26,17 @@
 						<td>Estatus</td>
 						<td>Numero</td>
 						<td>Fecha</td>
+						<td>Procesar</td>
 						<td>Eliminar</td>
 					</tr>
 
 					<tr ng-repeat="ajuste in ajustes" class="productos-table-detail" ng-init="total=0">
-						<td class="icon-folder posteo-[[entrada.posteo]]"></td>
+						<td class="[[ajuste.estatus | posteoFolderIcon]] posteo-[[ajuste.estatus]] align-center"></td>
 						<td> <a href="#" class="sp-field" ng-click="DocFullById(ajuste.id)"> [[ajuste.id | numberFixedLen: 8]] </a> </td>
 						<td>[[ajuste.fecha | date: 'dd/MM/yyyy']]</td>
+						<td class="align-center">
+							<a href="#" class="icon-cog icon-imprimir"></a>
+						</td>
 						<td>
 							<a href="#" class="icon-delete icon-eliminar"></a> 
 						</td>

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes
+from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes, InventarioHSalidas
 from administracion.models import Suplidor
 
 # Listado de Entradas de Inventario
@@ -11,7 +11,16 @@ class EntradasInventarioSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = InventarioH
-		fields = ('id','posteo','fecha','ncf','factura','suplidor','totalGeneral','getTipo')
+		fields = ('id','posteo','fecha','ncf','factura','suplidor', 'borrado', 'totalGeneral')
+		ordering = ('-id',)
+
+
+# Listado de Salidas de Inventario
+class SalidasInventarioSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = InventarioHSalidas
+		fields = ('id','posteo','fecha', 'borrado', 'totalGeneral')
 		ordering = ('-id',)
 
 

@@ -111,4 +111,4 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/administracion/archivosBanco/'
 
-MEDIA_ROOT = 'administracion/archivosBanco/'
+MEDIA_ROOT = '/administracion/archivosBanco/'

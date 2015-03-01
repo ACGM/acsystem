@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %} Inventario {% endblock title %}
+
+{% block content %}
+
+
+	<div class="Inventario" ng-controller="ListadoSalidaInvCtrl">
+
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>				
+		
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" title="Nueva salida de Inventario" ng-click="nuevaSalida('{{user}}')"></button>
+			</div>
+				<a href="#" ng-click="toggleLSI()">Listado Salidas de Inventario</a>
+			<a class="[[ArrowLSI]]" href="#" ng-click="toggleLSI()"></a>
+		</div>
+
+		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLSI" ng-init="listadoSalidas()" >
+			
+			<section class="listado-reg-inventario">
+				<span> Documento No. </span> 
+				<input type="text" class="doc-no-ei" id="DocumentoNo" ng-model="NoDoc" ng-keypress="buscarDocSalida($event, NoDoc)">
+				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDocSalida(NoDoc)"></a>
+				
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoSalidas()">Ver todos</a>
+				
+				<div class="posteo-ei">
+					<span>Posteadas</span>
+					<select class="field-choices" name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteoSalidas()">
+						<option value="*">TODOS</option>
+						<option value="S">SI</option>
+						<option value="N">NO</option>
+					</select>
+				</div>
+
+				<section class="registrosPanel">
+					<figure class="fig-load [[mostrar]]">
+						<img class="img-load" src="/static/images/loading.gif" alt="">
+					</figure>
+					
+					<table class="listado-table-ei" id="table-ei-listado">
+						<tr class="listado-table-header-ei">
+							<td>Postear</td>
+							<td>Estatus</td>
+							<td>Documento</td>
+							<td>Fecha</td>
+							<td>Total</td>
+							<td>Eliminar</td>
+						</tr>
+
+						<tr ng-repeat="salida in salidas" class="listado-entrada-inventario-detail" ng-init="total=0">
+							<td class="align-center"> 
+								<a href="#" class="icon-cog icon-imprimir"></a>
+							</td>
+							<td class="[[salida.posteo | posteoFolderIcon]] posteo-[[salida.posteo]] align-center"></td>
+							<td> <a href="#" class="sp-field" ng-click="DocFullById(salida.id)"> [[salida.id | numberFixedLen: 8]] </a> </td>
+							<td>[[salida.fecha | date: 'dd/MM/yyyy']]</td>
+							<td class="resaltar-valor align-right">[[salida.totalGeneral]]</td>
+							<td class="align-center">
+								<a ng-if="salida.posteo == 'N' && salida.borrado == false" href="#" class="icon-delete icon-eliminar" ng-click="eliminarSalidaInv($event, salida.id)"></a>
+								<a ng-if="salida.posteo != 'N'" href="#" class="icon-delete icon-eliminar icon-disabled"></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td colspan="10"> Cantidad de Registros: [[salidas.length]]  </td>
+						</tr>								
+					</table>
+
+				</section>
+
+			</section>
+		</div>
+
+		<div class="salida-inventario" ng-show="showSI">
+			<!--SALIDA DE INVENTARIO-->
+			<div class="sub-menu">	
+					Salida de Inventario
+			</div>
+
+			<form name="SalidaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="darSalidaInv()" novalidate>
+
+				<div>
+					<p ng-if="dataH.salidaNo > 0"><strong>El usuario que registro esta salida: [[dataH.usuario]] </strong></p>
+					<p ng-if="dataH.borrado == true" class="rojo-bold"> Esta salida fue eliminada por el usuario: [[dataH.borradoPor]]</p>
+
+					
+					<table class="data-entry-header-table">
+						<tr>
+							<td>Salida No.</td>
+							<td> <input class="input-disabled" type="text" ng-disabled="true" ng-model="dataH.salidaNo"> </td>
+							<td>Fecha</td>
+							<td> <input type="text" ng-model="dataH.fecha" ng-disabled="true" class="input-disabled"> </td>
+						</tr>
+
+						<tr>
+							<td>Nota</td>
+							<td colspan="3"> 
+								<textarea name="nota" id="nota" cols="47" rows="4" ng-model="dataH.nota" required></textarea>
+							</td>
+						</tr>
+						
+					</table>
+					
+
+					<div class="producto-find-ei">
+
+						<span>Productos</span>
+						<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
+
+						<div class="almacen-field-ei" ng-init="getAlmacenes()">
+							<span>Almacen</span>
+							<select name="almacen" id="almacen" ng-model="almacen" class="field-choices">
+								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+							</select>	
+							
+						</div>
+
+					</div>
+
+					<div class="content-productos-salidaInv">
+						<productosSearch> </productosSearch>		
+					</div>
+					
+
+					<section class="productos-section">
+						<table class="productos-table">
+							<tr class="productos-table-header">
+								<td>Codigo</td>
+								<td>Descripcion</td>
+								<td>Unidad</td>
+								<td>Cantidad</td>
+								<td>Costo</td>
+								<td>Subtotal</td>
+								<td>Eliminar</td>
+							</tr>
+							<tr class="productos-table-detail" ng-repeat="item in dataD">
+								<td>[[item.codigo]]</td>
+								<td>[[item.descripcion]]</td>
+								<td>[[item.unidad]]</td>
+								<td><input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required select-on-click></td>
+								<td>[[item.costo | number: 2]]</td>
+								<td>[[item.cantidad * item.costo | number: 2]]</td>
+								<td>
+									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
+									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
+								</td>
+							</tr>
+							
+						</table>
+
+						<div class="totales-section">
+							<ul class="totales-ul">
+								<li><span>SubTotal</span> <input type="text" class="subtotal-field" ng-model="subtotal" readonly></li>
+								<li><span>ITBIS</span> <input type="text" class="subtotal-field" readonly></li>
+								<li><span>Total</span> <input type="text" class="total-field" ng-model="total" readonly></li>
+							</ul>
+						</div>
+
+						<button ng-if="dataH.posteo == 'N' && dataH.borrado == false" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
+
+						<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
+
+					</section>
+				</div>
+			</form>
+		</div>
+
+	</div>
+
+{% endblock content %}

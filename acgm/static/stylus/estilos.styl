@@ -336,6 +336,10 @@ footer
 
 .verde
 	color verde !important
+
+.rojo-bold
+	color red !important
+	font-weight bold !important
 		
 .registrosPanel //Para paneles que contiene las tablas con registros como maestra de prestamo, entrada de inventario, facturas registradas, ....
 	height 25em
@@ -734,7 +738,7 @@ footer
 .fig-load
 	position absolute
 	top 7em
-	left 30em
+	left 10em
 	z-index 999
 	
 .img-load
@@ -1278,27 +1282,7 @@ footer
 			padding 0 .4em
 			text-align center
 			width 1em
-		&:nth-child(2)
-			width 2em
-		&:nth-child(3)
-			width 1em	
-		&:nth-child(4)
-			width 3em
-		&:nth-child(5)
-			width 6.5em
-		&:nth-child(6)
-			width 11em
-		&:nth-child(7) //CAMPO FACTURA
-			width 6em
-		&:nth-child(8)
-			width 22em
-		&:nth-child(9)
-			width 5em
-			text-align center
-		&:nth-child(10)
-			width 2em
-			text-align center
-			
+		
 		border 1px solid black
 		padding .16em .4em
 	
@@ -1306,31 +1290,17 @@ footer
 .listado-entrada-inventario-detail
 	& td
 		border 1px solid black
-		padding .17em 0
-		&:nth-child(1),
-		&:nth-child(2), 
-		&:nth-child(3) 
-			text-align center
-		&:nth-child(4),
-		&:nth-child(9)
-			text-align right
-			padding 0 .3em
-		&:nth-child(5),
-		&:nth-child(6),
-		&:nth-child(7),
-		&:nth-child(8)
-			padding 0 .3em
-		&:nth-child(10),
-		&:nth-child(11)
-			text-align center		
+		padding .17em .3em
 		
 	// Para poner un color de fondo en cada registro de forma intercalada
 	// &:nth-child(even)
 	// 	background verdeMuySuave
 
 //Para salida de inventario
-.SalidaInventarioForm
+.content-productos-salidaInv
+	width 50%	
 	background red
+	position absolute
 
 .boton-postear-inventario
 	height 3em
@@ -1496,12 +1466,12 @@ footer
 	text-align right
 	font-weight bold
 	color verde
-
+	
 .boton-guarda-inventario
 	height 3em
 	width 7.5em
 	float right
-	margin-bottom 3em
+	margin-bottom 1em
 	&:before
 		margin-right .4em
 

@@ -1,5 +1,12 @@
 node_modules
 *.log
-./**/migrations/
+./**/migrations
 *.bat
 .idea/
+prestamos/migrations
+inventario/migrations
+facturacion/migrations
+fondoscajas/migrations
+administracion/migrations
+nominacoop/migrations
+

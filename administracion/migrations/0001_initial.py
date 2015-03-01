@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('tipoServicio', models.CharField(max_length=2)),
                 ('envio', models.CharField(max_length=4)),
                 ('secuencia', models.PositiveIntegerField(default=0)),
+                ('archivoNombre', models.CharField(max_length=25, null=True, blank=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
