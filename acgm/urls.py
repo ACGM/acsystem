@@ -11,7 +11,7 @@ from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTEntradaSalidaArticuloView, \
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
                                 ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
-                                InventarioSalidaEliminarView
+                                InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT
 
 from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
 
@@ -172,12 +172,14 @@ urlpatterns = patterns('',
     #Inventario#Reportes
     url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+    url(r'^inventario/reportes/conteoFisico/$', RPTConteoFisicoArticuloView.as_view(), name='Inventario_reporte_conteoFisico'),
     
-    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
-    url(r'^inventario/reportes/conteoFisico/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_conteoFisico'),
-    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'),
+    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'), #CONTRUCCION
+    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'), #CONTRUCCION
 
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
+    url(r'^inventario/api/reportes/existencia/conteoFisico/$', getExistenciaConteoFisicoRPT.as_view(), name='existencia_conteoFisico_api'),
+    
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),

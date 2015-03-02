@@ -85,11 +85,30 @@
         return deferred.promise;
       }      
 
+      //Existencia de Productos para Conteo Fisico (filtros: Almacen, categorias)
+      function existenciaConteoFisico(almacen, categorias) {
+        var deferred = $q.defer();
+        var stringCategorias = "";
+
+        for(i=0; i<categorias.length; i++) {
+          stringCategorias += categorias[i]['id'].toString() + ",";
+        }
+        
+        url = '/inventario/api/reportes/existencia/conteoFisico/?format=json&categorias=@categorias&almacen=@almacen'.replace('@categorias',stringCategorias).replace('@almacen', almacen);
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }   
+
       return {
         all : all,
         existencia : existencia,
         existenciaByProducto : existenciaByProducto,
-        categorias : categorias 
+        categorias : categorias,
+        existenciaConteoFisico : existenciaConteoFisico 
       };
 
     }])
@@ -124,6 +143,17 @@
 
       $scope.toggleCategorias = function() {
         $scope.mostrarCategorias = !$scope.mostrarCategorias;
+      }
+
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
       }
 
       //Cuando se le de click al checkbox de categorias.
@@ -166,17 +196,18 @@
 
       // Traer registros de existencia (Filtros: almacen, categorias)
       $scope.existencia = function() {
-
-        if($scope.busquedaValor == 'categoria') {
-          InventarioServiceRPT.existencia($scope.almacen, $scope.categoriasSeleccionadas).then(function (data) {
-            $scope.registros = data;
-            console.log(data)
-          });
-        } else {
-          InventarioServiceRPT.existenciaByProducto($scope.almacen, $scope.producto).then(function (data) {
-            $scope.registros = data;
-            console.log(data)
-          });
+        try {
+          if($scope.busquedaValor == 'categoria') {
+            InventarioServiceRPT.existencia($scope.almacen, $scope.categoriasSeleccionadas).then(function (data) {
+              $scope.registros = data;
+            });
+          } else {
+            InventarioServiceRPT.existenciaByProducto($scope.almacen, $scope.producto).then(function (data) {
+              $scope.registros = data;
+            });
+          }
+        } catch (e) {
+          $scope.mostrarError(e);
         }
       }
 
@@ -227,6 +258,17 @@
             $scope.productoNoExiste = 'No existe el producto'
           }
         });
+      }
+
+      // Traer registros de existencia para Conteo Fisico (Filtros: almacen, categorias)
+      $scope.existenciaConteoFisico = function() {
+        try {
+          InventarioServiceRPT.existenciaConteoFisico($scope.almacen, $scope.categoriasSeleccionadas).then(function (data) {
+            $scope.registros = data;
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
       }
 
     }]);

@@ -46,6 +46,12 @@ class RPTExistenciaArticuloView(LoginRequiredMixin, TemplateView):
 	template_name = 'rpt_ExistenciaArticulo.html'
 
 
+# Reporte para Conteo Fisico de Articulos
+class RPTConteoFisicoArticuloView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_ConteoFisico.html'
+
+
 # Reporte Ajuste de Inventario
 class RPTAjusteInventarioView(LoginRequiredMixin, TemplateView):
 
@@ -570,11 +576,11 @@ class getExistenciaRPT(ListView):
 		else:
 			# Busqueda para tipo categoria
 			if self.request.GET.get('categorias') != None:
-				categoriasList = list(self.request.GET.get('categorias'))
+				categoriasList = self.request.GET.get('categorias').split(',')
 				categorias = list()
 
 				for categoria in categoriasList:
-					if categoria != ',':
+					if categoria != '':
 						categorias.append(categoria)
 
 				if almacen != None:
@@ -604,6 +610,61 @@ class getExistenciaRPT(ListView):
 				'producto': existencia['producto__descripcion'],
 				'totalCantidad': existencia['totalCantidad'],
 				'totalCosto': existencia['totalCosto'],
+				})
+
+		return JsonResponse(data, safe=False)
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
+# Existencia productos para Conteo Fisico
+# # # # # # # # # # # # # # # # # # # # # # #
+class getExistenciaConteoFisicoRPT(ListView):
+
+	queryset = Producto.objects.all().order_by('categoria__descripcion','descripcion')
+
+	def get(self, request, *args, **kwargs):
+		
+		format = self.request.GET.get('format')
+
+		categoriasList = self.request.GET.get('categorias').split(',')
+		categorias = list()
+
+		for categoria in categoriasList:
+			if categoria != '':
+				categorias.append(int(categoria))
+
+		self.object_list = self.get_queryset().filter(categoria__id__in=categorias)
+
+		if format == 'json':
+			return self.json_to_response()
+
+		context = self.get_context_data()
+		return self.render_to_response(context)
+
+	def json_to_response(self):
+		data = list()
+
+		almacen = self.request.GET.get('almacen')
+
+		for producto in self.object_list:
+			cantidad = 0
+			
+			if almacen == '*':
+				existAll = Existencia.objects.filter(producto__codigo=producto.codigo).values('producto').annotate(totalCantidad=Sum('cantidad'))
+				cantidad = existAll[0]['totalCantidad']
+
+			else:
+				try:
+					exist = Existencia.objects.get(producto__codigo=producto.codigo, almacen__id=almacen)
+					cantidad = exist.cantidad
+				except Existencia.DoesNotExist:
+					pass
+
+			data.append({
+				'categoria': producto.categoria.descripcion,
+				'codigo': producto.codigo,
+				'producto': producto.descripcion,
+				'totalCantidad': cantidad
 				})
 
 		return JsonResponse(data, safe=False)
