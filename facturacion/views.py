@@ -24,14 +24,16 @@ import math
 import decimal
 
 # Eliminar producto de la factura
-def quitar_producto(self, idProd, iCantidad, iAlmacen):
+def quitar_producto(self, codProd, iAlmacen, noFactura):
 	try:
 
-		exist = Existencia.objects.get(producto = Producto.objects.get(codigo = idProd), almacen = Almacen.objects.get(id = iAlmacen))
-		exist.cantidad -= decimal.Decimal(iCantidad)
+		exist = Existencia.objects.get(producto__codigo=codProd, almacen__id=iAlmacen)
+		factura = Detalle.objects.get(factura__noFactura=noFactura, producto__codigo=codProd, almacen__id=iAlmacen)
+
+		exist.cantidad -= decimal.Decimal(factura.cantidad)
 		exist.save()
 	except Existencia.DoesNotExist:
-		return HttpResponse('No hay existencia para el producto ' + str(idProd))
+		return HttpResponse('No hay existencia para el producto ' + str(codProd))
 
 
 # Retornar una factura con todo su detalle  -- url(r'^facturajson/$',
@@ -121,7 +123,7 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 				fact = Factura.objects.get(noFactura = facturaNo)
 				
 				for item in dataD:
-					quitar_producto(self, item['codigo'], item['cantidad'], almacen)
+					quitar_producto(self, item['codigo'], almacen, facturaNo)
 
 				detalle = Detalle.objects.filter(factura = fact).delete()
 

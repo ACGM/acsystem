@@ -139,6 +139,7 @@ class Migration(migrations.Migration):
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
+                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['producto'],

@@ -12,13 +12,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import InventarioH, InventarioD, Almacen, Existencia, AjusteInventarioH, AjusteInventarioD, \
-					TransferenciasAlmacenes, InventarioHSalidas
+					TransferenciasAlmacenes, InventarioHSalidas, Movimiento
 
 from administracion.models import Suplidor, Producto
 
 from .serializers import EntradasInventarioSerializer, AlmacenesSerializer, EntradaInventarioByIdSerializer, \
 							ExistenciaProductoSerializer, AjustesInventarioSerializer, TransferenciasAlmacenesSerializer, \
-							SalidasInventarioSerializer
+							SalidasInventarioSerializer, MovimientoProductoSerializer
 
 from acgm.views import LoginRequiredMixin
 
@@ -34,10 +34,10 @@ class ImprimirEntradaInventarioView(LoginRequiredMixin, TemplateView):
 	template_name = 'print_entrada.html'
 
 
-# Reporte de Entrada/Salida de Articulo(s)
-class RPTEntradaSalidaArticuloView(LoginRequiredMixin, TemplateView):
+# Reporte de Movimiento de Articulo(s)
+class RPTMovimientoArticuloView(LoginRequiredMixin, TemplateView):
 
-	template_name = 'rpt_EntradaSalidaArticulo.html'
+	template_name = 'rpt_HistMovArt.html'
 
 
 # Reporte de Existencia de Articulo(s)
@@ -547,6 +547,20 @@ class getExistenciaByProductoView(APIView):
 		existencia = Existencia.objects.filter(producto__codigo=codProd, almacen_id=almacen)
 
 		response = self.serializer_class(existencia, many=True)
+		return Response(response.data)
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Movimiento de un producto en especifico en un rango de fecha
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+class RPTMovimientoProductoAPIView(APIView):
+
+	serializer_class = MovimientoProductoSerializer
+
+	def get(self, request, codProd, fechaInicio, fechaFin):
+		movimientos = Movimiento.objects.filter(producto__codigo=codProd, fechaMovimiento__range=(fechaInicio, fechaFin)).order_by('fechaMovimiento')
+
+		response = self.serializer_class(movimientos, many=True)
 		return Response(response.data)
 
 

@@ -420,6 +420,11 @@
         $scope.errorShow = !$scope.errorShow;
       }
 
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
+
       //Listado de todas las entradas de inventario
       $scope.listadoEntradas = function() {
         $scope.mostrar = 'mostrar';
@@ -880,6 +885,7 @@
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
+        $scope.showPostear = true;
 
       }
 

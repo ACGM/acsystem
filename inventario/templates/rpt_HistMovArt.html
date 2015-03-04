@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %} Historico Movimiento de Articulo {% endblock title %}
+
+{% block content %}
+	<div class="MovimientoArticulo" ng-controller="RPTMovimientoArticuloCtrl">
+
+		<mensajeerror> </mensajeerror>
+		
+		<div class="sub-menu">	
+			<span>Reporte de Movimiento de Articulo(s)</span>
+		</div>
+
+		<section ng-init="getCategoriasProductos()">
+
+			<section class="busqueda-movimiento-articulo">
+				
+
+				<div class="producto-find-ei">
+					<span>Producto</span>
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
+					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
+
+					<productosSearch> </productosSearch>
+
+				</div>
+
+				<div class="mov-art-rango-fecha">
+					<span>Desde</span>
+					<input type="text" ng-model="desdeFecha" datepicker>
+					<span>Hasta</span>
+					<input type="text" ng-model="hastaFecha" datepicker>
+				</div>
+
+			</section>
+			
+
+			<button class="Boton boton-genera-reporte" ng-click="movimiento()">Generar Reporte</button>
+
+			<div class="caja-productos">
+				<ul ng-repeat="registro in registros" class="content-productos-exist">
+
+					<!-- para valores subtotales -->
+					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+
+					<!-- para poner categoria (ruptura) -->
+					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+
+					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header">
+						<li class="content-productos-header-1"><strong>CODIGO</strong></li>
+						<li class="content-productos-header-2"><strong>PRODUCTO</strong></li>
+						<li class="content-productos-header-3"><strong>CANTIDAD</strong></li>
+						<li class="content-productos-header-3"><strong>COSTO</strong></li>
+						<li class="content-productos-header-3"><strong>VALOR</strong></li>
+					</div>
+
+					<div class="content-productos-detail">
+						<li class="content-productos-detail-1">[[registro.codigo]]</li>
+						<li class="content-productos-detail-2">[[registro.producto]]</li>
+						<li class="content-productos-detail-3">[[registro.totalCantidad | number : 2]]</li>
+						<li class="content-productos-detail-3">[[registro.totalCosto | number : 2]]</li>
+						<li class="content-productos-detail-3">[[registro.totalCantidad * registro.totalCosto | number : 2]]</li>
+					</div>
+				</ul>
+			</div>
+
+		</section>
+
+		
+	</div>
+
+{% endblock content %}

@@ -117,8 +117,41 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('RPTEntradaSalidaArticuloCtrl', ['$scope', '$filter', 'InventarioServiceRPT', function ($scope, $filter, InventarioServiceRPT) {
-      console.log('ENTRO AL CONTROLADOR SIN PROBLEMA ALGUNO.')
+    .controller('RPTMovimientoArticuloCtrl', ['$scope', '$filter', 'InventarioService', 'InventarioServiceRPT', 
+                                              function ($scope, $filter, InventarioService, InventarioServiceRPT) {
+
+      //Traer productos
+      $scope.getProducto = function($event) {
+        $event.preventDefault();
+        var descrp = '';
+
+        if($event.type != 'click') {
+          descrp = $scope.producto;
+        }
+
+        InventarioService.productos(descrp).then(function (data) {
+
+          if(data.length > 0){
+            $scope.productos = data;
+
+            $scope.tableProducto = true;
+            $scope.productoNoExiste = '';
+          } else {
+            $scope.tableProducto = false;
+            $scope.productoNoExiste = 'No existe el producto'
+          }
+        });
+      }
+
+      //Agregar Producto
+      $scope.addProducto = function($event, Prod) {
+        $event.preventDefault();
+
+        $scope.producto = Prod.descripcion;
+        $scope.codigoProducto = Prod.codigo;
+        $scope.tableProducto = false;
+
+      }
 
 
     }])

@@ -101,6 +101,8 @@ class Detalle(models.Model):
 		mov.cantidad = float(self.cantidad)
 		mov.almacen = self.almacen
 		mov.tipo_mov = 'S'
+		mov.documento = 'FACT'
+		mov.userLog = self.factura.userLog
 		mov.save()
 
 		super(Detalle, self).save(*args, **kwargs)

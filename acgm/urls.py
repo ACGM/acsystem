@@ -8,7 +8,7 @@ from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesemb
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
-                                ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTEntradaSalidaArticuloView, \
+                                ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
                                 ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
                                 InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT
@@ -56,7 +56,7 @@ from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODVi
                                 SuplidorByNombreView, ProductoByDescrpView
 
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
-                                getExistenciaRPT
+                                getExistenciaRPT, RPTMovimientoProductoAPIView
 
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
@@ -170,15 +170,16 @@ urlpatterns = patterns('',
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
     #Inventario#Reportes
-    url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
     url(r'^inventario/reportes/conteoFisico/$', RPTConteoFisicoArticuloView.as_view(), name='Inventario_reporte_conteoFisico'),
+    url(r'^inventario/reportes/histMovArt/$', RPTMovimientoArticuloView.as_view(), name='Inventario_reporte_historico'),
     
     url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'), #CONTRUCCION
-    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'), #CONTRUCCION
 
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
     url(r'^inventario/api/reportes/existencia/conteoFisico/$', getExistenciaConteoFisicoRPT.as_view(), name='existencia_conteoFisico_api'),
+    
+    url(r'^api/inventario/movimiento/(?P<codProd>[\w\s]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', RPTMovimientoProductoAPIView.as_view(), name='mov_producto_api'),
     
 
     #Facturacion    

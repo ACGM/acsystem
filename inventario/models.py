@@ -162,14 +162,14 @@ class InventarioD(models.Model):
 			existencia.save()
 
 		# Guardar el movimiento del producto
-		doc_mov = 'SINV' if self.tipoAccion == 'S' else 'EINV'
 
 		mov = Movimiento()
 		mov.producto = self.producto
 		mov.cantidad = decimal.Decimal(self.cantidadTeorico)
 		mov.almacen = self.almacen
 		mov.tipo_mov = self.tipoAccion
-		mov.doc = doc_mov
+		mov.documento = 'SINV' if self.tipoAccion == 'S' else 'EINV'
+		mov.userLog = self.inventario.userLog if self.inventario != None else self.inventarioSalida.usuarioSalida
 		mov.save()
 
 		super(InventarioD, self).save(*args, **kwargs)
@@ -201,17 +201,29 @@ class Movimiento(models.Model):
 	producto = models.ForeignKey(Producto)
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	almacen = models.ForeignKey(Almacen)
-	fecha_movimiento = models.DateField(auto_now_add=True)
-	documento = models.CharField(max_length=4, choices=doc_choices, default='EINV')
+	fechaMovimiento = models.DateField(auto_now_add=True)
+	documento = models.CharField(max_length=4, choices=doc_choices)
 	tipo_mov = models.CharField(max_length=1,
 								choices=tipo_mov_choices,
 								default=tipo_mov_choices[0][0],
 								verbose_name="Tipo de Movimiento")
 	
+	userLog = models.ForeignKey(User, null=True, editable=False)
 	datetime_server = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return '%s - %s (%s) - Almacen: %s' % (self.producto,self.cantidad,self.tipo_mov,self.almacen)
+		return '%s - %s (%s) - Almacen: %s --> %s' % (self.producto,self.cantidad,self.tipo_mov,self.almacen, self.documento)
+
+	@property
+	def getUsuario(self):
+		if self.userLog != None:
+			return self.userLog.username
+		else:
+			return ''
+
+	@property
+	def getCodProd(self):
+		return self.producto.codigo
 
 	class Meta:
 		ordering = ['producto']

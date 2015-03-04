@@ -34,5 +34,8 @@ class AjusteInventarioDAdmin(admin.ModelAdmin):
 class TransferenciasAlmacenes(admin.ModelAdmin):
 	list_display = ('id', 'desdeAlmacen', 'hastaAlmacen', 'cantidad', 'producto', 'fechaTransf')
 
-admin.site.register(Movimiento)
+@admin.register(Movimiento)
+class MovimientoAdmin(admin.ModelAdmin):
+	list_display = ('id', 'getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov', 'getUsuario')
+	search_fields = ('producto',)
 

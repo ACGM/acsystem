@@ -29,8 +29,21 @@
       return deferred.promise;
     }
 
+    //Traer Cuentas Contables
+    function allCuentasContables() {
+      var deferred = $q.defer();
+
+      $http.get('/api/cuentas/?format=json')
+        .success(function (data) {
+          deferred.resolve(data);
+        });
+
+      return deferred.promise;
+    }
+
     return {
-      generarArchivoBanco: generarArchivoBanco
+      generarArchivoBanco: generarArchivoBanco,
+      allCuentasContables: allCuentasContables
     };
 
   }]);

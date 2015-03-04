@@ -8,9 +8,9 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventario', '0007_auto_20150219_0451'),
+        ('inventario', '__first__'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0006_auto_20150219_0451'),
+        ('administracion', '__first__'),
     ]
 
     operations = [

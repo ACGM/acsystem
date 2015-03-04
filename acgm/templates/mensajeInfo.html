@@ -1,4 +1,4 @@
-<section class="posteo-contabilidad-panel" ng-show="false">
+<section class="posteo-contabilidad-panel" ng-show="showPostear">
 	
 	<div class="fondo-opaco">
 	</div>
@@ -12,8 +12,8 @@
 			<div class="section-agregar-cuenta">
 
 				<ul class="posteo-cuenta-agregar">
-					<li><input type="text" class="codigo-cuenta-posteo" placeholder="Codigo Cuenta"></li>
-					<li><input type="text" class="descrp-cuenta-posteo" placeholder="Descripcion Cuenta"></li>
+					<li><input type="text" class="codigo-cuenta-posteo" placeholder="Codigo Cuenta" ng-model="Postear.cuentaCodigo"></li>
+					<li><input type="text" class="descrp-cuenta-posteo" placeholder="Descripcion Cuenta" ng=model="Postear.cuentaDescrp"></li>
 					<li><button class="Boton boton-agregar-cuenta-posteo">Agregar</button></li>
 				</ul>
 			</div>

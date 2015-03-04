@@ -5,13 +5,10 @@
 {% block content %}
 	<div class="ExistenciaArticulo" ng-controller="RPTExistenciaArticuloCtrl">
 
-		<!-- <mensajeerror> </mensajeerror> -->
-		<!-- <mensajeinfo> </mensajeinfo>				 -->
+		<mensajeerror> </mensajeerror>
 		
 		<div class="sub-menu">	
-			
-				<a href="#">Reporte de Existencia de Articulo(s)</a>
-			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+			<span>Reporte de Existencia de Articulo(s)</span>
 		</div>
 
 		<section ng-init="getCategoriasProductos()">
@@ -58,6 +55,10 @@
 			<div class="caja-productos">
 				<ul ng-repeat="registro in registros" class="content-productos-exist">
 
+					<!-- para valores subtotales -->
+					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+
+					<!-- para poner categoria (ruptura) -->
 					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
 
 					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header">

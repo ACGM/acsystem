@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes, InventarioHSalidas
+from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes, InventarioHSalidas, Movimiento
 from administracion.models import Suplidor
 
 # Listado de Entradas de Inventario
@@ -67,3 +67,12 @@ class ExistenciaProductoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Existencia
 		fields = ('producto', 'getCodigo', 'cantidad', 'almacen')
+
+
+# Movimiento de Producto
+class MovimientoProductoSerializer(serializers.ModelSerializer):
+	producto = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = Movimiento
+		fields = ('getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov',)
