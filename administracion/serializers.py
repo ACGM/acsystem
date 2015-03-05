@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, CategoriaPrestamo, \
-					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, Representante, CategoriaProducto
+					CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, Representante, CategoriaProducto, DocumentoCuentas
 
 
 # Listado de Productos
@@ -110,4 +110,12 @@ class CategoriasProductosSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CategoriaProducto
 		fields = ('id', 'descripcion',)
+		
+# Categorias de Productos
+class DocumentoCuentasSerializer(serializers.ModelSerializer):
+	documento = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = DocumentoCuentas
+		fields = ('getCodigo', 'documento', 'getCuentaCodigo', 'getCuentaDescrp', 'accion',)
 		

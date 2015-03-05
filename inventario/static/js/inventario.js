@@ -363,7 +363,8 @@
     //****************************************************
     //CONTROLLERS    ENTRADA DE INVENTARIO               *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', function ($scope, $filter, $window, $rootScope, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 
+                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -388,7 +389,26 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLEI = 'UpArrow';
 
-      
+      // Cuentas
+      $scope.cuentasBuscar = function($event) {
+
+        appService.allCuentasContables().then(function (data) {
+          if(data.length > 0) {
+            console.log(data);
+            $scope.cuentasContables = data
+            $scope.tableCuenta = true;
+          }
+        });
+      }
+
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+
+        $scope.Postear.cuentaCodigo = cuenta.codigo;
+        $scope.Postear.cuentaDescrp = cuenta.descripcion;
+      }
+
       // Mostrar/Ocultar panel de Listado de Entrada Inventario
       $scope.toggleLEI = function() {
         $scope.showLEI = !$scope.showLEI;
@@ -835,6 +855,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.entradasSeleccionadas = [];
 
         $scope.entradas.forEach(function (data) {
           if (data.posteo == 'N') {
@@ -885,8 +906,39 @@
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
-        $scope.showPostear = true;
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
 
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        appService.getDocumentoCuentas('EINV').then(function (data) {
+          $scope.documentoCuentas = data;
+  
+          //Prepara cada linea de posteo
+          $scope.entradasSeleccionadas.forEach(function (item) {
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+              if (documento.accion == 'D') {
+                $scope.totalDebito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
+              } else {
+                $scope.totalCredito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
+              }
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + item.id;
+              desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            idoc += 1;
+          });
+          $scope.iDocumentos = idoc;
+        });
       }
 
     }])

@@ -411,26 +411,6 @@ class Banco(models.Model):
 		verbose_name_plural = 'Config 2.1) Bancos'
 
 
-# Tipos de Documentos
-class TipoDocumento(models.Model):
-
-	codigo = models.CharField(max_length=4)
-	descripcion = models.CharField(max_length=50)
-
-	def __unicode__(self):
-		return '%s - %s' % (self.codigo,self.descripcion)
-
-	def save(self, *args, **kwargs):
-		self.codigo = self.codigo.upper()
-		self.descripcion = self.descripcion.upper()
-
-		super(TipoDocumento, self).save(*args, **kwargs)
-
-	class Meta:
-		ordering = ['descripcion']
-		verbose_name_plural = 'Config 7.1) Tipos de Documentos'
-
-
 # Periodos (Fiscales)
 class Periodo(models.Model):
 
@@ -506,6 +486,26 @@ class UserExtra(models.Model):
 		unique_together = ('usuario','localidad','perfil')
 
 
+# Tipos de Documentos
+class TipoDocumento(models.Model):
+
+	codigo = models.CharField(max_length=4)
+	descripcion = models.CharField(max_length=50)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.codigo,self.descripcion)
+
+	def save(self, *args, **kwargs):
+		self.codigo = self.codigo.upper()
+		self.descripcion = self.descripcion.upper()
+
+		super(TipoDocumento, self).save(*args, **kwargs)
+
+	class Meta:
+		ordering = ['descripcion']
+		verbose_name_plural = 'Config 7.1) Tipos de Documentos'
+
+
 # Asociacion de Documentos con Cuentas
 class DocumentoCuentas(models.Model):
 
@@ -517,6 +517,18 @@ class DocumentoCuentas(models.Model):
 
 	def __unicode__(self):
 		return '%s - %s (%s)' % (self.documento, self.cuenta, self.accion)
+
+	@property
+	def getCodigo(self):
+		return self.documento.codigo
+
+	@property
+	def getCuentaCodigo(self):
+		return self.cuenta.codigo
+
+	@property
+	def getCuentaDescrp(self):
+		return self.cuenta.descripcion
 
 	class Meta:
 		ordering = ['documento','cuenta']

@@ -37,13 +37,24 @@
         .success(function (data) {
           deferred.resolve(data);
         });
+      return deferred.promise;
+    }
 
+    //Traer Documentos Relacionados a Cuentas
+    function getDocumentoCuentas(doc) {
+      var deferred = $q.defer();
+
+      $http.get('/api/documentoCuentas/{doc}/?format=json'.replace('{doc}', doc))
+        .success(function (data) {
+          deferred.resolve(data);
+        });
       return deferred.promise;
     }
 
     return {
       generarArchivoBanco: generarArchivoBanco,
-      allCuentasContables: allCuentasContables
+      allCuentasContables: allCuentasContables,
+      getDocumentoCuentas: getDocumentoCuentas
     };
 
   }]);
@@ -147,6 +158,14 @@
     return {
       restrict: 'E',
       templateUrl: '/mensajeInfo'
+    }
+  });
+
+  // Directiva para tabla de cuentas.
+  app.directive('cuentassearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/cuentasSearch'
     }
   });
 

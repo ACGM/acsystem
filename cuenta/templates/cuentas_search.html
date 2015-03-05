@@ -1,0 +1,18 @@
+<table class="productos-table-search" ng-show="tableCuenta">
+	<tr>
+		<td colspan="3" class="cerrar-table">
+			<a href="#" class="icon-delete" ng-click="tableCuenta=false"></a>
+		</td>
+	</tr>
+	<tr class="productos-table-header">
+		<td>Codigo</td>
+		<td>Descripcion</td>
+		<td class="align-center">Origen</td>
+	</tr>
+	<tr ng-repeat="c in cuentasContables" class="productos-table-detail-search">
+		<td><a href="#" class="select-item" ng-click="addCuentaContable($event, c)"> <strong> [[c.codigo]] </strong> </a></td>
+		<td><a href="#" class="select-item" ng-click="addCuentaContable($event, c)"> [[c.descripcion]] </a></td>
+		<td class="align-center"><a href="#" class="select-item" ng-click="addCuentaContable($event, c)"> [[c.origen]] </a></td>
+	</tr>
+</table>
+<span class="error-ei"> [[productoNoExiste]]</span>

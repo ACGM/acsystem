@@ -428,6 +428,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.facturasSeleccionadas = [];
 
         $scope.facturas.forEach(function (data) {
           if (data.posteo == 'N') {

@@ -490,6 +490,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.solicitudesSeleccionadas = [];
 
         $scope.solicitudes.forEach(function (data) {
           if (data.estatus != 'A' && data.estatus != 'R' && data.estatus != 'C') {

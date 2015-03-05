@@ -295,6 +295,14 @@ footer
 	
 // CLASES GENERICAS
 
+.cuentas-contables-posteo
+	top -1em
+	left 3em
+	position relative
+
+.bg-transparent
+	background transparent !important
+	
 .imprimir-icon
 	text-decoration none
 	color verde
@@ -660,6 +668,7 @@ footer
 
 .content-cuentas-posteo
 	display inline-block
+	width 90%
 	
 .section-agregar-cuenta
 	display inline-block
@@ -682,11 +691,6 @@ footer
 	margin-left 1em
 	height 2.6em
 			
-.codigo-cuenta-posteo
-	color verdeMuyOscuro
-	font-size 1.2em
-	width 9em
-	
 .descrp-cuenta-posteo
 	color verdeMuyOscuro
 	font-size 1.2em
@@ -699,32 +703,26 @@ footer
 	height 15em
 	overflow scroll
 	
+	table
+		width 99%
+		
 .table-posteo-cuentas-header
 	& td
 		border 2px solid verdeClarito
 		background verde
 		color verdeMuySuave
-		font-size 1.2em
+		font-size 1.1em
 		padding .2em .4em
 
 .table-posteo-cuentas-detail
 	& td
 		border 1px solid verdeClarito
 		padding .2em
-		font-size 1.2em
-		
-		&:nth-child(4), //DEBITO
-		&:nth-child(5) //CREDITO
-			text-align right
-			color mamey
-			font-weight bold
-			font-size 1.5em
-		
-		&:nth-child(6) //QUITAR
-			text-align center
-			font-size 1.7em
-			
+		font-size 1.1em
 
+		input
+			border none
+			
 .accion-posteo
 	margin 1em 0 0 4em
 

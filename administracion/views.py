@@ -16,13 +16,13 @@ from .serializers import ProductoSerializer, SuplidorTipoSerializer, SuplidorSer
 						SocioSerializer, DepartamentoSerializer, CoBeneficiarioSerializer, \
 						ListadoCategoriaPrestamoSerializer, CantidadCuotasPrestamosSerializer, \
 						AutorizadoresSerializer, EmpresasSerializer, RepresentantesSerializer, \
-						CategoriasProductosSerializer, CantidadCuotasODSerializer
+						CategoriasProductosSerializer, CantidadCuotasODSerializer, DocumentoCuentasSerializer
 
 
 from .models import Producto, Suplidor, TipoSuplidor, Socio, Departamento, CoBeneficiario, \
 					CategoriaPrestamo, CuotaPrestamo, CuotaOrdenes, Autorizador, Empresa, \
 					CategoriaProducto, Representante, Banco, ArchivoBanco, ArchivoBancoHeader, \
-					ArchivoBancoDetailN
+					ArchivoBancoDetailN, DocumentoCuentas
 
 import json
 import datetime
@@ -33,38 +33,38 @@ def productosSearch(request):
 
 
 class ProductoViewSet(viewsets.ModelViewSet):
-	queryset=Producto.objects.all().order_by('descripcion')
-	serializer_class=ProductoSerializer
+	queryset = Producto.objects.all().order_by('descripcion')
+	serializer_class = ProductoSerializer
 
 
 class CategoriaProductoViewSet(viewsets.ModelViewSet):
-	queryset=CategoriaProducto.objects.all().order_by('descripcion')
-	serializer_class=CategoriasProductosSerializer
+	queryset = CategoriaProducto.objects.all().order_by('descripcion')
+	serializer_class = CategoriasProductosSerializer
 
 
 class SuplidorTipoViewSet(viewsets.ModelViewSet):
-	queryset=TipoSuplidor.objects.all()
-	serializer_class=SuplidorTipoSerializer
+	queryset = TipoSuplidor.objects.all()
+	serializer_class = SuplidorTipoSerializer
 
 
 class SuplidorViewSet(viewsets.ModelViewSet):
-	queryset=Suplidor.objects.all().order_by('nombre')
-	serializer_class=SuplidorSerializer
+	queryset = Suplidor.objects.all().order_by('nombre')
+	serializer_class = SuplidorSerializer
 
 
 class SocioViewSet(viewsets.ModelViewSet):
-	queryset=Socio.objects.all().order_by('nombreCompleto')
-	serializer_class=SocioSerializer
+	queryset = Socio.objects.all().order_by('nombreCompleto')
+	serializer_class = SocioSerializer
 
 
 class DepartamentoViewSet(viewsets.ModelViewSet):
-	queryset=Departamento.objects.all()
-	serializer_class=DepartamentoSerializer
+	queryset = Departamento.objects.all()
+	serializer_class = DepartamentoSerializer
 
 
 class CoBeneficiarioViewSet(viewsets.ModelViewSet):
-	queryset=CoBeneficiario.objects.all()
-	serializer_class=CoBeneficiarioSerializer
+	queryset = CoBeneficiario.objects.all()
+	serializer_class = CoBeneficiarioSerializer
 
 
 # Categorias de Prestamos
@@ -94,6 +94,18 @@ class RepresentantesViewSet(viewsets.ModelViewSet):
 	queryset = Representante.objects.all()
 	serializer_class = RepresentantesSerializer
 
+
+# Documentos Relacionados a Cuentas
+class DocumentoCuentasView(APIView):
+
+	serializer_class = DocumentoCuentasSerializer
+
+	def get(self, request, doc=None):
+		
+		docCuentas = DocumentoCuentas.objects.filter(documento__codigo=doc)
+
+		response = self.serializer_class(docCuentas, many=True)
+		return Response(response.data)
 
 # Categoria de Prestamo por Descripcion
 class CategoriaPrestamoByDescrpView(APIView):

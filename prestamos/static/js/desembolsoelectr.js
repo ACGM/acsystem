@@ -288,6 +288,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.prestamosSeleccionados = [];
 
         $scope.prestamos.forEach(function (data) {
           if ($scope.regAll === true){

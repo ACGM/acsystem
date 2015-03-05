@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 
 from rest_framework import viewsets
 from django.views.generic import DetailView
+from django.shortcuts import render
 
 from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
 from .serializers import CuentasSerializer, AuxiliarSerualizer, DiarioSerializer, TipoDocSerializer, \
@@ -9,6 +10,11 @@ from .serializers import CuentasSerializer, AuxiliarSerualizer, DiarioSerializer
 
 import json
 import decimal
+
+
+# Cuentas Busqueda (GENERICO)
+def cuentasSearch(request):
+    return render(request, 'cuentas_search.html')
 
 
 class CuentasView(DetailView):
