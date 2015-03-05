@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
-from cxp.models import OrdenCompra, DetalleOrden, CxpSuperCoop
+from cxp.models import OrdenCompra, DetalleOrden, CxpSuperCoop, CuentasGenericasOrdenes
 from cuenta.models import DiarioGeneral, Cuentas, Auxiliares, TipoDocumento
 from administracion.models import Suplidor, Socio
 from .serializers import OrdenSerializer, DetalleOrdenSerializer
@@ -87,7 +87,6 @@ class CxpOrdenView(DetailView):
         self.object_list = self.get_queryset()
 
         format = self.request.GET.get('format')
-        self.tipo = self.request.GET.get('tipo')
 
         if format == "json":
             return self.json_to_response()
@@ -108,7 +107,7 @@ class CxpOrdenView(DetailView):
                 'fecha': ordenes.fecha,
                 'monto': ordenes.monto,
                 'cuotas': ordenes.cuotas,
-                # 'estatus': ordenes.estatus,
+                'estatus': ordenes.estatus,
                 'montoCuotas': ordenes.montocuotas,
                 'detalleOrden': [
                     {
@@ -137,6 +136,30 @@ class CxpOrdenView(DetailView):
             })
         return JsonResponse(data, safe=False)
 
+class CxpOrdenCuentasG(DetailView):
+    queryset = CuentasGenericasOrdenes.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+
+        format = self.request.GET.get('format')
+
+        if format == 'json':
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data=list()
+        for cuenta in self.object_list:
+            data.append({
+                'id': cuenta.id,
+                'cuenta': cuenta.cuenta,
+                'aux': cuenta.aux,
+                'origen': cuenta.origen
+            })
+        return JsonResponse(data, safe=False)
 
 class CxpSuperCoop(DetailView):
     queryset = CxpSuperCoop.objects.all()

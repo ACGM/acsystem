@@ -31,7 +31,7 @@
 
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail" ng-init="total=0">
 							<td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td>
-							<td class="icon-folder posteo-[[factura.posteo]]"></td>
+							<td class="icon-folder estatus-[[Orden.estatus]]"></td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
 							<td><a href="#" class="sp-field" ng-click="selOrden(Orden.orden)"> [[Orden.orden | numberFixedLen: 8]] </a></td>
 							<td>[[Orden.socio ]]</td>
@@ -40,8 +40,8 @@
 							<td>[[Orden.cuotas | numberFixedLen: 5]]</td>
 							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td>
 							<td>
-								<div ng-if="Orden.estatus != 'true'"> <a href="#" class="icon-delete icon-eliminar" ng-click="deleteOrden()"></a></div> 
-								<div ng-if="Orden.estatus == 'true'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
+								<div ng-if="Orden.estatus == 'A'"> <a href="#" class="icon-delete icon-eliminar" ng-click="deleteOrden()"></a></div> 
+								<div ng-if="Orden.estatus == 'P' || Orden.estatus == 'I'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
 
 							</td>
 						</tr>

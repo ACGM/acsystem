@@ -16,6 +16,8 @@ class DetalleOrden(models.Model):
 
 # Registro de ordenes de compra a Socio
 class OrdenCompra(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     socio = models.ForeignKey(Socio, null=False, blank=False, default=False, verbose_name="Socio")
     orden = models.PositiveIntegerField(null=False, blank=False, verbose_name="# Orden")
@@ -23,15 +25,29 @@ class OrdenCompra(models.Model):
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
     cuotas = models.PositiveIntegerField(null=False, blank=False, verbose_name="Cuotas")
     montocuotas = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
-    estatus = models.BooleanField(default=False)
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     detalleOrden = models.ManyToManyField(DetalleOrden, related_name='detalle_ref', verbose_name="Detalle de Orden")
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_ref", verbose_name='Detalle Cuentas')
 
     def __unicode__(self):
-        '%s-%s' % (str(self.orden), self.suplidor.nombre)
+        return '%s-%s' % (str(self.orden), self.suplidor.nombre)
 
     class Meta:
         ordering = ['suplidor', 'fecha']
+
+class CuentasGenericasOrdenes(models.Model):
+    Origen_choicer = (('D', 'Debito'), ('C', 'Credito'))
+
+    cuenta = models.ForeignKey(Cuentas, null=True, blank=True)
+    aux = models.ForeignKey(Auxiliares, null=True, blank=True)
+    origen = models.CharField(max_length=1, choices=Origen_choicer)
+
+    def __unicode__(self):
+        return '%s-%s-%s' % (self.origen, str(self.cuenta), str(self.aux))
+
+    class Meta:
+        ordering = ['origen']
+
 
 
 # Cuenta por pagar a suplidor de SuperCoop

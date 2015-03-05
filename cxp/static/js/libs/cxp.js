@@ -14,17 +14,6 @@
                     });
                 return deferred.promise;
             }
-
-            function delOrden(Orden){
-                $http.get('/cxpOrdenJson/?format=del&id='+Orden)
-                    .success(function (data) {
-                        deferred.resolve(data);
-                    })
-                    .error(function (data) {
-                        deferred.resolve(data);
-                    });
-                return deferred.promise;
-            }
             
             function getCxpsById(id){
                 var deferred = $q.defer();
@@ -166,7 +155,6 @@
                 getCxpByOrden: getCxpByOrden,
                 socios: socios,
                 suplidor: suplidor,
-                delOrden: delOrden,
                 setOrden: setOrden
                 
             };
@@ -398,9 +386,6 @@
                 }
             };
 
-            $scope.deleteOrden = function(orden){
-                $scope.cxpData = cxpService.delOrden(orden);
-            };
 
                                 } ]
                                 );

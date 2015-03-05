@@ -39,7 +39,7 @@ from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsVi
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
+from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop, CxpOrdenCuentasG
 
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
@@ -232,7 +232,8 @@ urlpatterns = patterns('',
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),
     url(r'^cxpOrdenJson/$', CxpOrdenView.as_view(), name='Cxp_Ordenes_api'),
-     url(r'^cxpSuperJson/$', CxpSuperCoop.as_view(), name='Cxp_SuperCoop_api'),
+    url(r'^cxpCuentasJson/$',CxpOrdenCuentasG.as_view(), name='Cxp_Cuentas_apo'),
+    url(r'^cxpSuperJson/$', CxpSuperCoop.as_view(), name='Cxp_SuperCoop_api'),
 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
