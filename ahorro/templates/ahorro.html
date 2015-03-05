@@ -5,10 +5,8 @@
 {% block content %}
 	<!-- Visualizar Ahorros-->
 	<div class="Ahorro" ng-controller="AhorroController">
-		<div class="cssSlideUpError" ng-show="errorShow">
-			[[errorMsg]]
-			<!-- <a href="" class="cerrarError" ng-click="toggleError()">X</a> -->
-		</div>
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 		<div class="sub-menu">
 			Ahorros
 			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
@@ -94,7 +92,7 @@
 							<th>Estatus</th>
 						</tr>
 						<tr ng-repeat="registro in MaestraDetalle[0].maestra" class="listado-facturas-detail">
-						<td><a href="#" ng-click="getCuentaMaestra(registro.id]])">[[registro.id]] </a></td>
+						<td><a href="#" ng-click="getCuentaMaestra([[registro.id]])">[[registro.id]] </a></td>
 						<td>[[registro.fecha]]</td>
 						<td>[[registro.monto]]</td>
 						<td>[[registro.interes]]</td>

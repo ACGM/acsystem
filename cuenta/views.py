@@ -9,7 +9,6 @@ from .serializers import CuentasSerializer, AuxiliarSerualizer, DiarioSerializer
     CuentasControlSerializer
 
 import json
-import decimal
 
 
 # Cuentas Busqueda (GENERICO)
@@ -19,98 +18,90 @@ def cuentasSearch(request):
 
 class CuentasView(DetailView):
     queryset = Cuentas.objects.all()
-    solTipo = ''
 
-    def __init__(self, **kwargs):
-        super(CuentasView, self).__init__(**kwargs)
-        self.object_list = self.get_queryset()
-
-    def post(self, request, *args, **kwargs):
-        InfoType = self.request.Get.get('infoType')
-
+    def post(self, request):
+        InfoType = self.request.Get.get('tipo')
         try:
-            if InfoType == 'cuentas':
-                data = json.loads(request.body)
+            data = json.loads(request.body)
+            regId=data['id']
 
-                cta = data['codigo']
-                ctId = data['id']
+            if regId == None:
+                if InfoType == 'diario':
+                    regDiario = DiarioGeneral()
+                    regDiario.fecha = data['fecha']
+                    if data['cuenta'] != None:
+                        regDiario.cuenta = data['cuenta']
 
-                if ctId != None:
-                    regCuenta = Cuentas.objects.filter(id=ctId)
+                    regDiario.referencia = data['ref']
+
+                    if data['auxiliar'] != None:
+                        regDiario.auxiliar = data['auxiliar']
+
+                    regDiario.tipoDoc = TipoDocumento.objects.filter(tipoDoc=data['tipoDoc'])
+                    regDiario.estatus = data['estatus']
+                    regDiario.debito = data['debito']
+                    regDiario.credito = data['credito']
+                    regDiario.save()
+
+                if InfoType == 'cuenta':
+                    regCuenta = Cuentas()
+                    regCuenta.codigo = data['codigo']
                     regCuenta.descripcion = data['descripcion']
+                    regCuenta.origen = data['origen']
+                    regCuenta.control = data['control']
                     regCuenta.save()
 
-                if cta != None:
-                    regCuenta = Cuentas.objects.filter(codigo=cta)
-                    if regCuenta == None:
-                        regCuenta = Cuentas()
-                        regCuenta.codigo = data['codigo']
-                        regCuenta.descripcion = data['descripcion']
-                        regCuenta.origen = data['origen']
-                        regCuenta.control = data['control']
-                        regCuenta.cuentasControl = data['cuentaControl']
-                        regCuenta.save()
+                if InfoType == 'aux':
+                    regAux = Auxiliares()
+                    regAux.codigo = data['codigo']
+                    regAux.descripcion = data['descripcion']
+                    regAux.cuenta = data['cuenta']
+                    regAux.save()
 
-            elif InfoType == 'Diario':
-                data = json.loads(request.body)
-
-                for item in data:
-                    drid = data['id']
-
-                    if drid != None:
-                        regDiario = DiarioGeneral.objects.get(id=drid)
-                        regDiario.referencia = data['referencia']
-                        regDiario.auxiliar = data['auxiliar']
-                        regDiario.tipoDoc = data['tipoDoc']
-                        regDiario.estatus = data['estatus']
-                        regDiario.debito = data['debito']
-                        regDiario.credito = data['credito']
-                        regDiario.save()
-
-                    else:
-                        regDiario = DiarioGeneral()
-                        regDiario.fecha = data['fecha']
-                        regDiario.cuenta = data['cuenta']
-                        regDiario.referencia = data['referencia']
-                        regDiario.Auxiliares = data['auxiliar']
-                        regDiario.tipoDoc = data['tipoDoc']
-                        regDiario.estatus = data['estatus']
-                        regDiario.debito = data['debito']
-                        regDiario.credito = data['credito']
-                        regDiario.save()
             else:
-                data = json.load(request.body)
+                if InfoType == 'diario':
+                    regDiario = DiarioGeneral.objects.filter(referencia = regId)
+                    if data['cuenta'] != None:
+                        regDiario.cuenta = data['cuenta']
 
-                aux = data['codigo']
-                auxId = data['id']
+                    if data['auxiliar'] != None:
+                        regDiario.auxiliar = data['auxiliar']
 
-                if aux != None:
-                    regAuxiliar = Auxiliares.objects.get(id=auxId)
-                    regAuxiliar.descripcion = data['descripcion']
-                    regAuxiliar.save()
-                else:
-                    regAuxiliar = Auxiliares()
-                    regcuenta = Cuentas.objects.get(codigo=data['cuenta'])
-                    regAuxiliar.codigo = data['codigo']
-                    regAuxiliar.descripcion = data['descripcion']
-                    regAuxiliar.cuenta = regcuenta
-                    regAuxiliar.save()
+                    regDiario.tipoDoc = TipoDocumento.objects.filter(tipoDoc=data['tipoDoc'])
+                    regDiario.estatus = data['estatus']
+                    regDiario.debito = data['debito']
+                    regDiario.credito = data['credito']
+                    regDiario.save()
 
+                if InfoType == 'cuenta':
+                    regCuenta = Cuentas.objects.filter(codigo=regId)
+                    regCuenta.descripcion = data['descripcion']
+
+                if InfoType == 'aux':
+                    regAux = Auxiliares.objects.filter(codigo =regId)
+                    regAux.descripcion = data['descripcion']
+                    regAux.cuenta = data['cuenta']
             return HttpResponse('1')
         except Exception as ex:
             return HttpResponse(ex)
 
     def get(self, request, *args, **kwargs):
-        self.solTipo = self.request.GET.get('solicitud')
+        self.object_list = self.get_queryset()
+
+        format = self.request.GET.get('format')
+        if hasattr(self, 'tipo'):
+            self.tipo = self.request.GET.get('tipo')
+        else:
+            self.tipo = None
 
         if hasattr(self, 'idReg'):
             self.idReg = self.request.Get.get('idReg')
         else:
             self.idReg = None
 
-        format = self.request.GET.get('format')
 
-        if format == 'json':
+
+        if format == "json":
             return self.json_to_response()
 
         context = self.get_context_data()
@@ -119,66 +110,78 @@ class CuentasView(DetailView):
     def json_to_response(self):
         data = list()
 
-        if self.solTipo == 'diario':
+        if self.tipo == 'cuenta':
             if self.idReg != None:
-                regDiario = DiarioGeneral.objects.get(id=self.idReg)
+                regCuentas = Cuentas.objects.filter(codigo=self.idReg)
+
+                data.append({
+                    'codigo': regCuentas.codigo,
+                    'descripcion': regCuentas.descripcion,
+                    'origen': regCuentas.origen,
+                    'control': regCuentas.control,
+                    'cuentaControl': regCuentas.cuentaControl
+                    }
+                )
+            else:
+                regCuentas = self.object_list
+
+                for item in regCuentas:
+                    data.append({
+                        'codigo': item.codigo,
+                        'descripcion': item.descripcion,
+                        'origen': item.origen,
+                        'control': item.control,
+                        'cuentaControl': item.cuentaControl
+                    })
+
+
+        elif self.tipo == 'diario':
+            if self.idReg != None:
+                regDiario = DiarioGeneral.objects.filter(referencia=self.idReg)
+
+                for item in regDiario:
+                    data.append({
+                        'id': item.id,
+                        'cuenta': item.cuenta,
+                        'auxiliar': item.auxiliar,
+                        'ref': item.referencia,
+                        'tipoDoc': item.tipoDoc.tipoDoc,
+                        'estatus': item.estatus,
+                        'debito': item.debito,
+                        'credito': item.credito
+                })
             else:
                 regDiario = DiarioGeneral.objects.all()
 
-            for diario in regDiario:
-                data.append({
-                    'id': diario.id,
-                    'fecha': diario.fecha,
-                    'cuenta': diario.cuenta.codigo,
-                    'referencia': diario.referencia,
-                    'auxiliar': diario.auxiliar,
-                    'tipoDoc': diario.tipoDoc.tipoDoc,
-                    'estatus': diario.estatus,
-                    'debito': diario.debito,
-                    'credito': diario.credito
+                for item in regDiario:
+                    data.append({
+                        'id': item.id,
+                        'cuenta': item.cuenta,
+                        'auxiliar': item.auxiliar,
+                        'ref': item.referencia,
+                        'tipoDoc': item.tipoDoc.tipoDoc,
+                        'estatus': item.estatus,
+                        'debito': item.debito,
+                        'credito': item.credito
                 })
         else:
-            if self.solTipo == 'cuenta':
-                if self.idReg != None:
-                    regCuenta = Cuentas.objects.get(id=self.idReg)
-                else:
-                    regCuenta = Cuentas.objects.all()
+            if self.idReg != None:
+                regAux = Auxiliares.objects.filter(codigo=self.idReg)
 
-                for cuenta in regCuenta:
-                    data.append({
-                        'id': cuenta.id,
-                        'codigo': cuenta.codigo,
-                        'descripcion': cuenta.descripcion,
-                        'origen': cuenta.origen,
-                        'control': cuenta.control  # 'cuentaControl' : cuenta.cuentaControl.pk
-                    })
+                data.append({
+                    'codigo': regAux.codigo,
+                    'Descripcion': regAux.descripcion,
+                    'cuenta': regAux.cuenta
+                })
             else:
-                if self.solTipo == 'aux':
-                    if self.idReg != None:
-                        auxList = Auxiliares.objects.get(id=self.idReg)
-                    else:
-                        auxList = Auxiliares.objects.all()
+                regAux = Auxiliares.objects.all()
 
-                    for aux in auxList:
-                        data.append({
-                            'id': aux.id,
-                            'codigo': aux.codigo,
-                            'descripcion': aux.descripcion,
-                            'cuenta': aux.cuenta.codigo
-                        })
-                else:
-                    if self.idReg != None:
-                        tipoList = TipoDocumento.objects.get(id=self.idReg)
-                    else:
-                        tipoList = TipoDocumento.objects.all()
-
-                    for tipo in tipoList:
-                        data.append({
-                            'id': tipo.id,
-                            'tipoDoc': tipo.tipoDoc,
-                            'descripcion': tipo.descripcion
-                        })
-
+                for item in regAux:
+                    data.append({
+                        'codigo': item.codigo,
+                        'descripcion': item.descripcion,
+                        'cuenta': item.cuenta
+                    })
         return JsonResponse(data, safe=False)
 
 
@@ -203,5 +206,5 @@ class TipoDocViewSet(viewsets.ModelViewSet):
 
 
 class CuentaControlViewSet(viewsets.ModelViewSet):
-    queryset = CuentasControl
+    queryset = CuentasControl.objects.all()
     serializer_class = CuentasControlSerializer

@@ -11,6 +11,7 @@
     'cooperativa.solicitudprestamo',
     'cooperativa.maestraprestamo',
     'cooperativa.solicitudod',
+    'cooperativa.cxp',
     'cooperativa.desembolsoelectronico'
     ]);
 

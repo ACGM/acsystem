@@ -49,7 +49,7 @@
 			<li class="menu-item" id="menu9"> <a class="menu-opcion" href="#">Conciliacion</a></li>
 			<li ng-hide="{{nomina}}" class="menu-item" id="menu10"> <a class="menu-opcion" ng-click="ShowSubMenuNomina(true)" ng-mouseleave="ShowSubMenuNomina(false)" href="#">Nomina</a> </li>
 
-			<li class="menu-item" id="menu11"> <a class="menu-opcion" href="#">CxP</a></li>
+			<li ng-hide="{{cxp}}" class="menu-item" id="menu11"> <a class="menu-opcion" ng-click="ShowSubMenuCxp(true)" ng-mouseleave="ShowSubMenuCxp(false)" href="#">CxP</a></li>
 			<li class="menu-item" id="menu12"> <a class="menu-opcion"  href="/admin">Administracion</a></li>
 		</ul>
 
@@ -107,8 +107,11 @@
 		<li><hr/></li>
 		<li><a href="/nomina/reporte/general">Reporte de Nomina</a></li>
 	</ul>
-
-
+	<!-- SUB MENU DE CXP -->
+	<ul class="sub-menu-cxp" ng-show="SubCxp" ng-mouseover="ShowSubMenuCxp(true)" ng-mouseleave="ShowSubMenuCxp(false)">
+		<li><a href="/cxp/cxpOrden">Cxp Orden de Compra</a></li>
+		<li><a href="">Cxp Factura AceroCoop</a></li>
+	</ul>
 	</nav>
 
 	
@@ -152,6 +155,8 @@
 	<script type="text/javascript" src={% static "js/notacredito.js" %} ></script>
 	<script type="text/javascript" src={% static "js/notadebito.js" %} ></script>
 	<script type="text/javascript" src={% static "js/libs/ahorro.js" %}></script>
+	<script type="text/javascript" src={% static "js/libs/cxp.js" %}></script>
+
 
 
 </body>

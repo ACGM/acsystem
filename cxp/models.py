@@ -44,6 +44,7 @@ class CxpSuperCoop(models.Model):
                                 verbose_name="Monto")
     descuento = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False,
                                     verbose_name="Desc")
+    estatus = models.BooleanField(default=False)
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_super_ref",
                                             verbose_name='Detalle Cuentas')
 

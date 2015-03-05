@@ -30,7 +30,7 @@ class Cuentas(models.Model):
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
 
     def __unicode__(self):
-        return '%i-%s' % (self.codigo, self.descripcion)
+        return '%s-%s' % (str(self.codigo), self.descripcion)
 
     class Meta:
         ordering = ['codigo']

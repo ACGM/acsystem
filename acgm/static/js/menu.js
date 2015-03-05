@@ -19,5 +19,9 @@
 		    	$scope.SubMNomina = valor;
 		    }
 
+		    $scope.ShowSubMenuCxp = function(valor){
+		    	$scope.SubCxp =valor;
+		    }
+
 		}]);
 })();
