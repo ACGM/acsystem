@@ -33,6 +33,7 @@
 
 .icon-save:before {
 	content: "\e89c";
+	margin-right .2em
 }
 
 .icon-archivo:before {
@@ -113,6 +114,7 @@
 
 .icon-delete:before {
 	content: "\e900";
+	margin-right .2em
 }
 
 .icon-close:before {
@@ -129,6 +131,7 @@
 
 .icon-plus:before {
 	content: "\e609";
+	margin-right: .2em;
 }
 
 .icon-arrow-up2:before {
@@ -224,6 +227,7 @@ verdeClarito = #2BA92D
 verdeSubMenu = #6ABF40
 verdeSuave = #94E698
 verdeMuySuave = #E1FFDD
+rojoClaro = #F63735
 rojoOscuro = #A81E1A
 mamey = #FF5A13
 amarillo = #FFF676
@@ -2944,7 +2948,7 @@ footer
 .suplidor-table-search	
 	border 1px solid black
 	position absolute
-	top 7.2em
+	top 20em
 	left 6em
 	width 40em
 	z-index 900
@@ -2957,6 +2961,19 @@ footer
 	
 	&-Registro
 		margin .5em 0 .5em .7em
+	&-Articulos
+		background #2ba92d
+		color white
+		&td first-child:
+			width: 90%
+.DetalleOrden
+	border solid #2ba92d 1px
+	padding 0.3em;
+	&td first-child
+		border-right solid #2ba92d 1px
+		
+.smallMargin
+	margin: 1em .2em;
 
 .utils
 	&-block
@@ -2964,7 +2981,8 @@ footer
 		
 	&-smallPadding
 		padding .16em .4em
-		
+
+
 	&-alingRight
 		position absolute
 		right 4em
@@ -3016,6 +3034,49 @@ footer
 		display: block;
 		width: 10em;
 		height: 1em;
+
+.listado-Or-detail
+	& td
+		padding .17em 0
+		border 1px solid black
+		&:nth-child(1),&:nth-child(2) 
+			text-align center
+		&:nth-child(3)
+			width 5.8em
+			padding-left .2em
+		&:nth-child(4)
+			width 5.1em
+			text-align right
+			padding 0 .6em
+		&:nth-child(5) //ORDEN C.
+			padding 0 .3em
+			text-align left
+			width 20em
+		&:nth-child(6)
+			text-align left
+			padding 0 .3em
+			width 20em
+		&:nth-child(8)
+			text-align right
+			padding 0 .6em
+			width 4em;
+		&:nth-child(7)
+			color mamey
+			font-size 1.2em
+			font-weight bold
+			text-align right
+			width 10em
+		&:nth-child(9),&:nth-child(10)
+			text-align center	
 	
+.danger
+	background rojoClaro
+	border-bottom .3rem solid rojoOscuro
+	color width
+	&:hover
+		background lightred
+
+
+		
 		
 	

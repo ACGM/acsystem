@@ -53,7 +53,7 @@ class Auxiliares(models.Model):
     cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta")
 
     def __unicode__(self):
-        return '%i-%s' % (self.codigo, self.descripcion)
+        return '%s-%s' % (str(self.codigo), self.descripcion)
 
     class Meta:
         ordering = ['codigo']
