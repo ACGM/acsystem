@@ -173,6 +173,7 @@ class Migration(migrations.Migration):
                 ('descripcion', models.CharField(max_length=25)),
             ],
             options={
+                'ordering': ('descripcion',),
                 'verbose_name_plural': 'Config 4.2) Categorias de Productos',
             },
             bases=(models.Model,),

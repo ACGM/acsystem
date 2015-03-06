@@ -13,7 +13,7 @@
 	<tr ng-repeat="prod in productos" class="productos-table-detail-search">
 		<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.codigo]] </a></td>
 		<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> [[prod.descripcion]] </a></td>
-		<td><a href="#" class="select-item" ng-click="addProducto($event,prod)"> <strong> [[prod.costo | number : 2]] </strong> </a></td>
+		<td><a href="#" class="select-item align-right" ng-click="addProducto($event,prod)"> <strong> [[prod.costo | number : 2]] </strong> </a></td>
 		<!-- <td><a href="#" class="select-item" ng-click="addProducto($event,prod)"><strong> [[prod.precio]] </strong></a></td> -->
 	</tr>
 </table>

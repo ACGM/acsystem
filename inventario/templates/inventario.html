@@ -57,7 +57,11 @@
 						</tr>
 
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
-							<td class="align-center"><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
+							
+							<td class="align-center">
+								<input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]] != entrada.borrado" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> 
+							</td>
+
 							<td class="[[entrada.posteo | posteoFolderIcon]] posteo-[[entrada.posteo]] align-center"></td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd/MM/yyyy']]</td>
@@ -91,7 +95,7 @@
 
 			<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="guardarEI()" novalidate>
 				<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong></span>
-				<p ng-if="dataH.borrado == true" class="rojo-bold"> Esta entrada fue eliminada por el usuario: [[dataH.borradoPor]]</p>
+				<p ng-if="dataH.borrado == true" class="rojo-bold"> Esta entrada fue eliminada por el usuario: [[dataH.borradoPor]] en fecha: [[dataH.borradoFecha | date : 'dd/MM/yyyy hh:mm a']]</p>
 
 				<button ng-if="dataH.posteo == 'N' && dataH.entradaNo > 0 && dataH.borrado == false" class="icon-delete Boton boton-guarda-inventario" ng-click="eliminarEntradaInv($event)" title="Elimina la existencia de esta entrada, pero no elimina los registros de inventario(quedan para consulta)">Eliminar</button>
 
@@ -141,7 +145,7 @@
 							<td>NCF</td>
 							<td> <input type="text" class="ncf-ei" ng-model="dataH.ncf"> </td>
 							<td>Fecha</td>
-							<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" datepicker required> </td>
+							<td> <input type="text" class="input-disabled" ng-model="dataH.fecha" ng-disabled="true" datepicker required> </td>
 						</tr>
 						<tr>
 							<td>Condicion</td>

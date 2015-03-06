@@ -36,6 +36,6 @@ class TransferenciasAlmacenes(admin.ModelAdmin):
 
 @admin.register(Movimiento)
 class MovimientoAdmin(admin.ModelAdmin):
-	list_display = ('id', 'getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov', 'getUsuario')
+	list_display = ('id', 'getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov', 'getUsuario', 'documentoNo')
 	search_fields = ('producto',)
 

@@ -658,7 +658,7 @@ footer
 	transition .3s linear all
 	z-index 9999
 	overflow scroll
-	opacity .989
+	opacity .97
 	
 	& span
 		float left
@@ -684,13 +684,6 @@ footer
 		float left
 		padding-right .4em
 	
-.boton-agregar-cuenta-posteo
-	position relative
-	top -.5em
-	padding 0 2em
-	margin-left 1em
-	height 2.6em
-			
 .descrp-cuenta-posteo
 	color verdeMuyOscuro
 	font-size 1.2em
@@ -1296,9 +1289,9 @@ footer
 
 //Para salida de inventario
 .content-productos-salidaInv
-	width 50%	
-	background red
-	position absolute
+	width 100%	
+	position relative
+	top -1em
 
 .boton-postear-inventario
 	height 3em
@@ -1396,13 +1389,9 @@ footer
 	
 	
 .productos-table-detail-search
-	
 	& td
 		border 1px solid black
 		background lightyellow
-		
-		&:nth-child(3)
-			text-align right
 		
 .productos-section
 	margin 1em 0 0 0
@@ -1577,11 +1566,20 @@ footer
 //** Para Reporte Movimiento de Articulo
 .busqueda-movimiento-articulo
 	margin 0 0 1em 1em
+.table-reporte-movimiento
+	margin-bottom .5em
+	
+	tr
+		td
+			padding .3em
 
-.mov-art-rango-fecha
-	span
-		display block
-
+.caja-movimientos
+	margin 1em
+	table
+		width 100%
+		tr
+			td
+				padding .3em
 //Para Ajuste de inventario
 .prod-almacen-ajuste
 	display inline-block
@@ -1607,6 +1605,10 @@ footer
 	& button
 		&:last-child
 			margin-left 2em
+
+.content-productos-ajuste-inv
+	position relative
+	top -1em
 
 //Para Transferencia entre almacenes
 .ul-almacen-transf
@@ -1694,7 +1696,9 @@ footer
 	position relative
 
 .productos-section-transf
-	margin 0 0 0 1em
+	width 65%
+	margin .5em 0 0 .5em
+	padding .5em
 
 .productos-table-detail-transf
 	& td
@@ -2784,6 +2788,7 @@ footer
 	height 2.8em
 	width 8em
 	margin-bottom 3em
+	margin-left 1em
 	&:before
 		margin-right .4em
 

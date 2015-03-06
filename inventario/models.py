@@ -34,6 +34,7 @@ class InventarioHSalidas(models.Model):
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	borrado = models.BooleanField(default=False)
 	borradoPor = models.ForeignKey(User, related_name='+', null=True, editable=False)
+	borradoFecha = models.DateTimeField(null=True)
 	
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
@@ -76,6 +77,7 @@ class InventarioH(models.Model):
 	suplidor = models.ForeignKey(Suplidor)
 	borrado = models.BooleanField(default=False)
 	borradoPor = models.ForeignKey(User, related_name='+', null=True, editable=False)
+	borradoFecha = models.DateTimeField(null=True)
 
 	userLog = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -169,6 +171,7 @@ class InventarioD(models.Model):
 		mov.almacen = self.almacen
 		mov.tipo_mov = self.tipoAccion
 		mov.documento = 'SINV' if self.tipoAccion == 'S' else 'EINV'
+		mov.documentoNo = self.inventario.id if self.inventario != None else self.inventarioSalida.id
 		mov.userLog = self.inventario.userLog if self.inventario != None else self.inventarioSalida.usuarioSalida
 		mov.save()
 
@@ -190,6 +193,8 @@ class TransferenciasAlmacenes(models.Model):
 
 	class Meta:
 		ordering = ('fechaTransf',)
+		verbose_name = 'Transferencia entre Almacenes'
+		verbose_name_plural = 'Transferencias entre Almacenes'
 
 
 # Movimiento de productos del inventario
@@ -200,9 +205,11 @@ class Movimiento(models.Model):
 
 	producto = models.ForeignKey(Producto)
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
+	precio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	almacen = models.ForeignKey(Almacen)
 	fechaMovimiento = models.DateField(auto_now_add=True)
 	documento = models.CharField(max_length=4, choices=doc_choices)
+	documentoNo = models.PositiveIntegerField()
 	tipo_mov = models.CharField(max_length=1,
 								choices=tipo_mov_choices,
 								default=tipo_mov_choices[0][0],
@@ -255,7 +262,7 @@ class AjusteInventarioH(models.Model):
 
 	fecha = models.DateField()
 	notaAjuste = models.CharField(max_length=200, blank=True, null=True)
-	estatus = models.CharField(max_length=1, default='N') #N = En proceso, P = Procesado
+	estatus = models.CharField(max_length=1, default='N') #N = En proceso, S = Procesado
 	
 	usuario = models.ForeignKey(User)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -265,6 +272,8 @@ class AjusteInventarioH(models.Model):
 
 	class Meta:
 		ordering = ('id',)
+		verbose_name = 'Ajuste Inventario Cabecera'
+		verbose_name_plural = 'Ajuste Inventario Cabecera'
 
 #Ajuste de Inventario Detalle
 class AjusteInventarioD(models.Model):
@@ -281,3 +290,7 @@ class AjusteInventarioD(models.Model):
 
 	def __unicode__(self):
 		return '%s = %s' % (self.producto, (self.cantidadFisico - self.cantidadTeorico))
+
+	class Meta:
+		verbose_name = 'Ajuste Inventario Detalle'
+		verbose_name_plural = 'Ajuste Inventario Detalle'
