@@ -101,6 +101,26 @@
             deferred.resolve(data);
           });
         return deferred.promise;
+      }
+
+      //Movimiento de Producto (filtros: Producto, Fecha Inicio, Fecha Fin)
+      function movimientoArticulo(Prod, fechaI, fechaF, almacen) {
+        var deferred = $q.defer();
+
+        var fechaIn = fechaI.split('/');
+        var fechaInicio = fechaIn[2] + '-' + fechaIn[1] + '-' + fechaIn[0];
+        
+        var fechaFn = fechaF.split('/');
+        var fechaFin = fechaFn[2] + '-' + fechaFn[1] + '-' + fechaFn[0];
+
+        url = '/api/inventario/movimiento/{Prod}/{fechaI}/{fechaF}/{almacen}/?format=json'.replace('{Prod}', Prod)
+              .replace('{fechaI}', fechaInicio).replace('{fechaF}', fechaFin).replace('{almacen}', almacen);
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
       }   
 
       return {
@@ -108,7 +128,8 @@
         existencia : existencia,
         existenciaByProducto : existenciaByProducto,
         categorias : categorias,
-        existenciaConteoFisico : existenciaConteoFisico 
+        existenciaConteoFisico : existenciaConteoFisico,
+        movimientoArticulo : movimientoArticulo
       };
 
     }])
@@ -150,9 +171,30 @@
         $scope.producto = Prod.descripcion;
         $scope.codigoProducto = Prod.codigo;
         $scope.tableProducto = false;
-
       }
 
+      //Traer almacenes
+      $scope.getAlmacenes = function() {
+        InventarioService.almacenes().then(function (data) {
+          $scope.almacenes = data;
+        });
+      }
+
+      //Generar reporte
+      $scope.movimiento = function($event) {
+        $event.preventDefault();
+
+        try {
+          InventarioServiceRPT.movimientoArticulo($scope.codigoProducto, $scope.desdeFecha, $scope.hastaFecha, $scope.almacen).then(function (data) {
+            $scope.resultados = data;
+          },
+          function () {
+            throw data;
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
 
     }])
 

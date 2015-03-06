@@ -133,13 +133,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('fecha_movimiento', models.DateField(auto_now_add=True)),
-                ('documento', models.CharField(default=b'EINV', max_length=4, choices=[(b'EINV', b'Entrada Inventario'), (b'SINV', b'Salida Inventario'), (b'AINV', b'Ajuste Inventario'), (b'FACT', b'Facturacion')])),
+                ('fechaMovimiento', models.DateField(auto_now_add=True)),
+                ('documento', models.CharField(max_length=4, choices=[(b'EINV', b'Entrada Inventario'), (b'SINV', b'Salida Inventario'), (b'AINV', b'Ajuste Inventario'), (b'FACT', b'Facturacion')])),
+                ('documentoNo', models.PositiveIntegerField()),
                 ('tipo_mov', models.CharField(default=b'E', max_length=1, verbose_name=b'Tipo de Movimiento', choices=[(b'E', b'Entrada'), (b'S', b'Salida')])),
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
-                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
+                ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['producto'],

@@ -799,7 +799,11 @@
       $scope.guardarDetalleSolicitud = function() {
         if($scope.ArticulosODForm) {
           SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
-            console.log(data);
+            if(data == 1) {
+              alert('Se guardo perfectamente');
+            } else {
+              $scope.mostrarError(data);
+            }
           });
         }
       }

@@ -464,3 +464,24 @@
 			&:first-child
 				& td
 					padding 0 1em
+
+//REPORTE CONTEO FISICO
+.titulo-reporte-conteo-fisico
+	display none
+	
+@media print
+	.titulo-reporte-conteo-fisico
+		display block
+		text-align center
+
+	.ExistenciaArticulo
+		
+		.sub-menu
+			display none
+		.busqueda-existencia-inventario
+			display none
+		.busqueda-categoria
+			display none
+		
+		button
+			display none

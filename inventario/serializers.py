@@ -75,4 +75,4 @@ class MovimientoProductoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Movimiento
-		fields = ('getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov',)
+		fields = ('getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'documentoNo', 'tipo_mov', 'precio')

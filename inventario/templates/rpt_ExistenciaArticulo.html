@@ -56,7 +56,7 @@
 				<ul ng-repeat="registro in registros" class="content-productos-exist">
 
 					<!-- para valores subtotales -->
-					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+					<!-- <li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li> -->
 
 					<!-- para poner categoria (ruptura) -->
 					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>

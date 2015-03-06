@@ -1,13 +1,18 @@
+<div class="head"> 
+
 {% extends "base.html" %}
 
 {% block title %} Reporte de Conteo Fisico {% endblock title %}
 
 {% block content %}
 
+</div>
+
 	<div class="ExistenciaArticulo" ng-controller="RPTExistenciaArticuloCtrl">
 
 		<!-- <mensajeerror> </mensajeerror> -->
 		
+		<h1 class="titulo-reporte-conteo-fisico">REPORTE PARA CONTEO FISICO</h1>
 		<div class="sub-menu">	
 			
 				<a href="#">Reporte de Conteo Fisico de Articulo(s)</a>
@@ -57,7 +62,7 @@
 						<li class="content-productos-detail-cf-1">[[registro.codigo]]</li>
 						<li class="content-productos-detail-cf-2">[[registro.producto]]</li>
 						<li class="content-productos-detail-cf-3">[[registro.totalCantidad | number : 2]]</li>
-						<li class="content-productos-detail-cf-3">           .</li>
+						<li class="content-productos-detail-cf-3">           _</li>
 
 					</div>
 				</ul>
@@ -68,4 +73,8 @@
 		
 	</div>
 
+<div class="pie">
+
 {% endblock content %}
+
+</div>

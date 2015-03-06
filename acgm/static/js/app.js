@@ -87,6 +87,7 @@
   });
 
   // Para color de icono de posteo ---> N = Mamey ----> S = Verde
+  // y para bloquear o desbloquear checkbox de entrada de inventario
   app.filter('posteo', function() {
       return function (input) {
         if (!input) return "";

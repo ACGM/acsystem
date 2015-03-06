@@ -13,55 +13,63 @@
 
 		<section ng-init="getCategoriasProductos()">
 
-			<section class="busqueda-movimiento-articulo">
+			<form class="busqueda-movimiento-articulo" ng-submit="movimiento($event)" novalidate>
 				
 
 				<div class="producto-find-ei">
 					<span>Producto</span>
-					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei">
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei" required>
 					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
 
 					<productosSearch> </productosSearch>
 
 				</div>
 
-				<div class="mov-art-rango-fecha">
-					<span>Desde</span>
-					<input type="text" ng-model="desdeFecha" datepicker>
-					<span>Hasta</span>
-					<input type="text" ng-model="hastaFecha" datepicker>
-				</div>
+				<table class="table-reporte-movimiento">
+					<tr>
+						<td>Almacen</td>
+						<td>
+							<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+							</select>	
+						</td>
+					</tr>
+					<tr>
+						<td>Desde</td>
+						<td><input type="text" ng-model="desdeFecha" datepicker required></td>
+					</tr>
+					<tr>
+						<td>Hasta</td>
+						<td><input type="text" ng-model="hastaFecha" datepicker required></td>
+					</tr>
+				</table>
+					
+				<button class="Boton boton-genera-reporte" type="submit">Generar Reporte</button>
 
-			</section>
-			
+			</form>
 
-			<button class="Boton boton-genera-reporte" ng-click="movimiento()">Generar Reporte</button>
+			<div class="caja-movimientos">
+				<table>
+					<tr class="productos-table-header-transf">
+						<td>E/S</td>
+						<td>Tipo</td>
+						<td>Cantidad</td>
+						<td>Precio</td>
+						<td>Valor</td>
+						<td>Documento</td>
+						<td>Fecha</td>
+					</tr>
+					<tr ng-repeat="registro in resultados" class="productos-table-detail-search">
+						<td>[[registro.tipo_mov]]</td>
+						<td>[[registro.documento]]</td>
+						<td>[[registro.cantidad | number : 2]]</td>
+						<td>[[registro.precio | number : 2]]</td>
+						<td>[[registro.cantidad * registro.precio | number : 2]]</td>
+						<td>[[registro.documentoNo | numberFixedLen : 8]]</td>
+						<td>[[registro.fechaMovimiento | date : 'dd/MM/yyyy']]</td>
+					</tr>
+				</table>
 
-			<div class="caja-productos">
-				<ul ng-repeat="registro in registros" class="content-productos-exist">
-
-					<!-- para valores subtotales -->
-					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
-
-					<!-- para poner categoria (ruptura) -->
-					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
-
-					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header">
-						<li class="content-productos-header-1"><strong>CODIGO</strong></li>
-						<li class="content-productos-header-2"><strong>PRODUCTO</strong></li>
-						<li class="content-productos-header-3"><strong>CANTIDAD</strong></li>
-						<li class="content-productos-header-3"><strong>COSTO</strong></li>
-						<li class="content-productos-header-3"><strong>VALOR</strong></li>
-					</div>
-
-					<div class="content-productos-detail">
-						<li class="content-productos-detail-1">[[registro.codigo]]</li>
-						<li class="content-productos-detail-2">[[registro.producto]]</li>
-						<li class="content-productos-detail-3">[[registro.totalCantidad | number : 2]]</li>
-						<li class="content-productos-detail-3">[[registro.totalCosto | number : 2]]</li>
-						<li class="content-productos-detail-3">[[registro.totalCantidad * registro.totalCosto | number : 2]]</li>
-					</div>
-				</ul>
 			</div>
 
 		</section>

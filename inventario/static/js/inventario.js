@@ -43,7 +43,20 @@
           error(function (data) {
             deferred.resolve(data);
           });
+        return deferred.promise;
+      }
 
+      //Procesar Ajuste de Inventario
+      function procesarAjusteInv(ajusteNo) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/procesarAjuste/', JSON.stringify({'ajusteNo': ajusteNo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
         return deferred.promise;
       }
 
@@ -354,7 +367,8 @@
         DocumentoSalidaById     : DocumentoSalidaById,
         eliminarEI              : eliminarEI,
         eliminarSI              : eliminarSI,
-        byNoDocSalida           : byNoDocSalida
+        byNoDocSalida           : byNoDocSalida,
+        procesarAjusteInv       : procesarAjusteInv
       };
 
     }])
@@ -381,6 +395,7 @@
       $scope.entradas = {};
       $scope.dataH = {};
 
+      $scope.desgloseCuentas = [];
       $scope.entradasSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
@@ -399,14 +414,6 @@
             $scope.tableCuenta = true;
           }
         });
-      }
-
-      // Agregar una cuenta
-      $scope.addCuentaContable = function($event, cuenta) {
-        $event.preventDefault();
-
-        $scope.Postear.cuentaCodigo = cuenta.codigo;
-        $scope.Postear.cuentaDescrp = cuenta.descripcion;
       }
 
       // Mostrar/Ocultar panel de Listado de Entrada Inventario
@@ -641,6 +648,7 @@
               $scope.dataH.usuario = data[0]['usuario'];
               $scope.dataH.borrado = data[0]['borrado'];
               $scope.dataH.borradoPor = data[0]['borradoPor'];
+              $scope.dataH.borradoFecha = data[0]['borradoFecha'];
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
@@ -834,6 +842,8 @@
         if ($scope.almacen == undefined || $scope.almacen == '') {
           $scope.mostrarError('Debe seleccionar un almacen');
           throw "almacen";
+        } else {
+          $scope.errorShow = false;
         }
 
         //No agregar el producto si ya existe
@@ -902,6 +912,21 @@
 
         $window.sessionStorage['entrada'] = JSON.stringify(entrada);
         $window.open('/inventario/print/{entrada}'.replace('{entrada}',entrada.id), target='_blank'); 
+      }
+
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+        var desgloseCuenta = new Object();
+
+        desgloseCuenta.cuenta = cuenta.codigo;
+        desgloseCuenta.descripcion = cuenta.descripcion;
+        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+        desgloseCuenta.debito = 0;
+        desgloseCuenta.credito = 0;
+
+        $scope.desgloseCuentas.push(desgloseCuenta);
+        $scope.tableCuenta = false;
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
@@ -1268,6 +1293,8 @@
       if ($scope.almacen == undefined || $scope.almacen == '') {
         $scope.mostrarError('Debe seleccionar un almacen');
         throw "almacen";
+      } else {
+        $scope.errorShow = false;
       }
 
       InventarioService.getExistenciaByProducto(Prod.codigo, $scope.almacen).then(function (data) {
@@ -1323,8 +1350,19 @@
       } catch(e) {
         $scope.mostrarError(e);
       }
-
     }
+
+    //Procesar Ajustes de Inventario
+    $scope.procesarAjuste = function(ajusteNo) {
+      InventarioService.procesarAjusteInv(ajusteNo).then(function (data) {
+        if(data == 1) {
+          alert('El ajuste de inventario fue procesado!');
+          $scope.ListadoAjustes();
+        } else {
+          $scope.mostrarError(data);
+        }
+      });
+    }     
 
     // Limpiar los campos (Nuevo)
     $scope.clearFields = function($event) {
@@ -1339,6 +1377,7 @@
       $scope.dataD = [];
       $scope.dataH.numero = 0;
       $scope.producto = '';
+      $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
     }
 
     // Visualizar Documento (Ajuste de Inventario Existente - desglose)
@@ -1401,7 +1440,6 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLSI = 'UpArrow';
 
-      
       // Mostrar/Ocultar panel de Listado de Salida Inventario
       $scope.toggleLSI = function() {
         $scope.showLSI = !$scope.showLSI;
@@ -1676,6 +1714,8 @@
         if ($scope.almacen == undefined || $scope.almacen == '') {
           $scope.mostrarError('Debe seleccionar un almacen');
           throw "almacen";
+        } else {
+          $scope.errorShow = false;
         }
 
         //No agregar el producto si ya existe

@@ -5,7 +5,6 @@
 {% block content %}
 
 	<div class="TransferenciaInv" ng-controller="TransfInvCtrl">
-		<mensajeinfo> </mensajeinfo>
 		
 		<mensajeerror> </mensajeerror>
 
@@ -75,7 +74,7 @@
 				Listado de Transferencias
 			</div>
 
-			<section class="productos-section-transf" ng-init="ListadoTransfAlmacenes()">
+			<section class="productos-section-transf registrosPanel" ng-init="ListadoTransfAlmacenes()">
 				<table class="productos-table-transf">
 					<tr class="productos-table-header-transf">
 						<td>Secuencia</td>
@@ -95,8 +94,8 @@
 					</tr>		
 				</table>
 
-				<button class="icon-save Boton boton-guarda-transf" ng-click="ListadoTransfAlmacenes()">Refrescar</button>
 			</section>
+			<button class="icon-save Boton boton-guarda-transf" ng-click="ListadoTransfAlmacenes()">Refrescar</button>
 
 		</div>
 		

@@ -131,6 +131,7 @@ class EntradaInventarioById(LoginRequiredMixin, ListView):
 				'usuario': inventario.userLog.username,
 				'borrado': inventario.borrado,
 				'borradoPor': inventario.borradoPor.username if inventario.borrado == True else '',
+				'borradoFecha': inventario.borradoFecha if inventario.borrado == True else '',
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -180,6 +181,7 @@ class SalidaInventarioById(LoginRequiredMixin, ListView):
 				'datetimeServer': inventario.datetimeServer,
 				'borrado': inventario.borrado,
 				'borradoPor': inventario.borradoPor.username if inventario.borrado == True else '',
+				'borradoFecha': inventario.borradoFecha if inventario.borrado == True else '',
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -346,9 +348,20 @@ class InventarioEliminarView(LoginRequiredMixin, View):
 
 			for item in dataD:
 				quitar_producto(self, item.producto.codigo, item.almacen.id, entradaNo)
+
+				mov = Movimiento()
+				mov.producto = item.producto
+				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventario__id=entradaNo).cantidadTeorico) * -1
+				mov.almacen = item.almacen
+				mov.documento = 'EINV'
+				mov.documentoNo = entradaNo
+				mov.tipo_mov = 'E'
+				mov.userLog = request.user
+				mov.save()
 			
 			invH.borrado = True
 			invH.borradoPor = request.user
+			invH.borradoFecha = datetime.datetime.now()
 			invH.save()
 
 			return HttpResponse('1')
@@ -376,6 +389,12 @@ class InventarioSalidaView(LoginRequiredMixin, TemplateView):
 
 			if salidaNo > 0:
 				invH = InventarioHSalidas.objects.get(id=salidaNo)
+
+				#Validar si la cantidad de salida no excede la existente
+				for item in dataD:
+					if item['cantidad'] > InventarioD.objects.get(inventarioSalida=invH, producto__codigo=item['codigo']):
+						raise Exception('La cantidad digitada al producto : ' + item['codigo'] + ' es mayor a la existencia actual') 
+				#Fin Validacion
 				
 				for item in dataD:
 					reponer_producto(self, item['codigo'], data['almacen'], salidaNo)
@@ -391,8 +410,11 @@ class InventarioSalidaView(LoginRequiredMixin, TemplateView):
 
 			#Verificar si tiene existencia para dar salida
 			for item in dataD:
-				if decimal.Decimal(Existencia.objects.get(producto__codigo=item['codigo'], almacen__id=almacen).cantidad) < decimal.Decimal(item['cantidad']):
-					raise Exception('La salida que esta intentando realizar sobre el producto: ' + item['codigo'] + ' sobrepasa lo que tiene en existencia.')
+				try:
+					if decimal.Decimal(Existencia.objects.get(producto__codigo=item['codigo'], almacen__id=almacen).cantidad) < decimal.Decimal(item['cantidad']):
+						raise Exception('La salida que esta intentando realizar sobre el producto: ' + item['codigo'] + ' sobrepasa lo que tiene en existencia.')
+				except Existencia.DoesNotExist:
+					raise Exception('El producto ' + item['codigo'] + ' no tiene existencia para el almacen seleccionado.')
 
 			# Llevar a cabo la accion
 			for item in dataD:
@@ -405,7 +427,6 @@ class InventarioSalidaView(LoginRequiredMixin, TemplateView):
 				invD.tipoAccion = 'S'
 				invD.save()
 				
-
 			return HttpResponse('1')
 
 		except Exception as e:
@@ -428,9 +449,20 @@ class InventarioSalidaEliminarView(LoginRequiredMixin, View):
 
 			for item in dataD:
 				reponer_producto(self, item.producto.codigo, item.almacen.id, salidaNo)
+
+				mov = Movimiento()
+				mov.producto = item.producto
+				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventarioSalida__id=salidaNo).cantidadTeorico) * -1
+				mov.almacen = item.almacen
+				mov.documento = 'SINV'
+				mov.documentoNo = salidaNo
+				mov.tipo_mov = 'S'
+				mov.userLog = request.user
+				mov.save()
 			
 			invH.borrado = True
 			invH.borradoPor = request.user
+			invH.borradoFecha = datetime.datetime.now()
 			invH.save()
 
 			return HttpResponse('1')
@@ -537,6 +569,47 @@ class AjusteInvView(LoginRequiredMixin, TemplateView):
 
 
 # # # # # # # # # # # # # # # # # # # # # # #
+# Procesar Ajuste de Inventario 
+# (Este proceso es uno de los mas delicados 
+#   ya que reemplaza los valores en Existencia)
+# # # # # # # # # # # # # # # # # # # # # # #
+class ProcesarAjusteInvView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			ajusteNo = int(data['ajusteNo'])
+
+			for item in AjusteInventarioD.objects.filter(ajusteInvH__id=ajusteNo):
+				exist = Existencia.objects.get(producto=item.producto, almacen=item.almacen)
+				exist.cantidadAnterior = exist.cantidad
+				exist.cantidad = item.cantidadFisico
+				exist.save()
+
+				mov = Movimiento()
+				mov.producto = item.producto
+				mov.cantidad = item.cantidadFisico
+				mov.precio = item.producto.precio
+				mov.almacen = item.almacen
+				mov.documento = 'AINV'
+				mov.documentoNo = ajusteNo
+				mov.tipo_mov = 'E'
+				mov.userLog = request.user
+				mov.save()
+
+			ajusteH = AjusteInventarioH.objects.get(id=ajusteNo)
+			ajusteH.estatus = 'S'
+			ajusteH.save()
+
+			return HttpResponse('1')
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
 # Existencia de un producto en especifico
 # # # # # # # # # # # # # # # # # # # # # # #
 class getExistenciaByProductoView(APIView):
@@ -557,8 +630,9 @@ class RPTMovimientoProductoAPIView(APIView):
 
 	serializer_class = MovimientoProductoSerializer
 
-	def get(self, request, codProd, fechaInicio, fechaFin):
-		movimientos = Movimiento.objects.filter(producto__codigo=codProd, fechaMovimiento__range=(fechaInicio, fechaFin)).order_by('fechaMovimiento')
+	def get(self, request, codProd, fechaInicio, fechaFin, almacen):
+		movimientos = Movimiento.objects.filter(producto__codigo=codProd, fechaMovimiento__range=(fechaInicio, fechaFin), \
+												almacen__id=almacen).order_by('fechaMovimiento')
 
 		response = self.serializer_class(movimientos, many=True)
 		return Response(response.data)

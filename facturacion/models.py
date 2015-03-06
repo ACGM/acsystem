@@ -102,6 +102,7 @@ class Detalle(models.Model):
 		mov.almacen = self.almacen
 		mov.tipo_mov = 'S'
 		mov.documento = 'FACT'
+		mov.documentoNo = self.factura.noFactura
 		mov.userLog = self.factura.userLog
 		mov.save()
 
