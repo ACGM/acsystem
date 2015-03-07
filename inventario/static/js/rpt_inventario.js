@@ -202,7 +202,7 @@
     //****************************************************
     //CONTROLLERS Existencia                             *
     //****************************************************
-    .controller('RPTExistenciaArticuloCtrl', ['$scope', '$filter', 'InventarioServiceRPT', 'InventarioService', 
+    .controller('RPTExistenciaArticuloCtrl', ['$scope', '$filter', 'InventarioServiceRPT', 'InventarioService',
                                                 function ($scope, $filter, InventarioServiceRPT, InventarioService) {
 
       // Inicializacion de Variables
@@ -273,6 +273,7 @@
       $scope.existencia = function() {
         try {
           if($scope.busquedaValor == 'categoria') {
+
             InventarioServiceRPT.existencia($scope.almacen, $scope.categoriasSeleccionadas).then(function (data) {
               $scope.registros = data;
             });

@@ -542,6 +542,8 @@
         $scope.solicitud.prestamo = '';
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
+        
         $scope.solicitud.ahorrosCapitalizados = "200,000";
         $scope.solicitud.deudasPrestamos = "50,000";
 

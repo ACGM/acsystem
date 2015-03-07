@@ -14,7 +14,7 @@ from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView
                                 InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT, \
                                 ProcesarAjusteInvView
 
-from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
+from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
@@ -62,6 +62,7 @@ from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getEx
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
+from facturacion.views import DetalleFacturasView
 
 
 admin.site.site_header = 'COOPERATIVA'
@@ -188,10 +189,15 @@ urlpatterns = patterns('',
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
-    url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
+    url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
+
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
+
+    #Facturacion#Reportes
+    url(r'^facturacion/reportes/utilidades/$', RPTUtilidades.as_view(), name='Reporte_Utilidades'),
+    url(r'^facturacion/reportes/utilidades/vista/$', RPTUtilidadesView.as_view(), name='Reporte_Utilidades_vista'),
     
 
     #Prestamos

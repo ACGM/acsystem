@@ -61,6 +61,7 @@ class Detalle(models.Model):
 	porcentajeDescuento = models.DecimalField("Porcentaje Descuento", max_digits=6, decimal_places=2,blank=True, default=0)
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
+	costo = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	almacen = models.ForeignKey(Almacen)
 
 	class Meta:
@@ -69,12 +70,30 @@ class Detalle(models.Model):
 
 	@property
 	def importeValor(self):
-		return '%i' % ((float(self.cantidad) * float(self.precio)) - (float(self.porcentajeDescuento/100) * float(self.precio) * float(self.cantidad)))
+		return '%s' % 	str(format(
+						(float(self.cantidad) * float(self.precio)) - \
+						(float(self.porcentajeDescuento/100) * float(self.precio) * float(self.cantidad)) \
+						,',.2f'))
+
+	@property
+	def getFactura(self):
+		return self.factura.noFactura
+
+	@property
+	def getFecha(self):
+		return self.factura.fecha
+
+	@property
+	def getCategoria(self):
+		return self.producto.categoria.descripcion
 
 	def __unicode__(self):
 		return u"%s %s" % (self.producto, (self.cantidad * self.precio))
 
 	def save(self, *args, **kwargs):
+
+		# Tomar el costo actual del producto que sera vendido (para reportes futuros)
+		self.costo = self.producto.costo
 		
 		# Actualizar la existencia del producto 
 		try:
@@ -86,19 +105,13 @@ class Detalle(models.Model):
 
 		except Existencia.DoesNotExist:
 			raise Exception('NOT_EXISTENCIA')
-			# existencia = Existencia()
-			# existencia.producto = self.producto
-
-			# existencia.cantidad = (self.cantidad * -1)
-			
-			# existencia.almacen = self.almacen
-			# existencia.save()
-			
 
 		# Guardar el movimiento del producto
 		mov = Movimiento()
 		mov.producto = self.producto
 		mov.cantidad = float(self.cantidad)
+		mov.precio = self.precio
+		mov.costo = self.costo
 		mov.almacen = self.almacen
 		mov.tipo_mov = 'S'
 		mov.documento = 'FACT'
@@ -107,35 +120,3 @@ class Detalle(models.Model):
 		mov.save()
 
 		super(Detalle, self).save(*args, **kwargs)
-
-
-# Orden de Despacho 
-class OrdenDespachoSuperCoop(models.Model):
-
-	orden_choices = (('A','Activa'),('I','Inactiva'),('N','Anulada'))
-	pagar_por_choices = (('EM','Empresa'),('CA','Cajero'),)
-	forma_pago_choices = (('Q','Quincenal'),('M','Mensual'),)
-	quincenas_choices = (('1','1ra Quincena'),('2','2da Quincena'),)
-
-	noSolicitud = models.AutoField(primary_key=True)
-	categoria = models.ForeignKey(CategoriaPrestamo)
-	oficial = models.ForeignKey(User)
-	pagarPor = models.CharField(max_length=2, choices=pagar_por_choices, default='EM')
-	formaPago = models.CharField(max_length=1, choices=forma_pago_choices, default='Q')
-	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-	quincena = models.IntegerField(choices=quincenas_choices, default=1, blank=True)
-	cuotas = models.IntegerField(default=2)
-	valorCuotas = models.DecimalField(max_digits=18, decimal_places=2)
-	estatus = models.CharField(max_length=1, choices=orden_choices, default='A')
-	
-	datetimeServer = models.DateTimeField(auto_now_add=True)
-
-	def __unicode__(self):
-		return '%i' % (self.no_solicitud)
-
-	class Meta:
-		ordering =['-noSolicitud']
-		verbose_name = "Orden Despacho SuperCoop"
-		verbose_name_plural = "Ordenes Despacho SuperCoop"
-		

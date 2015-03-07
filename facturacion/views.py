@@ -11,11 +11,12 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import ListadoFacturasSerializer
+from .serializers import ListadoFacturasSerializer, DetalleFacturasSerializer
 
-from .models import Factura, Detalle, OrdenDespachoSuperCoop
+from .models import Factura, Detalle
 from administracion.models import Producto, Socio, CategoriaPrestamo
 from inventario.models import Existencia, Almacen
+from prestamos.models import SolicitudOrdenDespachoH
 
 from acgm.views import LoginRequiredMixin
 
@@ -57,8 +58,8 @@ class FacturaById(LoginRequiredMixin, DetailView):
 		data = list()
 
 		try:
-			o = OrdenDespachoSuperCoop.objects.get(noSolicitud=self.object_list[0].ordenCompra)
-		except OrdenDespachoSuperCoop.DoesNotExist:
+			o = SolicitudOrdenDespachoH.objects.get(noSolicitud=self.object_list[0].ordenCompra)
+		except SolicitudOrdenDespachoH.DoesNotExist:
 			o = None
 
 		for factura in self.object_list:
@@ -83,16 +84,14 @@ class FacturaById(LoginRequiredMixin, DetailView):
 					} 
 					for prod in Detalle.objects.filter(factura=factura)],
 				'ordenDetalle':
-					{	'categoriaId': o.categoria.id if o != None else '',
-						'categoriaDescrp': o.categoria.descripcion if o != None else '',
-						'oficial': o.oficial.username if o != None else '',
-						'pagarPor': o.pagarPor if o != None else '',
-						'formaPago': o.formaPago if o != None else '',
+					{	'categoriaId': o.categoriaPrestamo.id if o != None else '',
+						'categoriaDescrp': o.categoriaPrestamo.descripcion if o != None else '',
+						'autorizador': o.autorizadoPor.username if o != None else '',
+						'representante': o.representante.nombre if o != None else '',
 						'tasaInteresAnual': o.tasaInteresAnual if o != None else '',
 						'tasaInteresMensual': o.tasaInteresMensual if o != None else '',
-						'quincena': o.quincena if o != None else '',
-						'cuotas': o.cuotas if o != None else '',
-						'valorCuotas': o.valorCuotas if o != None else '',
+						'cuotas': o.cantidadCuotas if o != None else '',
+						'valorCuotas': o.valorCuotasCapital if o != None else '',
 						'solicitud': o.noSolicitud if o != None else 0,
 					}
 				})
@@ -166,67 +165,69 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 
 
-# Vista para guardar la orden de despacho SUPERCOOP  --- url(r'^ordenSuperCoop/$'
-class OrdenDespachoSPView(View):
-
-	def post(self, request, *args, **kwargs):
-
-		try:
-			data = json.loads(request.body)
-
-			OrdenD = data['orden']
-
-			solicitud = int(OrdenD['solicitud'])
-			categoriaP = OrdenD['categoriaPrestamo']
-			oficial = OrdenD['oficial']
-			pagarPor = OrdenD['pagarPor']
-			formaPago = OrdenD['formaPago']
-			tasaInteresAnual = OrdenD['tasaInteresAnual']
-			tasaInteresMensual = OrdenD['tasaInteresMensual']
-			quincena = int(OrdenD['quincena'])
-			cantidadCuotas = OrdenD['cantidadCuotas']
-			valorCuotas = float(OrdenD['valorCuotas'])
-
-			factura = OrdenD['factura']
-
-			if categoriaP != None:
-				CP = CategoriaPrestamo.objects.get(id=categoriaP)
-			if oficial != None:
-				oficial = User.objects.get(username = oficial)
-
-			if solicitud > 0:
-				ordenDespacho = OrdenDespachoSuperCoop.objects.get(noSolicitud = solicitud)
-			else:
-				ordenDespacho = OrdenDespachoSuperCoop()
-
-			ordenDespacho.categoria = CP
-			ordenDespacho.oficial = oficial
-			ordenDespacho.pagarPor = pagarPor
-			ordenDespacho.formaPago = formaPago
-			ordenDespacho.tasaInteresAnual = tasaInteresAnual
-			ordenDespacho.tasaInteresMensual = tasaInteresMensual
-			ordenDespacho.quincena = quincena
-			ordenDespacho.cuotas = cantidadCuotas
-			ordenDespacho.valorCuotas = valorCuotas
-
-			ordenDespacho.save()
-
-			if not solicitud > 0:
-				fact = Factura.objects.get(noFactura=factura)
-				fact.ordenCompra = ordenDespacho.noSolicitud
-				fact.save()
-
-			return HttpResponse(ordenDespacho.noSolicitud)
-
-		except Exception as e:
-			return HttpResponse(e)
-
-
 # Listado de Facturas registradas
 class ListadoFacturasViewSet(viewsets.ModelViewSet):
 
 	queryset = Factura.objects.all()
 	serializer_class = ListadoFacturasSerializer
+
+
+# Documentos Relacionados a Cuentas
+class DetalleFacturasView(APIView):
+
+	serializer_class = DetalleFacturasSerializer
+
+	def get(self, request, fechaInicio, fechaFin):
+		
+		# detalle = Detalle.objects.filter(factura__fecha__range=[fechaInicio, fechaFin])
+		detalle = Detalle.objects.raw('SELECT * FROM facturacion_detalle group by producto_id')
+
+		response = self.serializer_class(detalle, many=True)
+		return Response(response.data)
+
+
+# Retornar detalle de facturas (para Reporte Utilidades)
+class RPTUtilidades(LoginRequiredMixin, DetailView):
+
+	queryset = Detalle.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		# format = self.request.GET.get('format')
+		return self.json_to_response()
+
+	def json_to_response(self):
+		data = list()
+
+		registros = Detalle.objects.raw('SELECT \
+											d.id, \
+											c.descripcion categoriaDescrp, \
+											d.producto_id, \
+											p.descripcion productoDescrp, \
+											d.cantidad,  \
+											d.precio,  \
+											((d.cantidad * d.precio) - ((d.porcentajeDescuento/100) * d.precio * d.cantidad)) valor,  \
+											d.costo, \
+											d.precio - d.costo margen \
+										FROM facturacion_detalle d \
+										LEFT JOIN administracion_producto p ON p.id = d.producto_id \
+										LEFT JOIN administracion_categoriaProducto c ON c.id = p.categoria_id \
+										GROUP BY d.producto_id, c.descripcion \
+										ORDER BY c.descripcion, p.descripcion \
+										')
+
+		for detalle in registros:
+			data.append({
+				'id': detalle.id,
+				'productoId': detalle.producto_id,
+				'productoDescrp': detalle.productoDescrp,
+				'categoriaDescrp': detalle.categoriaDescrp,
+				'cantidad': detalle.cantidad,
+				'precio': detalle.precio,
+				'valor': detalle.valor,
+				'costo': detalle.costo,
+				'margen': detalle.margen,
+				})
+		return JsonResponse(data, safe=False)
 
 
 #Imprimir Factura
@@ -248,3 +249,9 @@ class ImprimirFacturaView(LoginRequiredMixin, TemplateView):
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+#Reporte de Utilidades
+class RPTUtilidadesView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_utilidades.html'

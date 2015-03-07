@@ -67,6 +67,7 @@ class SolicitudPrestamo(models.Model):
 # Solicitud de Orden de Despacho Cabecera
 class SolicitudOrdenDespachoH(models.Model):
 
+	cxp_choices = (('E','EN PROCESO'),('P','PROCESADA'))
 	estatus_choices = (('P','En Proceso'),('A','Aprobado'),('R','Rechazado'),('C','Cancelado'))
 
 	noSolicitud = models.IntegerField(unique=True)
@@ -99,6 +100,9 @@ class SolicitudOrdenDespachoH(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	prestamo = models.PositiveIntegerField(null=True, blank=True)
 	fechaVencimiento = models.DateField(null=True, blank=True)
+	factura = models.PositiveIntegerField(null=True)
+	cxp = models.CharField(max_length=1, choices=cxp_choices, default='E')
+	
 	
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -117,6 +121,7 @@ class SolicitudOrdenDespachoD(models.Model):
 	articulo = models.CharField(max_length=80, default='No especificado')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
+	descuento = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
 	class Meta:
 		unique_together = ('id','ordenDespacho')

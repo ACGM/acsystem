@@ -7,7 +7,7 @@
 	<div class="facturas" ng-controller="ListadoFacturasCtrl">
 
 		<mensajeerror> </mensajeerror>
-		<!-- <mensajeinfo> </mensajeinfo> -->
+		<mensajeinfo> </mensajeinfo>
 			
 		<div class="sub-menu">	
 			<div class="menu-entrada-inventario-listado">
@@ -72,7 +72,7 @@
 
 				</section>
 
-				<button class="icon-cog Boton boton-postear-factura"> Postear</button>
+				<button class="icon-cog Boton boton-postear-factura" ng-click="postear()"> Postear</button>
 			</section>
 		
 		</div>
@@ -114,7 +114,7 @@
 						</tr>
 						<tr>
 							<td>Fecha</td>
-							<td> <input type="text" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
+							<td> <input type="text" class="input-no-editable" ng-model="dataH.fecha" value="[[dataH.fecha | date: 'dd/MM/yyyy']]" readonly required> </td>
 						</tr>
 						<tr>
 							<td>Socio</td>
@@ -198,13 +198,14 @@
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
 								<td>[[item.unidad]]</td>
-								<td>
+
+								<td class="align-right">
 									<input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" select-on-click required>
 								</td>
-								<td>[[item.precio | number: 2]]</td>
-								<td><input type="text" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei" select-on-click>%</td>
-								<td>[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
-								<td>
+								<td class="align-right">[[item.precio | number: 2]]</td>
+								<td class="align-right"><input type="text" ng-change="calculaTotales()" ng-model="item.descuento" ng-bind="item.descuento" class="cantidad-input-ei short-field" select-on-click>%</td>
+								<td class="align-right">[[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
+								<td class="align-center">
 									<div ng-if="dataH.posteo == 'N'"> <button class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button> </div>
 									
 									<div ng-if="dataH.posteo != 'N'"> <button class="icon-delete eliminar-entrada-producto disabled" disabld="true"></button> </div> 
@@ -249,38 +250,15 @@
 								</td>
 							</tr>
 							<tr>
-								<td>Oficial</td>
-								<td><input type="text" class="input-no-editable" ng-model="OC.oficial" readonly></td>
+								<td>Autorizador</td>
+								<td><input type="text" class="input-no-editable" ng-model="OC.autorizador" readonly></td>
 								
 							</tr>
 							<tr>
-								<td>Pagar Por</td>
+								<td>Representante</td>
 								<td>
-									<select name="pagarpor" id="pagarpor" ng-model="OC.pagarPor" class="field-choices" readonly>
-										<option value="EM">Empresa</option>
-										<option value="CA">Cajero</option>
-									</select>
+									<input type="text" class="input-no-editable" ng-model="OC.representante" readonly>
 								</td>
-							</tr>
-							<tr>
-								<td>Forma Pago</td>
-								<td>
-									<select name="formapago" id="formapago" ng-model="OC.formaPago" class="field-choices" readonly>
-										<option value="Q">Quincenal</option>
-										<option value="M">Mensual</option>
-									</select>
-								</td>
-								
-							</tr>
-							<tr>
-								<td>Quincena</td>
-								<td>
-									<select name="quincena" id="quincena" ng-model="OC.quincena" class="field-choices" readonly>
-										<option value="1">1ra Quincena</option>
-										<option value="2">2da Quincena</option>
-									</select>
-								</td>
-								
 							</tr>
 							<tr>
 								<td>Tasa Interes Anual</td>
@@ -297,14 +275,12 @@
 							<tr>
 								<td>Valor Cuotas</td>
 								<td><input type="text" class="input-no-editable" ng-model="OC.valorCuotas" readonly></td>
-								
 							</tr>
 							<tr>
 								<td colspan="2">
 									<button class="icon-save [[BotonOC]] Boton-Orden-Compra" type="submit" ng-disabled="disableOC">Guardar</button>
 								</td>
 							</tr>
-							
 						</table>
 					</div>
 					

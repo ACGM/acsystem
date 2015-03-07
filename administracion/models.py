@@ -143,7 +143,7 @@ class Suplidor(models.Model):
 	estatus_choices = (('A','Activo'), ('I','Inactivo'))
 	sexo_choices = (('M','Masculino'),('F','Femenino'),)
 
-	tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=1, choices=tipoIdentificacion_choices, default='C')
+	tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=2, choices=tipoIdentificacion_choices, default='C')
 	cedulaRNC = models.CharField("Cedula o RNC", unique=True, max_length=25)
 	nombre = models.CharField(max_length=60)
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
