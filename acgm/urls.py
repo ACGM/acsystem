@@ -25,7 +25,7 @@ from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODA
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, ImprimirSolicitudPView
 
 from ahorro.views import AhorroView, MaestraAhorroView
-from cuenta.views import CuentasView
+from cuenta.views import CuentasView, diarioView
 from cxp.views import CxpView
 
 #ViewSets (API)
@@ -39,7 +39,7 @@ from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsVi
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop, CxpOrdenCuentasG
+from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
 
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
@@ -228,11 +228,11 @@ urlpatterns = patterns('',
 
     #Cuentas
     url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
+    url(r'^contabilidad/DiarioGeneral/$', diarioView.as_view(), name='diario_general'),
 
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),
     url(r'^cxpOrdenJson/$', CxpOrdenView.as_view(), name='Cxp_Ordenes_api'),
-    url(r'^cxpCuentasJson/$',CxpOrdenCuentasG.as_view(), name='Cxp_Cuentas_apo'),
     url(r'^cxpSuperJson/$', CxpSuperCoop.as_view(), name='Cxp_SuperCoop_api'),
 
     

@@ -1,0 +1,78 @@
+{% extends "base.html "%}
+
+{% block title%} Diario General {% endblock title %}
+
+{% block content%}
+<section class="DiarioSearch" ng-init="getAll()">
+	<div class="sub-menu">	
+				<a href="#" ng-click="toggleLF()">Diario General</a>
+			<!-- <a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a> -->
+	</div>
+	<div>
+		<div class="DiarioHidenTable">
+			<table class="socios-table-search" ng-show="tableCuentas">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>descripcion</td>
+						</tr>
+						<tr ng-repeat="c in cuentas" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selCuenta($event,s)"> [[c.codigo]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[c.descripcion]] </a></td>
+						</tr>
+					</table>
+
+			<table class="socios-table-search" ng-show="tableAux">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableAux=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>descripcion</td>
+						</tr>
+						<tr ng-repeat="a in aux" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selCuenta($event,s)"> [[a.codigo]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[a.descripcion]] </a></td>
+						</tr>
+					</table>
+		</div>
+
+
+		<table>
+			<tr>
+				<td>
+					<label for="FechaI">Fecha Inicial</label> 
+						<input type="text" ng-model="SFechaI" value="[[SFechaI | date: 'dd/MM/yyyy']]" datepicker>
+				</td>
+				<td>
+					<label for="FechaF">Fecha Final</label> 
+						<input type="text" ng-model="SFechaF" value="[[SFechaF | date: 'dd/MM/yyyy']]" datepicker>
+				</td>
+			</tr>
+			<tr>
+				<td><label for="SCuenta">Cuenta</label> 
+						<input type="text" ng-model="SCuenta" ng-keyup="getCuentas($event)" ng-focus="tableCuentas=false" ng-click="tableCuentas=false; errorShow=false;" class="producto-field-ei" required>
+
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="SCuenta=''; getCuentas($event)"></a>
+							
+							<span class="error-ei"> [[cuentaNoExiste]]</span>
+
+				<td>
+					<label for="SAux">Auxiliar</label> 
+						<input type="text" ng-model="SAux" ng-keyup="getAux($event)" ng-focus="tableAux=false" ng-click="tableAux=false; errorShow=false;" class="producto-field-ei" required>
+
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="SAux=''; getCuentas($event)"></a>
+							
+							<span class="error-ei"> [[auxNoExiste]]</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+</section>
+{% endblock content%}

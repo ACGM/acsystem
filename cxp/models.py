@@ -35,20 +35,6 @@ class OrdenCompra(models.Model):
     class Meta:
         ordering = ['suplidor', 'fecha']
 
-class CuentasGenericasOrdenes(models.Model):
-    Origen_choicer = (('D', 'Debito'), ('C', 'Credito'))
-
-    cuenta = models.ForeignKey(Cuentas, null=True, blank=True)
-    aux = models.ForeignKey(Auxiliares, null=True, blank=True)
-    origen = models.CharField(max_length=1, choices=Origen_choicer)
-
-    def __unicode__(self):
-        return '%s-%s-%s' % (self.origen, str(self.cuenta), str(self.aux))
-
-    class Meta:
-        ordering = ['origen']
-
-
 
 # Cuenta por pagar a suplidor de SuperCoop
 class CxpSuperCoop(models.Model):

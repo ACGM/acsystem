@@ -2926,6 +2926,40 @@ footer
 			background verdeClarito
 			color white
 			
+.sub-menu-contabilidad	
+	background verde
+	border 3px solid colorBordeSubMenu
+	list-style none
+	margin 1.7em 0 0 15.4em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent colorBordeSubMenu transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+
+
 
 .generic-table //CLASE para darle formato a las tablas 
 	margin 1em 0 1em 0

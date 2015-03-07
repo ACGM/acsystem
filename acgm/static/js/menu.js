@@ -20,7 +20,11 @@
 		    }
 
 		    $scope.ShowSubMenuCxp = function(valor){
-		    	$scope.SubCxp =valor;
+		    	$scope.SubCxp = valor;
+		    }
+
+		    $scope.ShowSubMenuCont = function(valor){
+		    	$scope.SubCont = valor;
 		    }
 
 		}]);
