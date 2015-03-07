@@ -200,10 +200,10 @@
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
 								<td>[[item.unidad]]</td>
-								<td><input select-on-click type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required></td>
-								<td>[[item.costo | number: 2]]</td>
-								<td>[[item.cantidad * item.costo | number: 2]]</td>
-								<td>
+								<td class="align-right"><input select-on-click type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required></td>
+								<td class="align-right">[[item.costo | number: 2]]</td>
+								<td class="align-right">[[item.cantidad * item.costo | number: 2]]</td>
+								<td class="align-center">
 									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
 									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
 								</td>

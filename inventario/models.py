@@ -168,6 +168,8 @@ class InventarioD(models.Model):
 		mov = Movimiento()
 		mov.producto = self.producto
 		mov.cantidad = decimal.Decimal(self.cantidadTeorico)
+		mov.precio = self.producto.precio
+		mov.costo = self.costo
 		mov.almacen = self.almacen
 		mov.tipo_mov = self.tipoAccion
 		mov.documento = 'SINV' if self.tipoAccion == 'S' else 'EINV'

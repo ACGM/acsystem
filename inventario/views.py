@@ -352,6 +352,8 @@ class InventarioEliminarView(LoginRequiredMixin, View):
 				mov = Movimiento()
 				mov.producto = item.producto
 				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventario__id=entradaNo).cantidadTeorico) * -1
+				mov.precio = item.producto.precio
+				mov.costo = item.producto.costo
 				mov.almacen = item.almacen
 				mov.documento = 'EINV'
 				mov.documentoNo = entradaNo
@@ -453,6 +455,8 @@ class InventarioSalidaEliminarView(LoginRequiredMixin, View):
 				mov = Movimiento()
 				mov.producto = item.producto
 				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventarioSalida__id=salidaNo).cantidadTeorico) * -1
+				mov.precio = item.producto.precio
+				mov.costo = item.producto.costo
 				mov.almacen = item.almacen
 				mov.documento = 'SINV'
 				mov.documentoNo = salidaNo
@@ -592,6 +596,7 @@ class ProcesarAjusteInvView(LoginRequiredMixin, View):
 				mov.producto = item.producto
 				mov.cantidad = item.cantidadFisico
 				mov.precio = item.producto.precio
+				mov.costo = item.producto.costo
 				mov.almacen = item.almacen
 				mov.documento = 'AINV'
 				mov.documentoNo = ajusteNo

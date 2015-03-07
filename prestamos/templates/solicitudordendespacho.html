@@ -183,7 +183,7 @@
 								<td>
 									<div class="fecha-prestamo">
 										<span class="fecha-solicitud-field">Fecha Solicitud</span>
-										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud" datepicker required>
+										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud" readonly required>
 									</div>
 								</td>
 							</tr>
@@ -304,7 +304,7 @@
 
 							<tr>
 								<td>Fecha para descuento</td>
-								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" datepicker required></td>
+								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" readonly required></td>
 							</tr>
 						</table>
 
@@ -377,6 +377,7 @@
 						<td>Descripción</td>
 						<td>Cantidad</td>
 						<td>Precio</td>
+						<td>Descuento</td>
 						<td>Sub-Total</td>
 						<td>Eliminar</td>
 					</tr>
@@ -384,14 +385,15 @@
 						<td>[[item.articulo]]</td>
 						<td><input type="text" ng-model="item.cantidad" ng-bind="item.cantidad" ng-change="calculaTotales()" class="valor-field-od cantidad" required></td>
 						<td><input type="text" ng-model="item.precio" ng-bind="item.precio" ng-change="calculaTotales()" class="valor-field-od precio" required></td>
-						<td> [[item.cantidad * item.precio | number : 2]]</td>
-						<td>
+						<td><input type="text" ng-model="item.descuento" ng-bind="item.descuento" ng-change="calculaTotales()" class="valor-field-od precio">%</td>
+						<td class="align-right"> [[ (item.cantidad * item.precio) - ((item.descuento/100) * (item.precio * item.cantidad )) | number: 2]]</td>
+						<td class="align-center">
 							<div ng-if="solicitud.estatus == 'P'"><a href="#" class="icon-delete icon-eliminar" ng-click="eliminarArticulo($event, item)"></a></div>
 							<div ng-if="solicitud.estatus != 'P'"><a href="#" class="icon-delete icon-eliminar" ng-disabled="true"></a></div>
 						</td>
 					</tr>
 					<tr ng-if="dataD.length > 0" class="table-articulo-orden-despacho-footer">
-						<td colspan="3">TOTAL: </td>
+						<td colspan="4">TOTAL: </td>
 						<td>[[totalGeneralArticulos | number : 2]]</td>
 						<td> </td>
 					</tr>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Factura, Detalle, OrdenDespachoSuperCoop
+from .models import Factura, Detalle
 
 @admin.register(Factura)
 class FacturaAdmin(admin.ModelAdmin):
@@ -13,8 +13,3 @@ class FacturaAdmin(admin.ModelAdmin):
 class DetalleAdmin(admin.ModelAdmin):
 
 	list_display = ['id', 'factura', 'producto', 'porcentajeDescuento', 'cantidad', 'precio', 'almacen']
-
-@admin.register(OrdenDespachoSuperCoop)
-class OrdenDespachoSuperCoop(admin.ModelAdmin):
-
-	list_display = ['noSolicitud', 'categoria', 'oficial', 'pagarPor', 'formaPago', 'tasaInteresAnual', 'tasaInteresMensual', 'quincena', 'cuotas', 'valorCuotas', 'estatus']

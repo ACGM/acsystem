@@ -482,6 +482,7 @@
       $scope.nuevaEntrada = function(usuario) {
         $scope.solicitante = {};
         $scope.solicitud = {};
+        $scope.dataD = [];
 
         $scope.solicitante.representanteCodigo = '';
         $scope.solicitante.representanteNombre = undefined;
@@ -499,6 +500,7 @@
         $scope.solicitud.prestamo = '';
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.solicitud.ahorrosCapitalizados = "200,000";
         $scope.solicitud.deudasPrestamos = "50,000";
 
@@ -507,6 +509,7 @@
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+
       }
 
       // Funcion para mostrar error por pantalla
@@ -729,6 +732,8 @@
                 $scope.dataD.push(item);
               });
 
+              $scope.calculaTotales();
+
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
                 $scope.disabledButtonBool = false;
@@ -762,6 +767,7 @@
 
         if($event.type == 'keyup' && $event.keyCode == 13 || $event.type == 'click') {
           if(item.articulo.length > 0) {
+            item.descuento = 0;
             $scope.dataD.push(item);
             $scope.articulo = '';
           }
@@ -785,12 +791,18 @@
       //Calcula total de articulos ingresados
       $scope.calculaTotales = function () {
         $scope.totalGeneralArticulos = 0;
+        var descuento = 0;
 
         $scope.dataD.forEach(function (item) {
           valor = item.cantidad * item.precio;
 
           if(!isNaN(valor)) {
-            $scope.totalGeneralArticulos += valor;
+            if (item.descuento != undefined && item.descuento > 0) {
+              descuento = parseFloat(item.descuento/100);
+              descuento = (item.precio * descuento * item.cantidad);
+            } else {descuento=0}
+
+            $scope.totalGeneralArticulos += valor - descuento;
           }
         });
       }
@@ -800,7 +812,7 @@
         if($scope.ArticulosODForm) {
           SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
             if(data == 1) {
-              alert('Se guardo perfectamente');
+              alert('Se guardó perfectamente!');
             } else {
               $scope.mostrarError(data);
             }
