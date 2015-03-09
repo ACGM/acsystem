@@ -692,6 +692,14 @@
         $scope.tableCuenta = false;
       }
 
+      $scope.quitarCC = function(desgloseC) {
+        if($scope.desgloseCuentas.length == 1) {
+          $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
+        } else {
+          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+        }
+      }
+
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
         var idoc = 0;
@@ -967,8 +975,8 @@
   //****************************************************
   //CONTROLLERS Reporte Utilidades                     *
   //****************************************************
-  .controller('ImprimirReporteUtilidadCtrl', ['$scope', '$filter', 'InventarioServiceRPT', 'InventarioService', 'FacturacionService',
-                                              function ($scope, $filter, InventarioServiceRPT, InventarioService, FacturacionService) {
+  .controller('ImprimirReporteUtilidadCtrl', ['$scope', '$filter', 'FacturacionService',
+                                              function ($scope, $filter, FacturacionService) {
 
     // Inicializacion de Variables
 
@@ -987,13 +995,141 @@
     // Para imprimir reporte de Utilidades
     $scope.reporteUtilidades = function() {
       try {
+        var fechaInicio = $scope.fechaInicio.split('/');
+        var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+        var fechaFin = $scope.fechaFin.split('/');
+        var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
         FacturacionService.reporteUtilidad().then(function (data) {
-          $scope.registros = data;
+          $scope.registros = data.filter(function (item) {
+            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
+          });
         });
 
       } catch (e) {
         $scope.mostrarError(e);
       }
+    }
+
+  }])
+
+  //****************************************************
+  //CONTROLLERS Reporte de Ventas Diarias              *
+  //****************************************************
+  .controller('RPTVentasDiariasCtrl', ['$scope', '$filter', 'FacturacionService',
+                                              function ($scope, $filter, FacturacionService) {
+
+    // Inicializacion de Variables
+
+
+    // Funcion para mostrar error por pantalla
+    $scope.mostrarError = function(error) {
+      $scope.errorMsg = error;
+      $scope.errorShow = true;
+    }
+
+    // Mostrar/Ocultar error
+    $scope.toggleError = function() {
+      $scope.errorShow = !$scope.errorShow;
+    }
+
+    // Para imprimir reporte de Ventas Diarias
+    $scope.ventasDiarias = function() {
+      try {
+        var fechaInicio = $scope.fechaInicio.split('/');
+        var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+        var fechaFin = $scope.fechaFin.split('/');
+        var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+        FacturacionService.all().then(function (data) {
+          $scope.registros = data.filter(function (item) {
+            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
+          });
+
+          $scope.totales();
+
+        });
+      } catch (e) {
+        $scope.mostrarError(e);
+      }
+    }
+
+    // Total de monto en Credito
+    $scope.totales = function() {
+      $scope.totalCredito = 0;
+      $scope.totalContado = 0;
+
+      $scope.registros.forEach(function (item) {
+        if(item.terminos == 'CR') {
+          $scope.totalCredito += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
+          console.log($scope.totalCredito)
+          console.log(item.totalGeneral)
+        } else {
+          $scope.totalContado += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
+        }
+      });
+    }
+
+  }])
+
+  //****************************************************
+  //CONTROLLERS Reporte de Resumen de Ventas           *
+  //****************************************************
+  .controller('RPTVentasResumidoCtrl', ['$scope', '$filter', 'FacturacionService',
+                                              function ($scope, $filter, FacturacionService) {
+
+    // Inicializacion de Variables
+
+
+    // Funcion para mostrar error por pantalla
+    $scope.mostrarError = function(error) {
+      $scope.errorMsg = error;
+      $scope.errorShow = true;
+    }
+
+    // Mostrar/Ocultar error
+    $scope.toggleError = function() {
+      $scope.errorShow = !$scope.errorShow;
+    }
+
+    // Para imprimir reporte de Ventas Diarias
+    $scope.ventasDiarias = function() {
+      try {
+        var fechaInicio = $scope.fechaInicio.split('/');
+        var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+        var fechaFin = $scope.fechaFin.split('/');
+        var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+        FacturacionService.all().then(function (data) {
+          $scope.registros = data.filter(function (item) {
+            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
+          });
+
+          $scope.totales();
+
+        });
+      } catch (e) {
+        $scope.mostrarError(e);
+      }
+    }
+
+    // Total de monto en Credito
+    $scope.totales = function() {
+      $scope.totalCredito = 0;
+      $scope.totalContado = 0;
+
+      $scope.registros.forEach(function (item) {
+        if(item.terminos == 'CR') {
+          $scope.totalCredito += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
+          console.log($scope.totalCredito)
+          console.log(item.totalGeneral)
+        } else {
+          $scope.totalContado += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
+        }
+      });
     }
 
   }]);

@@ -1,7 +1,7 @@
 <div class="head">
 
 {% extends "base.html" %}
-{% block title %} Reporte de Ventas Diarias {% endblock title %}
+{% block title %} Reporte de Resumen de Ventas {% endblock title %}
 
 {% block content %}
 
@@ -9,12 +9,12 @@
 
 <mensajeerror> </mensajeerror>
 
-<section class="Factura" ng-controller="RPTVentasDiariasCtrl">
+<section class="Factura" ng-controller="RPTVentasResumidoCtrl">
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
 			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
-			<p class="titulo-utilidad"> Reporte de Ventas Diarias </p>
+			<p class="titulo-utilidad"> Reporte de Resumen de Ventas </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
 

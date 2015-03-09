@@ -13,13 +13,22 @@
 		<div class="align-center">
 			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
 			<p class="titulo-utilidad"> Reporte de Utilidades </p>
-			<p class="fecha-utilidad"> Desde: 0000000 Hasta 0000000 </p>
+			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
+		</div>
+
+		<div class="busqueda-vd">
+			<span>Fecha Inicio</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
+			<span>Fecha Fin</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
+			<button class="Boton" ng-click="reporteUtilidades()">Buscar</button>
 		</div>
 
 		<section class="detalle-utilidad">
 			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
-			<table class="table-producto-factura" ng-init="reporteUtilidades()">
+			<table class="table-producto-factura">
 				<tr>
+					<td>Fecha</td>
 					<td>Categoria</td>
 					<td>Producto</td>
 					<td>Cantidad</td>
@@ -29,6 +38,7 @@
 					<td>Margen</td>
 				</tr>
 				<tr ng-repeat="registro in registros">
+					<td>[[registro.fecha]]</td>
 					<td>[[registro.categoriaDescrp]]</td>
 					<td>[[registro.productoDescrp]]</td>
 					<td>[[registro.cantidad | number : 2]]</td>
@@ -38,8 +48,11 @@
 					<td>[[registro.margen | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="5">TOTALES:</td>
+					<td colspan="3">TOTALES:</td>
 					<td>[[totalDescuento_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
 					<td>[[totalValor_ | number : 2]]</td>
 				</tr>
 			</table>

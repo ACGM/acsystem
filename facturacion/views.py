@@ -200,6 +200,7 @@ class RPTUtilidades(LoginRequiredMixin, DetailView):
 
 		registros = Detalle.objects.raw('SELECT \
 											d.id, \
+											f.fecha, \
 											c.descripcion categoriaDescrp, \
 											d.producto_id, \
 											p.descripcion productoDescrp, \
@@ -209,6 +210,7 @@ class RPTUtilidades(LoginRequiredMixin, DetailView):
 											d.costo, \
 											d.precio - d.costo margen \
 										FROM facturacion_detalle d \
+										LEFT JOIN facturacion_factura f \
 										LEFT JOIN administracion_producto p ON p.id = d.producto_id \
 										LEFT JOIN administracion_categoriaProducto c ON c.id = p.categoria_id \
 										GROUP BY d.producto_id, c.descripcion \
@@ -218,6 +220,7 @@ class RPTUtilidades(LoginRequiredMixin, DetailView):
 		for detalle in registros:
 			data.append({
 				'id': detalle.id,
+				'fecha': detalle.fecha,
 				'productoId': detalle.producto_id,
 				'productoDescrp': detalle.productoDescrp,
 				'categoriaDescrp': detalle.categoriaDescrp,
@@ -226,6 +229,41 @@ class RPTUtilidades(LoginRequiredMixin, DetailView):
 				'valor': detalle.valor,
 				'costo': detalle.costo,
 				'margen': detalle.margen,
+				})
+		return JsonResponse(data, safe=False)
+
+
+# Retornar resumen de ventas
+class RPTResumenVentas(LoginRequiredMixin, DetailView):
+
+	queryset = Detalle.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		fechaI = request.GET.get('fechaI')
+		fechaF = request.GET.get('fechaI')
+
+		return self.json_to_response(fechaI, fechaF)
+
+	def json_to_response(self, fechaInicio, fechaFin):
+		data = list()
+
+		registros = Detalle.objects.raw('SELECT \
+											d.id, \
+											s.nombreCompleto, \
+											SUM((d.cantidad * d.precio) - ((d.porcentajeDescuento/100) * d.precio * d.cantidad)) valor  \
+										FROM facturacion_detalle d \
+										LEFT JOIN facturacion_factura f ON d.factura_id = f.id \
+										LEFT JOIN administracion_socio s ON s.id = f.socio_id \
+										GROUP BY s.nombreCompleto \
+										HAVING f.fecha between \'2015-03-07\' \
+										ORDER BY s.nombreCompleto \
+										')
+
+		for detalle in registros:
+			data.append({
+				'id': detalle.id,
+				'nombreCompleto': detalle.nombreCompleto,
+				'valor': detalle.valor,
 				})
 		return JsonResponse(data, safe=False)
 
@@ -255,3 +293,15 @@ class ImprimirFacturaView(LoginRequiredMixin, TemplateView):
 class RPTUtilidadesView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'print_utilidades.html'
+
+
+#Reporte de Ventas Resumido
+class RPTVentasResumidoView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_ventasResumido.html'
+
+
+#Reporte de Ventas Diarias
+class RPTVentasDiariasView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_ventasDiarias.html'
