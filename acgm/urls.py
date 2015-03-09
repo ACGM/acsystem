@@ -7,22 +7,25 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
 
-from inventario.views import InventarioView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
-                                ImprimirEntradaInventarioView, SalidaInventarioView, RPTEntradaSalidaArticuloView, \
+from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
+                                ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
-                                ListadoTransfInvView, RPTAjusteInventarioView
+                                ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
+                                InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT, \
+                                ProcesarAjusteInvView
 
-from facturacion.views import FacturacionView, FacturaById, OrdenDespachoSPView, ImprimirFacturaView
+from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
-                            AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico
+                            AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
+                            ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView
 
-from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, ImprimirSolicitudPView
+from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById
 
 from ahorro.views import AhorroView, MaestraAhorroView
 from cuenta.views import CuentasView, diarioView
@@ -45,7 +48,7 @@ from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperC
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
                                 AutorizadoresViewSet, EmpresasViewSet, RepresentantesViewSet, \
-                                CategoriaProductoViewSet
+                                CategoriaProductoViewSet, GenerarArchivoBancoView
 
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
@@ -53,14 +56,15 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
-                                SuplidorByNombreView, ProductoByDescrpView
+                                SuplidorByNombreView, ProductoByDescrpView, DocumentoCuentasView
 
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
-                                getExistenciaRPT
+                                getExistenciaRPT, RPTMovimientoProductoAPIView
 
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
+from facturacion.views import DetalleFacturasView
 
 
 admin.site.site_header = 'COOPERATIVA'
@@ -104,6 +108,7 @@ router.register(r'notas_Conciliacion',NotasConsViewSet)
 
 #inventario
 router.register(r'inventario', ListadoEntradasInvView)
+router.register(r'inventariosalidas', ListadoSalidasInvView)
 router.register(r'almacenes', ListadoAlmacenesView)
 router.register(r'ajustesInventario', ListadoAjustesInvView)
 router.register(r'transfAlmacenes', ListadoTransfInvView)
@@ -132,11 +137,15 @@ urlpatterns = patterns('',
     
     #Administracion
     url(r'^productosSearch/$', 'administracion.views.productosSearch', name='productos_search'),
+    url(r'^cuentasSearch/$', 'cuenta.views.cuentasSearch', name='cuentas_search'),
 
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
     url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
+    url(r'^api/documentoCuentas/(?P<doc>[\w]+)/$', DocumentoCuentasView.as_view(), name='documento_cuentas_by_codigo'),
+    
+    url(r'^generarArchivoBanco/$', GenerarArchivoBancoView.as_view(), name='generar_archivo_banco'),
 
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
@@ -155,30 +164,43 @@ urlpatterns = patterns('',
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
-    url(r'^inventario/salida/$', SalidaInventarioView.as_view(), name='Inventario_salida'),
+    url(r'^inventario/salida/$', InventarioSalidaView.as_view(), name='Inventario_salida'),
     url(r'^inventariojson/$', EntradaInventarioById.as_view(), name='InventarioById'),
+    url(r'^inventariosalidajson/$', SalidaInventarioById.as_view(), name='Inventario_SalidaById'),
     url(r'^inventario/ajuste/$', AjusteInvView.as_view(), name='AjusteInventario'),
     url(r'^inventario/ajustejson/$', AjusteInventarioById.as_view(), name='AjusteInventarioById'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
+    url(r'^inventario/eliminar/$', InventarioEliminarView.as_view(), name='Inventario_eliminar'),
+    url(r'^inventario/salida/eliminar/$', InventarioSalidaEliminarView.as_view(), name='Inventario_salida_eliminar'),
+    url(r'^inventario/procesarAjuste/$', ProcesarAjusteInvView.as_view(), name='Inventario_procesar_ajuste'),
+    
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
     #Inventario#Reportes
-    url(r'^inventario/reportes/entradaSalidaArticulo/$', RPTEntradaSalidaArticuloView.as_view(), name='Inventario_reporte_entradaSalida'),
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
+    url(r'^inventario/reportes/conteoFisico/$', RPTConteoFisicoArticuloView.as_view(), name='Inventario_reporte_conteoFisico'),
+    url(r'^inventario/reportes/histMovArt/$', RPTMovimientoArticuloView.as_view(), name='Inventario_reporte_historico'),
     
-    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
-    url(r'^inventario/reportes/conteoFisico/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_conteoFisico'),
-    url(r'^inventario/reportes/histMovArt/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_historico'),
+    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'), #CONTRUCCION
 
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
+    url(r'^inventario/api/reportes/existencia/conteoFisico/$', getExistenciaConteoFisicoRPT.as_view(), name='existencia_conteoFisico_api'),
+    
+    url(r'^api/inventario/movimiento/(?P<codProd>[\w\s]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/(?P<almacen>[\d]+)/$', RPTMovimientoProductoAPIView.as_view(), name='mov_producto_api'),
+    
 
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
-    url(r'^ordenSuperCoop/$', OrdenDespachoSPView.as_view(), name='Orden_de_Compra'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
+    url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
+
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
+
+    #Facturacion#Reportes
+    url(r'^facturacion/reportes/utilidades/$', RPTUtilidades.as_view(), name='Reporte_Utilidades'),
+    url(r'^facturacion/reportes/utilidades/vista/$', RPTUtilidadesView.as_view(), name='Reporte_Utilidades_vista'),
     
 
     #Prestamos
@@ -194,8 +216,11 @@ urlpatterns = patterns('',
     url(r'^prestamosDesembolsoElectronicojson/$', PrestamosDesembolsoElectronico.as_view(), name='prestamos_desembolso_electronico'),
 
     url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
+    url(r'^prestamos/maestra/marcarcomo/$', MarcarPrestamoComoDCView.as_view(), name='marcar_prestamo_como'),
+    
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),
+    url(r'^prestamos/print/recibidoconforme/$', ImprimirRecibidoConformeView.as_view(), name='Recibido_Conforme_print'),
 
 
     #Prestamos -- Solicitudes Prestamos

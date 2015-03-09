@@ -9,11 +9,37 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('administracion', '0005_auto_20150211_2334'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('administracion', '__first__'),
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='AjusteInventarioD',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidadFisico', models.DecimalField(max_digits=12, decimal_places=2, blank=True)),
+                ('cantidadTeorico', models.DecimalField(max_digits=12, decimal_places=2, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AjusteInventarioH',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField()),
+                ('notaAjuste', models.CharField(max_length=200, null=True, blank=True)),
+                ('estatus', models.CharField(default=b'N', max_length=1)),
+                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
+                ('usuario', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ('id',),
+            },
+            bases=(models.Model,),
+        ),
         migrations.CreateModel(
             name='Almacen',
             fields=[
@@ -67,15 +93,14 @@ class Migration(migrations.Migration):
                 ('diasPlazo', models.CharField(max_length=3, null=True, verbose_name=b'Dias de Plazo', blank=True)),
                 ('nota', models.TextField(null=True, blank=True)),
                 ('ncf', models.CharField(max_length=25, null=True, verbose_name=b'NCF', blank=True)),
-                ('descripcionSalida', models.CharField(max_length=255, null=True, verbose_name=b'Descripci\xc3\xb3n de Salida', blank=True)),
-                ('fechaSalida', models.DateTimeField(null=True, verbose_name=b'Fecha de Salida', blank=True)),
-                ('numeroSalida', models.PositiveIntegerField(null=True, blank=True)),
                 ('posteo', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'NO'), (b'S', b'SI')])),
                 ('condicion', models.CharField(default=b'CO', max_length=2, choices=[(b'CO', b'Contado'), (b'CR', b'Credito')])),
+                ('cxp', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'EN PROCESO'), (b'P', b'PROCESADA')])),
+                ('borrado', models.BooleanField(default=False)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('suplidor', models.ForeignKey(blank=True, to='administracion.Suplidor', null=True)),
+                ('borradoPor', models.ForeignKey(related_name='+', editable=False, to=settings.AUTH_USER_MODEL, null=True)),
+                ('suplidor', models.ForeignKey(to='administracion.Suplidor')),
                 ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('usuarioSalida', models.ForeignKey(related_name='+', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ('-id',),
@@ -85,15 +110,37 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='InventarioHSalidas',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField(default=datetime.datetime.now)),
+                ('descripcionSalida', models.CharField(max_length=255, null=True, verbose_name=b'Descripci\xc3\xb3n de Salida', blank=True)),
+                ('posteo', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'NO'), (b'S', b'SI')])),
+                ('borrado', models.BooleanField(default=False)),
+                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
+                ('borradoPor', models.ForeignKey(related_name='+', editable=False, to=settings.AUTH_USER_MODEL, null=True)),
+                ('usuarioSalida', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ('-id',),
+                'verbose_name': 'Inventario Cabecera SALIDAS',
+                'verbose_name_plural': 'Inventario Cabecera SALIDAS',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Movimiento',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('fecha_movimiento', models.DateField(auto_now_add=True)),
+                ('fechaMovimiento', models.DateField(auto_now_add=True)),
+                ('documento', models.CharField(max_length=4, choices=[(b'EINV', b'Entrada Inventario'), (b'SINV', b'Salida Inventario'), (b'AINV', b'Ajuste Inventario'), (b'FACT', b'Facturacion')])),
+                ('documentoNo', models.PositiveIntegerField()),
                 ('tipo_mov', models.CharField(default=b'E', max_length=1, verbose_name=b'Tipo de Movimiento', choices=[(b'E', b'Entrada'), (b'S', b'Salida')])),
                 ('datetime_server', models.DateTimeField(auto_now_add=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
+                ('userLog', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['producto'],
@@ -105,7 +152,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('fechaTransf', models.DateField()),
+                ('fechaTransf', models.DateField(auto_now_add=True)),
                 ('desdeAlmacen', models.ForeignKey(related_name='+', to='inventario.Almacen')),
                 ('hastaAlmacen', models.ForeignKey(related_name='+', to='inventario.Almacen')),
                 ('producto', models.ForeignKey(to='administracion.Producto')),
@@ -119,7 +166,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='inventariod',
             name='inventario',
-            field=models.ForeignKey(to='inventario.InventarioH'),
+            field=models.ForeignKey(to='inventario.InventarioH', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='inventariod',
+            name='inventarioSalida',
+            field=models.ForeignKey(to='inventario.InventarioHSalidas', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -131,5 +184,23 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='existencia',
             unique_together=set([('producto', 'almacen')]),
+        ),
+        migrations.AddField(
+            model_name='ajusteinventariod',
+            name='ajusteInvH',
+            field=models.ForeignKey(to='inventario.AjusteInventarioH'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='ajusteinventariod',
+            name='almacen',
+            field=models.ForeignKey(to='inventario.Almacen'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='ajusteinventariod',
+            name='producto',
+            field=models.ForeignKey(to='administracion.Producto'),
+            preserve_default=True,
         ),
     ]

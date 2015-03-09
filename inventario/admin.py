@@ -6,7 +6,7 @@ from .models import Almacen, InventarioH, InventarioD, Movimiento, Existencia, A
 
 @admin.register(InventarioH)
 class InventarioHAdmin(admin.ModelAdmin):
-	list_display = ['id','fecha','suplidor','orden','factura','diasPlazo','ncf','posteo','nota','descripcionSalida','totalGeneral']
+	list_display = ['id','fecha','suplidor','orden','factura','diasPlazo','ncf','posteo','nota','totalGeneral']
 	# readonly_fields = ('total',)
 
 @admin.register(InventarioD)
@@ -34,5 +34,8 @@ class AjusteInventarioDAdmin(admin.ModelAdmin):
 class TransferenciasAlmacenes(admin.ModelAdmin):
 	list_display = ('id', 'desdeAlmacen', 'hastaAlmacen', 'cantidad', 'producto', 'fechaTransf')
 
-admin.site.register(Movimiento)
+@admin.register(Movimiento)
+class MovimientoAdmin(admin.ModelAdmin):
+	list_display = ('id', 'getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'tipo_mov', 'getUsuario', 'documentoNo')
+	search_fields = ('producto',)
 

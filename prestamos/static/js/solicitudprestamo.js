@@ -256,6 +256,7 @@
                                         function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService) {
       
       //Inicializacion de variables
+      $scope.mostrar = 'mostrar';
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
       $scope.tableSocio = false; //Mostrar tabla que contiene los socios
       $scope.showLSP = true; //Mostrar el listado de solicitudes
@@ -296,6 +297,7 @@
 
       //Listado de todas las solicitudes de prestamos
       $scope.listadoSolicitudes = function(noSolicitud) {
+        $scope.mostrar = 'mostrar';
         $scope.solicitudesSeleccionadas = [];
         $scope.valoresChk = [];
         $scope.estatus = 'T';
@@ -303,7 +305,6 @@
         SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
           $scope.solicitudes = data;
           $scope.regAll = false;
-
 
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
@@ -313,7 +314,10 @@
               $scope.valoresChk[i] = false;
               i++;
             });
+            $scope.mostrar = 'ocultar';
           }
+        }, function() {
+          $scope.mostrar = 'ocultar';
         });
       }
 
@@ -486,6 +490,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.solicitudesSeleccionadas = [];
 
         $scope.solicitudes.forEach(function (data) {
           if (data.estatus != 'A' && data.estatus != 'R' && data.estatus != 'C') {
@@ -537,6 +542,8 @@
         $scope.solicitud.prestamo = '';
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
+        $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
+        
         $scope.solicitud.ahorrosCapitalizados = "200,000";
         $scope.solicitud.deudasPrestamos = "50,000";
 
@@ -692,7 +699,6 @@
           }
 
           SolicitudPrestamoService.AprobarRechazarSolicitudes($scope.solicitudesSeleccionadas, accion).then(function (data) {
-            console.log(data);
             if(data == 1) {
               $scope.listadoSolicitudes();
             } else {

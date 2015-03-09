@@ -26,16 +26,18 @@
 						<td>Estatus</td>
 						<td>Numero</td>
 						<td>Fecha</td>
-						<td>Eliminar</td>
+						<td>Procesar</td>
+						<!-- <td>Eliminar</td> -->
 					</tr>
 
 					<tr ng-repeat="ajuste in ajustes" class="productos-table-detail" ng-init="total=0">
-						<td class="icon-folder posteo-[[entrada.posteo]]"></td>
+						<td class="[[ajuste.estatus | posteoFolderIcon]] posteo-[[ajuste.estatus]] align-center"></td>
 						<td> <a href="#" class="sp-field" ng-click="DocFullById(ajuste.id)"> [[ajuste.id | numberFixedLen: 8]] </a> </td>
 						<td>[[ajuste.fecha | date: 'dd/MM/yyyy']]</td>
-						<td>
-							<a href="#" class="icon-delete icon-eliminar"></a> 
+						<td class="align-center">
+							<a ng-show="ajuste.estatus != 'S'" href="#" class="icon-cog icon-imprimir" ng-click="procesarAjuste(ajuste.id)"></a>
 						</td>
+						<!-- <td><a href="#" class="icon-delete icon-eliminar"></a> </td> -->
 					</tr>
 				</table>
 
@@ -55,7 +57,7 @@
 							<td>Numero</td>
 							<td> <input type="text" ng-model="dataH.numero" class="input-disabled" readonly> </td>
 							<td>Fecha</td>
-							<td> <input type="text" class="fecha-solicitud-field-t" ng-model="dataH.fecha" datepicker required> </td>
+							<td> <input type="text" class="fecha-solicitud-field-t input-disabled" ng-model="dataH.fecha" ng-disabled="true" datepicker required> </td>
 						</tr>
 						<tr>
 							<td>Nota</td>
@@ -78,7 +80,7 @@
 							<!-- <a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a>  -->
 						</div>
 					</div>
-					<div class="content-productos">
+					<div class="content-productos-ajuste-inv">
 						<productosSearch> </productosSearch>
 					</div>
 					

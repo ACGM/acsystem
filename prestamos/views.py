@@ -1,4 +1,4 @@
-# VIEWS de Solicitud de Prestamo
+# VIEWS de Prestamo
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
-from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra
+from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco
 
 from acgm.views import LoginRequiredMixin
 
@@ -289,10 +289,33 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 				return HttpResponse(e)
 
 
+# Marcar como Desembolso Electronico o Cheque
+class MarcarPrestamoComoDCView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			prestamos = data['prestamos']
+			accion = data['accion']
+			
+			# Marcar cada prestamo con D - Para Desembolsos Electronicos o C - Para Cheques
+			for prestamo in prestamos:
+				p = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
+				p.estatus = accion
+				p.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
 # Prestamos para Desembolso Electronico
 class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 
-	queryset = MaestraPrestamo.objects.filter(estatus='P')
+	queryset = MaestraPrestamo.objects.filter(estatus='E', noSolicitudPrestamo__gt=0).order_by('-noPrestamo')
 
 	def get(self, request, *args, **kwargs):
 
@@ -308,6 +331,8 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 	def json_to_response(self):
 		data = list()
 
+		banco = Banco.objects.latest('codigo')
+
 		for prestamo in self.object_list:
 			data.append({
 				'noPrestamo': prestamo.noPrestamo,
@@ -317,8 +342,23 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				'socioCedula': prestamo.socio.cedula,
 				'socioCuentaBancaria': prestamo.socio.cuentaBancaria,
 				'socioTipoCuentaBancaria': prestamo.socio.tipoCuentaBancaria,
+				'bancoCodigo': banco.codigo,
+				'bancoNombre': banco.nombre,
 				'netoDesembolsar': prestamo.montoInicial,
+				'fechaDesembolso': prestamo.fechaDesembolso,
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+#Imprimir Solicitud de Prestamo
+class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_solicitudprestamo.html'
+
+
+#Imprimir Solicitud de Prestamo
+class ImprimirRecibidoConformeView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_recibidoconforme.html'
 

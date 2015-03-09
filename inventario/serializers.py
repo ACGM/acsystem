@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes
+from .models import Existencia, InventarioH, InventarioD, Almacen, AjusteInventarioH, TransferenciasAlmacenes, InventarioHSalidas, Movimiento
 from administracion.models import Suplidor
 
 # Listado de Entradas de Inventario
@@ -11,7 +11,16 @@ class EntradasInventarioSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = InventarioH
-		fields = ('id','posteo','fecha','ncf','factura','suplidor','totalGeneral','getTipo')
+		fields = ('id','posteo','fecha','ncf','factura','suplidor', 'borrado', 'totalGeneral')
+		ordering = ('-id',)
+
+
+# Listado de Salidas de Inventario
+class SalidasInventarioSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = InventarioHSalidas
+		fields = ('id','posteo','fecha', 'borrado', 'totalGeneral')
 		ordering = ('-id',)
 
 
@@ -58,3 +67,12 @@ class ExistenciaProductoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Existencia
 		fields = ('producto', 'getCodigo', 'cantidad', 'almacen')
+
+
+# Movimiento de Producto
+class MovimientoProductoSerializer(serializers.ModelSerializer):
+	producto = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = Movimiento
+		fields = ('getCodProd', 'producto', 'cantidad', 'almacen', 'fechaMovimiento', 'documento', 'documentoNo', 'tipo_mov', 'precio')

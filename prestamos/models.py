@@ -67,6 +67,7 @@ class SolicitudPrestamo(models.Model):
 # Solicitud de Orden de Despacho Cabecera
 class SolicitudOrdenDespachoH(models.Model):
 
+	cxp_choices = (('E','EN PROCESO'),('P','PROCESADA'))
 	estatus_choices = (('P','En Proceso'),('A','Aprobado'),('R','Rechazado'),('C','Cancelado'))
 
 	noSolicitud = models.IntegerField(unique=True)
@@ -99,6 +100,9 @@ class SolicitudOrdenDespachoH(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	prestamo = models.PositiveIntegerField(null=True, blank=True)
 	fechaVencimiento = models.DateField(null=True, blank=True)
+	factura = models.PositiveIntegerField(null=True)
+	cxp = models.CharField(max_length=1, choices=cxp_choices, default='E')
+	
 	
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -107,6 +111,9 @@ class SolicitudOrdenDespachoH(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	def __unicode__(self):
+		return '%s' % (str(self.noSolicitud))
+
 # Solicitud de Orden de Despacho Detalle
 class SolicitudOrdenDespachoD(models.Model):
 
@@ -114,12 +121,16 @@ class SolicitudOrdenDespachoD(models.Model):
 	articulo = models.CharField(max_length=80, default='No especificado')
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2)
+	descuento = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+
+	class Meta:
+		unique_together = ('id','ordenDespacho')
 
 
 #Maestra de Prestamos
 class MaestraPrestamo(models.Model):
 
-	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'),)
+	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'), ('C', 'Cheque'), ('D','Desembolso'))
 
 	noPrestamo = models.PositiveIntegerField(unique=True)
 	noSolicitudPrestamo = models.ForeignKey(SolicitudPrestamo, null=True, blank=True)
@@ -140,10 +151,12 @@ class MaestraPrestamo(models.Model):
 	montoCuotaQ1 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	montoCuotaQ2 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	fechaDesembolso = models.DateField(null=True, blank=True)
+	usuarioDesembolso = models.ForeignKey(User, related_name='+', null=True)
 	fechaEntrega = models.DateField(null=True, blank=True)
 	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
+	fechaAprobacion = models.DateField(auto_now_add=True, null=True)
 
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
@@ -237,21 +250,6 @@ class NotaDeDebitoPrestamo(models.Model):
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 
-# Desembolsos Electronicos
-class DesembolsoElectronico(models.Model):
-
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
-
-	fecha = models.DateField(auto_now_add=True)
-	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	monto = models.DecimalField(max_digits=18, decimal_places=2)
-	banco = models.ForeignKey(Banco)
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
-
-	userLog = models.ForeignKey(User, related_name='+')
-	datetimeServer = models.DateTimeField(auto_now_add=True)
-
-
 # Distribuccion de Excedentes -- Este proceso se corre una vez al agno
 # Consiste en repartir un % de los interes retenidos por la cooperativa entre los socios, depositandolo directamente en los ahorros.
 class DistribucionExcedente(models.Model):
@@ -261,3 +259,6 @@ class DistribucionExcedente(models.Model):
 	porcentaje = models.DecimalField(max_digits=6, decimal_places=2)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	fechaPosteo = models.DateField(auto_now=True, null=True)
+
+	userLog = models.ForeignKey(User, editable=False)
+	datetimeServer = models.DateTimeField(auto_now_add=True)

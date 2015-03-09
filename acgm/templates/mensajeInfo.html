@@ -1,4 +1,4 @@
-<section class="posteo-contabilidad-panel" ng-show="false">
+<section class="posteo-contabilidad-panel" ng-show="showPostear" ng-disabled="true">
 	
 	<div class="fondo-opaco">
 	</div>
@@ -9,13 +9,15 @@
 		<a href="#" class="cerrarError" ng-click="toggleInfo()">X</a>
 
 		<section class="content-cuentas-posteo">
-			<div class="section-agregar-cuenta">
+			<div ng-show="iDocumentos < 2" class="section-agregar-cuenta">
 
 				<ul class="posteo-cuenta-agregar">
-					<li><input type="text" class="codigo-cuenta-posteo" placeholder="Codigo Cuenta"></li>
-					<li><input type="text" class="descrp-cuenta-posteo" placeholder="Descripcion Cuenta"></li>
-					<li><button class="Boton boton-agregar-cuenta-posteo">Agregar</button></li>
+					<li><input type="text" class="descrp-cuenta-posteo" placeholder="Codigo ó Descripcion de Cuenta" ng-model="Postear.cuentaBuscar" ng-change="cuentasBuscar($event)"></li>
 				</ul>
+				
+				<div class="cuentas-contables-posteo">
+					<cuentasSearch> </cuentasSearch>
+				</div>
 			</div>
 
 			<div class="table-posteo-cuentas">
@@ -26,135 +28,21 @@
 						<td>Doc. Ref.</td>
 						<td>DEBITO</td>
 						<td>CREDITO</td>
-						<td>Quitar</td>
+						<td class="align-center">Quitar</td>
 					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>8,900</td>
-						<td>0</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
+					<tr class="table-posteo-cuentas-detail" ng-repeat="desgloseC in desgloseCuentas">
+						<td>[[desgloseC.cuenta]]</td>
+						<td>[[desgloseC.descripcion]]</td>
+						<td>[[desgloseC.ref]]</td>
+						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.debito" ng-bind="desgloseC.debito"></td>
+						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.credito" ng-bind="desgloseC.credito"></td>
+						<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarCC(desgloseC)"></a></td>
 					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>8,900</td>
-						<td>0</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>1001001</td>
-						<td>Cuenta por Cobrar Suplidor</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-					<tr class="table-posteo-cuentas-detail">
-						<td>100192001</td>
-						<td>Cuenta por Cobrar Suplidorxxxxxxxxxxxxxxxxxx</td>
-						<td>INV-000034</td>
-						<td>0</td>
-						<td>8,900</td>
-						<td><a href="#" class="icon-delete icon-eliminar"></a></td>
+					<tr>
+						<td colspan="3" class="resaltar-valor">TOTALES:</td>
+						<td class="resaltar-valor verde align-right">[[totalDebito | number : 2]]</td>
+						<td class="resaltar-valor verde align-right">[[totalCredito | number : 2]]</td>
+						<td></td>
 					</tr>
 
 				</table>

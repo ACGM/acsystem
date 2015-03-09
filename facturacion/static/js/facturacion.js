@@ -33,7 +33,6 @@
         return deferred.promise;
       }
 
-
       //Guardar Orden de Compra
       function guardarOrdenSC(Orden) {
         var deferred = $q.defer();
@@ -149,6 +148,20 @@
         return deferred.promise;
       }
 
+      //Impresion de Reporte de Utilidad
+      function reporteUtilidad() {
+        var deferred = $q.defer();
+
+        $http.get('/facturacion/reportes/utilidades/'.replace('{fechaI}','fact'), {'fechaF': 'fact'}).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byPosteo: byPosteo,
@@ -158,7 +171,8 @@
         DocumentoById: DocumentoById,
         categoriasPrestamos: categoriasPrestamos,
         guardarOrdenSC: guardarOrdenSC,
-        impresionFact: impresionFact
+        impresionFact: impresionFact,
+        reporteUtilidad : reporteUtilidad
       };
 
     }])
@@ -167,8 +181,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', '$window', 'FacturacionService', 'InventarioService', 
-                                        function ($scope, $filter, $rootScope, $timeout, $window, FacturacionService, InventarioService) {
+    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', '$window', 'appService', 'FacturacionService', 'InventarioService', 
+                                        function ($scope, $filter, $rootScope, $timeout, $window, appService, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
       $rootScope.mostrarOC = false;
@@ -204,6 +218,10 @@
         }
       }
 
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
 
       //Listado de todas las facturas
       $scope.listadoFacturas = function() {
@@ -331,7 +349,6 @@
                 $rootScope.FullOrden(data[0]['ordenDetalle']);
               }
             }
-
           }, 
             (function () {
               $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
@@ -428,6 +445,7 @@
 
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
+        $scope.facturasSeleccionadas = [];
 
         $scope.facturas.forEach(function (data) {
           if (data.posteo == 'N') {
@@ -659,6 +677,58 @@
         }  
       }
 
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+        var desgloseCuenta = new Object();
+
+        desgloseCuenta.cuenta = cuenta.codigo;
+        desgloseCuenta.descripcion = cuenta.descripcion;
+        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+        desgloseCuenta.debito = 0;
+        desgloseCuenta.credito = 0;
+
+        $scope.desgloseCuentas.push(desgloseCuenta);
+        $scope.tableCuenta = false;
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postear = function(){
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        appService.getDocumentoCuentas('FACT').then(function (data) {
+          $scope.documentoCuentas = data;
+  
+          //Prepara cada linea de posteo
+          $scope.facturasSeleccionadas.forEach(function (item) {
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+              if (documento.accion == 'D') {
+                $scope.totalDebito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
+              } else {
+                $scope.totalCredito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
+              }
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + item.id;
+              desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            idoc += 1;
+          });
+          $scope.iDocumentos = idoc;
+        });
+      }
+
       //Imprimir factura
       $scope.ImprimirFactura = function(factura) {
         $window.sessionStorage['factura'] = JSON.stringify(factura);
@@ -670,8 +740,8 @@
    //*************************************************//
    // CONTROLLERS  ORDEN DE SUPERCOOP                *
    //*************************************************//
-   .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'FacturacionService',
-                                      function ($scope, $filter, $rootScope, FacturacionService) {
+   .controller('OrdenSuperCoopCtrl', ['$scope', '$filter', '$rootScope', 'SolicitudOrdenDespachoService', 'FacturacionService',
+                                      function ($scope, $filter, $rootScope, SolicitudOrdenDespachoService, FacturacionService) {
     
       //Inicializacion de variables
       // Limpiar Orden de Compra
@@ -684,7 +754,6 @@
       $scope.showOC = false;
       $rootScope.clearOrden();
 
-
       // Mostrar/Ocultar panel para llenar datos de orden de compra
       $rootScope.mostrarOrden = function(valor) {
         $scope.showOC = valor;
@@ -695,14 +764,11 @@
       $rootScope.getCategoriaPrestamo = function(oficial) {
         FacturacionService.categoriasPrestamos("SUPERCOOP").then(function (data) {
 
-          $scope.OC.oficial = oficial;
+          // $scope.OC.oficial = oficial;
           $scope.OC.categoriaId = data[0]['id'];
           $scope.OC.categoriaDescrp = data[0]['descripcion'];
           $scope.OC.interesA = data[0]['interesAnualSocio'];
           $scope.OC.interesM = parseFloat(data[0]['interesAnualSocio'])/12;
-          $scope.OC.pagarPor = 'EM';
-          $scope.OC.formaPago = 'Q';
-          $scope.OC.quincena = '1';
           $scope.OC.cantidadCuotas = 2;
           $scope.OC.valorCuotas = $filter('number')(parseFloat($rootScope.total.replace(',','')) /2, 2);
 
@@ -715,35 +781,70 @@
 
         try {
           var Orden = new Object();
-          Orden.solicitud = $scope.OC.solicitud != undefined? parseInt('0' + $scope.OC.solicitud) : 0;
-          Orden.categoriaPrestamo = $scope.OC.categoriaId;
-          Orden.oficial = $scope.OC.oficial;
-          Orden.pagarPor = $scope.OC.pagarPor;
-          Orden.formaPago = $scope.OC.formaPago;
-          Orden.tasaInteresAnual = $scope.OC.interesA;
-          Orden.tasaInteresMensual = $scope.OC.interesA / 12;
-          Orden.quincena = $scope.OC.quincena;
-          Orden.cantidadCuotas = $scope.OC.cantidadCuotas;
-          Orden.valorCuotas = $filter('number')(parseFloat($rootScope.total.replace(',','')) /2, 2).replace(',',''); //$scope.OC.valorCuotas.replace(',','');
-          Orden.factura = $rootScope.factura;
+          Orden.solicitud = {};
+          Orden.solicitante = {};
 
-          FacturacionService.guardarOrdenSC(Orden).then(function (data) {
-            if(angular.isNumber(parseInt(data))) {
+          Orden.fechaSolicitud = $filter('date')(Date.now(),'yyyy-MM-dd');
+          Orden.fechaDescuento = $filter('date')(Date.now(),'yyyy-MM-dd');
+
+          Orden.solicitante.codigoEmpleado = $scope.socioCodigo;
+          Orden.solicitante.cobrador = $scope.dataH.vendedor;
+          Orden.solicitante.autorizador = $scope.dataH.vendedor;
+          Orden.solicitante.representanteCodigo = 0;
+
+          Orden.solicitud.solicitudNo = $scope.OC.solicitud != undefined? parseInt('0' + $scope.OC.solicitud) : 0;
+          Orden.solicitud.categoriaPrestamoId = $scope.OC.categoriaId;
+          Orden.solicitud.idSuplidor = -1;
+          Orden.solicitud.montoSolicitado = $scope.total.toString();
+          Orden.solicitud.netoDesembolsar = $scope.total.toString();
+          Orden.solicitud.ahorrosCapitalizados = '0';
+          Orden.solicitud.deudasPrestamos = '0';
+          Orden.solicitud.prestacionesLaborales = '0';
+          Orden.solicitud.valorGarantizado = '0';
+          Orden.solicitud.nota = 'Orden realizada por facturacion';
+          Orden.solicitud.tasaInteresAnual = 0;
+          Orden.solicitud.tasaInteresMensual = 0;
+          Orden.solicitud.cantidadCuotas = 2;
+          Orden.solicitud.valorCuotas = $filter('number')(parseFloat($rootScope.total.replace(',','')) /2, 2).replace(',','');
+          Orden.solicitud.factura = $rootScope.factura;
+
+          SolicitudOrdenDespachoService.guardaSolicitudOD(Orden.solicitante, Orden.solicitud, Orden.fechaSolicitud, Orden.fechaDescuento).then(function (data) {
+            if(data > 0) {
               $scope.OC.solicitud = $filter('numberFixedLen')(data, 8)
               
               $scope.disableOC = true;
               $scope.BotonOC = 'Boton-disabled';
 
+              //Prepara productos para formato de Orden de Despacho
+              var articulo = {};
+              var articulos = [];
+
+              $scope.dataD.forEach(function (item) {
+                articulo = new Object();
+                articulo.articulo = item.codigo + '-' + item.descripcion;
+                articulo.cantidad = item.cantidad;
+                articulo.descuento = item.descuento;
+                articulo.precio = item.precio;
+
+                articulos.push(articulo);
+              });
+
+              //Agregar Detalle a la Orden
+              SolicitudOrdenDespachoService.guardaSolicitudODDetalle(data, articulos).then(function (data) {
+                if(data == 1) {
+                  alert('Se guardó perfectamente!');
+                } else {
+                  $scope.mostrarError(data);
+                }
+              });
             } else {
               throw data;
             }
-
           },
           (function () {
             $rootScope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
           }
           ));
-
         }
         catch (e) {
           $rootScope.mostrarError(e);
@@ -759,10 +860,8 @@
           $scope.OC.solicitud = $filter('numberFixedLen')(ordenD['solicitud'], 8);
           $scope.OC.categoriaId = ordenD['categoriaId'];
           $scope.OC.categoriaDescrp = ordenD['categoriaDescrp'];
-          $scope.OC.oficial = ordenD['oficial'];
-          $scope.OC.pagarPor = ordenD['pagarPor'];
-          $scope.OC.formaPago = ordenD['formaPago'];
-          $scope.OC.quincena = ordenD['quincena'];
+          $scope.OC.autorizador = ordenD['autorizador'];
+          $scope.OC.representante = ordenD['representante'];
           $scope.OC.interesA = ordenD['tasaInteresAnual'];
           $scope.OC.interesM = ordenD['tasaInteresMensual']
           $scope.OC.cantidadCuotas = ordenD['cuotas'];
@@ -774,7 +873,6 @@
           $rootScope.mostrarError(e);
         }
       }
-
     }])  
 
 
@@ -864,7 +962,40 @@
       return Date.now();
     }
 
+  }])
+
+  //****************************************************
+  //CONTROLLERS Reporte Utilidades                     *
+  //****************************************************
+  .controller('ImprimirReporteUtilidadCtrl', ['$scope', '$filter', 'InventarioServiceRPT', 'InventarioService', 'FacturacionService',
+                                              function ($scope, $filter, InventarioServiceRPT, InventarioService, FacturacionService) {
+
+    // Inicializacion de Variables
+
+
+    // Funcion para mostrar error por pantalla
+    $scope.mostrarError = function(error) {
+      $scope.errorMsg = error;
+      $scope.errorShow = true;
+    }
+
+    // Mostrar/Ocultar error
+    $scope.toggleError = function() {
+      $scope.errorShow = !$scope.errorShow;
+    }
+
+    // Para imprimir reporte de Utilidades
+    $scope.reporteUtilidades = function() {
+      try {
+        FacturacionService.reporteUtilidad().then(function (data) {
+          $scope.registros = data;
+        });
+
+      } catch (e) {
+        $scope.mostrarError(e);
+      }
+    }
+
   }]);
    
-
 })(_);

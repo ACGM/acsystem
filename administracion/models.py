@@ -43,7 +43,10 @@ class Departamento(models.Model):
 # Representantes
 class Representante(models.Model):
 
+	estatus_choices = (('A','Activo'),('I','Inactivo'))
+
 	nombre = models.CharField(max_length=50)
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)
@@ -81,6 +84,7 @@ class CategoriaProducto(models.Model):
 
 	class Meta:
 		verbose_name_plural = 'Config 4.2) Categorias de Productos'
+		ordering = ('descripcion',)
 
 
 # PRODUCTOS para registrarlos en la facturacion
@@ -134,13 +138,15 @@ class TipoSuplidor(models.Model):
 # Suplidores/Proveedores registrados
 class Suplidor(models.Model):
 	
-	tipoIdentificacion_choices = (('C','Cedula'),('R','RNC'))
+	tipoIdentificacion_choices = (('CE','Cedula'),('RN','RNC'))
 	clase_choices = (('N','Normal'),('S','SuperCoop'))
 	estatus_choices = (('A','Activo'), ('I','Inactivo'))
+	sexo_choices = (('M','Masculino'),('F','Femenino'),)
 
-	tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=1, choices=tipoIdentificacion_choices, default='C')
+	tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=2, choices=tipoIdentificacion_choices, default='C')
 	cedulaRNC = models.CharField("Cedula o RNC", unique=True, max_length=25)
 	nombre = models.CharField(max_length=60)
+	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	direccion = models.TextField(blank=True)
 	sector = models.CharField(max_length=40, blank=True, null=True)
 	ciudad = models.CharField(max_length=40, blank=True, null=True)
@@ -152,6 +158,8 @@ class Suplidor(models.Model):
 	tipoSuplidor = models.ForeignKey(TipoSuplidor)
 	clase = models.CharField(max_length=1, choices=clase_choices, default='N')
 	auxiliar = models.ForeignKey(Auxiliares, null=True)
+	tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=2, null=True, blank=True)
+	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	userLog = models.ForeignKey(User, editable=False)
@@ -382,8 +390,13 @@ class TipoNCGlobal(models.Model):
 # Bancos
 class Banco(models.Model):
 
+	estatus_choices = (('A','Activo'),('I','Inactivo'))
+
 	codigo = models.CharField(max_length=25)
 	nombre = models.CharField(max_length=100)
+	digitoVerificador = models.CharField(max_length=1, default='8')
+	codigoOperacion = models.CharField(max_length=2, default='22')
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	def __unicode__(self):
 		return '%s - %s' % (self.codigo,self.nombre)
@@ -396,26 +409,6 @@ class Banco(models.Model):
 	class Meta:
 		ordering = ['nombre']
 		verbose_name_plural = 'Config 2.1) Bancos'
-
-
-# Tipos de Documentos
-class TipoDocumento(models.Model):
-
-	codigo = models.CharField(max_length=4)
-	descripcion = models.CharField(max_length=50)
-
-	def __unicode__(self):
-		return '%s - %s' % (self.codigo,self.descripcion)
-
-	def save(self, *args, **kwargs):
-		self.codigo = self.codigo.upper()
-		self.descripcion = self.descripcion.upper()
-
-		super(TipoDocumento, self).save(*args, **kwargs)
-
-	class Meta:
-		ordering = ['descripcion']
-		verbose_name_plural = 'Config 7.1) Tipos de Documentos'
 
 
 # Periodos (Fiscales)
@@ -446,9 +439,14 @@ class Periodo(models.Model):
 # Empresas
 class Empresa(models.Model):
 
+	estatus_choices = (('A','Activo'), ('I','Inactivo',))
+
 	nombre = models.CharField(max_length=50)
 	rnc = models.CharField(max_length=15, blank=True, null=True)
+	cuentaBanco = models.CharField(max_length=1, null=True)
 	bancoAsign = models.CharField(max_length=5, blank=True, null=True)
+	correoHeader = models.CharField(max_length=40, blank=True, null=True)
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 	def __unicode__(self):
 		return '%s' % (self.nombre)
@@ -488,6 +486,26 @@ class UserExtra(models.Model):
 		unique_together = ('usuario','localidad','perfil')
 
 
+# Tipos de Documentos
+class TipoDocumento(models.Model):
+
+	codigo = models.CharField(max_length=4)
+	descripcion = models.CharField(max_length=50)
+
+	def __unicode__(self):
+		return '%s - %s' % (self.codigo,self.descripcion)
+
+	def save(self, *args, **kwargs):
+		self.codigo = self.codigo.upper()
+		self.descripcion = self.descripcion.upper()
+
+		super(TipoDocumento, self).save(*args, **kwargs)
+
+	class Meta:
+		ordering = ['descripcion']
+		verbose_name_plural = 'Config 7.1) Tipos de Documentos'
+
+
 # Asociacion de Documentos con Cuentas
 class DocumentoCuentas(models.Model):
 
@@ -499,6 +517,18 @@ class DocumentoCuentas(models.Model):
 
 	def __unicode__(self):
 		return '%s - %s (%s)' % (self.documento, self.cuenta, self.accion)
+
+	@property
+	def getCodigo(self):
+		return self.documento.codigo
+
+	@property
+	def getCuentaCodigo(self):
+		return self.cuenta.codigo
+
+	@property
+	def getCuentaDescrp(self):
+		return self.cuenta.descripcion
 
 	class Meta:
 		ordering = ['documento','cuenta']
@@ -513,9 +543,16 @@ class ArchivoBanco(models.Model):
 	bancoAsign = models.CharField(max_length=5) # Numero Asignado a la Empresa de cinco posiciones
 	tipoServicio = models.CharField(max_length=2) #Tipo de Servicio de dos posiciones
 	envio = models.CharField(max_length=4) # MMDD mes y dia en que se envia el archivo
-	secuencia = models.PositiveIntegerField() # Secuencia del header de siete posiciones
+	secuencia = models.PositiveIntegerField(default=0) # Secuencia del header de siete posiciones
+	archivoNombre = models.CharField(max_length=25, null=True, blank=True)
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+	userLog = models.ForeignKey(User, editable=False)
+
+	def save(self, *args, **kwargs):
+		self.archivoNombre = 'PE{0}{1}{2}{3}E.TXT'.format('{:0>5}'.format(self.bancoAsign), self.tipoServicio, self.envio, '{:0>7}'.format(self.secuencia))
+
+		super(ArchivoBanco, self).save(*args, **kwargs)
 
 
 # Cabecera Contenido Archivo de Banco
@@ -525,7 +562,7 @@ class ArchivoBancoHeader(models.Model):
 	idCompania 			= models.CharField(max_length=15)
 	nombreCompania 		= models.CharField(max_length=35)
 	secuencia 			= models.CharField(max_length=7) # Secuencia del archivo generado
-	tipoServicio 		= models.CharField(max_length=2)
+	tipoServicio 		= models.CharField(max_length=2) # 01 = Nomina Automatica  --- 02 = Pago a Suplidores .... 06 = Transferencia a Cta.
 	fechaEfectiva 		= models.CharField(max_length=8) # YYYYMMDD (Fecha Futura cuando se aplican los Pagos)
 	cantidadDB			= models.CharField(max_length=11) # Cantidad de Debitos
 	montoTotalDB		= models.CharField(max_length=13) # Monto Total de Debitos
@@ -541,6 +578,9 @@ class ArchivoBancoHeader(models.Model):
 	lineaFormateadaH	= models.CharField(max_length=292, blank=True) # Aqui ira la linea formateada para el TXT
 
 	def save(self, *args, **kwargs):
+		montoDB = str(self.montoTotalDB).replace('.','').replace(',','')[:13]
+		montoCR = str(self.montoTotalCR).replace('.','').replace(',','')[:13]
+
 		self.tipoRegistro		= 'H'
 		self.idCompania 		= '{:<15}'.format(self.idCompania)
 		self.nombreCompania 	= '{:<35}'.format(self.nombreCompania)
@@ -548,9 +588,9 @@ class ArchivoBancoHeader(models.Model):
 		self.tipoServicio		= self.tipoServicio
 		self.fechaEfectiva		= self.fechaEfectiva
 		self.cantidadDB 		= '{:0>11}'.format(self.cantidadDB)
-		self.montoTotalDB		= '{:0>13}'.format(self.montoTotalDB.replace('.',''))
+		self.montoTotalDB		= '{:0>13}'.format(int(montoDB))
 		self.cantidadCR			= '{:0>11}'.format(self.cantidadCR)
-		self.montoTotalCR 		= '{:0>13}'.format(self.montoTotalCR.replace('.',''))
+		self.montoTotalCR 		= '{:0>13}'.format(int(montoCR))
 		self.numeroAfiliacion	= '{:0>15}'.format(self.numeroAfiliacion)
 		self.fecha				= self.fecha
 		self.hora				= self.hora
@@ -613,6 +653,7 @@ class ArchivoBancoDetailN(models.Model):
 	lineaFormateadaN 	= models.CharField(max_length=320, blank=True,)
 
 	def save(self, *args, **kwargs):
+		montoT = str(self.montoTransaccion).replace('.','').replace(',','')[:13]
 
 		self.tipoRegistro		= 'N'
 		self.idCompania 		= '{:<15}'.format(self.idCompania)
@@ -624,7 +665,7 @@ class ArchivoBancoDetailN(models.Model):
 		self.codBancoDestino	= self.codBancoDestino
 		self.digiVerBancoDestino= self.digiVerBancoDestino
 		self.codigoOperacion	= self.codigoOperacion
-		self.montoTransaccion	= '{:<13}'.format(self.montoTransaccion.replace('.',''))
+		self.montoTransaccion	= '{:0>13}'.format(int(montoT))
 		self.tipoIdentificacion	= self.tipoIdentificacion
 		self.identificacion		= '{:<15}'.format(self.identificacion)
 		self.nombre				= '{:<35}'.format(self.nombre)

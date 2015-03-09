@@ -290,7 +290,7 @@
 			&:nth-child(odd)
 				font-weight bold
 
-.datos-prestamo
+.datos-prestamo-sp
 	width 98%
 	padding .3em
 	border 1px solid black
@@ -384,4 +384,109 @@
 			text-align center
 			
 		
+// PRINT DESEMBOLSO RECIBIDO CONFORME
+.PrintDesembRecibidoConforme
+	font-family "courier"
+	
+.cabecera-rc
+	position relative
+	
+	h3
+		margin 0
+	
+	span
+		&:last-child
+			position absolute
+			top 0
+			right 0
+.rc-titulo
+	font-weight bold
+	display block
+	text-align center
+
+.datos-recibido-conforme
+	position relative
+	margin-left .4em
+	
+	& li
+		list-style-type none
+		padding 0
+		margin 0
+		
+.prestamo-rc-desglose
+	margin 0
+	span
+		display block
+.socio-rc
+	position absolute
+	top 0
+	left 15em
+	
+.fechas-rc
+	position absolute
+	top 0
+	right 0
+
+.bancario
+	background peru
+	margin-top 1em
+	position relative
+	
+	span
+		&:first-child
+			position absolute
+			top 0
+			left 0
+		&:last-child
+			position absolute
+			top 0
+			right 0
+
+.detalle-recibido-conforme
+	margin-top 3em
+	
+	table
+		width 100%
+		& tr
+			&:first-child
+				& td
+					border-top 1px solid black
+					border-bottom 1px solid black
+			& td
+				padding .2em
+
+.firmantes-recibido-conforme
+	margin-top 15em
+	table
+		margin-left auto
+		margin-right auto
+		tr
+			&:first-child
+				& td
+					padding 0 1em
+
+//REPORTE CONTEO FISICO
+.titulo-reporte-conteo-fisico
+	display none
+	
+@media print
+	.titulo-reporte-conteo-fisico
+		display block
+		text-align center
+
+	.ExistenciaArticulo
+		
+		.sub-menu
+			display none
+		.busqueda-existencia-inventario
+			display none
+		.busqueda-categoria
+			display none
+		
+		button
+			display none
+
+//REPORTE DE UTILIDAD
+.cabecera-utilidades
+	text-align center
 	

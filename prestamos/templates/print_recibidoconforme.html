@@ -1,0 +1,92 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Desembolso Electronico {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<section class="PrintDesembRecibidoConforme" ng-controller="ImprimirDesembolsoElectronicoCtrl">
+
+	<div class="cabecera-rc">
+		<span class="align-center"><h3>COOPERATIVA INDUSTRIAS NACIONALES</h3></span>
+		<span class="rc-titulo">Desembolso Electronico</span>
+		<span>[['' | currentdate]]</span>
+	</div>
+	<hr/>
+
+	<div class="datos-recibido-conforme">
+		<div class="prestamo-rc-desglose">
+			<span>Prestamo No. <strong>9999300</strong></span> <span class="socio-rc">RAFAEL MERCEDES SANTANA</span>
+			<span>Monto del Prestamo <strong>44,5444.55</strong></span>
+			<span>44 Cuotas de : <strong>4,455.54</strong></span>
+			<span>Tasa de Interes <strong>1.50</strong></span>
+		</div>
+		<ul class="fechas-rc">
+			<li class="align-right">Fecha Desembolso 24/12/2014</li>
+			<li class="align-right">Fecha Vencimiento 24/12/2029</li>
+		</ul>
+
+		<div class="bancario">
+			<span><strong>BANCO:</strong> 10101010101 - BANCO FAMOSO</span>
+			<span><strong>CUENTA:</strong> 09388747374</span>
+		</div>
+
+		<div class="detalle-recibido-conforme">
+			<table>
+				<tr>
+					<td>Cuenta</td>
+					<td>Detalle</td>
+					<td>Debitos</td>
+					<td>Creditos</td>
+				</tr>
+				<tr>
+					<td>10010010</td>
+					<td>Desembolso Electronico</td>
+					<td></td>
+					<td>54,000.44</td>
+				</tr>
+				<tr>
+					<td>11110022</td>
+					<td>RAFAEL MERCEDES SANTANA</td>
+					<td>54,000.44</td>
+					<td></td>
+				</tr>
+				<tr><td colspan="4"><hr/></td></tr>
+				<tr>
+					<td colspan="2">Totales</td>
+					<td>54,000.44</td>
+					<td>54,000.44</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="firmantes-recibido-conforme">
+		<table>
+			<tr>
+				<td class="align-center">______________________________</td>
+				<td class="align-center">______________________________</td>
+				<td class="align-center">______________________________</td>
+			</tr>
+			<tr>
+				<td class="align-center">Solicitado Por</td>
+				<td class="align-center">Revisado Por</td>
+				<td class="align-center">Aprobado Por</td>
+			</tr>
+			<tr>
+				<td class="align-center">Analista Cooperativa</td>
+				<td class="align-center">Contador General</td>
+				<td class="align-center">Gerente Cooperativa</td>
+			</tr>
+		</table>
+	</div>
+
+</section>	
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

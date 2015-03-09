@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %} Historico Movimiento de Articulo {% endblock title %}
+
+{% block content %}
+	<div class="MovimientoArticulo" ng-controller="RPTMovimientoArticuloCtrl">
+
+		<mensajeerror> </mensajeerror>
+		
+		<div class="sub-menu">	
+			<span>Reporte de Movimiento de Articulo(s)</span>
+		</div>
+
+		<section ng-init="getCategoriasProductos()">
+
+			<form class="busqueda-movimiento-articulo" ng-submit="movimiento($event)" novalidate>
+				
+
+				<div class="producto-find-ei">
+					<span>Producto</span>
+					<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei" required>
+					<a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a> 
+
+					<productosSearch> </productosSearch>
+
+				</div>
+
+				<table class="table-reporte-movimiento">
+					<tr>
+						<td>Almacen</td>
+						<td>
+							<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+							</select>	
+						</td>
+					</tr>
+					<tr>
+						<td>Desde</td>
+						<td><input type="text" ng-model="desdeFecha" datepicker required></td>
+					</tr>
+					<tr>
+						<td>Hasta</td>
+						<td><input type="text" ng-model="hastaFecha" datepicker required></td>
+					</tr>
+				</table>
+					
+				<button class="Boton boton-genera-reporte" type="submit">Generar Reporte</button>
+
+			</form>
+
+			<div class="caja-movimientos">
+				<table>
+					<tr class="productos-table-header-transf">
+						<td>E/S</td>
+						<td>Tipo</td>
+						<td>Cantidad</td>
+						<td>Precio</td>
+						<td>Valor</td>
+						<td>Documento</td>
+						<td>Fecha</td>
+					</tr>
+					<tr ng-repeat="registro in resultados" class="productos-table-detail-search">
+						<td>[[registro.tipo_mov]]</td>
+						<td>[[registro.documento]]</td>
+						<td>[[registro.cantidad | number : 2]]</td>
+						<td>[[registro.precio | number : 2]]</td>
+						<td>[[registro.cantidad * registro.precio | number : 2]]</td>
+						<td>[[registro.documentoNo | numberFixedLen : 8]]</td>
+						<td>[[registro.fechaMovimiento | date : 'dd/MM/yyyy']]</td>
+					</tr>
+				</table>
+
+			</div>
+
+		</section>
+
+		
+	</div>
+
+{% endblock content %}

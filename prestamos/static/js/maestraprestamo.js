@@ -2,6 +2,36 @@
 
   angular.module('cooperativa.maestraprestamo', ['ngAnimate'])
 
+    // Filtro para manejo de bloqueo de seleccion de prestamo segun el estatus (checkbox)
+    .filter('posteoMP', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('E', false)
+                .replace('D', false)
+                .replace('C', false)
+                .replace('P', true)
+                .replace('S', true);
+        return input;
+      }
+    })
+
+    // Filtro para imagenes a mostrar por cada estatus del prestamo.
+    .filter('OpenCloseMP', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('E', 'icon-folder-open')
+                .replace('P', 'icon-folder')
+                .replace('S', 'icon-folder')
+                .replace('C', 'icon-banknote')
+                .replace('D', 'icon-coin');
+        return input;
+      }
+    })
+
     .factory('MaestraPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       // //Guardar Factura
@@ -34,20 +64,6 @@
       // }
 
 
-      // //Guardar Orden de Compra
-      // function guardarOrdenSC(Orden) {
-      //   var deferred = $q.defer();
-      //   $http.post('/ordenSuperCoop/', JSON.stringify({'orden': Orden})).
-      //     success(function (data) {
-      //       deferred.resolve(data);
-      //     }).
-      //     error(function (data) {
-      //       deferred.resolve(data);
-      //     });
-
-      //   return deferred.promise;
-      // }
-
       //Llenar el listado de prestamos
       function all() {
         var deferred = $q.defer();
@@ -59,40 +75,19 @@
         return deferred.promise;
       }
 
-      // //Categorias de prestamos, si se pasa el parametro "cp" con valor es filtrada la informacion. 
-      // function categoriasPrestamos(cp) {
-      //   var deferred = $q.defer();
+      //Marcar Prestamo como Desembolso Electronico o Cheque.
+      function MarcarPrestamoDC(prestamos, accion) {
+        var deferred = $q.defer();
 
-      //   $http.get('/api/categoriasPrestamos/?format=json')
-      //     .success(function (data) {
-      //       if (cp != undefined) {
-      //         deferred.resolve(data.filter( function(item) {
-      //           return item.descripcion == cp;
-
-      //         }));
-      //       } else {
-      //         deferred.resolve(data);
-      //       }
-      //     });
-
-      //   return deferred.promise;
-      // }
-
-      // //Traer el listado de socios
-      // function socios() {
-      //   var deferred = $q.defer();
-
-      //   $http.get('/api/socio/?format=json')
-      //     .success(function (data) {
-      //       deferred.resolve(data.filter( function(socio) {
-      //         return socio.estatus == "E" || socio.estatus == "S";
-
-      //       }));
-      //     });
-
-      //   return deferred.promise;
-      // }
-
+        $http.post('/prestamos/maestra/marcarcomo/', JSON.stringify({'prestamos': prestamos, 'accion': accion})). 
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
 
       //Buscar un prestamo en especifico (Desglose)
       function PrestamoById(NoPrestamo) {
@@ -146,12 +141,8 @@
         all: all,
         byNoPrestamo: byNoPrestamo,
         PrestamosbySocio: PrestamosbySocio,
-        PrestamoById: PrestamoById
-        // guardarFact: guardarFact,
-        // DocumentoById: DocumentoById,
-        // categoriasPrestamos: categoriasPrestamos,
-        // guardarOrdenSC: guardarOrdenSC,
-        // impresionFact: impresionFact
+        PrestamoById: PrestamoById,
+        MarcarPrestamoDC: MarcarPrestamoDC
       };
 
     }])
@@ -191,6 +182,11 @@
         }
       }
 
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
 
       //Listado de todos los prestamos
       $scope.listadoPrestamos = function() {
@@ -337,6 +333,22 @@
         $scope.toggleLP();
       }
 
+      //Marcar Prestamo como Cheque
+      $scope.marcarPrestamoDC = function(prestamo, accion) {
+        var p = [];
+        p.push(prestamo);
+
+        MaestraPrestamoService.MarcarPrestamoDC(p, accion).then(function (data) {
+          if(data == 1) {
+            $scope.listadoPrestamos();
+          } else {
+            $scope.mostrarError(data);
+          }
+        }, function() {
+          $scope.mostrarError("Hubo un error interno en la aplicacion, contacte al administrador.");
+        })
+      }
+
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
 
@@ -358,7 +370,6 @@
 
       //Cuando se le de click a un checkbox de la lista
       $scope.selectedReg = function(iReg) {
-        
         index = $scope.prestamos.indexOf(iReg);
 
         if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
@@ -367,6 +378,7 @@
         else{
           $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
         }
+
       }
 
     }])

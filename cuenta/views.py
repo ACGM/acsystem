@@ -1,13 +1,23 @@
 from django.http import HttpResponse, JsonResponse
 
 from rest_framework import viewsets
+<<<<<<< HEAD
 from django.views.generic import DetailView, TemplateView
+=======
+from django.views.generic import DetailView
+from django.shortcuts import render
+>>>>>>> FETCH_HEAD
 
 from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
 from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer, TipoDocSerializer, \
     CuentasControlSerializer
 
 import json
+
+
+# Cuentas Busqueda (GENERICO)
+def cuentasSearch(request):
+    return render(request, 'cuentas_search.html')
 
 
 class CuentasView(DetailView):

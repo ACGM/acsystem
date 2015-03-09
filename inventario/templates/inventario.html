@@ -18,7 +18,7 @@
 			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
 		</div>
 
-		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas('E')" >
+		<div id="listado" class="Listado-Entrada-Inventario cssSlideUp" ng-show="showLEI" ng-init="listadoEntradas()" >
 			
 			<section class="listado-reg-inventario">
 				<span> Documento No. </span> 
@@ -27,7 +27,7 @@
 				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoDoc(NoDoc)"></a>
 				
 				<span class="error-ei"> [[NoFoundDoc]]</span>
-				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas(undefined)">Ver todos</a>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoEntradas()">Ver todos</a>
 				
 				<div class="posteo-ei">
 					<span>Posteadas</span>
@@ -35,14 +35,6 @@
 						<option value="*">TODOS</option>
 						<option value="S">SI</option>
 						<option value="N">NO</option>
-					</select>
-				</div>
-				<div class="posteo-ei">
-					<span>Tipo</span>
-					<select class="field-choices" name="tipo" id="tipo" ng-model="tipoinv" ng-change="listadoEntradas(tipoinv)">
-						<option value="undefined">TODOS</option>
-						<option value="E">Entradas</option>
-						<option value="S">Salidas</option>
 					</select>
 				</div>
 
@@ -55,7 +47,6 @@
 						<tr class="listado-table-header-ei">
 							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()" > </td>
 							<td>Estatus</td>
-							<td>Tipo</td>
 							<td>Doc. No.</td>
 							<td>Fecha</td>
 							<td>NCF</td>
@@ -63,57 +54,50 @@
 							<td>Suplidor</td>
 							<td>Total</td>
 							<td>Imprimir</td>
-							<td>Salida</td>
 						</tr>
 
 						<tr ng-repeat="entrada in entradas" class="listado-entrada-inventario-detail" ng-init="total=0">
-							<td><input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]]" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> </td>
-							<td class="icon-folder posteo-[[entrada.posteo]]"></td>
-							<td>[[entrada.getTipo]]</td>
-							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id, 'entrada')"> [[entrada.id | numberFixedLen: 8]] </a> </td>
+							
+							<td class="align-center">
+								<input type="checkbox" name="c[[entrada.id]]" ng-disabled="[[entrada.posteo | posteo]] != entrada.borrado" ng-checked="valoresChk[entrada.id]" ng-model="reg[entrada.id]" ng-click="selectedReg(entrada)"> 
+							</td>
+
+							<td class="[[entrada.posteo | posteoFolderIcon]] posteo-[[entrada.posteo]] align-center"></td>
+							<td> <a href="#" class="sp-field" ng-click="DocFullById(entrada.id)"> [[entrada.id | numberFixedLen: 8]] </a> </td>
 							<td>[[entrada.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[entrada.ncf]]</td>
 							<td>[[entrada.factura]]</td>
 							<td>[[entrada.suplidor]]</td>
-							<td>[[entrada.totalGeneral]]</td>
-							<td>
-								<a ng-if="entrada.getTipo == 'E'" href="#" class="icon-printer imprimir-icon" ng-click="Imprimir(entrada)"></a> 
-								<a ng-if="entrada.getTipo == 'S'" href="#" class="icon-printer imprimir-icon disabled"></a> 
+							<td class="resaltar-valor align-right">[[entrada.totalGeneral]]</td>
+							<td class="align-center">
+								<a ng-if="entrada.borrado == false" class="icon-printer imprimir-icon" ng-click="Imprimir(entrada)"></a>
+								<span ng-if="entrada.borrado == true">Eliminado</span>
 							</td>
-							<td>
-								<div ng-if="entrada.posteo == 'N' && entrada.getTipo != 'S'"> <a href="#" class="icon-blocked icon-eliminar" ng-click="DocFullById(entrada.id, 'salida')"></a></div> 
-								<div ng-if="entrada.posteo != 'N'"> <a href="#" class="icon-blocked icon-eliminar disabled"></a></div> 
-							</td>
-							
+
 						</tr>
 
 						<tr>
-							<td colspan="9"> Cantidad de Registros: [[entradas.length]]  </td>
+							<td colspan="10"> Cantidad de Registros: [[entradas.length]]  </td>
 						</tr>								
 					</table>
 
 				</section>
 
-				<button class="icon-cog Boton boton-postear-inventario" ng-click=""> Postear</button>
+				<button class="icon-cog Boton boton-postear-inventario" ng-click="postear()"> Postear</button>
 			</section>
 		</div>
 
 		<div class="entrada-inventario" ng-show="showEI">
 			<!--ENTRADA DE INVENTARIO-->
 			<div class="sub-menu">	
-		
 					Entrada de Inventario
 			</div>
 
 			<form name="EntradaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="guardarEI()" novalidate>
-				<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong> </span>
+				<span ng-if="dataH.entradaNo != undefined"> <strong> Esta entrada fue creada por el usuario: [[dataH.usuario]] </strong></span>
+				<p ng-if="dataH.borrado == true" class="rojo-bold"> Esta entrada fue eliminada por el usuario: [[dataH.borradoPor]] en fecha: [[dataH.borradoFecha | date : 'dd/MM/yyyy hh:mm a']]</p>
 
-				<div ng-if="tipoinv == 'S'" class="salida-datos">
-					<p><strong>Numero de Salida: </strong> [[dataH.numeroSalida]]</p>
-					<p><strong>Descripción de Salida: </strong> [[dataH.descripcionSalida]]</p>
-					<p><strong>Fecha de Salida: </strong> [[dataH.fechaSalida | date : 'dd/MM/yyyy hh:MM a']]</p>
-					<p><strong>Salida por el usuario: </strong> [[dataH.usuarioSalida]]</p>
-				</div>
+				<button ng-if="dataH.posteo == 'N' && dataH.entradaNo > 0 && dataH.borrado == false" class="icon-delete Boton boton-guarda-inventario" ng-click="eliminarEntradaInv($event)" title="Elimina la existencia de esta entrada, pero no elimina los registros de inventario(quedan para consulta)">Eliminar</button>
 
 				<div>
 					<div class="content-suplidores-table">
@@ -161,7 +145,7 @@
 							<td>NCF</td>
 							<td> <input type="text" class="ncf-ei" ng-model="dataH.ncf"> </td>
 							<td>Fecha</td>
-							<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" datepicker required> </td>
+							<td> <input type="text" class="input-disabled" ng-model="dataH.fecha" ng-disabled="true" datepicker required> </td>
 						</tr>
 						<tr>
 							<td>Condicion</td>
@@ -216,10 +200,10 @@
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
 								<td>[[item.unidad]]</td>
-								<td><input select-on-click type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required></td>
-								<td>[[item.costo | number: 2]]</td>
-								<td>[[item.cantidad * item.costo | number: 2]]</td>
-								<td>
+								<td class="align-right"><input select-on-click type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required></td>
+								<td class="align-right">[[item.costo | number: 2]]</td>
+								<td class="align-right">[[item.cantidad * item.costo | number: 2]]</td>
+								<td class="align-center">
 									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
 									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
 								</td>
@@ -235,113 +219,8 @@
 							</ul>
 						</div>
 
-						<button ng-if="dataH.posteo == 'N' && tipoinv == 'E'" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
-
-						<button ng-if="dataH.posteo != 'N' || tipoinv == 'S'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
-
-					</section>
-				</div>
-			</form>
-		</div>
-
-
-		<div class="salida-inventario" ng-show="showSI">
-			<!--SALIDA DE INVENTARIO-->
-			<div class="sub-menu">	
-		
-					Salida de Inventario
-			</div>
-
-			<form name="SalidaInventarioForm" class="data-entry-section data-entry-inventario-header" ng-submit="darSalidaInv()" novalidate>
-
-				<div>
-					
-					<table class="data-entry-header-table">
-						<tr>
-							<td>Entrada No.</td>
-							<td> <input class="input-disabled" type="text" ng-disabled="true" ng-model="dataH.entradaNo"> </td>
-							<td>Factura No.</td>
-							<td> <input type="text" ng-model="dataH.factura" ng-disabled="true" class="input-disabled"> </td>
-						</tr>
-						<tr>
-							<td>Orden No.</td>
-							<td> <input type="text" ng-model="dataH.ordenNo" ng-disabled="true" class="input-disabled"> </td>
-							<td>Fecha</td>
-							<td> <input type="text" ng-model="dataH.fecha" ng-blur="venceFecha()" ng-disabled="true" class="input-disabled"> </td>
-						</tr>
-						<tr>
-							<td>NCF</td>
-							<td> <input type="text" class="ncf-ei input-disabled" ng-model="dataH.ncf" ng-disabled="true"> </td>
-							<td>Dias Plazo</td>
-							<td> 
-								<input type="text" ng-model="dataH.venceDias" ng-disabled="true" class="input-disabled">
-							</td>
-						</tr>
-
-						<tr>
-							<td>Condicion</td>
-							<td> 
-								<select name="condicion" id="condicion" ng-model="dataH.condicion" class="field-choices input-disabled" ng-disabled="true">
-									<option value="CO">Contado</option>
-									<option value="CR">Credito</option>
-								</select>
-							</td>
-						</tr>
-						
-					</table>
-
-					<div class="producto-find-ei">
-						<span>Productos</span>
-						
-						<div class="almacen-field-ei">
-							<span>Almacen</span>
-							<select name="almacen" id="almacen" ng-model="almacen" ng-disabled="true" class="input-disabled">
-								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
-							</select>	
-							
-						</div>
-
-
-					</div>
-
-					<section class="productos-section">
-						<table class="productos-table">
-							<tr class="productos-table-header">
-								<td>Codigo</td>
-								<td>Descripcion</td>
-								<td>Unidad</td>
-								<td>Cantidad</td>
-								<td>Costo</td>
-								<td>Subtotal</td>
-								<td>Eliminar</td>
-							</tr>
-							<tr class="productos-table-detail" ng-repeat="item in dataD">
-								<td>[[item.codigo]]</td>
-								<td>[[item.descripcion]]</td>
-								<td>[[item.unidad]]</td>
-								<td><input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei disabled-field" ng-disabled="true"></td>
-								<td>[[item.costo | number: 2]]</td>
-								<td>[[item.cantidad * item.costo | number: 2]]</td>
-								<td>
-									<button class="icon-delete eliminar-entrada-producto disabled" ng-disabled="true"></button>
-								</td>
-							</tr>
-							
-						</table>
-
-						<div class="totales-section">
-							<ul class="totales-ul">
-								<li><span>SubTotal</span> <input type="text" class="subtotal-field" ng-model="subtotal" readonly></li>
-								<li><span>ITBIS</span> <input type="text" class="subtotal-field" readonly></li>
-								<li><span>Total</span> <input type="text" class="total-field" ng-model="total" readonly></li>
-							</ul>
-						</div>
-
-						<span><strong>Nota de Salida</strong></span>
-						<p>
-							<textarea name="nota" id="nota" cols="49" rows="3" ng-model="dataH.notaSalida" required></textarea>
-							<button class="icon-save Boton boton-guarda-inventario-salida" type="submit">Dar Salida</button>
-						</p>
+						<button ng-if="dataH.posteo == 'N' && dataH.borrado == false" class="icon-save Boton boton-guarda-inventario" type="submit">Guardar</button>
+						<button ng-if="dataH.posteo != 'N'" class="icon-save Boton-disabled boton-guarda-inventario" ng-disabled="true">Guardar</button>
 
 					</section>
 				</div>

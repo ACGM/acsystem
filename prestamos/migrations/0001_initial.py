@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0007_auto_20150219_2118'),
+        ('administracion', '0001_initial'),
         ('facturacion', '0001_initial'),
     ]
 
@@ -26,20 +26,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='DesembolsoElectronico',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fecha', models.DateField(auto_now_add=True)),
-                ('monto', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado')])),
-                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('banco', models.ForeignKey(to='administracion.Banco')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='DistribucionExcedente',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -47,6 +33,7 @@ class Migration(migrations.Migration):
                 ('fecha', models.DateField(auto_now_add=True)),
                 ('porcentaje', models.DecimalField(max_digits=6, decimal_places=2)),
                 ('fechaPosteo', models.DateField(auto_now=True, null=True)),
+                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
             ],
             options={
             },
@@ -68,11 +55,12 @@ class Migration(migrations.Migration):
                 ('fechaEntrega', models.DateField(null=True, blank=True)),
                 ('valorGarantizado', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('balance', models.DecimalField(default=0, max_digits=12, decimal_places=2, blank=True)),
-                ('estatus', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'En proceso'), (b'P', b'Posteado'), (b'S', b'Saldado')])),
+                ('fechaAprobacion', models.DateField(auto_now_add=True, null=True)),
+                ('estatus', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'En proceso'), (b'P', b'Posteado'), (b'S', b'Saldado'), (b'C', b'Cheque'), (b'D', b'Desembolso')])),
                 ('posteadoFecha', models.DateField(auto_now=True, null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),
-                ('chequeNo', models.ForeignKey(to='prestamos.Cheque', null=True)),
+                ('chequeNo', models.ForeignKey(blank=True, to='prestamos.Cheque', null=True)),
                 ('factura', models.ForeignKey(blank=True, to='facturacion.Factura', null=True)),
                 ('localidad', models.ForeignKey(to='administracion.Localidad')),
             ],
@@ -251,6 +239,10 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='prestamos.SolicitudOrdenDespachoH'),
             preserve_default=True,
         ),
+        migrations.AlterUniqueTogether(
+            name='solicitudordendespachod',
+            unique_together=set([('id', 'ordenDespacho')]),
+        ),
         migrations.AddField(
             model_name='prestamounificado',
             name='prestamoPrincipal',
@@ -330,21 +322,21 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='maestraprestamo',
+            name='usuarioDesembolso',
+            field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='distribucionexcedente',
             name='noPrestamo',
             field=models.ForeignKey(to='prestamos.MaestraPrestamo'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='desembolsoelectronico',
-            name='noPrestamo',
-            field=models.ForeignKey(to='prestamos.MaestraPrestamo'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='desembolsoelectronico',
+            model_name='distribucionexcedente',
             name='userLog',
-            field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
     ]

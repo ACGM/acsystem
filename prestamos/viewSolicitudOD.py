@@ -15,6 +15,7 @@ from .serializers import SolicitudesPrestamosSerializer, SolicitudesOrdenesDespa
 
 from .models import SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, MaestraPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Suplidor
+from facturacion.models import Factura
 
 from acgm.views import LoginRequiredMixin
 
@@ -43,9 +44,18 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 			socio = Socio.objects.get(codigo=solicitante['codigoEmpleado'])
 			cobrador = Cobrador.objects.get(userLog=User.objects.get(username=solicitante['cobrador']))
-			representante = Representante.objects.get(id=solicitante['representanteCodigo'])
+			
+			try:
+				representante = Representante.objects.get(id=solicitante['representanteCodigo'])
+			except Representante.DoesNotExist:
+				representante = Representante.objects.get(estatus='A')
+
 			categoriaPrest = CategoriaPrestamo.objects.get(id=solicitud['categoriaPrestamoId'])
-			suplidor = Suplidor.objects.get(id=solicitud['idSuplidor'])
+
+			if solicitud['idSuplidor'] == -1:
+				suplidor = Suplidor.objects.get(nombre='SUPERCOOP')
+			else:
+				suplidor = Suplidor.objects.get(id=solicitud['idSuplidor'])
 
 			if solicitudNo > 0:
 				SolOrdenDespacho = SolicitudOrdenDespachoH.objects.get(noSolicitud=solicitudNo)
@@ -58,12 +68,14 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 			SolOrdenDespacho.socio = socio
 			SolOrdenDespacho.fechaSolicitud = fechaSolicitud
-			SolOrdenDespacho.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',','')) if solicitante['salario'] != None else 0
+			SolOrdenDespacho.salarioSocio = socio.salario
+			# SolOrdenDespacho.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',','')) if solicitante['salario'] != None else 0
 			SolOrdenDespacho.representante = representante
-			SolOrdenDespacho.autorizadoPor = User.objects.get(username=solicitante['autorizadoPor'])
+			SolOrdenDespacho.autorizadoPor = User.objects.get(username=request.user.username)
 			SolOrdenDespacho.cobrador = cobrador
 
 			SolOrdenDespacho.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
+
 			SolOrdenDespacho.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0
 			SolOrdenDespacho.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
 			SolOrdenDespacho.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
@@ -73,6 +85,7 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			SolOrdenDespacho.categoriaPrestamo = categoriaPrest
 			SolOrdenDespacho.suplidor = suplidor
 			SolOrdenDespacho.fechaParaDescuento = fechaDescuento
+			SolOrdenDespacho.factura = solicitud['factura'] if solicitud.has_key('factura') else 0
 
 			SolOrdenDespacho.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual']) if solicitud['tasaInteresAnual'] > 0 else 0
 			SolOrdenDespacho.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
@@ -80,10 +93,17 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			SolOrdenDespacho.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
 
 			SolOrdenDespacho.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
-
 			SolOrdenDespacho.userLog = User.objects.get(username=request.user.username)
 
 			SolOrdenDespacho.save()
+
+			if SolOrdenDespacho.factura > 0:
+				SolOrdenDespacho.cxp = 'P'
+				SolOrdenDespacho.save()
+				
+				fact = Factura.objects.get(noFactura=SolOrdenDespacho.factura)
+				fact.ordenCompra = SolOrdenDespacho.noSolicitud
+				fact.save()
 
 			return HttpResponse(SolOrdenDespacho.noSolicitud)
 
@@ -94,7 +114,6 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 #Vista para guardar Detalle de solicitud de Orden de Despacho
 class SolicitudOrdenDespachoDetalleView(LoginRequiredMixin, View):
 
-	# template_name = 'solicitudordendespacho.html'
 	def post(self, request, *args, **kwargs):
 
 		try:
@@ -115,6 +134,7 @@ class SolicitudOrdenDespachoDetalleView(LoginRequiredMixin, View):
 				detalle.articulo = item['articulo']
 				detalle.cantidad = item['cantidad']
 				detalle.precio = item['precio']
+				detalle.descuento = item['descuento']
 				detalle.save()
 
 			return HttpResponse(1)
@@ -141,7 +161,7 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 					
 					#Si la Orden de Despacho no tiene detalle digitado no puede ser aprobada
 					try:
-						SolicitudOrdenDespachoD.objects.get(ordenDespacho=oSolicitud)
+						SolicitudOrdenDespachoD.objects.filter(ordenDespacho=oSolicitud)
 					except SolicitudOrdenDespachoD.DoesNotExist:
 						raise Exception('La Solicitud No. ' + '{:0>8}'.format(oSolicitud.noSolicitud) + ' no tiene detalle digitado.')
 
@@ -277,6 +297,7 @@ class SolicitudODById(LoginRequiredMixin, DetailView):
 					{	'articulo': detalle.articulo,
 						'cantidad': detalle.cantidad,
 						'precio': detalle.precio,
+						'descuento': detalle.descuento,
 					} 
 					for detalle in SolicitudOrdenDespachoD.objects.filter(ordenDespacho=solicitud)],
 				})

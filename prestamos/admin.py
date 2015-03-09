@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DesembolsoElectronico, \
+from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DistribucionExcedente, \
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
-					NotaDeDebitoPrestamo, DistribucionExcedente
+					NotaDeDebitoPrestamo
 
 @admin.register(SolicitudPrestamo)
 class SolicitudPrestamoAdmin(admin.ModelAdmin):
@@ -18,7 +18,14 @@ class SolicitudOrdenDespachoHAdmin(admin.ModelAdmin):
 					'montoSolicitado', 'valorGarantizado', 'netoDesembolsar', 'categoriaPrestamo']
 
 
+@admin.register(SolicitudOrdenDespachoD)
+class SolicitudOrdenDespachoDAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'ordenDespacho', 'articulo', 'cantidad', 'precio']
+
+
 @admin.register(MaestraPrestamo)
 class MaestraPrestamoAdmin(admin.ModelAdmin):
 
-	list_display = ['id','noPrestamo','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio']
+	list_display = ['noPrestamo', 'fechaDesembolso','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio']
+	search_fields = ('noPrestamo',)

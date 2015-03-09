@@ -1,0 +1,56 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Reporte de Ventas Diarias {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<section class="Factura" ng-controller="RPTVentasDiariasCtrl">
+	
+	<div class="rptUtilidad">
+		<div class="align-center">
+			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<p class="titulo-utilidad"> Reporte de Utilidades </p>
+			<p class="fecha-utilidad"> Desde: 0000000 Hasta 0000000 </p>
+		</div>
+
+		<section class="detalle-utilidad">
+			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
+			<table class="table-producto-factura" ng-init="reporteUtilidades()">
+				<tr>
+					<td>Categoria</td>
+					<td>Producto</td>
+					<td>Cantidad</td>
+					<td>Precio</td>
+					<td>Valor</td>
+					<td>Costo</td>
+					<td>Margen</td>
+				</tr>
+				<tr ng-repeat="registro in registros">
+					<td>[[registro.categoriaDescrp]]</td>
+					<td>[[registro.productoDescrp]]</td>
+					<td>[[registro.cantidad | number : 2]]</td>
+					<td>[[registro.precio | number : 2]]</td>
+					<td>[[registro.valor | number : 2]]</td>
+					<td>[[registro.costo | number : 2]]</td>
+					<td>[[registro.margen | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="5">TOTALES:</td>
+					<td>[[totalDescuento_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
+				</tr>
+			</table>
+		</section>
+
+	</div>
+	
+</section>
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

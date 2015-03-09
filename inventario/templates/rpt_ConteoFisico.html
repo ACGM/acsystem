@@ -1,0 +1,80 @@
+<div class="head"> 
+
+{% extends "base.html" %}
+
+{% block title %} Reporte de Conteo Fisico {% endblock title %}
+
+{% block content %}
+
+</div>
+
+	<div class="ExistenciaArticulo" ng-controller="RPTExistenciaArticuloCtrl">
+
+		<!-- <mensajeerror> </mensajeerror> -->
+		
+		<h1 class="titulo-reporte-conteo-fisico">REPORTE PARA CONTEO FISICO</h1>
+		<div class="sub-menu">	
+			
+				<a href="#">Reporte de Conteo Fisico de Articulo(s)</a>
+			<a class="[[ArrowLEI]]" href="#" ng-click="toggleLEI()"></a>
+		</div>
+
+		<section ng-init="getCategoriasProductos()">
+
+			<div class="busqueda-existencia-inventario">
+				<div class="almacen">
+					<span>Almacen</span>
+					<select name="almacen" id="almacen" ng-model="almacen" ng-init="getAlmacenes()" required>
+						<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+					</select>	
+				</div>
+			</div>
+
+			<div class="busqueda-categoria">
+
+				<span>Seleccione la(s) categoria(s): </span> 
+				<a href="#" class=[[iconcheck]] ng-click="seleccionAll()" title="Seleccionar todas las categorias"></a>
+
+				<button class="Boton" ng-click="toggleCategorias()">Mostrar</button>
+
+				<div class="section-categorias" ng-show="mostrarCategorias">
+					<ul ng-repeat="categoria in categorias" class="content-categorias-productos">
+						<li><input type="checkbox" value="[[categoria.id]]" ng-checked="valoresChk[categoria.id]" ng-model="reg[categoria.id]" ng-click="selectedReg(categoria)"> [[categoria.descripcion]]</li>
+					</ul>
+				</div>
+			</div>
+			<button class="Boton boton-genera-reporte" ng-click="existenciaConteoFisico()">Generar Reporte</button>
+
+			<div class="caja-productos">
+
+				<ul ng-repeat="registro in registros" class="content-productos-exist">
+
+					<li ng-if="registros[$index-1].categoria != registro.categoria" class="categoria-producto">[[registro.categoria]]</li>
+
+					<div ng-if="registros[$index-1].categoria != registro.categoria" class="content-productos-header-cf">
+						<li class="content-productos-header-cf-1"><strong>CODIGO</strong></li>
+						<li class="content-productos-header-cf-2"><strong>PRODUCTO</strong></li>
+						<li class="content-productos-header-cf-3"><strong>EXISTENCIA</strong></li>
+						<li class="content-productos-header-cf-3">CONTEO</li>
+					</div>
+
+					<div class="content-productos-detail-cf">
+						<li class="content-productos-detail-cf-1">[[registro.codigo]]</li>
+						<li class="content-productos-detail-cf-2">[[registro.producto]]</li>
+						<li class="content-productos-detail-cf-3">[[registro.totalCantidad | number : 2]]</li>
+						<li class="content-productos-detail-cf-3">           _</li>
+
+					</div>
+				</ul>
+			</div>
+
+		</section>
+
+		
+	</div>
+
+<div class="pie">
+
+{% endblock content %}
+
+</div>
