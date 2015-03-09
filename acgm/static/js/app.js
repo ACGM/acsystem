@@ -12,7 +12,8 @@
     'cooperativa.maestraprestamo',
     'cooperativa.solicitudod',
     'cooperativa.cxp',
-    'cooperativa.desembolsoelectronico'
+    'cooperativa.desembolsoelectronico',
+    'cooperativa.contabilidad'
     ]);
 
   app.factory('appService', ['$http', '$q', '$filter', function ($http, $q, $filter) {

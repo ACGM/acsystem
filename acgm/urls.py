@@ -29,7 +29,7 @@ from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODA
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById
 
 from ahorro.views import AhorroView, MaestraAhorroView
-from cuenta.views import CuentasView
+from cuenta.views import CuentasView, diarioView
 from cxp.views import CxpView
 
 #ViewSets (API)
@@ -256,6 +256,7 @@ urlpatterns = patterns('',
 
     #Cuentas
     url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
+    url(r'^contabilidad/DiarioGeneral/$', diarioView.as_view(), name='diario_general'),
 
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),

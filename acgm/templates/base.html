@@ -39,7 +39,8 @@
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
 			<li ng-hide="{{prestamo}}" class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#">Prestamos</a> </li>
 			<li class="menu-item" id="menu3"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
-			<li class="menu-item" id="menu4"> <a class="menu-opcion" href="#">Contabilidad</a></li>
+			<li ng-hide="{{contabilidad}}" class="menu-item" id="menu4"> <a class="menu-opcion" ng-click="ShowSubMenuCont(true)"
+			ng-mouseleave-"ShowSubMenuCont(false)" href="#">Contabilidad</a></li>
 			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
 			<li class="menu-item" id="menu6"> <a class="menu-opcion" href="/desembolso">Desembolsos</a></li>
 			
@@ -113,6 +114,15 @@
 		<li><a href="/cxp/cxpOrden">Cxp Orden de Compra</a></li>
 		<li><a href="">Cxp Factura AceroCoop</a></li>
 	</ul>
+
+	<!-- Sub Menu de Contabilidad -->
+	<ul class="sub-menu-contabilidad" ng-show="SubCont" ng-mouseover="ShowSubMenuCont(true)" ng-mouseleave="ShowSubMenuCont(false)">
+		<li><a href="/contabilidad/DiarioGeneral">Diario General</a></li>
+		<li><a href="">Mayor General</a></li>
+		<li><a href="">Balance General</a></li>
+		<li><a href="">Estado de Resultado</a></li>
+		<li><a href="">Estado de Sutuación</a></li>
+	</ul>
 	</nav>
 
 	
@@ -157,6 +167,8 @@
 	<script type="text/javascript" src={% static "js/notadebito.js" %} ></script>
 	<script type="text/javascript" src={% static "js/libs/ahorro.js" %}></script>
 	<script type="text/javascript" src={% static "js/libs/cxp.js" %}></script>
+	<script type="text/javascript" src={% static "js/libs/contabilidad.js" %}></script>
+
 
 
 

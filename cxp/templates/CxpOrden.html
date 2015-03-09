@@ -8,112 +8,164 @@
 		
 		<div class="sub-menu">	
 			<div class="menu-entrada-inventario-listado">
-				<button class="nuevo icon-file" title="Nueva factura" ng-click="nuevaEntrada('{{user}}')"></button>
+				<button class="nuevo icon-file" ng-click="nuevaOrden()" title="Nueva Orden" ></button>
 			</div>
 				<a href="#" ng-click="toggleLF()">CXP Ordenes de Compra</a>
 			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
 		</div>
-		
-		<div class="sub-menu">
-			Crear Orden
-			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
-		</div>
-		<section class="Orden-Registro">
-				<div class="content-socios-table">
-						<table class="socios-table-search" ng-show="tableSocio">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
-								</td>
-							</tr>
-							<tr class="socios-table-header">
-								<td>Codigo</td>
-								<td>Nombre</td>
-								<td>Departamento</td>
-							</tr>
-							<tr ng-repeat="s in socios" class="socios-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
-							</tr>
-						</table>
-		<div class="content-suplidor-table">
-						<table class="suplidor-table-search" ng-show="tableSuplidor">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
-								</td>
-							</tr>
-							<tr class="socios-table-header">
-								<td>Codigo</td>
-								<td>Nombre</td>
-							</tr>
-							<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
-								
-							</tr>
-						</table>
-					</div>
-		<table class="data-entry-header-table">
-						<tr>
-							<td>Orden</td>
-							<td> <input type="text" ng-model="cxpFilterData.orden" class="input-no-editable" ng-disabled="true"> </td>
-						</tr>
-						<tr>
+
+		<div ng-show="OrdenList">
+			<table class="listado-table-f" id="table-lf-listado" ng-init="getAllData()">
+						<tr class="listado-table-header-f">
+							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
+							<td>Estatus</td>
 							<td>Fecha</td>
-							<td> <input type="text" ng-model="getdate" value="[[cxpFilterData.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
-						</tr>
-						<tr>
+							<td>Orden</td>
 							<td>Socio</td>
-							<td> <input type="text" ng-model="socioCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
-								<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
-
-								<a href="#" class="icon-uniE601 icon-buscar" ng-click="socioNombre=''; getSocio($event)"></a>
-								
-								<span class="error-ei"> [[socioNoExiste]]</span>
-
-							</td>
-						</tr>
-						<tr>
-							<td>Suplidro</td>
-							<td> <input type="text" ng-model="suplidorCodigo" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
-								<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
-
-								<a href="#" class="icon-uniE601 icon-buscar" ng-click="SuplidorNombre=''; getSuplidor($event)"></a>
-								
-								<span class="error-ei"> [[suplidorNoExiste]]</span>
-
-							</td>
-						</tr>
-						<tr>
+							<td>Suplidor</td>
 							<td>Monto</td>
-							<td> 
-								<input type="text" ng-model="cxpFilterData.monto" class="input-no-editable">
+							<td>Cuotas</td>
+							<td>Imprimir</td>
+							<td>Eliminar</td>
+						</tr>
+
+						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail" ng-init="total=0">
+							<td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td>
+							<td class="icon-folder estatus-[[Orden.estatus]]"></td>
+							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
+							<td><a href="#" class="sp-field" ng-click="selOrden(Orden.orden)"> [[Orden.orden | numberFixedLen: 8]] </a></td>
+							<td>[[Orden.socio ]]</td>
+							<td>[[Orden.suplidor]]</td>
+							<td>[[Orden.monto | number: 2]]</td>
+							<td>[[Orden.cuotas | numberFixedLen: 5]]</td>
+							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td>
+							<td>
+								<div ng-if="Orden.estatus == 'A'"> <a href="#" class="icon-delete icon-eliminar" ng-click="deleteOrden()"></a></div> 
+								<div ng-if="Orden.estatus == 'P' || Orden.estatus == 'I'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
+
 							</td>
 						</tr>
+									
+					</table>
+		</div>
+		
+
+		<div class="sub-menu" ng-show="OrdenCrPanel">
+			Crear Orden
+			<a href="#" class="[[DatArrow]]" ng-click="toggleDat()"></a>
+		</div>
+		
+		<section class="Orden-Registro" ng-show="OrdenReg">
+			<form name="CxpForm" class="data-entry-section" novalidate ng-submit="guardarOrden($event)" >
+				<div class="content-socios-table">
+					<table class="socios-table-search" ng-show="tableSocio">
 						<tr>
-							<td>Cuotas</td>
-							<td> <input type="text" ng-model="cxpFilterData.Cuotas" readonly class="input-no-editable"> </td>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>Nombre</td>
+							<td>Departamento</td>
+						</tr>
+						<tr ng-repeat="s in socios" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
 						</tr>
 					</table>
+				</div>
+
+				<div class="content-suplidor-table">
+					<table class="suplidor-table-search" ng-show="tableSuplidor">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>Nombre</td>
+						</tr>
+						<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+							
+						</tr>
+					</table>
+				</div>
+
+				<table class="data-entry-header-table">
+					<tr>
+						<td>Orden</td>
+						<td> <input type="text" ng-model="cxpFilterData.orden"> </td>
+					</tr>
+					<tr>
+						<td>Fecha</td>
+						<td> <input type="text" ng-model="getdate" value="[[cxpFilterData.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
+					</tr>
+					<tr>
+						<td>Socio</td>
+						<td> <input type="text" ng-model="cxpFilterData.socioId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+							<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="socioNombre=''; getSocio($event)"></a>
+							
+							<span class="error-ei"> [[socioNoExiste]]</span>
+
+						</td>
+					</tr>
+					<tr>
+						<td>Suplidro</td>
+						<td> <input type="text" ng-model="cxpFilterData.suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+							<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
+
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="suplidorNombre=''; getSuplidor($event)"></a>
+							
+							<span class="error-ei"> [[suplidorNoExiste]]</span>
+
+						</td>
+					</tr>
+					<tr>
+						<td>Monto</td>
+						<td> 
+							<input type="text" ng-model="cxpFilterData.monto | number:2 " class="input-no-editable"  ng-disabled="true">
+						</td>
+					</tr>
+					<tr>
+						<td>Cuotas</td>
+						<td> <input type="text" ng-model="cxpFilterData.cuotas" readonly class="input-no-editable"  ng-disabled="true"> </td>
+					</tr>
+				</table>
+			
+			<button class="smallMargin icon-save Boton" type="submit" >Guardar</button>
+			<button class="smallMargin icon-delete Boton danger" type="reset">Cancelar</button>
+			</form>
+
 		</section>
-	
+		
+			<div class="producto-find-ei" ng-show="panelDetalleArt">
+				<div class="sub-menu">
+					Detalle de Ordenes
+					<a href="#" class="[[DetArrow]]" ng-click="toggleDt()"></a>
+				</div>
+				<div ng-show="DetallesArt">
+					<button class="smallMargin icon-plus Boton" type="submit" ng-click="addDetalle()" >Agregar</button>
+					<table  id="TbDetalle" class="listado-table-f data-entry-header-table">
+						<tr class="listado-table-header-f Orden-Articulos">
+							<td style="width:90.5%;">Articulo</td>
+							<td>Precio</td>
+						</tr>
+						<tr class="DetalleOrden" ng-repeat="detalle in cxpDataDetalle" >
+							<td><input type="text" value="[[detalle.articulo]]" class="utils-alignTLeft" style="width:100%; height:100%"></td>
+							<td><input type="text" value="[[detalle.monto |number:2]]" class="utils-alingTRight" style="width:100%; height:100%"></td>
+						</tr>
+					</table>
+				</div>
 
-					<div class="producto-find-ei">
-						<div class="sub-menu">
-							Detalle de Ordenes
-							<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
-						</div>
-						<table class="data-entry-header-table">
-							<tr>
-								<td>Articulo</td>
-								<td>Precio</td>
-							</tr>
-						</table>
-
-					</div>
-
+			</div>
+		
 
 	</section>
 {% endblock content%}

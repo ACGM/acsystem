@@ -1,7 +1,7 @@
 from django.db import models
 
-from administracion.models import Socio, CoBeneficiario
-from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
+from administracion.models import Socio
+from cuenta.models import DiarioGeneral
 
 # Manejo de intereces de ahorro
 class InteresesAhorro(models.Model):
@@ -22,7 +22,6 @@ class AhorroSocio(models.Model):
                                   verbose_name="Balance Socio")
     disponible = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False,
                                      verbose_name="Disponible")
-
 
     def __unicode__(self):
         return '%s-%s' % (str(self.pk), self.socio.nombreCompleto)
@@ -53,10 +52,8 @@ class MaestraAhorro(models.Model):
     estatus = models.BooleanField(default=False)
     cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="ahorro_rel")
 
-
     def __unicode__(self):
         return '%i' % self.id
-
 
     class Meta:
         ordering = ['fecha']

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title%} Diario General {% endblock title %}
+
+{% block content%}
+<section ng-controller="ContabilidadController" >
+	<div class="sub-menu">	
+				<a href="#" ng-click="toggleLF()">Diario General</a>
+			<!-- <a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a> -->
+	</div>
+	<section class="DiarioSearch" >
+		<div ng-init="FillResult()">
+			<div class="DiarioHidenTable">
+				<table class="cuentas-table-search" ng-show="tableCuentas">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableCuentas=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>descripcion</td>
+							</tr>
+							<tr ng-repeat="c in cuentas" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selCuenta($event,c)"> [[c.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selCuenta($event,c)"> [[c.descripcion]] </a></td>
+							</tr>
+						</table>
+
+				<table class="aux-table-search" ng-show="tableAux">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableAux=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>descripcion</td>
+							</tr>
+							<tr ng-repeat="a in aux" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selAux($event,a)"> [[a.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selAux($event,a)"> [[a.descripcion]] </a></td>
+							</tr>
+						</table>
+			</div>
+
+
+			<table >
+				<tr>
+					<td>
+						<label for="FechaI">Fecha Inicial</label> 
+							<input type="text" ng-model="SFechaI" value="[[SFechaI | date: 'dd/MM/yyyy']]" datepicker style="margin:.5em">
+					</td>
+					<td>
+						<label for="FechaF">Fecha Final</label> 
+							<input type="text" ng-model="SFechaF" value="[[SFechaF | date: 'dd/MM/yyyy']]" datepicker style="margin:.5em">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><label for="SCuenta">Cuenta</label> 
+							<input type="text" ng-model="SCuenta" ng-keyup="getCuenta($event)" ng-focus="tableCuentas=false" ng-click="tableCuentas=false; errorShow=false; getCuenta($event);" class="producto-field-ei" style="margin:.5em">
+								
+								<span class="error-ei"> [[cuentaNoExiste]]</span>
+				</td>
+				<tr>
+					<td colspan="2">
+						<label for="SAux">Auxiliar</label> 
+							<input type="text" ng-model="SAux" ng-keyup="getAux($event)" ng-focus="tableAux=false" ng-click="tableAux=false; errorShow=false; getAux($event);" class="producto-field-ei" style="margin:.5em">
+								
+								<span class="error-ei"> [[auxNoExiste]]</span>
+					</td>
+				</tr>
+			</table>
+			<button class="Boton  BusquedaBtn" ng-click="FillResult()">Buscar <span class="icon-uniE601"></span></button>
+
+
+			<button class="Boton BusquedaBtn danger" ng-click="Clear()">Limpiar <span class="icon-notification"></span></button>
+			<button class="Boton BotonImprimirDiario" ng-click="Clear()">Limpiar <span class="icon-printer"></span></button>
+						
+		</div>
+	</section>
+
+	<section class="DiarioPanel">
+		<div>
+			<table class="listado-table-f" id="table-lf-listado" style="width:70%">
+				<tr class="listado-table-header-f">
+					<td>Fecha</td>
+					<td>Cuenta</td>
+					<td>Aux</td>
+					<td>Ref</td>
+					<td>Debito</td>
+					<td>Credito</td>
+				</tr>
+				<tr ng-repeat="reg in diario" class"listado-Dr-detail" >
+					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
+					<td style="padding-left:.5em;">[[reg.cuenta ]]</td>
+					<td style="padding-left:.5em;">[[reg.auxiliar ]]</td>
+					<td style="padding-left:.5em;">[[reg.ref]]</td>
+					<td style="text-align:right; padding-right:.5em;">[[reg.debito | number: 2 ]]</td>
+					<td style="text-align:right; padding-right:.5em;">[[reg.credito | number: 2]]</td>
+				</tr>
+			</table>
+			<div class="[[panelTotal]]">
+				<span>[[totalDebito | number:2]]</span>
+				<span>[[totalCredito | number:2 ]]</span>
+			</div>
+		</div>
+	</section>
+</section>
+{% endblock content%}

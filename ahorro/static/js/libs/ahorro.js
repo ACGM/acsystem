@@ -108,63 +108,13 @@
 			$scope.Disponible=null;
 			$scope.MaestraDetalle=[];
 
-
-
-			$scope.DataAhorro = {
-				'id':'8',
-				'socio':'241099',
-				'balance':'200000',
-				'disponible':'200000'
-			};
-			$scope.DataMaestra = {
-				'id': null,
-				'fecha':'2015-01-01',
-				'ahorro':'8',
-				'monto':'35000',
-                'retiro':null,
-				'interes':'8',
-				'balance':'200000',
-				'estatus':false,
-				};
-			$scope.DataCuentas = [{
-					'id': null,
-					'fecha':'2015-01-01',
-					'cuenta': '1',
-					'auxiliar': null,
-					'referencia':'AR',
-					'tipoDoc' : 'AH',
-					'estatus' : 'R',
-					'debito' : '35000',
-					'credito' : '0.00'
-				},
-				{
-					'id': null,
-					'fecha':'2015-01-01',
-					'cuenta': '2',
-					'auxiliar': null,
-					'referencia':'AR',
-					'tipoDoc' : 'AH',
-					'estatus' : 'R',
-					'debito' : '0.00',
-					'credito' : '35000'
-								}];
-			$scope.DataRetiro={};
-			// {
-			// 	'id': '7',
-			// 	'socio': '241099',
-			// 	'ahorro': '7',
-			// 	'tipoRetiro': 'A',
-			// 	'monto' : '35000'
-
-			// };
-
 			 $scope.getListaAhorro = function(){
 			 	try{
 					AhorroServices.getAllAhorro().then(function (data) {
 						$scope.AhorrosPorSocio=data;
 					});
-				}catch(ex){
-					$rootScope.mostrarError(ex.message);
+				}catch(ex){    
+					
 				}
 			};
 

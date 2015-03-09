@@ -6,7 +6,7 @@ from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
 class DetalleOrden(models.Model):
     articulo = models.CharField(max_length=200, default=False, blank=False, null=False, verbose_name="Articulo")
     monto = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False, verbose_name="Precio")
-    orden = models.PositiveIntegerField(verbose_name='Orden Compra')
+    orden = models.PositiveIntegerField(verbose_name='Orden')
     def __unicode__(self):
         return self.articulo
 
@@ -16,6 +16,8 @@ class DetalleOrden(models.Model):
 
 # Registro de ordenes de compra a Socio
 class OrdenCompra(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     socio = models.ForeignKey(Socio, null=False, blank=False, default=False, verbose_name="Socio")
     orden = models.PositiveIntegerField(null=False, blank=False, verbose_name="# Orden")
@@ -23,12 +25,12 @@ class OrdenCompra(models.Model):
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
     cuotas = models.PositiveIntegerField(null=False, blank=False, verbose_name="Cuotas")
     montocuotas = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
-    estatus = models.BooleanField(default=False)
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     detalleOrden = models.ManyToManyField(DetalleOrden, related_name='detalle_ref', verbose_name="Detalle de Orden")
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_ref", verbose_name='Detalle Cuentas')
 
     def __unicode__(self):
-        return self.orden
+        return '%s-%s' % (str(self.orden), self.suplidor.nombre)
 
     class Meta:
         ordering = ['suplidor', 'fecha']
@@ -49,7 +51,7 @@ class CxpSuperCoop(models.Model):
                                             verbose_name='Detalle Cuentas')
 
     def __unicode__(self):
-        return self.concepto
+        return '%s-%s' %(str(self.factura), self.suplidor.nombre)
 
     class Meta:
         ordering = ['suplidor', 'fecha']
