@@ -8,9 +8,9 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('inventario', '__first__'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('inventario', '0001_initial'),
-        ('administracion', '__first__'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('porcentajeDescuento', models.DecimalField(default=0, verbose_name=b'Porcentaje Descuento', max_digits=6, decimal_places=2, blank=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('costo', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
                 ('almacen', models.ForeignKey(to='inventario.Almacen')),
             ],
             options={
@@ -47,29 +48,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['-noFactura'],
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='OrdenDespachoSuperCoop',
-            fields=[
-                ('noSolicitud', models.AutoField(serialize=False, primary_key=True)),
-                ('pagarPor', models.CharField(default=b'EM', max_length=2, choices=[(b'EM', b'Empresa'), (b'CA', b'Cajero')])),
-                ('formaPago', models.CharField(default=b'Q', max_length=1, choices=[(b'Q', b'Quincenal'), (b'M', b'Mensual')])),
-                ('tasaInteresAnual', models.DecimalField(default=0, max_digits=6, decimal_places=2)),
-                ('tasaInteresMensual', models.DecimalField(default=0, max_digits=6, decimal_places=2)),
-                ('quincena', models.IntegerField(default=1, blank=True, choices=[(b'1', b'1ra Quincena'), (b'2', b'2da Quincena')])),
-                ('cuotas', models.IntegerField(default=2)),
-                ('valorCuotas', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('estatus', models.CharField(default=b'A', max_length=1, choices=[(b'A', b'Activa'), (b'I', b'Inactiva'), (b'N', b'Anulada')])),
-                ('datetimeServer', models.DateTimeField(auto_now_add=True)),
-                ('categoria', models.ForeignKey(to='administracion.CategoriaPrestamo')),
-                ('oficial', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'ordering': ['-noSolicitud'],
-                'verbose_name': 'Orden Despacho SuperCoop',
-                'verbose_name_plural': 'Ordenes Despacho SuperCoop',
             },
             bases=(models.Model,),
         ),

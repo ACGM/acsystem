@@ -7,8 +7,8 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('administracion', '0005_auto_20150211_2334'),
-        ('cuenta', '__first__'),
+        ('cuenta', '0001_initial'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('articulo', models.CharField(default=False, max_length=200, verbose_name=b'Articulo')),
                 ('monto', models.DecimalField(verbose_name=b'Precio', max_digits=18, decimal_places=2)),
-                ('orden', models.PositiveIntegerField(verbose_name=b'Orden Compra')),
+                ('orden', models.PositiveIntegerField(verbose_name=b'Orden')),
             ],
             options={
                 'ordering': ['articulo'],
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('monto', models.DecimalField(verbose_name=b'Monto', max_digits=18, decimal_places=2)),
                 ('cuotas', models.PositiveIntegerField(verbose_name=b'Cuotas')),
                 ('montocuotas', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('estatus', models.BooleanField(default=False)),
+                ('estatus', models.CharField(max_length=1, verbose_name=b'Estatus', choices=[(b'A', b'Activas'), (b'I', b'Inactivas'), (b'P', b'Posteada')])),
                 ('detalleCuentas', models.ManyToManyField(related_name='diario_ref', verbose_name=b'Detalle Cuentas', to='cuenta.DiarioGeneral')),
                 ('detalleOrden', models.ManyToManyField(related_name='detalle_ref', verbose_name=b'Detalle de Orden', to='cxp.DetalleOrden')),
                 ('socio', models.ForeignKey(default=False, verbose_name=b'Socio', to='administracion.Socio')),

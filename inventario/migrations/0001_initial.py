@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '__first__'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -22,6 +22,8 @@ class Migration(migrations.Migration):
                 ('cantidadTeorico', models.DecimalField(max_digits=12, decimal_places=2, blank=True)),
             ],
             options={
+                'verbose_name': 'Ajuste Inventario Detalle',
+                'verbose_name_plural': 'Ajuste Inventario Detalle',
             },
             bases=(models.Model,),
         ),
@@ -37,6 +39,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('id',),
+                'verbose_name': 'Ajuste Inventario Cabecera',
+                'verbose_name_plural': 'Ajuste Inventario Cabecera',
             },
             bases=(models.Model,),
         ),
@@ -97,6 +101,7 @@ class Migration(migrations.Migration):
                 ('condicion', models.CharField(default=b'CO', max_length=2, choices=[(b'CO', b'Contado'), (b'CR', b'Credito')])),
                 ('cxp', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'EN PROCESO'), (b'P', b'PROCESADA')])),
                 ('borrado', models.BooleanField(default=False)),
+                ('borradoFecha', models.DateTimeField(null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('borradoPor', models.ForeignKey(related_name='+', editable=False, to=settings.AUTH_USER_MODEL, null=True)),
                 ('suplidor', models.ForeignKey(to='administracion.Suplidor')),
@@ -117,6 +122,7 @@ class Migration(migrations.Migration):
                 ('descripcionSalida', models.CharField(max_length=255, null=True, verbose_name=b'Descripci\xc3\xb3n de Salida', blank=True)),
                 ('posteo', models.CharField(default=b'N', max_length=1, choices=[(b'N', b'NO'), (b'S', b'SI')])),
                 ('borrado', models.BooleanField(default=False)),
+                ('borradoFecha', models.DateTimeField(null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('borradoPor', models.ForeignKey(related_name='+', editable=False, to=settings.AUTH_USER_MODEL, null=True)),
                 ('usuarioSalida', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -133,6 +139,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('precio', models.DecimalField(null=True, max_digits=12, decimal_places=2)),
                 ('fechaMovimiento', models.DateField(auto_now_add=True)),
                 ('documento', models.CharField(max_length=4, choices=[(b'EINV', b'Entrada Inventario'), (b'SINV', b'Salida Inventario'), (b'AINV', b'Ajuste Inventario'), (b'FACT', b'Facturacion')])),
                 ('documentoNo', models.PositiveIntegerField()),
@@ -160,6 +167,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('fechaTransf',),
+                'verbose_name': 'Transferencia entre Almacenes',
+                'verbose_name_plural': 'Transferencias entre Almacenes',
             },
             bases=(models.Model,),
         ),

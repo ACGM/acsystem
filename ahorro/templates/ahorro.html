@@ -9,116 +9,100 @@
 		<mensajeinfo> </mensajeinfo>
 		<div class="sub-menu">
 			Ahorros
-			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
+			<a href="#" class="[[ArrowAhorro]]" ng-click="toggleAhorroPanel()"></a>
 		</div>
-		<section id="mainSection">
-			<section class="Ahorro-main" ng-init="getListaAhorro()">
-				<section class="Ahorro-main-search">
-					<div class="Ahorro-main-search-box">
-						<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
-						<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
-					</div>
-				</section>
-			</section>
-
-			<section class="Ahorro-main-list">
-					<div class="registrosPanel">
-						<table id='tabla-ahorros' class='listado-table'>
-							<tr class="listado-table-nc-header">
-								<th>Registro</th>
-								<th>Socio</th>
-								<th>Balance</th>
-								<th>Disponible</th>
-								<th>Imprimir</th>
-							</tr>
-							<tr ng-repeat="ahorro in AhorrosPorSocio" class="listado-sp-detail">
-								<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-noDecoration utils-alingTCenter'>[[ahorroid]] </a></td>
-								<td>[[ahorro.socio]] </td>
-								<td class="utils-alingTRight"> [[ahorro.balance]]</td>
-								<td class="utils-alingTRight"> [[ahorro.disponible]] </td>
-								<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer" ng-click="setAhorro()"></a></td>
-							</tr>
-							
-						</table>
-					</div>
+		<div ng-show="[[AhorroPanel]]">
+			<section id="mainSection">
+				<section class="Ahorro-main" ng-init="getListaAhorro()">
+					<section class="Ahorro-main-search">
+						<div class="Ahorro-main-search-box">
+							<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
+							<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
+						</div>
+					</section>
 				</section>
 
-		</section>
-
-		<section class="Ahorro-detalle">
-			<div class="sub-menu">
-				Ahorros - Detalle
-			</div>
-			<div class="Ahorro-detalle-header">
-				<table>
-					<tr>
-						<td class="items utils-upperBorderR">Registro</td>
-						<td class="results"><input id="idAhorro" type="text" class="input-disabled"></td>
-					</tr>
-					<tr>
-						<td class="items">
-							Socio
-						</td>
-						<td class="results">
-							<input type="text" id="Socio" class="input-disabled">
-						</td>
-					</tr>
-					<tr>
-						<td class="items">Balance</td>
-						<td class="results"><input type="text" id="Balance" class="input-disabled"></td>
-					</tr>
-					<tr>
-						<td class="items utils-bottomBorderR">
-							Disponible
-						</td>
-						<td class="results"><input type="text" id="Disponible" class="input-disabled"></td>
-					</tr>
-				</table>
-				
-			</div>
-			<section class="Ahorro-detalle-buttons utils-block utils-marginSmall">
-					<a href="#" class="Boton utils-paddingRSmall utils-noDecoration icon-save utils-registro" ng-click="setAhorro()"> Retiro de Ahorros</a>
+				<section class="Ahorro-main-list">
+						<div class="registrosPanel--grande">
+							<table id='tabla-ahorros' class='listado-table noTop'>
+								<tr class="listado-table-nc-header">
+									<th>Registro</th>
+									<th>Socio</th>
+									<th>Balance</th>
+									<th>Disponible</th>
+									<th>Imprimir</th>
+								</tr>
+								<tr ng-repeat="ahorro in Ahorros" class="listado-ar-detail">
+									<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-gr utils-noDecoration icon-pencil '><span class=""></span> </a></td>
+									<td>[[ahorro.socio]] </td>
+									<td class="utils-alingTRight"> [[ahorro.balance |number:2]]</td>
+									<td class="utils-alingTRight"> [[ahorro.disponible |number:2]] </td>
+									<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer" ng-click="setAhorro()"></a></td>
+								</tr>
+								
+							</table>
+						</div>
+					</section>
 			</section>
-
-			<div class="Ahorro-detalle-cuentas">
-				<div class="registroPanel">
-					<table id="tabla-detalleCuentas" class="listado-table-ei">
-						<tr class="listado-table-header-ei utils-upperBorderR">
-							<th>id Registro</th>
-							<th>Fecha</th>
-							<th>Monto</th>
-							<th>Interes</th>
-							<th>Balance</th>
-							<th>Estatus</th>
-						</tr>
-						<tr ng-repeat="registro in MaestraDetalle[0].maestra" class="listado-facturas-detail">
-						<td><a href="#" ng-click="getCuentaMaestra([[registro.id]])">[[registro.id]] </a></td>
-						<td>[[registro.fecha]]</td>
-						<td>[[registro.monto]]</td>
-						<td>[[registro.interes]]</td>
-						<td>[[registro.balance]]</td>
-						<td><input type="checkbox" name="[[maestra.estatus]]" id=""></td>
-							
-						</tr>
-					</table>
+		</div>
+		<div>
+			<section class="Ahorro-detalle">
+				<div class="sub-menu">
+					Ahorros - Detalle
+					<a href="#" class="[[ArrowDetalle]]" ng-click="toggleAhorroPanel()"></a>
 				</div>
-				<div class="cuentasPanel">
-					<table id="tabla-listaCuentas" class="listado-table-ei">
-						<tr class="listado-table-header-ei utils-upperBorderR">
-							<th>Cuenta</th>
-							<th>Auxiliar</th>
-							<th>Ref</th>
-							<th>Debito</th>
-							<th>Credito</th>
+				<div class="DiarioSearch">
+					<table>
+						<tr>
+							<td style="margin-right:.5em:"><strong> Registro </strong></td>
+							<td>[[AhorrosPorSocio[0].id]]</td>
 						</tr>
 						<tr>
-							
+							<td style="margin-right:.5em:">
+								<strong>Socio</strong> 
+							</td>
+							<td style="margin-right:.5em:">
+								[[AhorrosPorSocio[0].socio]]
+							</td>
+						</tr>
+						<tr>
+							<td style="margin-right:.25em:"><strong>Balance</strong> </td>
+							<td>[[AhorrosPorSocio[0].balance |number:2]]</td>
+						</tr>
+						<tr>
+							<td style="margin-right:.5em:">
+								<strong> Disponible</strong>
+							</td>
+							<td >[[AhorrosPorSocio[0].disponible]]</td>
 						</tr>
 					</table>
+					
 				</div>
-			</div>
-		</section>
-
+				<div class="Ahorro-detalle-cuentas">
+					<div class="registroPanel">
+						<table id="tabla-detalleCuentas" class="listado-table ">
+							<tr class="listado-table-header-ei utils-upperBorderR">
+								<th>Registro</th>
+								<th>Fecha</th>
+								<th>Monto</th>
+								<th>Interes</th>
+								<th>Balance</th>
+								<th>Estatus</th>
+							</tr>
+							<tr ng-repeat="registro in AhorrosPorSocio[0].maestra" class="listado-ardt-detail">
+							<td><a href="#" ng-click="getCuentaMaestra([[registro.id]])" class='utils-gr utils-noDecoration icon-pencil' ></a></td>
+							<td>[[registro.fecha]]</td>
+							<td>[[registro.monto |number:2]]</td>
+							<td>[[registro.interes |number:2]]</td>
+							<td>[[registro.balance |number:2]]</td>
+							<td><input type="checkbox" name="[[maestra.estatus]]" id=""></td>
+								
+							</tr>
+						</table>
+					</div>
+				</div>
+			</section>
+		</div>
 		<section>
 			<div class="sub-menu">
 			Retiro ahorro

@@ -368,6 +368,7 @@ footer
 		overflow scroll
 		border 1px solid lightgray
 		display inline-block
+	
 
 .comoCheque
 	position relative
@@ -3189,6 +3190,8 @@ footer
 .smallMargin
 	margin: 1em .2em;
 
+.noTop
+		margin-top 0
 .utils
 	&-block
 		display block
@@ -3219,6 +3222,8 @@ footer
 	
 	&-noDecoration
 		text-decoration None
+	&-gr
+		color verdeClarito
 	
 	&-paddingLSmall
 		padding-left 0.7em
@@ -3369,13 +3374,69 @@ footer
 	text-align right
 	width 70%
 	span
-		margin-left 4.3em
-		margin-right .5em
-	&first-child
-		margin-left 4.3em
+		padding-left 3.6em
+		padding-right .5em
 
 .BotonImprimirDiario
 	margin-left 4em;
+	
+.listado-ar-detail
+	& td
+		padding .17em 0
+		border 1px solid black
+		&:nth-child(1)
+			text-align center
+		&:nth-child(2) 
+			padding-left .3em
+			text-align left
+			width 32em
+		&:nth-child(3)
+			width 5.8em
+			padding 0 .6em
+			color mamey
+			font-weight bold
+		&:nth-child(4)
+			width 5.8em
+			text-align right
+			padding 0 .6em
+			color mamey
+			font-weight bold
+		&:nth-child(5) //ORDEN C.
+			padding 0 .3em
+			text-align left
+			width 1.2em
+
+.listado-ardt-detail
+	& td
+		padding .17em 0
+		border 1px solid black
+		&:nth-child(1)
+			text-align center
+		&:nth-child(2) 
+			padding-left .3em
+			text-align left
+			
+		&:nth-child(3)
+			width 5.8em
+			padding 0 .6em
+			text-align right
+			color mamey
+			font-weight bold
+		&:nth-child(4)
+			width 5.8em
+			text-align right
+			padding 0 .6em
+			color mamey
+			font-weight bold
+		&:nth-child(5) //ORDEN C.
+			width 5.8em
+			text-align right
+			padding 0 .6em
+			color mamey
+			font-weight bold
+		&:nth-child(6)
+			padding 0 .3em
+			text-align center
 		
 		
 		

@@ -29,7 +29,7 @@
 							<td>Eliminar</td>
 						</tr>
 
-						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail" ng-init="total=0">
+						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
 							<td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td>
 							<td class="icon-folder estatus-[[Orden.estatus]]"></td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>

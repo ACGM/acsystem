@@ -12,7 +12,7 @@
 			function getAllAhorro(){
 				var deferred = $q.defer();
 
-				$http.get(apiUrl)
+				$http.get(apiUrl+'&tipo=AR')
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -27,7 +27,6 @@
 				
 				getAllAhorro().then(function (data){
 					var result = data.filter(function (reg){
-
                         return reg.id==id;
 					});
 
@@ -106,34 +105,57 @@
 			$scope.Socio=null;
 			$scope.Balance=null;
 			$scope.Disponible=null;
+			$scope.ArrowAhorro = "UpArrow";
+			$scope.ArrowDetalle = "DownArrow";
+			$scope.AhorroPanel = true;
+			$scope.DetalleAhorro = false;
 			$scope.MaestraDetalle=[];
 
 			 $scope.getListaAhorro = function(){
 			 	try{
 					AhorroServices.getAllAhorro().then(function (data) {
-						$scope.AhorrosPorSocio=data;
+						$scope.Ahorros=data;
 					});
 				}catch(ex){    
 					
 				}
 			};
 
+			$scope.toggleAhorroPanel = function(){
+				$scope.AhorroPanel = !$scope.AhorroPanel;
+
+				if($scope.AhorroPanel==true){
+					$scope.ArrowAhorro = "UpArrow";
+				}else{
+					$scope.ArrowAhorro = "DownArrow";
+				}
+
+			}
+
 			$scope.setAhorro = function(){
 				AhorroServices.setAhorroReg($scope.DataAhorro,$scope.DataMaestra,$scope.DataCuentas,$scope.DataRetiro).then(function (data){
-			 			console.log(data);
 			 			$scope.getListaAhorro();
 			 		});
 			};
 
 			$scope.AhorroById = function(Id){
 				try{
+                    AhorroServices.getAhorroById(Id).then(function (data){
+                    	$scope.AhorrosPorSocio = data.filter(function(reg){
+                    		var x =[];
+                    		
+                    		for(i=0; i>reg.maestra.length; i++){
+                    			if(reg.maestra[i].retiro != ""){
+                    				console.log(reg.maestra[i].retiro);
+                    				x.push(reg);
+                    			}
+                    		}
 
-                    $scope.MaestraDetalle=$scope.AhorrosPorSocio.filter(function (data){
-                       
-                        return data.id==Id;
+                    		return x;
+                    	});
                     });
-                    console.log($scope.MaestraDetalle);
-						}
+                    
+					}
 				catch (ex){
 					$rootScope.mostrarError('Ocurrio un error al intentar cargar los datos: '+ex.message);
 				}
