@@ -162,6 +162,20 @@
         return deferred.promise;
       }
 
+      //Reporte de Resumen de Ventas
+      function resumenVentas(fechaI, fechaF) {
+        var deferred = $q.defer();
+
+        $http.get('/facturacion/reportes/ventasResumido/json/?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}', fechaF).replace('{fechaF}', fechaF)).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byPosteo: byPosteo,
@@ -172,7 +186,8 @@
         categoriasPrestamos: categoriasPrestamos,
         guardarOrdenSC: guardarOrdenSC,
         impresionFact: impresionFact,
-        reporteUtilidad : reporteUtilidad
+        reporteUtilidad : reporteUtilidad,
+        resumenVentas : resumenVentas
       };
 
     }])
@@ -1045,6 +1060,8 @@
 
         FacturacionService.all().then(function (data) {
           $scope.registros = data.filter(function (item) {
+            console.log($filter('date')(item.fecha, 'yyyy-MM-dd'))
+            console.log(fechaI)
             return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
           });
 
@@ -1094,8 +1111,8 @@
       $scope.errorShow = !$scope.errorShow;
     }
 
-    // Para imprimir reporte de Ventas Diarias
-    $scope.ventasDiarias = function() {
+    // Para imprimir reporte de Resumen de Ventas
+    $scope.ventasResumido = function() {
       try {
         var fechaInicio = $scope.fechaInicio.split('/');
         var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
@@ -1103,12 +1120,9 @@
         var fechaFin = $scope.fechaFin.split('/');
         var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
 
-        FacturacionService.all().then(function (data) {
-          $scope.registros = data.filter(function (item) {
-            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
-          });
-
-          $scope.totales();
+        FacturacionService.resumenVentas(fechaI, fechaF).then(function (data) {
+          $scope.registros = data;
+          $scope.totalesValores();
 
         });
       } catch (e) {
@@ -1117,18 +1131,11 @@
     }
 
     // Total de monto en Credito
-    $scope.totales = function() {
-      $scope.totalCredito = 0;
-      $scope.totalContado = 0;
+    $scope.totalesValores = function() {
+      $scope.totalValor = 0;
 
       $scope.registros.forEach(function (item) {
-        if(item.terminos == 'CR') {
-          $scope.totalCredito += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
-          console.log($scope.totalCredito)
-          console.log(item.totalGeneral)
-        } else {
-          $scope.totalContado += parseFloat(item.totalGeneral.replace('$','').replace(',',''));
-        }
+        $scope.totalValor += item.valor;
       });
     }
 

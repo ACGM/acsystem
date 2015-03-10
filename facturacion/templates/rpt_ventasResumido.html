@@ -23,30 +23,23 @@
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
 			<span>Fecha Fin</span>
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
-			<button class="Boton" ng-click="ventasDiarias()">Buscar</button>
+			<button class="Boton" ng-click="ventasResumido()">Buscar</button>
 		</div>
 
 		<section class="detalle-utilidad">
 			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
 			<table class="table-producto-factura">
 				<tr>
-					<td>Factura</td>
-					<td>Fecha</td>
-					<td>Socio</td>
-					<td>Credito</td>
-					<td>Contado</td>
+					<td>Nombre</td>
+					<td>Valor</td>
 				</tr>
 				<tr ng-repeat="registro in registros">
-					<td>[[registro.noFactura | numberFixedLen : 8]]</td>
-					<td>[[registro.fecha | date : 'dd/MM/yyyy']]</td>
-					<td>[[registro.socio]]</td>
-					<td><span ng-show="registro.terminos == 'CR'">[[registro.totalGeneral]]</span></td>
-					<td><span ng-show="registro.terminos == 'CO'">[[registro.totalGeneral]]</span></td>
+					<td>[[registro.nombreCompleto]]</td>
+					<td class="align-right">[[registro.valor | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="3">TOTALES:</td>
-					<td>[[totalCredito | number : 2]]</td>
-					<td>[[totalContado | number : 2]]</td>
+					<td>TOTALES:</td>
+					<td>[[totalValor | number : 2]]</td>
 				</tr>
 			</table>
 		</section>

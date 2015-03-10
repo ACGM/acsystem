@@ -187,12 +187,9 @@ class DetalleFacturasView(APIView):
 
 
 # Retornar detalle de facturas (para Reporte Utilidades)
-class RPTUtilidades(LoginRequiredMixin, DetailView):
-
-	queryset = Detalle.objects.all()
+class RPTUtilidades(LoginRequiredMixin, View):
 
 	def get(self, request, *args, **kwargs):
-		# format = self.request.GET.get('format')
 		return self.json_to_response()
 
 	def json_to_response(self):
@@ -255,7 +252,6 @@ class RPTResumenVentas(LoginRequiredMixin, DetailView):
 										LEFT JOIN facturacion_factura f ON d.factura_id = f.id \
 										LEFT JOIN administracion_socio s ON s.id = f.socio_id \
 										GROUP BY s.nombreCompleto \
-										HAVING f.fecha between \'2015-03-07\' \
 										ORDER BY s.nombreCompleto \
 										')
 

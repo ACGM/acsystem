@@ -1,0 +1,11 @@
+Requerimientos Iniciales para usar el sistema:
+
+1-Crear usuarios que tendran acceso.
+2-Agregar la localidad a cada usuario creado.
+3-Crear el suplidor SUPERCOOP para las facturas a credito.
+4-Crear la categoria de prestamo SUPERCOOP para las facturas a credito.
+5-Agregar los suplidores
+6-Agregar la Empresa
+7-Agregar los Representantes
+8-Agregar los Autorizadores
+9-Agregar los Cobradores

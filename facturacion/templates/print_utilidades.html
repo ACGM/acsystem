@@ -28,7 +28,6 @@
 			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
 			<table class="table-producto-factura">
 				<tr>
-					<td>Fecha</td>
 					<td>Categoria</td>
 					<td>Producto</td>
 					<td>Cantidad</td>
@@ -38,7 +37,6 @@
 					<td>Margen</td>
 				</tr>
 				<tr ng-repeat="registro in registros">
-					<td>[[registro.fecha]]</td>
 					<td>[[registro.categoriaDescrp]]</td>
 					<td>[[registro.productoDescrp]]</td>
 					<td>[[registro.cantidad | number : 2]]</td>
