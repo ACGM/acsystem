@@ -8,9 +8,9 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('prestamos', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0007_auto_20150219_2118'),
+        ('prestamos', '__first__'),
+        ('administracion', '__first__'),
     ]
 
     operations = [
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                 ('nomina', models.DateField(null=True)),
                 ('fecha', models.DateField(auto_now=True, null=True)),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
-                ('prueba', models.CharField(default=b's', max_length=1)),
+                ('cuota', models.ForeignKey(to='prestamos.PagoCuotasPrestamo')),
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
             ],

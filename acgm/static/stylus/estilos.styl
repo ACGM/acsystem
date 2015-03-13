@@ -298,10 +298,6 @@ footer
 		font-size 11px
 	
 // CLASES GENERICAS
-
-input, textarea
-	&:focus
-		background #FFFEDB
 		
 .cuentas-contables-posteo
 	top -1em
@@ -597,7 +593,7 @@ input, textarea
 	opacity 1
 	&.ng-hide
 		opacity 0
-		margin-left 30em
+		margin-top 30em
 	
 
 .cssSlideUpError
@@ -1076,26 +1072,6 @@ input, textarea
 	& td
 		border 1px solid black
 		padding .16em .2em
-		
-		&:nth-child(1), 
-		&:nth-child(3), 
-		&:nth-child(14),	
-		&:nth-child(15),	
-		&:nth-child(16),	
-		&:nth-child(17)	
-			text-align center
-		
-		&:nth-child(4),
-		&:nth-child(5),
-		&:nth-child(6),
-		&:nth-child(7),
-		&:nth-child(8),
-		&:nth-child(9),
-		&:nth-child(10),
-		&:nth-child(11),
-		&:nth-child(12)
-			text-align right
-
 
 .icon-delete-nomina
 	text-decoration none
@@ -1232,6 +1208,33 @@ input, textarea
 
 .egreso-field
 	padding 0 0 0 .5em
+
+	//Sub para Descuentos de Prestamos y Ahorros
+.form-prestamos-regulares
+	margin-left .5em
+	padding .3em
+	background #EEEEEE
+	border 1px solid verdeMuyOscuro
+	box-sizing border-box
+	display inline-block
+	width 49%
+	transition .3s
+
+.extiende
+	width 87% !important
+	
+.encogeAhorros
+	width 11% !important
+	float right
+	table 
+		display none
+
+.encogePrestamos
+	width 11% !important
+	float left
+	.section-prestamo 
+		display none
+		
 // FIN MODULO DE NOMINA  **********************************
 
 // MODULO DE INVENTARIO  **********************************
@@ -1819,7 +1822,7 @@ input, textarea
 
 
 .data-entry-factura-header
-	display inline-block
+	display block
 
 .data-entry-header-table
 	& tr
@@ -1931,12 +1934,13 @@ input, textarea
 	height 1em
 
 .factura-entry-div
-	float left
+	display inline-block
+
 	//sub modulo Orden Compra SUPER COOP
 .ordenCompra
-	float left
+	float right
 	position relative
-	margin 1em 0 0 3em
+	margin 1em .5em 0 1em
 	border 1px solid mamey
 	padding .4em
 	border-radius 3px 3px 2px 2px

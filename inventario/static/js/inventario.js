@@ -1838,7 +1838,7 @@
 
         appService.getDocumentoCuentas('SINV').then(function (data) {
           $scope.documentoCuentas = data;
-  console.log(data)
+
           //Prepara cada linea de posteo
           $scope.documentoCuentas.forEach(function (documento) {
             var desgloseCuenta = new Object();

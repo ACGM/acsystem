@@ -28,6 +28,12 @@ class NominaView(LoginRequiredMixin, TemplateView):
 	template_name = 'nomina.html'
 
 
+# Vista Descuentos Prestamos/Ahorros
+class NominaDescuentosView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'nomprestamos.html'
+
+
 # Listado de Nominas Generadas
 class ListadoNominasGeneradasViewSet(viewsets.ModelViewSet):
 

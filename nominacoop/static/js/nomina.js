@@ -293,6 +293,50 @@
 
       }
 
+    }])
+
+    //****************************************************
+    //                                                   *
+    //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
+    //                                                   *
+    //****************************************************
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'MaestraPrestamoService', 'NominaService', 
+                                          function ($scope, $filter, MaestraPrestamoService, NominaService) {
+      $scope.showAHORROS = true;
+      $scope.encogeAhorros = 'encogeAhorros';
+      $scope.extiendePrestamos = 'extiende';
+      $scope.showPRESTAMOS = true;
+
+      $scope.nominaH = {};
+      $scope.reg = [];
+      $scope.empleado = {};
+      $scope.detalle = [];
+
+      $scope.listadoPrestamos = function() {
+        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          $scope.prestamos = data;
+
+        });
+      }
+
+      $scope.ocultarAhorros = function($event) {
+        $event.preventDefault();
+
+        $scope.extiendePrestamos = 'extiende';
+        $scope.encogePrestamos = '';
+        $scope.encogeAhorros = 'encogeAhorros';
+      }
+
+      $scope.ocultarPrestamos = function($event) {
+        $event.preventDefault();
+
+        $scope.extiendeAhorros = 'extiende';
+        $scope.encogeAhorros = '';
+        $scope.encogePrestamos = 'encogePrestamos';
+
+
+      }
+
 
     }]);
 

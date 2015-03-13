@@ -118,7 +118,6 @@
         return deferred.promise;
       }
 
-
       //Buscar Prestamos por socio
       function PrestamosbySocio(codigoSocio){
         var deferred = $q.defer();
@@ -137,12 +136,45 @@
         return deferred.promise;
       }
 
+      // Marcar prestamos como posteados.
+      function PostearPrestamosOD(prestamos) {
+        var deferred = $q.defer();
+
+        $http.post('/maestraPrestamos/prestamosOD/postear/', JSON.stringify({'prestamos': prestamos})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Prestamos/OD posteados.
+      function PrestamosPosteados() {
+        var deferred = $q.defer();
+        all().then(function (data) {
+          var result = data.filter(function (documento) {
+            return documento.estatus == 'P';
+          });
+
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
       return {
         all: all,
-        byNoPrestamo: byNoPrestamo,
-        PrestamosbySocio: PrestamosbySocio,
-        PrestamoById: PrestamoById,
-        MarcarPrestamoDC: MarcarPrestamoDC
+        byNoPrestamo : byNoPrestamo,
+        PrestamosbySocio : PrestamosbySocio,
+        PrestamoById : PrestamoById,
+        MarcarPrestamoDC : MarcarPrestamoDC,
+        PostearPrestamosOD : PostearPrestamosOD,
+        PrestamosPosteados : PrestamosPosteados
       };
 
     }])
@@ -347,6 +379,24 @@
         }, function() {
           $scope.mostrarError("Hubo un error interno en la aplicacion, contacte al administrador.");
         })
+      }
+
+      //Postear Prestamos/OD
+      $scope.Postear = function($event) {
+        $event.preventDefault();
+
+        try {
+          MaestraPrestamoService.PostearPrestamosOD($scope.prestamosSeleccionados).then(function (data) {
+            if(data == 1) {
+              $scope.listadoPrestamos();
+            } else {
+              $scope.mostrarError(data);
+            }
+
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
       }
 
       //Cuando se le de click al checkbox del header.

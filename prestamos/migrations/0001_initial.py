@@ -8,9 +8,9 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('facturacion', '0002_auto_20150311_2144'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0001_initial'),
-        ('facturacion', '0001_initial'),
+        ('administracion', '__first__'),
     ]
 
     operations = [
@@ -152,6 +152,7 @@ class Migration(migrations.Migration):
                 ('articulo', models.CharField(default=b'No especificado', max_length=80)),
                 ('cantidad', models.DecimalField(max_digits=12, decimal_places=2)),
                 ('precio', models.DecimalField(max_digits=12, decimal_places=2)),
+                ('descuento', models.DecimalField(default=0, max_digits=8, decimal_places=2)),
             ],
             options={
             },
@@ -181,6 +182,8 @@ class Migration(migrations.Migration):
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'En Proceso'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'C', b'Cancelado')])),
                 ('prestamo', models.PositiveIntegerField(null=True, blank=True)),
                 ('fechaVencimiento', models.DateField(null=True, blank=True)),
+                ('factura', models.PositiveIntegerField(null=True)),
+                ('cxp', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'EN PROCESO'), (b'P', b'PROCESADA')])),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('autorizadoPor', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),

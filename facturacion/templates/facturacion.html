@@ -48,7 +48,6 @@
 							<td>Socio</td>
 							<td>Valor</td>
 							<td>Imprimir</td>
-							<td>Eliminar</td>
 						</tr>
 
 						<tr ng-repeat="factura in facturas" class="listado-facturas-detail" ng-init="total=0">
@@ -60,11 +59,9 @@
 							<td>[[factura.prestamo]]</td>
 							<td>[[factura.socio]]</td>
 							<td class="resaltar-valor">[[factura.totalGeneral]]</td>
-							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirFactura(factura)"></a> </td>
 							<td>
-								<div ng-if="factura.posteo == 'N'"> <a href="#" class="icon-delete icon-eliminar"></a></div> 
-								<div ng-if="factura.posteo != 'N'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
-
+								<a ng-if="factura.borrado == false" href="#" class="icon-printer imprimir-icon" ng-click="ImprimirFactura(factura)"></a> 
+								<span ng-if="factura.borrado == true">Eliminada</span>
 							</td>
 						</tr>
 									
@@ -84,6 +81,11 @@
 			</div>
 
 			<form name="FacturaForm" class="data-entry-section factura-entry-div" ng-submit="guardarFactura($event)" novalidate>
+				<p ng-if="dataH.factura != undefined"> <strong> Esta factura fue creada por el usuario: [[dataH.vendedor]] </strong></p>
+				<p ng-if="dataH.borrado == true" class="rojo-bold"> Esta factura fue eliminada por el usuario: [[dataH.borradoPor]] en fecha: [[dataH.borradoFecha | date : 'dd/MM/yyyy hh:mm a']]</p>
+
+				<button ng-if="dataH.posteo == 'N' && dataH.factura > 0 && dataH.borrado == false" class="icon-delete Boton boton-guarda-inventario" ng-click="eliminarFactura($event)" title="Elimina la existencia de esta factura, pero no elimina los registros de detalle(quedan para consulta)">Eliminar</button>
+
 				<div class="data-entry-factura-header">
 					
 					<div class="content-socios-table">
@@ -223,7 +225,7 @@
 							</ul>
 						</div>
 
-					<button class="icon-save [[disabledButton]] boton-guarda-inventario" type="submit" ng-disabled="FacturaForm.$valid && dataH.posteo == 'N' && disabledButtonBool">Guardar</button>
+					<button ng-hide="dataH.borrado" class="icon-save [[disabledButton]] boton-guarda-inventario" type="submit" ng-disabled="FacturaForm.$valid && dataH.posteo == 'N' && disabledButtonBool">Guardar</button>
 
 					</section>
 

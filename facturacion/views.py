@@ -15,7 +15,7 @@ from .serializers import ListadoFacturasSerializer, DetalleFacturasSerializer
 
 from .models import Factura, Detalle
 from administracion.models import Producto, Socio, CategoriaPrestamo
-from inventario.models import Existencia, Almacen
+from inventario.models import Existencia, Almacen, Movimiento
 from prestamos.models import SolicitudOrdenDespachoH
 
 from acgm.views import LoginRequiredMixin
@@ -23,6 +23,7 @@ from acgm.views import LoginRequiredMixin
 import json
 import math
 import decimal
+import datetime
 
 # Eliminar producto de la factura
 def quitar_producto(self, codProd, iAlmacen, noFactura):
@@ -35,6 +36,8 @@ def quitar_producto(self, codProd, iAlmacen, noFactura):
 		exist.save()
 	except Existencia.DoesNotExist:
 		return HttpResponse('No hay existencia para el producto ' + str(codProd))
+	except Detalle.DoesNotExist:
+		return HttpResponse('No existe el producto: ' + codProd)
 
 
 # Retornar una factura con todo su detalle  -- url(r'^facturajson/$',
@@ -73,6 +76,9 @@ class FacturaById(LoginRequiredMixin, DetailView):
 				'vendedor': factura.userLog.username,
 				'posteo': factura.posteo,
 				'impresa': factura.impresa,
+				'borrado': factura.borrado,
+				'borradoPor': factura.borradoPor.username if factura.borrado == True else '',
+				'borradoFecha': factura.borradoFecha if factura.borrado == True else '',
 				'productos': [ 
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
@@ -117,6 +123,16 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 			if dataH['socio'] != None:
 				socio = Socio.objects.get(codigo = dataH['socio'])
 
+			#Verificar la existencia de cada producto
+			for item in dataD:
+				try:
+					exist = Existencia.objects.filter(producto__codigo=item['codigo'], almacen__id=almacen).values('cantidad','producto__descripcion')
+
+					if decimal.Decimal(item['cantidad']) > exist[0]['cantidad']:
+						raise Exception('No tiene existencia el producto: ' + exist[0]['producto__descripcion'] + ', solo tiene : '+ str(exist[0]['cantidad']))
+				except Exception as e:
+					raise Exception('No tiene existencia en el almacen: ' + almacen + ' para el producto: ' + item['codigo'])
+			#Fin de verificacion de existencia
 
 			if facturaNo > 0:
 				fact = Factura.objects.get(noFactura = facturaNo)
@@ -124,17 +140,11 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 				for item in dataD:
 					quitar_producto(self, item['codigo'], almacen, facturaNo)
 
-				detalle = Detalle.objects.filter(factura = fact).delete()
-
+				try:
+					detalle = Detalle.objects.filter(factura = fact).delete()
+				except Exception as e:
+					pass
 			else:
-				#Verificar la existencia de cada producto
-				for item in dataD:
-					exist = Existencia.objects.filter(producto__codigo=item['codigo'], almacen__id=almacen).values('cantidad','producto__descripcion')
-
-					if decimal.Decimal(item['cantidad']) > exist[0]['cantidad']:
-						raise Exception('No tiene existencia el producto: ' + exist[0]['producto__descripcion'] + ', solo tiene : '+ str(exist[0]['cantidad']))
-				#Fin de verificacion de existencia
-				
 				try:
 					fact = Factura()
 					fact.noFactura = Factura.objects.latest('noFactura').noFactura + 1
@@ -160,6 +170,46 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 				detalle.save()
 
 			return HttpResponse(fact.noFactura)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
+# Eliminar Factura
+# # # # # # # # # # # # # # # # # # # # # # #
+class FacturaEliminarView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+			facturaNo = int(data['facturaNo'])
+
+			fact = Factura.objects.get(noFactura=facturaNo)
+			detalle = Detalle.objects.filter(factura=fact)
+
+			for item in detalle:
+				quitar_producto(self, item.producto.codigo, item.almacen.id, facturaNo)
+
+				mov = Movimiento()
+				mov.producto = item.producto
+				mov.cantidad = decimal.Decimal(Detalle.objects.get(factura__noFactura=facturaNo, producto=item.producto).cantidad) * -1
+				mov.precio = item.producto.precio
+				mov.costo = item.producto.costo
+				mov.almacen = item.almacen
+				mov.documento = 'FACT'
+				mov.documentoNo = facturaNo
+				mov.tipo_mov = 'S'
+				mov.userLog = request.user
+				mov.save()
+			
+			fact.borrado = True
+			fact.borradoPor = request.user
+			fact.borradoFecha = datetime.datetime.now()
+			fact.save()
+
+			return HttpResponse('1')
 
 		except Exception as e:
 			return HttpResponse(e)

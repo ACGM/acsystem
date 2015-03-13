@@ -26,6 +26,10 @@ class Factura(models.Model):
 	terminos = models.CharField(max_length=2, choices=terminos_choices, default='CO')
 	localidad = models.ForeignKey(Localidad, null=True, blank=True)
 
+	borrado = models.BooleanField(default=False)
+	borradoPor = models.ForeignKey(User, related_name='+', null=True)
+	borradoFecha = models.DateTimeField(null=True)
+
 	impresa = models.PositiveIntegerField(default=0)
 
 	userLog = models.ForeignKey(User)
@@ -104,7 +108,7 @@ class Detalle(models.Model):
 			exist.save()
 
 		except Existencia.DoesNotExist:
-			raise Exception('NOT_EXISTENCIA')
+			raise Exception('Intenta facturar un producto que no tiene existencia ' + self.producto.descripcion)
 
 		# Guardar el movimiento del producto
 		mov = Movimiento()

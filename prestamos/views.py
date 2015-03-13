@@ -320,13 +320,7 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 	def get(self, request, *args, **kwargs):
 
 		self.object_list = self.get_queryset()
-
-		format = self.request.GET.get('format')
-		if format == 'json':
-			return self.json_to_response()
-
-		context = self.get_context_data()
-		return self.render_to_response(context)
+		return self.json_to_response()
 
 	def json_to_response(self):
 		data = list()
@@ -349,6 +343,28 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+# Marcar como posteados los Prestamos y Ordenes de Despacho
+class PostearPrestamosODView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			prestamos = data['prestamos']
+			
+			# Marcar cada prestamo/OD con P - Posteado
+			for prestamo in prestamos:
+				p = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
+				p.estatus = 'P'
+				p.save()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
 
 
 #Imprimir Solicitud de Prestamo

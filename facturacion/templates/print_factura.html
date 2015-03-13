@@ -1,0 +1,125 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Factura {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<section class="Factura" ng-controller="ImprimirFacturaCtrl">
+	
+	<div class="FacturaVenta" id="FacturaDocumento">
+		<div class="header-f">
+			<span class="titulo-f"> COOPERATIVA </span>
+			<span class="localidad-f"> ZONA IND. LA ISABELA </span>
+			<span class="numeracion-f"> 2397299 </span>
+			<span class="rnc-f">RNC 300444554</span>
+		</div>
+
+		<section class="cabecera-factura">
+			<span class="vendido-f"> Vendido a: </span>
+			<span class="socio-f"> <strong> [[socioCodigo]]-[[socioNombre]] </strong> </span>
+			<span class="vendedor-f">Vendedor: [[dataH.vendedor]]</span>
+			<span class="terminos-f">Terminos: [[dataH.terminos]]</span>
+			<span class="hora">Hora: [[hora() | date : 'h:mm:a']]</timer> </span>
+		</section>
+
+		<section class="cabecera-factura-2">
+			<table>
+				<tr><td colspan="2">FACTURA</td></tr>
+				<tr>
+					<td>Fecha:</td>
+					<td>[[dataH.fecha]]</td>
+				</tr>
+				<tr>
+					<td>Numero:</td>
+					<td>[[dataH.factura]]</td>
+				</tr>
+				<tr>
+					<td>Orden No.:</td>
+					<td>[[dataH.orden]]</td>
+				</tr>
+			</table>
+
+		</section>
+		<section class="detalle-factura">
+			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
+			<table class="table-producto-factura">
+				<tr>
+					<td>Codigo</td>
+					<td>Unidad</td>
+					<td>Descripcion</td>
+					<td>Cantidad</td>
+					<td>Precio</td>
+					<td>% Descuento</td>
+					<td>Monto</td>
+				</tr>
+				<tr ng-repeat="producto in dataD">
+					<td>[[producto.codigo]]</td>
+					<td>[[producto.unidad]]</td>
+					<td>[[producto.descripcion]]</td>
+					<td>[[producto.cantidad | number : 2]]</td>
+					<td>[[producto.precio | number : 2]]</td>
+					<td>[[producto.descuento]]%</td>
+					<td>[[producto.subtotal | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="5">TOTALES:</td>
+					<td>[[totalDescuento_ | number : 2]]</td>
+					<td>[[totalValor_ | number : 2]]</td>
+				</tr>
+			</table>
+		</section>
+
+		<section class="firmas-f">
+			<div class="firma1-f">
+				<span>____________________________</span>
+				<span>Firma del Socio</span>
+			</div>
+
+			<div class="firma2-f">
+				<span>____________________________</span>
+				<span>Firma Autorizada</span>
+			</div>
+		</section>
+		<section class="totales-f">
+			<table>
+				<tr>
+					<td>SubTotal</td>
+					<td>[[totalValor_ | number : 2]]</td>
+				</tr>
+				<tr>
+					<td>Descuento</td>
+					<td>[[totalDescuento_ | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="2"> <hr></td>
+				</tr>
+				<tr>
+					<td>Total RD$</td>
+					<td>[[totalValor_ - totalDescuento_ | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="2"> <hr></td>
+				</tr>
+				<tr>
+					<td colspan="2"> <hr></td>
+				</tr>
+
+			</table>
+		</section>
+
+	</div>
+	
+	<div class="imprimir">
+		<button class="icon-printer Boton boton-imprimir-doc" ng-click="imprimirFactura()">IMPRIMIR</button>
+		
+	</div>
+</section>
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

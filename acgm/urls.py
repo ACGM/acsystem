@@ -5,7 +5,7 @@ from rest_framework import routers
 
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
-from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado
+from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -15,13 +15,14 @@ from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView
                                 ProcesarAjusteInvView
 
 from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView, RPTVentasDiariasView, \
-                                RPTVentasResumidoView, RPTResumenVentas
+                                RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
                             SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
-                            ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView
+                            ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
+                            PostearPrestamosODView
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView
@@ -157,11 +158,13 @@ urlpatterns = patterns('',
     
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
+    url(r'^nomina/descuentos/$', NominaDescuentosView.as_view(), name='Nomina_Descuentos'),
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
     url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
+
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
@@ -194,6 +197,7 @@ urlpatterns = patterns('',
     #Facturacion    
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
+    url(r'^facturacion/eliminar/$', FacturaEliminarView.as_view(), name='Facturacion_eliminar'),
     url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
 
     #Factura#Imprimir
@@ -246,6 +250,7 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
     url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
     url(r'^maestraPrestamojson/$', PrestamoById.as_view(), name='Maestra_Prestamo'),
+    url(r'^maestraPrestamos/prestamosOD/postear/$', PostearPrestamosODView.as_view(), name='postear_prestamosOD'),
 
     
 

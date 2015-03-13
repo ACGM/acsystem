@@ -19,6 +19,20 @@
         return deferred.promise;
       }
 
+      //Eliminar Factura
+      function eliminarFACT(facturaNo) {
+        var deferred = $q.defer();
+
+        $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       //Impresion de Factura (incrementa el campo de IMPRESA)
       function impresionFact(fact) {
         var deferred = $q.defer();
@@ -187,7 +201,8 @@
         guardarOrdenSC: guardarOrdenSC,
         impresionFact: impresionFact,
         reporteUtilidad : reporteUtilidad,
-        resumenVentas : resumenVentas
+        resumenVentas : resumenVentas,
+        eliminarFACT : eliminarFACT
       };
 
     }])
@@ -330,6 +345,26 @@
         }
       }
 
+      //Eliminar Factura (Borra el detalle de EXISTENCIA y pone estatus BORRADO, pero el registro sigue en base de datos)
+      $scope.eliminarFactura = function($event) {
+        $event.preventDefault();
+
+        try {
+          FacturacionService.eliminarFACT($scope.dataH.factura).then(function (data) {
+            if(data == 1) {
+              $scope.errorShow = false;
+              $scope.listadoFacturas();
+              $scope.nuevaEntrada();
+              $scope.toggleLF();
+            } else {
+              $scope.mostrarError(data);
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
       // Visualizar Documento (Factura Existente - desglose)
       $scope.FactFullById = function(NoFact, usuario) {
         try {
@@ -352,6 +387,9 @@
               $scope.dataH.vendedor = data[0]['vendedor'];
               $scope.dataH.posteo = data[0]['posteo'];
               $scope.dataH.impresa = data[0]['impresa'];
+              $scope.dataH.borrado = data[0]['borrado'];
+              $scope.dataH.borradoPor = data[0]['borradoPor'];
+              $scope.dataH.borradoFecha = data[0]['borradoFecha'];
 
               data[0]['productos'].forEach(function (item) {
                 $scope.dataD.push(item);
