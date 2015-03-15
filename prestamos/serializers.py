@@ -39,7 +39,8 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MaestraPrestamo
 		fields = ('noPrestamo', 'estatus', 'factura', 'codigoSocio', 'socio', 'montoInicial', 'categoriaPrestamo', 'balance', 'noSolicitudPrestamo', \
-					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual')
+					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual', 'cuotaInteresQ1', 'cuotaInteresQ2', 'cuotaMasInteresQ1', \
+					'cuotaMasInteresQ2')
 		ordering = ('-noPrestamo',)
 
 

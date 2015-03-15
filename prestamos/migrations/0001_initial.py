@@ -8,8 +8,8 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('facturacion', '0002_auto_20150311_2144'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('facturacion', '__first__'),
         ('administracion', '__first__'),
     ]
 
@@ -93,8 +93,6 @@ class Migration(migrations.Migration):
                 ('valorCapital', models.DecimalField(max_digits=18, decimal_places=2)),
                 ('valorInteres', models.DecimalField(null=True, max_digits=18, decimal_places=2)),
                 ('concepto', models.TextField()),
-                ('posteado', models.BooleanField(default=False)),
-                ('fechaPosteo', models.DateField(auto_now=True, null=True)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
             ],
             options={
@@ -124,10 +122,8 @@ class Migration(migrations.Migration):
             name='PagoCuotasPrestamo',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('valorCapital', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('valorInteres', models.DecimalField(null=True, max_digits=18, decimal_places=2)),
-                ('fechaPago', models.DateField(auto_now_add=True)),
-                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'N', b'Nota de Credito')])),
+                ('valorCapital', models.DecimalField(max_digits=8, decimal_places=2)),
+                ('valorInteres', models.DecimalField(null=True, max_digits=8, decimal_places=2)),
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
             ],
             options={

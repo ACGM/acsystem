@@ -274,11 +274,13 @@ class CuotasPrestamosEmpresa(models.Model):
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	cuota = models.ForeignKey(PagoCuotasPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
-	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+
+	fecha = models.DateField(auto_now=True)
+	userLog = models.ForeignKey(User)
 
 # Cuotas Ahorros para Nomina Empresa
 class CuotasAhorrosEmpresa(models.Model):
@@ -286,8 +288,9 @@ class CuotasAhorrosEmpresa(models.Model):
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),)
 
 	socio = models.ForeignKey(Socio)
-	valorAhorro = models.DecimalField(max_digits=12, decimal_places=2)
-	fecha = models.DateField(auto_now=True, null=True)
-	nomina = models.DateField(null=True)
+	valorAhorro = models.DecimalField(max_digits=8, decimal_places=2)
+	nomina = models.DateField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
+	fecha = models.DateField(auto_now=True)
+	userLog = models.ForeignKey(User)

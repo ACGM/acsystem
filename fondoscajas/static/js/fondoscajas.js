@@ -31,18 +31,6 @@
         return deferred.promise;
       }
 
-      //Traer los distritos
-      function distritos() {
-        var deferred = $q.defer();
-
-        $http.get('/api/distritos/?format=json')
-          .success(function (data) {
-              deferred.resolve(data);
-          });
-
-        return deferred.promise;
-      }
-
       //Buscar un numero de cheque en especifico en listado de documentos
       function byNoCheque(NoCheque) {
         var deferred = $q.defer();
@@ -61,8 +49,8 @@
       }
 
 
-      //Buscar un desembolso en especifico (Desglose)
-      function DocumentoById(NoCheque) {
+      //Buscar un desembolso en especifico (Desglose) By Cheque
+      function DocumentoByCheque(NoCheque) {
         var deferred = $q.defer();
         var doc = NoCheque != undefined? NoCheque : 0;
 
@@ -74,12 +62,24 @@
         return deferred.promise;
       }
 
+      //Buscar un desembolso en especifico (Desglose) By ID
+      function DocumentoById(Id) {
+        var deferred = $q.defer();
+        var doc = Id != undefined? Id : 0;
+
+        $http.get('/desembolsojson/?id={id}'.replace('{id}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
 
       return {
         all: all,
-        distritos: distritos,
         guardaDesembolso: guardaDesembolso,
         byNoCheque: byNoCheque,
+        DocumentoByCheque: DocumentoByCheque,
         DocumentoById: DocumentoById
       };
 
@@ -180,84 +180,40 @@
     //****************************************************
     //CONTROLLERS    IMPRESION                           *
     //****************************************************
-    .controller('ImprimirDesembolsoCtrl', ['$scope', '$filter', 'FondosCajasService', 
-                                        function ($scope, $filter, FondosCajasService) {
+    .controller('ImprimirDesembolsoCtrl', ['$scope', '$filter', '$window', 'FondosCajasService', 
+                                        function ($scope, $filter, $window, FondosCajasService) {
       
       //Inicializacion de variables
       $scope.showLD = true;
       $scope.regAll = false;
 
-      $scope.item = {};
-      $scope.desembolsos = {};
-
-      $scope.desembolsosSeleccionadas = [];
-      $scope.reg = [];
-      $scope.valoresChk = [];
-      $scope.dataD = [];
-
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-      $scope.ArrowLD = 'UpArrow';
 
-      
-      // Mostrar/Ocultar panel de Listado de Desembolsos
-      $scope.toggleLD = function() {
-        $scope.showLD = !$scope.showLD;
+      $scope.desembolso = JSON.parse($window.sessionStorage['desembolso']);
 
-        if($scope.showLD === true) {
-          $scope.ArrowLD = 'UpArrow';
-        } else {
-          $scope.ArrowLD = 'DownArrow';
-        }
-      }
-
-      //Listado de todos los desembolsos
-      $scope.listadoDesembolsos = function() {
-        $scope.desembolsosSeleccionadas = [];
-        $scope.valoresChk = [];
-
-        FondosCajasService.all().then(function (data) {
-          $scope.desembolsos = data;
-          $scope.regAll = false;
-
-          if(data.length > 0) {
-            $scope.verTodos = 'ver-todos-ei';
-
-            var i = 0;
-            data.forEach(function (data) {
-              $scope.valoresChk[i] = false;
-              i++;
-            });
-
-          }
-        });
-      }
-
-      //Buscar un cheque en especifico
-      $scope.filtrarPorNoCheque = function(NoCheque) {
+      //Buscar un documento en especifico con detalle.
+      $scope.getDocumentoById = function(Id) {
         try {
-          FondosCajasService.byNoCheque(NoCheque).then(function (data) {
-            $scope.desembolsos = data;
+          FondosCajasService.DocumentoById(Id).then(function (data) {
+            $scope.desembolsoDetalle = data[0];
+            $scope.desglose = data[0]['detalle'];
 
-            if(data.length > 0) {
-              $scope.verTodos = '';
-              $scope.NoFoundDoc = '';
-            }
-          }, 
-            (function () {
-              $scope.NoFoundDoc = 'No se encontró el cheque #' + NoCheque;
-            }
-          ));          
+            $scope.totalvalor();
+          });
+
         } catch (e) {
           console.log(e);
         }
       }
 
-      //Buscar Cheque por ENTER
-      $scope.buscarCheque = function($event, NoCheque) {
-        if($event.keyCode == 13) {
-          $scope.filtrarPorNoCheque(NoCheque);
-        }
+      $scope.totalvalor = function() {
+        $scope.totalValor_ = 0;
+        
+        $scope.desglose.forEach(function (item) {
+          $scope.totalValor_ += parseFloat(item.monto);
+        });
       }
+
 
     }]);
 

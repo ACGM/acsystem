@@ -300,8 +300,8 @@
     //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
     //                                                   *
     //****************************************************
-    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'MaestraPrestamoService', 'NominaService', 
-                                          function ($scope, $filter, MaestraPrestamoService, NominaService) {
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
+                                          function ($scope, $filter, MaestraPrestamoService, FacturacionService, NominaService) {
       $scope.showAHORROS = true;
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
@@ -312,11 +312,91 @@
       $scope.empleado = {};
       $scope.detalle = [];
 
-      $scope.listadoPrestamos = function() {
-        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
-          $scope.prestamos = data;
 
+      $scope.AplicarPrestamos = function() {
+
+      }
+
+      $scope.listadoPrestamos = function() {
+        document.getElementById('panelPrestamos').style.height = (window.innerHeight - 280) + 'px';
+        document.getElementById('panelAhorros').style.height = (window.innerHeight - 280) + 'px';
+
+        $scope.prestamos = [];
+
+        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          var fecha = $scope.fechaNomina.split('/');
+          var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+          var prestamo;
+          
+          data.forEach(function (item) {
+            prestamo = {};
+            prestamo.codigoSocio = item.codigoSocio;
+            prestamo.socio = item.socio;
+            prestamo.noPrestamo = item.noPrestamo;
+            prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
+            prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
+            prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
+
+            if(parseFloat(prestamo.montoCuotaQ) > 0) {
+              $scope.prestamos.push(prestamo);
+            }
+
+            $scope.totalesPrestamos();
+          });
+
+          $scope.listadoAhorros();
         });
+      }
+
+      $scope.listadoAhorros = function() {
+        $scope.ahorros = [];
+
+        FacturacionService.socios().then(function (data) {
+          var fecha = $scope.fechaNomina.split('/');
+          var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+          var ahorro;
+          
+          data.forEach(function (item) {
+            ahorro = {};
+            ahorro.codigo = item.codigo;
+            ahorro.nombreCompleto = item.nombreCompleto;
+            ahorro.cuotaAhorro = fecha[0] > 15? item.cuotaAhorroQ2 : item.cuotaAhorroQ1;
+
+            if(parseFloat(ahorro.cuotaAhorro) > 0) {
+              $scope.ahorros.push(ahorro);
+            }
+
+            $scope.totalAhorros();
+
+          });
+        });
+      }
+
+      $scope.totalesPrestamos = function() {
+        $scope.prestamoTotalMontoCuota = 0;
+        $scope.prestamoTotalCuotaInteres = 0;
+        $scope.prestamoTotalCuotaMasInteres = 0;
+
+        $scope.prestamos.forEach(function (prestamo) {
+          $scope.prestamoTotalMontoCuota += parseFloat(prestamo.montoCuotaQ);
+          $scope.prestamoTotalCuotaInteres += parseFloat(prestamo.cuotaInteresQ);
+          $scope.prestamoTotalCuotaMasInteres += parseFloat(prestamo.cuotaMasInteresQ);
+        });
+      }
+
+      $scope.totalAhorros = function() {
+        $scope.ahorroTotalCuotaAhorro = 0;
+
+        $scope.ahorros.forEach(function (ahorro) {
+          $scope.ahorroTotalCuotaAhorro += parseFloat(ahorro.cuotaAhorro);
+        });
+      }
+
+      $scope.quitarPrestamo = function(item) {
+        $scope.prestamos = _.without($scope.prestamos, _.findWhere($scope.prestamos, {noPrestamo: item.noPrestamo}));
+        $scope.totalesPrestamos();
       }
 
       $scope.ocultarAhorros = function($event) {
@@ -333,7 +413,6 @@
         $scope.extiendeAhorros = 'extiende';
         $scope.encogeAhorros = '';
         $scope.encogePrestamos = 'encogePrestamos';
-
 
       }
 

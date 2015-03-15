@@ -13,50 +13,83 @@
 			<a href="#">Nomina de Prestamos y Ahorros</a>
 		</div>
 
+		<div class="nomina-descuentos-panel">
+			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker>
+			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Refrescar</button>
+		</div>
+
 		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendePrestamos]] [[encogePrestamos]]" ng-submit="generarNomina()" novalidate>
 			<a href="#" class="resaltar-valor verde" ng-click="ocultarAhorros($event)">PRESTAMOS </a>
 			
 			<div class="section-prestamo">
-				<table class="listado-table" ng-init="listadoPrestamos()">
-					<tr class="suplidores-table-header">
-						<td>Socio</td>
-						<td>Nombre</td>
-						<td>Prestamo No.</td>
-						<td>Capital</td>
-						<td>Interes</td>
-						<td>Quitar</td>
-					</tr>
-					<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
-						<td>[[prestamo.codigoSocio]]</td>
-						<td>[[prestamo.socio]]</td>
-						<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
-						<td>[[prestamo.montoCuotaQ1 | number : 2]]</td>
-						<td>[[prestamo.tasaInteresMensual /2 * prestamo.montoCuotaQ1 | number : 2]]</td>
-						<td class="align-center"><a href="#" class="icon-delete icon-eliminar"></a></td>
-					</tr>
-						
-				</table>
-				<button class="Boton boton-postear-inventario">Aplicar</button>	
+				<div class="registrosPanel--grande" id="panelPrestamos">
+					<table class="listado-table">
+						<tr class="suplidores-table-header">
+							<td>Quitar</td>
+							<td>Socio</td>
+							<td>Nombre</td>
+							<td>Prestamo</td>
+							<td>Capital</td>
+							<td>Interes</td>
+							<td>Total</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
+							<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarPrestamo(prestamo)"></a></td>
+							<td>[[prestamo.codigoSocio]]</td>
+							<td>[[prestamo.socio]]</td>
+							<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail">
+							<td colspan="4"><strong>TOTALES</strong></td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalMontoCuota | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteres | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaMasInteres | number : 2]]</td>
+						</tr>
+							
+					</table>
+				</div>
+
+				<section class="acciones-pr">
+					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos">Archivo Nomina</button>	
+				</section>
 			</div>
 		</form>
 
-		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendeAhorros]] [[encogeAhorros]]" ng-submit="generarNomina()" ng-show="showAHORROS" novalidate>
+		<!-- FORMULARIO DE AHORROS -->
+		<form name="FormAhorros" class="form-prestamos-regulares [[extiendeAhorros]] [[encogeAhorros]]" ng-submit="generarNomina()" ng-show="showAHORROS" novalidate>
 			<a href="#" class="resaltar-valor verde" ng-click="ocultarPrestamos($event)">AHORROS</a>
-			<table class="listado-table">
-				<tr>
-					<td>Socio</td>
-					<td>Nombre</td>
-					<td>Prestamo No.</td>
-					<td>Capital</td>
-					<td>Interes</td>
-				</tr>
-				<tr>
-					<td>29929</td>
-					<td>Rafael Mercedes</td>
-					<td>333,444.45</td>
-					<td>1,233.43</td>
-				</tr>
-			</table>	
+
+			<div class="section-ahorro">
+				<div class="registrosPanel--grande" id="panelAhorros">
+					<table class="listado-table">
+						<tr class="suplidores-table-header">
+							<td>Socio</td>
+							<td>Nombre</td>
+							<td>Ahorro</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail" ng-repeat="ahorro in ahorros">
+							<td>[[ahorro.codigo]]</td>
+							<td>[[ahorro.nombreCompleto]]</td>
+							<td class="align-right resaltar-valor">[[ahorro.cuotaAhorro | number : 2]]</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail">
+							<td colspan="2"><strong>TOTAL</strong></td>
+							<td class="align-right resaltar-valor verde">[[ahorroTotalCuotaAhorro | number : 2]]</td>
+						</tr>
+							
+					</table>
+				</div>
+				
+				<section class="acciones-pr">
+					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos">Archivo Nomina</button>	
+				</section>
+
+			</div>
 		</form>
 
 	</div>

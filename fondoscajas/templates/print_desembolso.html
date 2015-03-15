@@ -6,27 +6,26 @@
 {% block content %}
 
 </div>
-
 	<div class="Desembolso" ng-controller="ImprimirDesembolsoCtrl">
-		<div class="header-f">
+		<div class="header-f" ng-init="getDocumentoById(desembolso.id)">
 			<span class="titulo-f"> COOPERATIVA GERDAUMETALDOM </span>
 			<span class="localidad-f"> ZONA IND. LA ISABELA </span>
 		</div>
 
 		<section class="cabecera-desembolso">
-			<span class="fondo-d">1 Caja Chica [[DESCRIPCION DEL FONDO SELECCIONADO]]</span>
-			<span class="a-orden-d">A la orden de: [[dataH.concepto]]</span>
-			<span class="paguese-d">Paguese la Suma de *** QUINIENTOS CON 00/100</span> <span class="paguese-valor-d">500.00</span>
-			<span class="detalle-d">Detalle : <span class="detalle-d-text"> Asignacion de combustible a Herrero para cotizar puerta y ventana de hierro Cooperativa PID, segun anexo.</span> </span>
+			<span class="fondo-d">Caja: [[desembolsoDetalle.fondo]]</span>
+			<span class="a-orden-d">A la orden de: <span class="detalleHeader">[[desembolsoDetalle.detalleHeader]]</span> </span>
+			<span class="paguese-d">Paguese la Suma de ***[[desembolsoDetalle.totalGeneral | NumLetra]]***</span> <span class="paguese-valor-d">[[desembolsoDetalle.totalGeneral | number : 2]]</span>
+			<span class="detalle-d">Detalle :</span> <span class="detalle-d-text"> [[desembolsoDetalle.conceptoHeader]]</span>
 		</section>
 
 		<section class="cabecera-desembolso-2">
 			<table>
 				<tr>
-					<td>Numero: 000039[[dataH.id]]</td>
+					<td>Numero: [[desembolsoDetalle.id | numberFixedLen : 8]]</td>
 				</tr>
 				<tr>
-					<td>Fecha: 12/12/2015[[dataH.fecha]]</td>
+					<td>Fecha: [[desembolsoDetalle.fecha | date : 'dd/MM/yyyy']]</td>
 				</tr>
 			</table>
 		</section>
@@ -37,37 +36,41 @@
 				<tr>
 					<td>Beneficiario</td>
 					<td>Concepto</td>
-					<td>Valor</td>
+					<td class="align-right">Valor</td>
 				</tr>
-				<tr ng-repeat="desembolso in dataD">
-					<td>[[desembolso.beneficiario]]</td>
-					<td>[[desembolso.concepto]]</td>
-					<td>[[desembolso.valor]]</td>
+				<tr ng-repeat="item in desglose">
+					<td>[[item.beneficiario]]</td>
+					<td>[[item.conceptoDescrp]]</td>
+					<td class="align-right">[[item.monto | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="2">TOTALES:</td>
+					<td colspan="2">TOTAL:</td>
 					<td>[[totalValor_ | number : 2]]</td>
 				</tr>
 			</table>
 		</section>
 
 		<section class="firmas-d">
-			<div class="firma1-d">
-				<span>____________________________</span>
-				<span>Solicitado por</span>
-				<span>Asistente Administrativo</span>
-			</div>
-
-			<div class="firma2-d">
-				<span>Recibido __________________________</span>
-				<span>Cedula   __________________________</span>
-			</div>
-
-			<div class="firma3-d">
-				<span>_____________________________</span>
-				<span>Autorizado Por</span>
-				<span>Gte. Cooperativa</span>
-			</div>
+			<table>
+				<tr>
+					<td>_______________________</td>
+					<td>Recibido</td>
+					<td>_______________________</td>
+					<td>_______________________</td>
+				</tr>
+				<tr>
+					<td class="align-center">Solicitado por</td>
+					<td></td>
+					<td></td>
+					<td class="align-center">Autorizado por</td>
+				</tr>
+				<tr>
+					<td class="align-center">Asistente Administrativo</td>
+					<td>Cedula</td>
+					<td>_______________________</td>
+					<td class="align-center">Gte. Cooperativa</td>
+				</tr>
+			</table>
 
 		</section>
 		

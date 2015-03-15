@@ -169,6 +169,26 @@ class MaestraPrestamo(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	@property
+	def cuotaInteresQ1(self):
+		valor = self.montoCuotaQ1 * (self.tasaInteresMensual/2/100)
+		return valor
+
+	@property
+	def cuotaInteresQ2(self):
+		valor = self.montoCuotaQ2 * (self.tasaInteresMensual/2/100)
+		return valor
+
+	@property
+	def cuotaMasInteresQ1(self):
+		valor = self.cuotaInteresQ1 + self.montoCuotaQ1
+		return valor
+
+	@property
+	def cuotaMasInteresQ2(self):
+		valor = self.cuotaInteresQ2 + self.montoCuotaQ2
+		return valor
+
 
 # Prestamos Unificados
 class PrestamoUnificado(models.Model):
@@ -184,11 +204,11 @@ class PrestamoUnificado(models.Model):
 # Cuotas de Pago de Prestamos
 class PagoCuotasPrestamo(models.Model):
 
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),('N','Nota de Credito'),)
+	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),('N','Nota de Credito'),('D','Nota de Debito'))
 
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True)
 	fechaPago = models.DateField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 

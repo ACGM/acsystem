@@ -109,7 +109,7 @@ function Miles(num){
   cientos = Math.floor(num / divisor)
   resto = num - (cientos * divisor)
 
-  strMiles = Seccion(num, divisor, "UN MIL", "MIL");
+  strMiles = Seccion(num, divisor, "MIL", "MIL");
   strCentenas = Centenas(resto);
 
   if(strMiles == "")

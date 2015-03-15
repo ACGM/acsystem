@@ -48,6 +48,8 @@ class DesembolsoH(models.Model):
 	fecha = models.DateField(auto_now=True)
 	fondo = models.ForeignKey(Fondo, null=True)
 	localidad = models.ForeignKey(Localidad)
+	detalle = models.TextField(null=True)
+	concepto = models.TextField(null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 	impreso = models.PositiveIntegerField(default=0, editable=False)
 	cheque = models.PositiveIntegerField(null=True, editable=False)
@@ -79,8 +81,8 @@ class DesembolsoH(models.Model):
 # Desembolso Detalle
 class DesembolsoD(models.Model):
 
-	beneficiario = models.CharField(max_length=80)
 	desembolso = models.ForeignKey(DesembolsoH)
+	beneficiario = models.CharField(max_length=80)
 	concepto = models.ForeignKey(ConceptoDesembolso)
 	monto = models.DecimalField(max_digits=18, decimal_places=2)
 

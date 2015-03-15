@@ -367,7 +367,9 @@ footer
 		height 30rem
 		overflow scroll
 		border 1px solid lightgray
-		display inline-block
+		// display inline-block
+		display block
+		
 
 .comoCheque
 	position relative
@@ -996,18 +998,22 @@ footer
 
 // MODULO DE NOMINA  **********************************
 .genera-nomina
+	margin-left .8rem
 	position relative
+	
 	& ul
 		display inline-block
 		list-style none
 		margin 0
 		padding 0 0 0 0
 
-.fecha-nomina,.tipo-nomina
+.fecha-nomina
+	margin 1em 0 .2em 0
+	
+.tipo-nomina
 	margin 1em 0 .2em 1em
-
+	
 .fecha-nomina-t
-	margin 0 0 0 .8rem
 	width 7em
 	background verdeMuySuave
 	border 1px solid verdeMuyOscuro
@@ -1023,11 +1029,11 @@ footer
 	outline none
 
 .nomina-nota
-	margin 1em 0 0 1em
+	margin 1em 0 0 0
 	
 .nomina-nota-t
 	height 4em
-	margin 0 0 1em 1em
+	margin 0 0 1em 0
 	padding .3em 0 0 .3em
 	width 22em
 	
@@ -1209,16 +1215,17 @@ footer
 .egreso-field
 	padding 0 0 0 .5em
 
-	//Sub para Descuentos de Prestamos y Ahorros
+	//Sub para Descuentos de Prestamos y Ahorros (Nomina)
 .form-prestamos-regulares
 	margin-left .5em
 	padding .3em
 	background #EEEEEE
-	border 1px solid verdeMuyOscuro
+	border 1px solid darkgray
+	box-shadow 2px 2px 2px 2px lightgray
 	box-sizing border-box
 	display inline-block
 	width 49%
-	transition .3s
+	transition .4s
 
 .extiende
 	width 87% !important
@@ -1226,7 +1233,7 @@ footer
 .encogeAhorros
 	width 11% !important
 	float right
-	table 
+	.section-ahorro 
 		display none
 
 .encogePrestamos
@@ -1234,7 +1241,37 @@ footer
 	float left
 	.section-prestamo 
 		display none
-		
+
+.acciones-pr
+	margin .5em 0 0 0 
+	display inline-block
+
+.boton-aplicar-prestamos
+	height 3.5em
+	width 10em
+	&:before
+		margin-right .4em
+	
+.nomina-descuentos-panel
+	height 4em
+	background verdeSuave
+	color verde
+	margin-bottom .4em
+	
+	.fecha-nomina-descuento
+		margin 1.4em 0 0 .5em
+		display inline-block
+	
+	.boton-nomina
+		padding 0 1em
+		&:before
+			margin-right .4em
+
+.boton-aplicar-ahorros
+	height 3em
+	width 9em
+	margin-bottom 2em
+	
 // FIN MODULO DE NOMINA  **********************************
 
 // MODULO DE INVENTARIO  **********************************
