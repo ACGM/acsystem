@@ -110,6 +110,21 @@
         return deferred.promise;
       }
 
+      //Generar Archivo de Nomina para Prestamos
+      function generarArchivoPrestamos(prestamos, fechaNomina) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivos/prestamos/', JSON.stringify({'prestamos': prestamos, 'fechaNomina': fechaNomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+
       return {
         nominasGeneradas: nominasGeneradas,
         generaNomina: generaNomina,
@@ -117,7 +132,8 @@
         detalleNomina: detalleNomina,
         detalleEmpleado: detalleEmpleado,
         eliminarNomina: eliminarNomina,
-        guardarDetalleEmpleado: guardarDetalleEmpleado
+        guardarDetalleEmpleado: guardarDetalleEmpleado,
+        generarArchivoPrestamos: generarArchivoPrestamos
       };
 
     }])
@@ -300,8 +316,8 @@
     //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
     //                                                   *
     //****************************************************
-    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
-                                          function ($scope, $filter, MaestraPrestamoService, FacturacionService, NominaService) {
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
+                                          function ($scope, $filter, appService, MaestraPrestamoService, FacturacionService, NominaService) {
       $scope.showAHORROS = true;
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
@@ -312,43 +328,72 @@
       $scope.empleado = {};
       $scope.detalle = [];
 
-
-      $scope.AplicarPrestamos = function() {
-
+      window.onresize = function(event) {
+        panelesSize();
       }
 
-      $scope.listadoPrestamos = function() {
+      function panelesSize() {
         document.getElementById('panelPrestamos').style.height = (window.innerHeight - 280) + 'px';
         document.getElementById('panelAhorros').style.height = (window.innerHeight - 280) + 'px';
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
+      }
+
+      // Funcion para mostrar error por pantalla
+      $scope.mostrarError = function(error) {
+        $scope.errorMsg = error;
+        $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
+
+      // Traer listado de prestamos de la Maestra que estan activos.
+      $scope.listadoPrestamos = function() {
+        panelesSize();
 
         $scope.prestamos = [];
 
-        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
-          var fecha = $scope.fechaNomina.split('/');
-          var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+        try {
+          if($scope.fechaNomina == undefined) {
+            throw "Verifique que la fecha de nomina no tiene errores."
+          }
 
-          var prestamo;
-          
-          data.forEach(function (item) {
-            prestamo = {};
-            prestamo.codigoSocio = item.codigoSocio;
-            prestamo.socio = item.socio;
-            prestamo.noPrestamo = item.noPrestamo;
-            prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
-            prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
-            prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
+          MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+            var fecha = $scope.fechaNomina.split('/');
+            var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
-            if(parseFloat(prestamo.montoCuotaQ) > 0) {
-              $scope.prestamos.push(prestamo);
-            }
+            var prestamo;
+            
+            data.forEach(function (item) {
+              prestamo = {};
+              prestamo.codigoSocio = item.codigoSocio;
+              prestamo.socio = item.socio;
+              prestamo.noPrestamo = item.noPrestamo;
+              prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
+              prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
+              prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
 
-            $scope.totalesPrestamos();
+              if(parseFloat(prestamo.montoCuotaQ) > 0) {
+                $scope.prestamos.push(prestamo);
+              }
+              $scope.totalesPrestamos();
+            });
+
+            $scope.listadoAhorros();
+            $scope.errorShow = false;
           });
-
-          $scope.listadoAhorros();
-        });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
       }
 
+      // Trae el listado de ahorros de todos los socios activos.
       $scope.listadoAhorros = function() {
         $scope.ahorros = [];
 
@@ -367,13 +412,12 @@
             if(parseFloat(ahorro.cuotaAhorro) > 0) {
               $scope.ahorros.push(ahorro);
             }
-
             $scope.totalAhorros();
-
           });
         });
       }
 
+      // Calcula totales para prestamos regulares.
       $scope.totalesPrestamos = function() {
         $scope.prestamoTotalMontoCuota = 0;
         $scope.prestamoTotalCuotaInteres = 0;
@@ -386,6 +430,7 @@
         });
       }
 
+      // Calcula totales para ahorros.
       $scope.totalAhorros = function() {
         $scope.ahorroTotalCuotaAhorro = 0;
 
@@ -394,11 +439,13 @@
         });
       }
 
+      // Quitar un prestamo del listado.
       $scope.quitarPrestamo = function(item) {
         $scope.prestamos = _.without($scope.prestamos, _.findWhere($scope.prestamos, {noPrestamo: item.noPrestamo}));
         $scope.totalesPrestamos();
       }
 
+      // Ocultar panel de ahorros.
       $scope.ocultarAhorros = function($event) {
         $event.preventDefault();
 
@@ -407,15 +454,85 @@
         $scope.encogeAhorros = 'encogeAhorros';
       }
 
+      // Ocultar panel de prestamos.
       $scope.ocultarPrestamos = function($event) {
         $event.preventDefault();
 
         $scope.extiendeAhorros = 'extiende';
         $scope.encogeAhorros = '';
         $scope.encogePrestamos = 'encogePrestamos';
-
       }
 
+      // Generar Archivo para Prestamos (envio para nomina empleados)
+      $scope.generarArchivoPrestamos = function() {
+
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+
+        NominaService.generarArchivoPrestamos($scope.prestamos,fechaFormatted).then(function (data) {
+          console.log(data);
+        });
+      }
+
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+        var desgloseCuenta = new Object();
+
+        desgloseCuenta.cuenta = cuenta.codigo;
+        desgloseCuenta.descripcion = cuenta.descripcion;
+        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+        desgloseCuenta.debito = 0;
+        desgloseCuenta.credito = 0;
+
+        $scope.desgloseCuentas.push(desgloseCuenta);
+        $scope.tableCuenta = false;
+      }
+
+      $scope.quitarCC = function(desgloseC) {
+        if($scope.desgloseCuentas.length == 1) {
+          $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
+        } else {
+          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+        }
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postearPrestamos = function(){
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        appService.getDocumentoCuentas('NOMP').then(function (data) {
+          $scope.documentoCuentas = data;
+  
+          //Prepara cada linea de posteo
+          $scope.documentoCuentas.forEach(function (documento) {
+            var desgloseCuenta = new Object();
+
+            if (documento.accion == 'D') {
+              if (documento.accion == 'D') {
+
+              }
+              $scope.totalDebito += parseFloat($scope.prestamoTotalMontoCuota.toString().replace('$','').replace(',',''));
+            } else {
+              $scope.totalCredito += parseFloat($scope.prestamoTotalCuotaMasInteres.toString().replace('$','').replace(',',''));
+            }
+
+            desgloseCuenta.cuenta = documento.getCuentaCodigo;
+            desgloseCuenta.descripcion = documento.getCuentaDescrp;
+            desgloseCuenta.ref = documento.getCodigo + $scope.fechaNomina.replace('/','');
+            desgloseCuenta.debito = documento.accion == 'D'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
+            desgloseCuenta.credito = documento.accion == 'C'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
+
+            $scope.desgloseCuentas.push(desgloseCuenta);
+          });
+        });
+      }
 
     }]);
 

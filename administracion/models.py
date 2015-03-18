@@ -11,7 +11,8 @@ import datetime
 # Localidades
 class Localidad(models.Model):
 
-	descripcion = models.CharField(max_length=150)
+	descripcion = models.CharField(max_length=10)
+	descripcionLarga = models.CharField(max_length=150, blank=True)
 
 	def __unicode__(self):
 		return '%s' % (self.descripcion)

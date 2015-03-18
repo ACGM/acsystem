@@ -222,18 +222,18 @@ class ListadoFacturasViewSet(viewsets.ModelViewSet):
 	serializer_class = ListadoFacturasSerializer
 
 
-# Documentos Relacionados a Cuentas
-class DetalleFacturasView(APIView):
+# # Documentos Relacionados a Cuentas
+# class DetalleFacturasView(APIView):
 
-	serializer_class = DetalleFacturasSerializer
+# 	serializer_class = DetalleFacturasSerializer
 
-	def get(self, request, fechaInicio, fechaFin):
+# 	def get(self, request, fechaInicio, fechaFin):
 		
-		# detalle = Detalle.objects.filter(factura__fecha__range=[fechaInicio, fechaFin])
-		detalle = Detalle.objects.raw('SELECT * FROM facturacion_detalle group by producto_id')
+# 		# detalle = Detalle.objects.filter(factura__fecha__range=[fechaInicio, fechaFin])
+# 		detalle = Detalle.objects.raw('SELECT * FROM facturacion_detalle group by producto_id')
 
-		response = self.serializer_class(detalle, many=True)
-		return Response(response.data)
+# 		response = self.serializer_class(detalle, many=True)
+# 		return Response(response.data)
 
 
 # Retornar detalle de facturas (para Reporte Utilidades)

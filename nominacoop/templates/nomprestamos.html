@@ -7,14 +7,14 @@
 	<div class="Nomina" ng-controller="NominaDescuentosCtrl">
 	
 		<mensajeerror> </mensajeerror>
-		<!-- <mensajeinfo> </mensajeinfo> -->
+		<mensajeinfo> </mensajeinfo>
 
 		<div class="sub-menu">
 			<a href="#">Nomina de Prestamos y Ahorros</a>
 		</div>
 
 		<div class="nomina-descuentos-panel">
-			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker>
+			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
 			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Refrescar</button>
 		</div>
 
@@ -53,8 +53,9 @@
 				</div>
 
 				<section class="acciones-pr">
-					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
-					<button class="Boton icon-document boton-aplicar-prestamos">Archivo Nomina</button>	
+					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="postearPrestamos()">Aplicar</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="generarArchivoPrestamos()">Generar Archivo</button>	
+					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
 				</section>
 			</div>
 		</form>
@@ -86,7 +87,8 @@
 				
 				<section class="acciones-pr">
 					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
-					<button class="Boton icon-document boton-aplicar-prestamos">Archivo Nomina</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos">Generar Archivo</button>
+					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
 				</section>
 
 			</div>

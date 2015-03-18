@@ -102,6 +102,7 @@ class SolicitudOrdenDespachoH(models.Model):
 	fechaVencimiento = models.DateField(null=True, blank=True)
 	factura = models.PositiveIntegerField(null=True)
 	cxp = models.CharField(max_length=1, choices=cxp_choices, default='E')
+	impresa = models.PositiveIntegerField(default=0)
 	
 	
 	userLog = models.ForeignKey(User, related_name='+')

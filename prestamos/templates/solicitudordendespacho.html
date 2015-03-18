@@ -63,7 +63,7 @@
 						<td>[[solicitud.socio]]</td>
 						<td>[[solicitud.montoSolicitado | number : 2]]</td>
 						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
-						<td><a class="icon-printer icon-imprimir" href="#"></a></td>
+						<td><a class="icon-printer icon-imprimir" href="#" ng-click="ImprimirOD(solicitud)"></a></td>
 						<td>
 							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesOD($event,'C', solicitud)"></a> </div>
 							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>

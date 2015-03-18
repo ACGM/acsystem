@@ -9,8 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('prestamos', '__first__'),
-        ('administracion', '__first__'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -35,8 +34,6 @@ class Migration(migrations.Migration):
                 ('nomina', models.DateField()),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
                 ('fecha', models.DateField(auto_now=True)),
-                ('socio', models.ForeignKey(to='administracion.Socio')),
-                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -51,10 +48,6 @@ class Migration(migrations.Migration):
                 ('nomina', models.DateField(null=True)),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
                 ('fecha', models.DateField(auto_now=True)),
-                ('cuota', models.ForeignKey(to='prestamos.PagoCuotasPrestamo')),
-                ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
-                ('socio', models.ForeignKey(to='administracion.Socio')),
-                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },

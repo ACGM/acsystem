@@ -1,5 +1,6 @@
 # VIEWS de Nomina
 
+from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
@@ -13,10 +14,13 @@ from rest_framework.response import Response
 
 from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, NominaGeneradaDetalleSerializer
 
-from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina
+from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina, NominaPrestamosAhorros, CuotasPrestamosEmpresa
 from administracion.models import Socio
+from prestamos.models import MaestraPrestamo
 
 from acgm.views import LoginRequiredMixin
+
+from datetime import datetime
 
 import json
 import decimal
@@ -200,10 +204,76 @@ class EliminarNominaView(View):
 			return HttpResponse(e)
 
 
-# Generar archivo
-class GenerarArchivoView(View):
 
-	pass
+# Generar archivo
+class GenerarArchivoPrestamos(View):
+
+	# Prestamos Sumarizados
+	def getPrestamosResumidos(self, fechaNomina):
+
+		fecha = '{0}-{1}-{2}'.format(fechaNomina.year, fechaNomina.month, fechaNomina.day)
+
+		registros = CuotasPrestamosEmpresa.objects.raw('SELECT \
+												c.id, \
+												c.socio_id codigoSocio, \
+												s.nombreCompleto, \
+												SUM(c.valorCapital) montoCapital, \
+												SUM(c.valorInteres) montoInteres, \
+												SUM(c.valorCapital) + SUM(c.valorInteres) montoTotal \
+											FROM nominacoop_cuotasprestamosempresa c \
+											LEFT JOIN administracion_socio s ON c.socio_id = s.codigo \
+											GROUP BY c.socio_id \
+											HAVING c.nomina =' + fecha + '\
+											ORDER BY c.socio_id \
+											')
+		return registros
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			prestamos = data['prestamos']
+			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
+			
+			fechanominaSAP = '{0}.{1}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+
+			nominaH = NominaPrestamosAhorros()
+			nominaH.nomina = nomina
+			nominaH.save()
+
+			# Preparar archivo .TXT
+			nombreArchivoFinal = 'PA0015.TXT'
+			pathFile = open(nombreArchivoFinal, 'w')
+			sysFile = File(pathFile)
+			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG') # Escribir Cabecera de archivo -- Columnas de header
+
+			# Agregar cada prestamo en la tabla de CuotasPrestamosEmpresa
+			for prestamo in prestamos:
+				p = CuotasPrestamosEmpresa()
+				p.socio = Socio.objects.get(codigo=prestamo['codigoSocio'])
+				p.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
+				p.valorCapital = prestamo['montoCuotaQ']
+				p.valorInteres = prestamo['cuotaInteresQ']
+				p.nomina = nomina
+				p.userLog = request.user
+				p.save()
+
+			# Hacer SELECT GROUP BY desde la recien llenada tabla (por si acaso se saco un prestamo, no debe tomar en cuenta todos)	
+			prestamosResumidos = self.getPrestamosResumidos(nomina)
+
+			for prestamo in prestamosResumidos:
+
+				lineaFile = '{0}\t{1}\t{2}\t{3:0>9}'.format(prestamo.codigoSocio,'','2004', fechanominaSAP, prestamo.montoTotal)
+				sysFile.write(lineaFile)
+
+			sysFile.close()
+
+			return HttpResponse(1)
+
+
+		except Exception as e:
+			return HttpResponse(e)
 
 
 # Postear Nomina Cooperativa

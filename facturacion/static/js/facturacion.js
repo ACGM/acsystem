@@ -968,20 +968,20 @@
       }
     });
 
-    $scope.imprimirFactura = function() {
-      console.log('ENTRO');
-      // FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
-      //   console.log(data);
-      // });
+    $scope.imprimirFact = function() {
+
+      FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
+        console.log("DATA: " + data);
+
+        document.getElementById('printBoton').style.display = "None";
+        window.print();
+        window.location.reload();
+        document.getElementById('printBoton').style.display = "";
+      });
       // var doc = jsPDF();
       // doc.text(20,20, 'HOLA MUDO');
       // doc.save('pruebaPDF.pdf');
       // console.log(doc);
-      $scope.displayClass = 'displayNone';
-      console.log($scope.displayClass);
-      
-      window.print();
-      console.log($scope.displayClass);
     }
 
     $scope.totalValor = function() {

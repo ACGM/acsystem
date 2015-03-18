@@ -5,7 +5,8 @@ from rest_framework import routers
 
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
-from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView
+from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
+                                GenerarArchivoPrestamos
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -25,7 +26,8 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             PostearPrestamosODView
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
-                                        SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView
+                                        SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
+                                        ImprimirODView
 
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById
 
@@ -66,7 +68,6 @@ from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getEx
 from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
-from facturacion.views import DetalleFacturasView
 
 
 admin.site.site_header = 'COOPERATIVA'
@@ -162,9 +163,10 @@ urlpatterns = patterns('',
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
     url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),
+    url(r'^nomina/archivos/prestamos/$', GenerarArchivoPrestamos.as_view(), name='nomina_archivo_prestamos'),
+    
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
-
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
@@ -195,7 +197,7 @@ urlpatterns = patterns('',
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^facturacion/eliminar/$', FacturaEliminarView.as_view(), name='Facturacion_eliminar'),
-    url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
+    # url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     #Facturacion#Reportes
@@ -239,6 +241,8 @@ urlpatterns = patterns('',
     # url(r'^api/prestamos/solicitudes/od/(?P<solicitud>[\d]+)/$', SolicitudODById.as_view(), name='solicitud_od_api'),
     url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
     url(r'^solicitudODjson/$', SolicitudODById.as_view(), name='Solicitud_ODById'),
+    url(r'^solicitudOD/print/(?P<noSolicitud>[\d]+)/$', ImprimirODView.as_view(), name='ordendespacho_print'),
+
 
     #Maestra Prestamos    
     url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),

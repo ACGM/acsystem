@@ -179,8 +179,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudODCtrl', ['$scope', '$filter', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 'InventarioService',
-                                function ($scope, $filter, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService) {
+    .controller('SolicitudODCtrl', ['$scope', '$filter', '$window', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 'InventarioService',
+                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService) {
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -818,6 +818,12 @@
             }
           });
         }
+      }
+
+      //Imprimir Orden de Despacho
+      $scope.ImprimirOD = function(solicitud) {
+        $window.sessionStorage['noSolicitud'] = JSON.stringify(solicitud);
+        $window.open('/solicitudOD/print/{noSolicitud}'.replace('{noSolicitud}',solicitud.noSolicitud), target='_blank'); 
       }
 
     }]);
