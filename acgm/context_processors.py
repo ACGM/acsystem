@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 def menu(request):
+	
 	loc = request.session.get('localidad')
 
 	return {'valor': request.user, 'localidad': loc}

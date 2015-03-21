@@ -270,9 +270,15 @@ class NominaCoopD(models.Model):
 class NominaPrestamosAhorros(models.Model):
 
 	nomina = models.DateField()
+	tipo = models.CharField(max_length=2) # PR = Prestamos, AH = Ahorros, BP = Balance Prestamos, BA = Balance Ahorros
 	estatus = models.CharField(max_length=2, default='PE') # PE = PENDIENTE, PO = PROCESADA
 
-	
+	class Meta:
+		verbose_name = 'Nomina Prestamos Ahorros'
+		verbose_name_plural = 'Nomina Prestamos Ahorros'
+		unique_together = ('nomina', 'tipo')
+
+
 # Cuotas Prestamos para Nomina Empresa
 class CuotasPrestamosEmpresa(models.Model):
 

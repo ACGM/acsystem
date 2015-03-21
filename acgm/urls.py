@@ -6,7 +6,7 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
-                                GenerarArchivoPrestamos
+                                GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -163,7 +163,10 @@ urlpatterns = patterns('',
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
     url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),
+    url(r'^nomina/verificarExistencia/$', NominaPrestamosAhorrosView.as_view(), name='verificar_existencia_nomina'),
     url(r'^nomina/archivos/prestamos/$', GenerarArchivoPrestamos.as_view(), name='nomina_archivo_prestamos'),
+    url(r'^nomina/archivos/ahorros/$', GenerarArchivoAhorros.as_view(), name='nomina_archivo_ahorros'),
+
     
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),

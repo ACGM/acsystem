@@ -15,7 +15,8 @@
 
 		<div class="nomina-descuentos-panel">
 			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
-			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Refrescar</button>
+			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Procesar</button>
+			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 		</div>
 
 		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendePrestamos]] [[encogePrestamos]]" ng-submit="generarNomina()" novalidate>
@@ -87,7 +88,7 @@
 				
 				<section class="acciones-pr">
 					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
-					<button class="Boton icon-document boton-aplicar-prestamos">Generar Archivo</button>
+					<button class="Boton icon-document boton-aplicar-prestamos" ng-click="generarArchivoAhorros()">Generar Archivo</button>
 					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
 				</section>
 

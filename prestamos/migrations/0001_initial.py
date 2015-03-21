@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0001_initial'),
         ('facturacion', '0001_initial'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -184,6 +184,7 @@ class Migration(migrations.Migration):
                 ('fechaVencimiento', models.DateField(null=True, blank=True)),
                 ('factura', models.PositiveIntegerField(null=True)),
                 ('cxp', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'EN PROCESO'), (b'P', b'PROCESADA')])),
+                ('impresa', models.PositiveIntegerField(default=0)),
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('autorizadoPor', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),

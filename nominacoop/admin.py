@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import DepartamentoCoop, CargoCoop, EmpleadoCoop, TipoNomina, NominaCoopH, \
-					NominaCoopD, CuotasPrestamosEmpresa, CuotasAhorrosEmpresa
+					NominaCoopD, CuotasPrestamosEmpresa, CuotasAhorrosEmpresa, NominaPrestamosAhorros
 
 @admin.register(DepartamentoCoop)
 class DepartamentoCoopAdmin(admin.ModelAdmin):
@@ -44,4 +44,9 @@ class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):
 @admin.register(CuotasAhorrosEmpresa)
 class CuotasAhorrosEmpresaAdmin(admin.ModelAdmin):
 	list_display = ['socio', 'valorAhorro', 'fecha', 'estatus']
+
+@admin.register(NominaPrestamosAhorros)
+class NominasPrestamosAhorrosAdmin(admin.ModelAdmin):
+	list_display = ['nomina', 'tipo', 'estatus']
+
 	

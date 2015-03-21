@@ -186,7 +186,7 @@ class Socio(models.Model):
 	estado_civil_choices = (('S','Soltero(a)'),('C','Casado(a)'),('U','Union Libre'),)
 	estatus_choices = (('S','Socio'),('E','Empleado'),('I','Inactivo'),)
 
-	codigo = models.PositiveIntegerField()
+	codigo = models.PositiveIntegerField(unique=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	direccion = models.TextField(blank=True)

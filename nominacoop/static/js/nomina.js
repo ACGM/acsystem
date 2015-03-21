@@ -110,6 +110,20 @@
         return deferred.promise;
       }
 
+      //Consultar existencia de Nomina
+      function getNomina(fechaNomina) {
+        var deferred = $q.defer();
+
+        $http.get('/nomina/verificarExistencia/?nomina={nomina}'.replace('{nomina}', fechaNomina)).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       //Generar Archivo de Nomina para Prestamos
       function generarArchivoPrestamos(prestamos, fechaNomina) {
         var deferred = $q.defer();
@@ -124,16 +138,31 @@
         return deferred.promise;
       }
 
+      //Generar Archivo de Nomina para Ahorros
+      function generarArchivoAhorros(ahorros, fechaNomina) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivos/ahorros/', JSON.stringify({'ahorros': ahorros, 'fechaNomina': fechaNomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
 
       return {
-        nominasGeneradas: nominasGeneradas,
-        generaNomina: generaNomina,
-        tiposNominas: tiposNominas,
-        detalleNomina: detalleNomina,
-        detalleEmpleado: detalleEmpleado,
-        eliminarNomina: eliminarNomina,
-        guardarDetalleEmpleado: guardarDetalleEmpleado,
-        generarArchivoPrestamos: generarArchivoPrestamos
+        nominasGeneradas        : nominasGeneradas,
+        generaNomina            : generaNomina,
+        tiposNominas            : tiposNominas,
+        detalleNomina           : detalleNomina,
+        detalleEmpleado         : detalleEmpleado,
+        eliminarNomina          : eliminarNomina,
+        guardarDetalleEmpleado  : guardarDetalleEmpleado,
+        getNomina               : getNomina,
+        generarArchivoPrestamos : generarArchivoPrestamos,
+        generarArchivoAhorros   : generarArchivoAhorros
       };
 
     }])
@@ -356,10 +385,13 @@
       // Traer listado de prestamos de la Maestra que estan activos.
       $scope.listadoPrestamos = function() {
         panelesSize();
+        $scope.mensaje = '';
 
         $scope.prestamos = [];
 
         try {
+          $scope.verificarExistenciaNomina();
+
           if($scope.fechaNomina == undefined) {
             throw "Verifique que la fecha de nomina no tiene errores."
           }
@@ -463,6 +495,29 @@
         $scope.encogePrestamos = 'encogePrestamos';
       }
 
+      // Verificar si existe nomina.
+      $scope.verificarExistenciaNomina = function() {
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+        var msgAhorro = '';
+        var msgPrestamo = '';
+
+        NominaService.getNomina(fechaFormatted).then(function (data) {
+          if(data.length > 0) {
+            if(data[0]['ahorros'] == 1) {
+              msgAhorro = 'Ahorros generados.';
+            }
+            if(data[0]['prestamos'] == 1) {
+              msgPrestamo = 'Prestamos generados.';
+            }
+            if(data[0]['ahorros'] == 1 || data[0]['prestamos'] == 1) {
+              $scope.mensaje = 'Existe ' + msgPrestamo + ' ' + msgAhorro;
+            }
+          }
+        });
+      }
+
       // Generar Archivo para Prestamos (envio para nomina empleados)
       $scope.generarArchivoPrestamos = function() {
 
@@ -470,7 +525,26 @@
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
         NominaService.generarArchivoPrestamos($scope.prestamos,fechaFormatted).then(function (data) {
-          console.log(data);
+          if(data != 1) {
+            $scope.mostrarError(data);
+          } else {
+            $scope.mensaje = 'Fue generado el archivo de Prestamos.';
+          }
+        });
+      }
+
+      // Generar Archivo para Ahorros (envio para nomina empleados)
+      $scope.generarArchivoAhorros = function() {
+
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+
+        NominaService.generarArchivoAhorros($scope.ahorros,fechaFormatted).then(function (data) {
+          if(data != 1) {
+            $scope.mostrarError(data);
+          } else {
+            $scope.mensaje = 'Fue generado el archivo de Ahorros.';
+          }
         });
       }
 
