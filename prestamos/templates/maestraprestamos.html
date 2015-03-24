@@ -11,7 +11,7 @@
 		
 		<div class="sub-menu">	
 				<a href="#" ng-click="toggleLP()">Maestra de Prestamos</a>
-			<a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a>
+			<!-- <a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a> -->
 		</div>
 
 		<div id="listado" class="listado-maestra-prestamo cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
@@ -32,7 +32,7 @@
 
 				</div>
 
-				<section class="registrosPanel--grande">
+				<section id="prestamosContainer" class="registrosPanel--grande">
 					<table class="listado-table-maestraprestamo">
 						<tr class="listado-table-header">
 							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td>
@@ -90,49 +90,69 @@
 				<div class="data-detalle-prestamo-header">
 					
 					<div class="data-detalle-prestamo">
-						<span class="prestamo-prestamo-field">Prestamo No.</span>
-						<span class="prestamo-categoria-field">Categoria</span>
-						<span class="prestamo-representante-field">Representante</span>
-					</div>
-					
-					<div class="data-detalle-prestamo">
-						<span><input type="text" class="prestamo-prestamo-field-t" ng-model="dataH.noPrestamo" readonly></span>
-						<span><input type="text" class="prestamo-categoria-field-t" ng-model="dataH.categoriaPrestamoDescrp" readonly></span>
-						<span><input type="text" class="prestamo-representanteCod-field-t" ng-model="dataH.representanteCod" readonly></span>
-						<span><input type="text" class="prestamo-representanteDescrp-field-t" ng-model="dataH.representanteDescrp" readonly></span>
-					</div>
-					
-					<div class="data-detalle-prestamo">
-						<span class="prestamo-codigo-field">Codigo</span>
-						<span class="prestamo-socio-field">Nombre Socio</span>
-						<span class="prestamo-cedula-field">Cedula</span>
-						<span class="prestamo-pagarPor-field">Pagar por</span>
+						<table>
+							<tr>
+								<td>Prestamo No.</td>
+								<td><input type="text" class="prestamo-prestamo-field-t resaltar-valor" ng-model="dataH.noPrestamo" readonly></td>
+								<td class="align-right">Tipo Nomina</td>
+								<td class="align-right">
+									<select name="tipoNomina" id="tnom" ng-model="dataH.tipoPrestamoNomina" class="field-choices">
+										<option value="RE">Regular</option>
+										<option value="VA">Vacaciones</option>
+										<option value="BO">Bonificacion</option>
+										<option value="RG">Regalia</option>
+										<option value="RI">Rifa</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Categoria</td>
+								<td colspan="3"><input type="text" class="prestamo-categoria-field-t" ng-model="dataH.categoriaPrestamoDescrp" readonly></td>
+							</tr>
+							<tr>
+								<td>Representante</td>
+								<td colspan="3">
+									<input type="text" class="prestamo-representanteCod-field-t" ng-model="dataH.representanteCod" readonly>
+									<input type="text" class="prestamo-representanteDescrp-field-t" ng-model="dataH.representanteDescrp" readonly>
+								</td>
+							</tr>
+							<tr>
+								<td>Oficial</td>
+								<td><input type="text" class="prestamo-oficial-field-t" ng-model="dataH.oficial" readonly></td>
+								<td class="align-right">Localidad</td>
+								<td class="align-right"><input type="text" class="prestamo-oficial-field-t" ng-model="dataH.localidad" readonly></td>
+							</tr>
+						</table>
 					</div>
 
-					<div class="data-detalle-prestamo">
-						<span><input type="text" class="prestamo-codigo-field-t" ng-model="dataH.socioCodigo" readonly></span>
-						<span><input type="text" class="prestamo-socio-field-t" ng-model="dataH.socioNombre" readonly></span>
-						<span><input type="text" class="prestamo-cedula-field-t" ng-model="dataH.socioCedula" readonly></span>
-						<span><input type="text" class="prestamo-pagarPor-field-t" ng-model="dataH.pagarPor" readonly></span>
-					</div>
 
 					<div class="data-detalle-prestamo">
-						<span class="prestamo-oficial-field">Oficial</span>
-						<span class="prestamo-localidad-field">Localidad</span>
+						<table>
+							<tr>
+								<td>Codigo</td>
+								<td><input type="text" class="prestamo-codigo-field-t" ng-model="dataH.socioCodigo" readonly></td>
+							</tr>
+							<tr>
+								<td>Nombre</td>
+								<td><input type="text" class="prestamo-categoria-field-t" ng-model="dataH.socioNombre" readonly></td>
+							</tr>
+							<tr>
+								<td>Cedula</td>
+								<td><input type="text" class="prestamo-cedula-field-t" ng-model="dataH.socioCedula" readonly></td>
+							</tr>
+							<tr>
+								<td>Departamento</td>
+								<td><input type="text" class="prestamo-categoria-field-t" ng-model="dataH.socioDepartamento" readonly></td>
+							</tr>
+						</table>
 					</div>
-					
-					<div class="data-detalle-prestamo">
-						<span><input type="text" class="prestamo-oficial-field-t" ng-model="dataH.oficial" readonly></span>
-						<span><input type="text" class="prestamo-localidad-field-t" ng-model="dataH.localidad" readonly></span>
-					</div>
-
 				</div>
 			</section>
 
 			<section class="mas-datos-prestamo-sec">
 				<div class="datos-prestamo">
 					<div class="datos-prestamo-title">
-						<span>Mas datos del prestamo</span>
+						<span>Detalle del prestamo</span>
 					</div>
 
 					<table class="datos-prestamo-table">
@@ -158,11 +178,11 @@
 						</tr>
 						<tr>
 							<td>Monto de Cuota Q1</td>
-							<td><input type="text" ng-model="prestamo.montoCuotaQ1" class="align-right"></td>
+							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ1" class="align-right"></td>
 						</tr>
 						<tr>
 							<td>Monto de Cuota Q2</td>
-							<td><input type="text" ng-model="prestamo.montoCuotaQ2" class="align-right"></td>
+							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ2" class="align-right"></td>
 						</tr>
 					</table>
 				</div>
@@ -184,11 +204,11 @@
 						</tr>
 						<tr>
 							<td>Fecha de Vencimiento</td>
-							<td><input type="text" ng-model="prestamo.fechaVencimiento" readonly></td>
+							<td><input type="text" class="align-right" ng-model="prestamo.fechaVencimiento" readonly></td>
 						</tr>
 						<tr>
 							<td>Solicitud No.</td>
-							<td><input type="text" ng-model="prestamo.noSolicitud" readonly></td>
+							<td><input type="text" class="align-right" ng-model="prestamo.noSolicitud" readonly></td>
 						</tr>
 						<tr>
 							<td>Cheque No.</td>
@@ -200,13 +220,13 @@
 						</tr>
 						<tr>
 							<td>Balance a la fecha</td>
-							<td><input type="text" class="prestamo-balance-actual align-right" ng-model="prestamo.balance" readonly></td>
+							<td><input type="text" class="prestamo-balance-actual resaltar-valor align-right" ng-model="prestamo.balance" readonly></td>
 						</tr>					
 					</table>
 					
 				</div>
 
-				<button class="icon-save Boton boton-guarda-cambios">Guardar Cambios</button>
+				<button class="icon-save Boton boton-guarda-cambios" ng-click="GuardarCambiosPrestamo($event)">Guardar Cambios</button>
 
 			</section>
 

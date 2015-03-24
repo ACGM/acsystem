@@ -14,8 +14,17 @@
 		</div>
 
 		<div class="nomina-descuentos-panel">
-			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
-			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Procesar</button>
+			<span class="fecha-nomina-descuento">Fecha de Nomina:</span> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
+			<span>Prestamos:</span>			
+			<select name="tipoNomina" id="tnom" ng-model="tipoPrestamoNomina" class="field-choices">
+				<option value="RE">Regular</option>
+				<option value="VA">Vacaciones</option>
+				<option value="BO">Bonificacion</option>
+				<option value="RG">Regalia</option>
+				<option value="RI">Rifa</option>
+			</select>
+			
+			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)">Procesar</button>
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 		</div>
 

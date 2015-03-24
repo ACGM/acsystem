@@ -34,35 +34,22 @@
 
     .factory('MaestraPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
-      // //Guardar Factura
-      // function guardarFact(dataH, dataD) {
-      //   var deferred = $q.defer();
+      //Guardar Cambios Prestamo
+      function guardarCambios(prestamo) {
+        var deferred = $q.defer();
 
-      //   $http.post('/facturacion/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
-      //     success(function (data) {
-      //       deferred.resolve(data);
-      //     }).
-      //     error(function (data) {
-      //       deferred.resolve(data);
-      //     });
-
-      //   return deferred.promise;
-      // }
-
-      // //Impresion de Factura (incrementa el campo de IMPRESA)
-      // function impresionFact(fact) {
-      //   var deferred = $q.defer();
-
-      //   $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
-      //     success(function (data) {
-      //       deferred.resolve(data);
-      //     }).
-      //     error(function (data) {
-      //       deferred.resolve(data);
-      //     });
-      //   return deferred.promise;
-      // }
-
+        $http.post('/prestamos/maestra/cambios/', JSON.stringify({'noPrestamo': prestamo.noPrestamo,
+                                                                  'tipoNomina': prestamo.tipoNomina,
+                                                                  'montoQ1': prestamo.montoQ1,
+                                                                  'montoQ2': prestamo.montoQ2})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
 
       //Llenar el listado de prestamos
       function all() {
@@ -174,7 +161,8 @@
         PrestamoById : PrestamoById,
         MarcarPrestamoDC : MarcarPrestamoDC,
         PostearPrestamosOD : PostearPrestamosOD,
-        PrestamosPosteados : PrestamosPosteados
+        PrestamosPosteados : PrestamosPosteados,
+        guardarCambios : guardarCambios
       };
 
     }])
@@ -202,7 +190,16 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLP = 'UpArrow';
 
-      
+      panelesSize();
+
+      window.onresize = function(event) {
+        panelesSize();
+      }
+
+      function panelesSize() {
+        document.getElementById('prestamosContainer').style.height = (window.innerHeight - 280) + 'px';
+      }
+
       // Mostrar/Ocultar panel de Listado de Facturas
       $scope.toggleLP = function() {
         $scope.showLP = !$scope.showLP;
@@ -240,6 +237,25 @@
             });
           }
         });
+      }
+
+      //Guardar Cambios en Prestamo Seleccionado.
+      $scope.GuardarCambiosPrestamo = function($event) {
+        var prestamo = {};
+
+        prestamo.noPrestamo = $scope.dataH.noPrestamo;
+        prestamo.tipoNomina = $scope.dataH.tipoPrestamoNomina;
+        prestamo.montoQ1 = $scope.prestamo.montoCuotaQ1;
+        prestamo.montoQ2 = $scope.prestamo.montoCuotaQ2;
+
+        MaestraPrestamoService.guardarCambios(prestamo).then(function (data) {
+          if(data == 1) {
+            $scope.PrestamoFullById($event, $scope.dataH.noPrestamo);
+          } else {
+            $scope.mostrarError(data);
+          }
+        })
+
       }
 
       //Buscar un prestamo en especifico
@@ -320,11 +336,12 @@
               $scope.dataH.socioCodigo = data[0]['socioCodigo'];
               $scope.dataH.socioNombre = data[0]['socioNombre'];
               $scope.dataH.socioCedula = data[0]['socioCedula'];
-              $scope.dataH.pagarPor = ''; //data[0]['oficial'];
+              $scope.dataH.socioDepartamento = data[0]['socioDepartamento'];
               $scope.dataH.oficial = data[0]['oficial'];
               $scope.dataH.localidad = data[0]['localidad'];
               $scope.dataH.estatus = data[0]['estatus'];
               $scope.dataH.posteadoFecha = data[0]['posteadoFecha'];
+              $scope.dataH.tipoPrestamoNomina = data[0]['tipoPrestamoNomina'];
 
               $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
               $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
@@ -336,10 +353,17 @@
               $scope.prestamo.montoCuotaQ2 = $filter('number')(data[0]['montoCuotaQ2'], 2);
               $scope.prestamo.fechaDesembolso = data[0]['fechaDesembolso'];
               $scope.prestamo.fechaEntrega = data[0]['fechaEntrega'];
-              $scope.prestamo.fechaVencimiento = ''; //data[0][''];
               $scope.prestamo.chequeNo = data[0]['chequeNo'];
               $scope.prestamo.valorGarantizado = $filter('number')(data[0]['valorGarantizado'], 2);
               $scope.prestamo.balance = $filter('number')(data[0]['balance'], 2);
+
+              var fechaP = $filter('date')(Date.now(), 'dd/MM/yyyy').split('/');
+              var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
+
+              var nextDate = new Date();
+              nextDate.setDate(fechaF.getDate()+parseInt($scope.prestamo.cantidadCuotas * 15));
+
+              $scope.prestamo.fechaVencimiento = $filter('date')(nextDate, 'dd/MM/yyyy');
 
 
               // if(data[0]['estatus'] == 'P') {
@@ -362,7 +386,9 @@
           $scope.mostrarError(e);
         }
 
-        $scope.toggleLP();
+        if($scope.showLP == true) {
+          $scope.toggleLP();
+        }
       }
 
       //Marcar Prestamo como Cheque

@@ -132,6 +132,7 @@ class SolicitudOrdenDespachoD(models.Model):
 class MaestraPrestamo(models.Model):
 
 	estatus_choices = (('E','En proceso'), ('P','Posteado'), ('S','Saldado'), ('C', 'Cheque'), ('D','Desembolso'))
+	tipoPrestamoNomina_choices = (('RE','Regular'), ('BO','Bonificacion'), ('RG','Regalia'), ('VA','Vacaciones'), ('RI', 'Rifa'))
 
 	noPrestamo = models.PositiveIntegerField(unique=True)
 	noSolicitudPrestamo = models.ForeignKey(SolicitudPrestamo, null=True, blank=True)
@@ -158,10 +159,12 @@ class MaestraPrestamo(models.Model):
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 	fechaAprobacion = models.DateField(auto_now_add=True, null=True)
+	quincenas = models.PositiveIntegerField(default=2)
+	tipoPrestamoNomina = models.CharField(max_length=2, choices=tipoPrestamoNomina_choices, default='RE') # Bonificacion, Vacaciones, Regalia, Rifa
 
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
-	posteadoFecha = models.DateField(auto_now=True, null=True, blank=True)
+	posteadoFecha = models.DateField(null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -172,23 +175,43 @@ class MaestraPrestamo(models.Model):
 
 	@property
 	def cuotaInteresQ1(self):
-		valor = self.montoCuotaQ1 * (self.tasaInteresMensual/2/100)
+		if self.montoCuotaQ1 != None:
+			valor = self.montoCuotaQ1 * (self.tasaInteresMensual/self.quincenas/100)
+		else:
+			valor = 0
 		return valor
 
 	@property
 	def cuotaInteresQ2(self):
-		valor = self.montoCuotaQ2 * (self.tasaInteresMensual/2/100)
+		if self.montoCuotaQ2 != None:
+			valor = self.montoCuotaQ2 * (self.tasaInteresMensual/self.quincenas/100)
+		else:
+			valor = 0
 		return valor
 
 	@property
 	def cuotaMasInteresQ1(self):
-		valor = self.cuotaInteresQ1 + self.montoCuotaQ1
+		if self.montoCuotaQ1 != None:
+			valor = self.cuotaInteresQ1 + self.montoCuotaQ1
+		else:
+			valor = 0
 		return valor
 
 	@property
 	def cuotaMasInteresQ2(self):
-		valor = self.cuotaInteresQ2 + self.montoCuotaQ2
+		if self.montoCuotaQ2 != None:
+			valor = self.cuotaInteresQ2 + self.montoCuotaQ2
+		else:
+			valor = 0
 		return valor
+
+	def save(self, *args, **kwargs):
+		if (self.montoCuotaQ1 == 0 or self.montoCuotaQ1 == None) or (self.montoCuotaQ2 == 0 or self.montoCuotaQ2 == None):
+			self.quincenas = 1
+		else:
+			self.quincenas = 2
+
+		super(MaestraPrestamo, self).save(*args, **kwargs)
 
 
 # Prestamos Unificados

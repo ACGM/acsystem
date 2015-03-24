@@ -37,7 +37,7 @@ class NominaView(LoginRequiredMixin, TemplateView):
 # Vista Descuentos Prestamos/Ahorros
 class NominaDescuentosView(LoginRequiredMixin, TemplateView):
 
-	template_name = 'nomprestamos.html'
+	template_name = 'nomdescuentos.html'
 
 
 # Listado de Nominas Generadas

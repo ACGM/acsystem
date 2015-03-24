@@ -158,9 +158,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nomina', models.DateField()),
+                ('tipo', models.CharField(max_length=2)),
                 ('estatus', models.CharField(default=b'PE', max_length=2)),
             ],
             options={
+                'verbose_name': 'Nomina Prestamos Ahorros',
+                'verbose_name_plural': 'Nomina Prestamos Ahorros',
             },
             bases=(models.Model,),
         ),
@@ -176,6 +179,10 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Tipos de Nominas',
             },
             bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='nominaprestamosahorros',
+            unique_together=set([('nomina', 'tipo')]),
         ),
         migrations.AddField(
             model_name='nominacooph',

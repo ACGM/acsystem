@@ -74,17 +74,18 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 				'socioCodigo': prestamo.socio.codigo,
 				'socioNombre': prestamo.socio.nombreCompleto,
 				'socioCedula': prestamo.socio.cedula,
+				'socioDepartamento': prestamo.socio.departamento.descripcion,
 				'representanteCodigo': prestamo.representante.id,
 				'representanteNombre': prestamo.representante.nombre,
 				'oficial': prestamo.oficial.username,
 				'localidad': prestamo.localidad.descripcion,
 				'montoInicial': prestamo.montoInicial,
-				'tasaInteresAnual': prestamo.tasaInteresAnual,
-				'tasaInteresMensual': prestamo.tasaInteresMensual,
+				'tasaInteresAnual': prestamo.tasaInteresAnual if prestamo.tasaInteresAnual != None else '',
+				'tasaInteresMensual': prestamo.tasaInteresMensual if prestamo.tasaInteresMensual != None else '',
 				'pagoPrestamoAnterior': prestamo.pagoPrestamoAnterior,
 				'cantidadCuotas': prestamo.cantidadCuotas,
-				'montoCuotaQ1': prestamo.montoCuotaQ1,
-				'montoCuotaQ2': prestamo.montoCuotaQ2,
+				'montoCuotaQ1': prestamo.montoCuotaQ1 if prestamo.montoCuotaQ1 != None else '',
+				'montoCuotaQ2': prestamo.montoCuotaQ2 if prestamo.montoCuotaQ2 != None else '',
 				'fechaDesembolso': prestamo.fechaDesembolso,
 				'fechaEntrega': prestamo.fechaEntrega,
 				'chequeNo': prestamo.chequeNo.chequeNo if prestamo.chequeNo != None else '',
@@ -92,7 +93,44 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 				'balance': prestamo.balance,
 				'estatus': prestamo.estatus,
 				'posteadoFecha': prestamo.posteadoFecha,
+				'tipoPrestamoNomina': prestamo.tipoPrestamoNomina,
 				})
 
 		return JsonResponse(data, safe=False)
 
+
+# Guardar Cambios en Prestamo
+class guardarCambiosPrestamo(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+
+			data = json.loads(request.body)
+
+			noPrestamo = data['noPrestamo']
+			tipoNomina = data['tipoNomina']
+			cuotaQ1 = data['montoQ1']
+			cuotaQ2 = data['montoQ2']
+
+			cantidadCuotas = 0
+
+			prestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+
+			prestamo.tipoPrestamoNomina = tipoNomina
+			prestamo.montoCuotaQ1 = decimal.Decimal(cuotaQ1.replace(',','')) if cuotaQ1 != '' else 0
+			prestamo.montoCuotaQ2 = decimal.Decimal(cuotaQ2.replace(',','')) if cuotaQ2 != '' else 0
+			
+			#Verificar que los montos quincenales no excedan el balance pendiente
+			if prestamo.montoCuotaQ1 + prestamo.montoCuotaQ2 > prestamo.balance:
+				raise Exception('Los montos quincenas exceden el balance pendiente.')
+			prestamo.save()
+			
+			prestamo.cantidadCuotas = math.ceil(prestamo.balance / (prestamo.montoCuotaQ1 + prestamo.montoCuotaQ2)) * prestamo.quincenas
+
+			prestamo.save()
+			
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)

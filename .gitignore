@@ -10,4 +10,5 @@ facturacion/migrations
 fondoscajas/migrations
 administracion/migrations
 nominacoop/migrations
+cxp/migrations
 

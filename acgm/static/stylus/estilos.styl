@@ -260,7 +260,7 @@ vendor-prefixes = o ms webkit moz
 
 verde = #084C0B
 verdeClarito = #2BA92D
-verdeSubMenu = #6ABF40
+verdeSubMenu = #138814 //#6ABF40
 verdeSuave = #94E698
 verdeMuySuave = #E1FFDD
 rojoClaro = #F63735
@@ -445,12 +445,12 @@ footer
 .sub-menu //CLASE para darle formato a la subdivision en la pantalla. Ej: listado y la otra mitad el data entry.
 	background verdeSubMenu
 	padding .2em 0 .2em .4em 
-	color verdeMuyOscuro
+	color verdeMuySuave //verdeMuyOscuro
 	border-top 1px solid verde
 	border-bottom 1px solid verde
 	& a
 		text-decoration none
-		color verdeMuyOscuro
+		color verdeMuySuave //verdeMuyOscuro
 		&:hover
 			text-decoration underline
 
@@ -585,7 +585,7 @@ footer
 
 .cssSlideUp--Maestra
 	transition .4s linear all
-	height 36rem
+	height 46rem
 	overflow hidden
 	&.ng-hide
 		height 0
@@ -2064,7 +2064,7 @@ footer
 	left 2em
 	height 3.4em
 	width 11em
-	margin-bottom 3em
+	margin-bottom 1em
 	padding .5em 1em
 	transition .2s
 	&:before
@@ -2074,43 +2074,43 @@ footer
 		transform scale(1.1,1.1)
 
 	//Detalle del prestamo*****
+.data-detalle-prestamo
+	floar left
+	background verdeMuySuave
+	padding .4em
+	border 2px solid verdeClarito
+	display inline-block
+	td
+		padding .15em
+	
+.prestamo-prestamo-field-t
+	width 6em
+	
 .data-entry-section-sp
 	// overflow scroll
 	
 .data-detalle-prestamo-header
 	margin .5em 0 0 1em
-
-.data-detalle-prestamo
-	display block
+	display inline-block
 	
-.prestamo-prestamo-field-t
-	margin-top .2em
-	width 5.7em
-
-.prestamo-categoria-field
-	margin-left .8em
-
+	input[type='text']
+		border 1px solid verde
+		background verdeMuySuave
+	
 .prestamo-categoria-field-t
-	margin-left .85em
-	width 27em
-
-.prestamo-representante-field
-	margin-left 23.1em
+	width 25em
 
 .prestamo-representanteCod-field-t
 	width 3em
 
 .prestamo-representanteDescrp-field-t
-	width 17.35em
-	margin-bottom .4em
+	width 21.38em
+
 .descrp-repr
 	width 16.5em
 	
 .prestamo-codigo-field-t
 	width 5.7em
-	
-.prestamo-socio-field
-	margin-left 3.85em
 	
 .prestamo-socio-field-t
 	width 20em
@@ -2118,42 +2118,22 @@ footer
 	margin-top .2em
 	margin-bottom .4em
 
-.prestamo-cedula-field
-	margin-left 14em
-
 .prestamo-cedula-field-t
 	width 8em
-
-.prestamo-pagarPor-field
-	margin-left 7.2em
-	
-.prestamo-pagarPor-field-t
-	margin-left 2.1em
-	width 17.35em
 	
 .prestamo-oficial-field-t
-	width 27.1em
-
-.prestamo-localidad-field
-	margin-left 24.8em
-
-.prestamo-localidad-field-t
-	margin-left .15em
-	width 28.1em
-
-
+	width 7em
 
 .mas-datos-prestamo-sec
 	margin .5em 0 0 1em
-	width 78%
 	
 .datos-prestamo
 	display inline-block
-	width 49%
+	width 27rem
 	border 1px solid lightgray
 	
 .datos-prestamo-title
-	background amarilloOscuro
+	background rojoOscuro
 	padding .24em .2em
 	color white
 
@@ -2171,12 +2151,12 @@ footer
 	
 .garante
 	display inline-block
-	width 49%
+	width 27rem
 	border 1px solid lightgray
 		
 
 .garante-title
-	background amarilloOscuro
+	background rojoOscuro
 	padding .24em .2em
 	color white
 
@@ -2191,9 +2171,8 @@ footer
 				text-align right
 
 .boton-guarda-cambios
-	display block
+	display inline-block
 	margin .7em .4em 2em 0 
-	float right
 	height 3.5em
 	padding 0 .8em
 	

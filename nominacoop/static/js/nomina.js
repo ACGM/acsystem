@@ -357,6 +357,8 @@
       $scope.empleado = {};
       $scope.detalle = [];
 
+      $scope.tipoPrestamoNomina = 'RE';
+
       window.onresize = function(event) {
         panelesSize();
       }
@@ -383,7 +385,9 @@
       }
 
       // Traer listado de prestamos de la Maestra que estan activos.
-      $scope.listadoPrestamos = function() {
+      $scope.listadoPrestamos = function($event, tipoPrestamoNom) {
+        $event.preventDefault();
+
         panelesSize();
         $scope.mensaje = '';
 
@@ -396,7 +400,7 @@
             throw "Verifique que la fecha de nomina no tiene errores."
           }
 
-          MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          MaestraPrestamoService.PrestamosPosteados(tipoPrestamoNom).then(function (data) {
             var fecha = $scope.fechaNomina.split('/');
             var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
@@ -411,7 +415,7 @@
               prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
               prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
 
-              if(parseFloat(prestamo.montoCuotaQ) > 0) {
+              if(parseFloat(prestamo.montoCuotaQ) > 0 && item.tipoPrestamoNomina == tipoPrestamoNom) {
                 $scope.prestamos.push(prestamo);
               }
               $scope.totalesPrestamos();
