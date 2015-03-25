@@ -195,6 +195,10 @@
 					AhorroServices.setAhorroReg($scope.retiro).then(function (data){
 						
 					});
+
+					$scope.getListaAhorro();
+					$scope.cancelRetiro();
+					$scope.NoMaestra();
 				}
 
 				catch(ex){
@@ -210,6 +214,7 @@
                     	
                     	$scope.AhorrosPorSocio = data.filter(function(reg){
 
+
                     		var salida = reg.maestra.filter(function(ret){
                     			return ret.retiro != '0';
                     		});
@@ -223,8 +228,6 @@
                    	var xj = $scope.Ahorros.filter(function (data){
                    		return data.id==Id;
                    	});
-
-                   	console.log(xj);
 
                    	$scope.retiro['socio'] = xj[0].socioId;
                    	

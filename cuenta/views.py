@@ -1,12 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 
 from rest_framework import viewsets
-<<<<<<< HEAD
 
 from django.views.generic import DetailView, TemplateView, View
-=======
-from django.views.generic import DetailView, TemplateView
->>>>>>> FETCH_HEAD
+
 from django.shortcuts import render
 
 from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
