@@ -9,19 +9,40 @@
 		<mensajeinfo> </mensajeinfo>
 		<div class="sub-menu">
 			Ahorros
-			<a href="#" class="[[ArrowAhorro]]" ng-click="toggleAhorroPanel()"></a>
+			<!-- <a href="#" class="[[ArrowAhorro]]" ng-click="toggleAhorroPanel()"></a> -->
 		</div>
-		<div ng-show="[[AhorroPanel]]">
+		<div ng-show="AhorroPanel">
 			<section id="mainSection">
 				<section class="Ahorro-main" ng-init="getListaAhorro()">
 					<section class="Ahorro-main-search">
 						<div class="Ahorro-main-search-box">
-							<input id="finder" type="text" class="search-item" placeholder="Código de colaborador o Beneficiario">
-							<a href="#" class="icon-uniE601 icon-search" ng-click="setAhorro()"></a>
+
+							<input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" placeholder="Código o nombre del colaborador"  ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+
+							<a href="#" class="icon-uniE601 icon-search" ng-click="getSocio($event)"></a>
 						</div>
 					</section>
+					<div class="content-socios-table">
+						<table class="socios-table-search-panel" ng-show="tableSocio">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
+							</tr>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+							</tr>
+						</table>
+					</div>
 				</section>
-
+				
 				<section class="Ahorro-main-list">
 						<div class="registrosPanel--grande">
 							<table id='tabla-ahorros' class='listado-table noTop'>
@@ -49,65 +70,140 @@
 			<section class="Ahorro-detalle">
 				<div class="sub-menu">
 					Ahorros - Detalle
-					<a href="#" class="[[ArrowDetalle]]" ng-click="toggleAhorroPanel()"></a>
+					<!-- <a href="#" class="[[ArrowDetalle]]" ng-click="toggleAhorroPanel()"></a> -->
 				</div>
-				<div class="DiarioSearch">
-					<table>
-						<tr>
-							<td style="margin-right:.5em:"><strong> Registro </strong></td>
-							<td>[[AhorrosPorSocio[0].id]]</td>
-						</tr>
-						<tr>
-							<td style="margin-right:.5em:">
-								<strong>Socio</strong> 
-							</td>
-							<td style="margin-right:.5em:">
-								[[AhorrosPorSocio[0].socio]]
-							</td>
-						</tr>
-						<tr>
-							<td style="margin-right:.25em:"><strong>Balance</strong> </td>
-							<td>[[AhorrosPorSocio[0].balance |number:2]]</td>
-						</tr>
-						<tr>
-							<td style="margin-right:.5em:">
-								<strong> Disponible</strong>
-							</td>
-							<td >[[AhorrosPorSocio[0].disponible]]</td>
-						</tr>
-					</table>
-					
-				</div>
-				<div class="Ahorro-detalle-cuentas">
-					<div class="registroPanel">
-						<table id="tabla-detalleCuentas" class="listado-table ">
-							<tr class="listado-table-header-ei utils-upperBorderR">
-								<th>Registro</th>
-								<th>Fecha</th>
-								<th>Monto</th>
-								<th>Interes</th>
-								<th>Balance</th>
-								<th>Estatus</th>
+				<div  ng-show="DetalleAhorro">
+					<div class="DiarioSearch">
+						<table>
+							<tr>
+								<td style="margin-right:1em;" class="spaces"><strong> Registro </strong></td>
+								<td>[[AhorrosPorSocio[0].id]]</td>
 							</tr>
-							<tr ng-repeat="registro in AhorrosPorSocio[0].maestra" class="listado-ardt-detail">
-							<td><a href="#" ng-click="getCuentaMaestra([[registro.id]])" class='utils-gr utils-noDecoration icon-pencil' ></a></td>
-							<td>[[registro.fecha]]</td>
-							<td>[[registro.monto |number:2]]</td>
-							<td>[[registro.interes |number:2]]</td>
-							<td>[[registro.balance |number:2]]</td>
-							<td><input type="checkbox" name="[[maestra.estatus]]" id=""></td>
-								
+							<tr>
+								<td style="margin-right:1em;" class="spaces">
+									<strong>Socio</strong> 
+								</td>
+								<td style="margin-right:1em;">
+									[[AhorrosPorSocio[0].socio]]
+								</td>
+							</tr>
+							<tr>
+								<td style="margin-right:1em;" class="spaces"><strong>Balance</strong> </td>
+								<td>[[AhorrosPorSocio[0].balance |number:2]]</td>
+							</tr>
+							<tr>
+								<td style="margin-right:1em;" class="spaces">
+									<strong> Disponible</strong>
+								</td>
+								<td >[[AhorrosPorSocio[0].disponible |number :2]]</td>
 							</tr>
 						</table>
+						
+					</div>
+					<div class="Ahorro-detalle-cuentas">
+						<div class="registrosPanel">
+							<table id="tabla-detalleCuentas" class="listado-table detalle-Ahorro-w">
+								<tr class="listado-table-header-ei utils-upperBorderR">
+									<th>Registro</th>
+									<th>Fecha</th>
+									<th>Monto</th>
+									<th>Interes</th>
+									<th>Balance</th>
+									<th>Estatus</th>
+								</tr>
+								<tr ng-repeat="registro in AhorrosPorSocio[0].maestra" class="listado-ardt-detail">
+								<td>
+									<div ng-if="registro.estatus == 'A'">
+										<a href="#" ng-click="getRegRetiro(registro.retiro)" class='utils-gr utils-noDecoration icon-pencil'> </a>
+									</div>
+									<div ng-if="registro.estatus != 'A'">
+										<span class='utils-gr utils-noDecoration icon-pencil'> </span>
+									</div>
+								</td>
+								<td>[[registro.fecha]]</td>
+								<td>[[registro.monto |number:2]]</td>
+								<td>[[registro.interes |number:2]]</td>
+								<td>[[registro.balance |number:2]]</td>
+							    <td>
+							    	<div ng-if="registro.estatus == 'A'"> <span class="icon-credit" ="Activa"></span></div> 
+									<div ng-if="registro.estatus == 'I'"> <span class="icon-delete icon-eliminar disabled" tooltip="Nulas"></span></div>
+									<div ng-if="registro.estatus == 'O'"> <span class="icon-archivo  disabled" tooltip="Posteadas"></span></div>  
+							    </td> 
+									
+								</tr>
+							</table>
+							
+						</div>
+						<button class="Boton BusquedaBtn icon-file" ng-click="newRetiro()">Registrar Retiro</button>
+							<button class="Boton BusquedaBtn danger icon-delete" ng-click="NoMaestra()">Cancelar</button>
 					</div>
 				</div>
 			</section>
 		</div>
-		<section>
-			<div class="sub-menu">
-			Retiro ahorro
-			<a href="#" class="[[ArrowLF]]" ng-click="toggleLF()"></a>
-		</div>
+		<section ng-show="RetiroPanel">
+			<div class="sub-menu" >
+			Retiro Ahorro
+			</div>
+			<form action="" id="retiroForm" ng-submit="setAhorro($event)" class="regRetiro">
+				<table>
+					<tr>
+						<td style="padding:1.2em 1.4em 0 .7em; width:5em ">
+							# Registro:
+						</td>
+						<td>
+							<input type="text" ng-model="retiro.id" value="" ng-disable="true" class="disable" readonly="">
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:1.5em 1.4em 0 .7em; width:5em ">
+							Fecha:
+						</td>
+						<td>
+							<input type="text" ng-model="retiro.fecha" value="[[retiro.fecha | date: 'dd/MM/yyyy']]"  datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:1.2em 1.4em 0 .7em; width:5em;">
+							Tipo de Retiro:
+						</td>
+						<td>
+							<select name="TipoRet" form="retiroForm" ng-model="retiro.tipo">
+							  <option value="A">Retiro Ahorro</option>
+							  <option value="J">Retiro por Ajuste</option>
+							  <option value="O">Retiro Otros</option>
+							  
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:1.2em 1.4em 0 .7em; width:5em; ">
+							Estatus:
+						</td>
+						<td>
+							<select name="status" form="retiroForm" ng-model="retiro.estatus" ng-disable="editer">
+							  <option value="A">Activa</option>
+							  <option value="I">Nula</option>
+							  <option value="O">Posteada</option>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:1.2em 1.4em 1em .7em; width:5em; ">
+							Monto:
+						</td>
+						<td>
+							<input type="text" ng-model="retiro.monto" value="[[retiro.monto | number: 2]]">
+						</td>
+					</tr>
+					<tr>
+						<td style="padding:1.2em 1.4em 1em .7em; width:5em; ">
+							<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+						</td>
+						<td>
+							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRetiro()">Limpiar</button>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</section>
 
 	</div>

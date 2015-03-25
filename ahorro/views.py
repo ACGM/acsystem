@@ -2,7 +2,7 @@ import json
 import decimal
 
 from django.http import HttpResponse, JsonResponse
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from rest_framework import viewsets
 
 from .models import InteresesAhorro, MaestraAhorro, AhorroSocio, RetiroAhorro
@@ -15,29 +15,6 @@ class MaestraAhorroView(DetailView):
     queryset = AhorroSocio.objects.all()
 
     # Metodo Post para el proceso completo
-    def post(self, request, *args, **kwargs):
-
-        try:
-            data = json.loads(request.body)
-
-
-            if data['id'] != None:
-                regRet = RetiroAhorro.object.get(id = data['id'])
-                regRet.tipoRetiro = data['tipo']
-                regRet.monto = data['monto']
-                regRet.save()
-            else:
-                regRet = RetiroAhorro()
-                regRet.ahorro = AhorroSocio.objects.get(id=data['ahorro'])
-                regRet.socio = Socio.objects.get(id=data['socio'])
-                regRet.tipoRetiro = data['tipo']
-                regRet.monto = decimal.Decimal(data['monto'])
-
-            return HttpResponse('1')
-
-        except Exception as ex:
-            return HttpResponse(ex)
-
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
 
@@ -56,7 +33,7 @@ class MaestraAhorroView(DetailView):
             for ahorro in self.object_list:
                 data.append({
                     'id': ahorro.id,
-                    'socioId': ahorro.socio.id,
+                    'socioId': ahorro.socio.codigo,
                     'socio': ahorro.socio.nombres + ' ' + ahorro.socio.apellidos,
                     'balance': ahorro.balance,
                     'disponible': ahorro.disponible,
@@ -68,7 +45,7 @@ class MaestraAhorroView(DetailView):
                             'interes': maestra.interes.porcentaje,
                             'balance': maestra.balance,
                             'estatus': maestra.estatus,
-                            'retiro' : maestra.retiro.id if maestra.retiro != None else '',
+                            'retiro': maestra.retiro.id if maestra.retiro != None else '0',
                             'cuentas': [
                                 {
                                     'id': cuentas.id,
@@ -91,9 +68,10 @@ class MaestraAhorroView(DetailView):
             for retiro in RetiroAhorro.objects.all():
                 data.append({
                     'id': retiro.id,
-                    'socio': retiro.socio.nombres + ' ' + retiro.socio.apellidos,
-                    'ahorro': retiro.socio.id,
-                    'tipoRetiro': retiro.tipoRetiro,
+                    'socio': retiro.socio.codigo,
+                    'fecha': retiro.fecha,
+                    'estatus' : retiro.estatus,
+                    'tipo': retiro.tipoRetiro,
                     'monto': retiro.monto
                 })
 
@@ -121,7 +99,87 @@ class RetirosAhorroViewSet(viewsets.ModelViewSet):
 
 
 class AhorroView(TemplateView):
+
     template_name = 'ahorro.html'
+
+    def post(self, request, *args, **kwargs):
+        dataT = json.loads(request.body)
+
+        data = dataT['retiro']
+
+        regSocio = Socio.objects.get(codigo=data['socio'])
+        regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
+
+        try:
+
+            if data['id'] is None:
+                regRet = RetiroAhorro()
+                regRet.socio = regSocio
+                regRet.fecha = data['fecha']
+                regRet.estatus = data['estatus']
+                regRet.tipoRetiro = data['tipo']
+                regRet.monto = decimal.Decimal(data['monto'])
+                regRet.save()
+
+                regMaestra = MaestraAhorro()
+                regMaestra.ahorro = regAhorro
+                regMaestra.fecha = data['fecha']
+                regMaestra.retiro = regRet
+                regMaestra.interes = InteresesAhorro.objects.get(id=1)
+                regMaestra.monto = decimal.Decimal(data['monto'])
+                regMaestra.balance = regAhorro.disponible - decimal.Decimal(data['monto'])
+                regMaestra.estatus = 'A'
+                regMaestra.save()
+
+                regAhorro.balance = regAhorro.balance - decimal.Decimal(data['monto'])
+                regAhorro.disponible = regAhorro.disponible - decimal.Decimal(data['monto'])
+                regAhorro.save()
+
+            elif data['estatus'] == 'I':
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+
+                montoAnt = regRet.monto
+                regRet.estatus = data['estatus']
+                regRet.save()
+
+                regMaestra = MaestraAhorro.objects.get(retiro=data['id'])
+                regMaestra.estatus = data['estatus']
+                regMaestra.save()
+
+                regAhorro.balance = (regAhorro.balance + montoAnt)
+                regAhorro.disponible = (regMaestra.balance + montoAnt)
+                regAhorro.save()
+
+            elif data['estatus'] == 'A':
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+
+                montoRetAnt = regRet.monto
+
+
+                regRet.tipoRetiro = data['tipo']
+                regRet.estatus = data['estatus']
+                regRet.monto = decimal.Decimal(data['monto'])
+                regRet.save()
+
+                regMaestra = MaestraAhorro.objects.get(id=data['maestraId'])
+                regNaestra.monto = decimal.Decimal(data['monto'])
+                regMaestra.balance = (regMaestra.balance + montoRetAnt) - decimal.Decimal(data['monto'])
+                regMaestra.estatus = data['estatus']
+                regMaestra.save()
+
+                regAhorro.balance = (regAhorro.balance + montoRetAnt) - decimal.Decimal(data['monto'])
+                regAhorro.disponible = regMaestra.balance
+                regAhorro.save()
+            else:
+                 return HttpResponse('0')
+
+
+            return HttpResponse('1')
+
+        except Exception as ex:
+            return HttpResponse(ex)
+
+
 
 
 

@@ -20,4 +20,4 @@ class InteresAdmin(admin.ModelAdmin):
 
 @admin.register(RetiroAhorro)
 class RetiroAdmin(admin.ModelAdmin):
-    list_display = ['id', 'socio', 'ahorro', 'tipoRetiro', 'monto' ]
+    list_display = ['id', 'socio', 'tipoRetiro', 'monto' ]

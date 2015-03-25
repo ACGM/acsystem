@@ -29,11 +29,14 @@ class AhorroSocio(models.Model):
 
 # Retiros de ahorro
 class RetiroAhorro(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
     retiro_choicer = (('A', 'Retiro Ahorro'), ('J', 'Retiro por Ajuste'), ('O', 'Otros'))
 
+    fecha = models.DateField()
     socio = models.ForeignKey(Socio)
-    ahorro = models.ForeignKey(AhorroSocio)
+    # ahorro = models.ForeignKey(AhorroSocio)
     tipoRetiro = models.CharField(max_length=1, choices=retiro_choicer, verbose_name="Tipo de Retiro")
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus", default="A")
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=0.00,
                                 verbose_name="Monto a Retirar")
 

@@ -119,7 +119,7 @@
                   return deferred.promise;
             }
 
-             function suplidor(){
+            function suplidor(){
                 var deferred =$q.defer();
 
                 $http.get('/api/suplidor/?format=json')
@@ -144,8 +144,6 @@
                     });
                 return deferred.promise;
             }
-      
-
             return {
                 getAll: getAll,
                 getCxpsById: getCxpsById,
@@ -288,7 +286,6 @@
                   
             $scope.getSocio = function($event) {
                     $event.preventDefault();
-
                     $scope.tableSocio = true;
                     $scope.tableSuplidor = false;
 

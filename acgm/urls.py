@@ -84,7 +84,6 @@ router.register(r'detalleOrder',DetalleOrderViewSet)
 
 
 #ahorro
-router.register(r'MaestraAhorros',MaestraAhorroViewSet)
 router.register(r'ahorro',AhorroViewSet)
 router.register(r'retiroAhorro',RetirosAhorroViewSet)
 router.register(r'InteresAhorro',InteresAhorroViewSet)
