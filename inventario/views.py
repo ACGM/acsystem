@@ -96,21 +96,13 @@ class ListadoAlmacenesView(viewsets.ModelViewSet):
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Retornar un documento con todo su detalle (ENTRADA)
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
-class EntradaInventarioById(LoginRequiredMixin, ListView):
-
-	queryset = InventarioH.objects.all()
+class EntradaInventarioById(LoginRequiredMixin, View):
 
 	def get(self, request, *args, **kwargs):
 		NoDoc = self.request.GET.get('nodoc')
 		
-		self.object_list = self.get_queryset().filter(id=NoDoc)
-
-		format = self.request.GET.get('format')
-		if format == 'json':
-			return self.json_to_response()
-
-		context = self.get_context_data()
-		return self.render_to_response(context)
+		self.object_list = InventarioH.objects.filter(id=NoDoc)
+		return self.json_to_response()
 
 	def json_to_response(self):
 		data = list()
@@ -136,10 +128,11 @@ class EntradaInventarioById(LoginRequiredMixin, ListView):
 					{	'codigo': prod.producto.codigo,
 						'descripcion': prod.producto.descripcion,
 						'unidad': prod.producto.unidad.descripcion,
-						'cantidad': prod.cantidadTeorico,
-						'cantidadAnterior': float(Existencia.objects.filter(producto__codigo=prod.producto.codigo, almacen=prod.almacen.id).values('cantidadAnterior')[0]['cantidadAnterior']) 
+						'cantidad': float(prod.cantidadTeorico),
+						'cantidadAnterior': float(Existencia.objects.filter(producto__codigo=prod.producto.codigo, \
+																						almacen=prod.almacen.id).values('cantidadAnterior')[0]['cantidadAnterior']) 
 												if Existencia.objects.filter(producto=prod, almacen=prod.almacen.id).values('cantidadAnterior') != None else 0,
-						'costo': prod.costo,
+						'costo': float(prod.costo),
 						'almacen': prod.almacen.id,
 						'almacenDescrp': prod.almacen.descripcion,
 					} 

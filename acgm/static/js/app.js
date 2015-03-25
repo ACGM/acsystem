@@ -2,6 +2,7 @@
 
   var app = angular.module('cooperativa', [
     'cooperativa.menu',
+    'cooperativa.homepage',
     'cooperativa.nomina',
     'cooperativa.facturacion',
     'cooperativa.inventario',

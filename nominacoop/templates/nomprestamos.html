@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %} Actualiza Descuentos de Nominas {% endblock title %}
+
+{% block content %}
+
+	<div class="Nomina" ng-controller="NominaDescuentosCtrl">
+	
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
+
+		<div class="sub-menu">
+			<a href="#">Nomina de Prestamos y Ahorros</a>
+		</div>
+
+		<div class="nomina-descuentos-panel">
+			<scan class="fecha-nomina-descuento">Fecha de Nomina:</scan> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
+			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos()">Procesar</button>
+			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
+		</div>
+
+		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendePrestamos]] [[encogePrestamos]]" ng-submit="generarNomina()" novalidate>
+			<a href="#" class="resaltar-valor verde" ng-click="ocultarAhorros($event)">PRESTAMOS </a>
+			
+			<div class="section-prestamo">
+				<div class="registrosPanel--grande" id="panelPrestamos">
+					<table class="listado-table">
+						<tr class="suplidores-table-header">
+							<td>Quitar</td>
+							<td>Socio</td>
+							<td>Nombre</td>
+							<td>Prestamo</td>
+							<td>Capital</td>
+							<td>Interes</td>
+							<td>Total</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
+							<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarPrestamo(prestamo)"></a></td>
+							<td>[[prestamo.codigoSocio]]</td>
+							<td>[[prestamo.socio]]</td>
+							<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail">
+							<td colspan="4"><strong>TOTALES</strong></td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalMontoCuota | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteres | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaMasInteres | number : 2]]</td>
+						</tr>
+							
+					</table>
+				</div>
+
+				<section class="acciones-pr">
+					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="postearPrestamos()">Aplicar</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="generarArchivoPrestamos()">Generar Archivo</button>	
+					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
+				</section>
+			</div>
+		</form>
+
+		<!-- FORMULARIO DE AHORROS -->
+		<form name="FormAhorros" class="form-prestamos-regulares [[extiendeAhorros]] [[encogeAhorros]]" ng-submit="generarNomina()" ng-show="showAHORROS" novalidate>
+			<a href="#" class="resaltar-valor verde" ng-click="ocultarPrestamos($event)">AHORROS</a>
+
+			<div class="section-ahorro">
+				<div class="registrosPanel--grande" id="panelAhorros">
+					<table class="listado-table">
+						<tr class="suplidores-table-header">
+							<td>Socio</td>
+							<td>Nombre</td>
+							<td>Ahorro</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail" ng-repeat="ahorro in ahorros">
+							<td>[[ahorro.codigo]]</td>
+							<td>[[ahorro.nombreCompleto]]</td>
+							<td class="align-right resaltar-valor">[[ahorro.cuotaAhorro | number : 2]]</td>
+						</tr>
+						<tr class="listado-entrada-inventario-detail">
+							<td colspan="2"><strong>TOTAL</strong></td>
+							<td class="align-right resaltar-valor verde">[[ahorroTotalCuotaAhorro | number : 2]]</td>
+						</tr>
+							
+					</table>
+				</div>
+				
+				<section class="acciones-pr">
+					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos" ng-click="generarArchivoAhorros()">Generar Archivo</button>
+					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
+				</section>
+
+			</div>
+		</form>
+
+	</div>
+
+
+{% endblock content %}

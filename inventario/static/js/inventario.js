@@ -868,7 +868,7 @@
         $scope.entradasSeleccionadas = [];
 
         $scope.entradas.forEach(function (data) {
-          if (data.posteo == 'N') {
+          if (data.posteo == 'N' && data.borrado == false) {
             if ($scope.regAll === true){
 
               $scope.valoresChk[data.id] = true;
@@ -1420,7 +1420,8 @@
     //****************************************************
     //CONTROLLERS   SALIDA DE INVENTARIO                 *
     //****************************************************
-    .controller('ListadoSalidaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'InventarioService', function ($scope, $filter, $window, $rootScope, InventarioService) {
+    .controller('ListadoSalidaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService','InventarioService', 
+                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -1462,6 +1463,11 @@
       $scope.mostrarError = function(error) {
         $scope.errorMsg = error;
         $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
       }
 
       //Listado de todas las salidas de inventario
@@ -1805,9 +1811,52 @@
         }
       }
 
-      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postear = function(){
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+        var desgloseCuenta = new Object();
 
+        desgloseCuenta.cuenta = cuenta.codigo;
+        desgloseCuenta.descripcion = cuenta.descripcion;
+        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+        desgloseCuenta.debito = 0;
+        desgloseCuenta.credito = 0;
+
+        $scope.desgloseCuentas.push(desgloseCuenta);
+        $scope.tableCuenta = false;
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postear = function(salidaItem){
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        appService.getDocumentoCuentas('SINV').then(function (data) {
+          $scope.documentoCuentas = data;
+
+          //Prepara cada linea de posteo
+          $scope.documentoCuentas.forEach(function (documento) {
+            var desgloseCuenta = new Object();
+            if (documento.accion == 'D') {
+              $scope.totalDebito += parseFloat(salidaItem.totalGeneral.toString().replace('$','').replace(',',''));
+            } else {
+              $scope.totalCredito += parseFloat(salidaItem.totalGeneral.toString().replace('$','').replace(',',''));
+            }
+
+            desgloseCuenta.cuenta = documento.getCuentaCodigo;
+            desgloseCuenta.descripcion = documento.getCuentaDescrp;
+            desgloseCuenta.ref = documento.getCodigo + salidaItem.id;
+            desgloseCuenta.debito = documento.accion == 'D'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+            desgloseCuenta.credito = documento.accion == 'C'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+            $scope.desgloseCuentas.push(desgloseCuenta);
+          });
+        });
       }
 
     }])

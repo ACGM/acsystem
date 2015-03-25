@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('administracion', '0001_initial'),
         ('facturacion', '0001_initial'),
+        ('administracion', '0001_initial'),
     ]
 
     operations = [
@@ -124,10 +124,10 @@ class Migration(migrations.Migration):
             name='PagoCuotasPrestamo',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('valorCapital', models.DecimalField(max_digits=18, decimal_places=2)),
-                ('valorInteres', models.DecimalField(null=True, max_digits=18, decimal_places=2)),
+                ('valorCapital', models.DecimalField(max_digits=8, decimal_places=2)),
+                ('valorInteres', models.DecimalField(null=True, max_digits=8, decimal_places=2)),
                 ('fechaPago', models.DateField(auto_now_add=True)),
-                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'N', b'Nota de Credito')])),
+                ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado'), (b'R', b'Rechazado'), (b'N', b'Nota de Credito'), (b'D', b'Nota de Debito')])),
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
             ],
             options={
@@ -184,6 +184,10 @@ class Migration(migrations.Migration):
                 ('fechaVencimiento', models.DateField(null=True, blank=True)),
                 ('factura', models.PositiveIntegerField(null=True)),
                 ('cxp', models.CharField(default=b'E', max_length=1, choices=[(b'E', b'EN PROCESO'), (b'P', b'PROCESADA')])),
+<<<<<<< HEAD
+=======
+                ('impresa', models.PositiveIntegerField(default=0)),
+>>>>>>> FETCH_HEAD
                 ('datetimeServer', models.DateTimeField(auto_now_add=True)),
                 ('autorizadoPor', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('categoriaPrestamo', models.ForeignKey(to='administracion.CategoriaPrestamo')),

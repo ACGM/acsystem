@@ -15,15 +15,19 @@ class LoginRequiredMixin(object):
 #Pagina HOME -- principal		
 @login_required
 def home(request):
-	localidad = UserExtra.objects.filter(usuario__username=request.user.username).values('localidad__descripcion')
-	request.session['localidad'] = localidad[0]['localidad__descripcion']
-
+	try:
+		localidad = UserExtra.objects.filter(usuario__username=request.user.username).values('localidad__descripcion')
+		request.session['localidad'] = localidad[0]['localidad__descripcion']
+		
+	except Exception as e:
+		return render(request, '404.html')
 
 	return render(request, 'homepage.html')
 
 def login(request):
 
 	return HttpResponseRedirect('/admin/login/')
+
 
 # Mensaje de Error (GENERICO)
 def mensajeError(request):

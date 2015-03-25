@@ -24,15 +24,14 @@ class DesembolsoByCheque(DetailView):
 
 	def get(self, request, *args, **kwargs):
 		NoCheque = self.request.GET.get('nocheque')
+		byId = self.request.GET.get('id')
 
-		self.object_list = self.get_queryset().filter(cheque=NoCheque)
-
-		format = self.request.GET.get('format')
-		if format == 'json':
-			return self.json_to_response()
-
-		context = self.get_context_data()
-		return self.render_to_response(context)
+		if byId != None:
+			self.object_list = self.get_queryset().filter(id=byId)
+		else:
+			self.object_list = self.get_queryset().filter(cheque=NoCheque)
+		
+		return self.json_to_response()
 
 	def json_to_response(self):
 		data = list()
@@ -44,23 +43,26 @@ class DesembolsoByCheque(DetailView):
 
 		for desembolso in self.object_list:
 			data.append({
-				'beneficiario': desembolso.beneficiario,
 				'fecha': desembolso.fecha,
 				'fondo': desembolso.fondo.descripcion,
-				'distrito': desembolso.distrito,
+				'localidad': desembolso.localidad.descripcion,
+				'detalleHeader': desembolso.detalle,
+				'conceptoHeader': desembolso.concepto,
 				'estatus': desembolso.estatus,
 				'impreso': desembolso.impreso,
 				'cheque': desembolso.cheque,
 				'id': desembolso.id,
+				'totalGeneral': float(desembolso.totalGeneral.replace(',','')),
+				'userLog': desembolso.userLog.username if desembolso.userLog != None else '',
 				'detalle': [{
 					'id': item.id if detalle != None else '',
+					'beneficiario': item.beneficiario if detalle != None else '',
 					'conceptoId': item.concepto.id if detalle != None else '',
 					'conceptoDescrp': item.concepto.descripcion if detalle != None else '',
 					'monto': item.monto if detalle != None else ''
-
 				} for item in DesembolsoD.objects.filter(desembolso=desembolso)],
 
-				})
+			})
 		return JsonResponse(data, safe=False)
 
 

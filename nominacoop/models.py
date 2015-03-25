@@ -266,6 +266,19 @@ class NominaCoopD(models.Model):
 		verbose_name_plural = 'Nominas Detalles'
 
 
+# Nominas Generadas para Prestamos y Ahorros
+class NominaPrestamosAhorros(models.Model):
+
+	nomina = models.DateField()
+	tipo = models.CharField(max_length=2) # PR = Prestamos, AH = Ahorros, BP = Balance Prestamos, BA = Balance Ahorros
+	estatus = models.CharField(max_length=2, default='PE') # PE = PENDIENTE, PO = PROCESADA
+
+	class Meta:
+		verbose_name = 'Nomina Prestamos Ahorros'
+		verbose_name_plural = 'Nomina Prestamos Ahorros'
+		unique_together = ('nomina', 'tipo')
+
+
 # Cuotas Prestamos para Nomina Empresa
 class CuotasPrestamosEmpresa(models.Model):
 
@@ -273,12 +286,14 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	cuota = models.ForeignKey(PagoCuotasPrestamo)
-	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	# cuota = models.ForeignKey(PagoCuotasPrestamo)
+	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
-	fecha = models.DateField(auto_now=True, null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+
+	fecha = models.DateField(auto_now=True)
+	userLog = models.ForeignKey(User)
 
 # Cuotas Ahorros para Nomina Empresa
 class CuotasAhorrosEmpresa(models.Model):
@@ -286,8 +301,9 @@ class CuotasAhorrosEmpresa(models.Model):
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),)
 
 	socio = models.ForeignKey(Socio)
-	valorAhorro = models.DecimalField(max_digits=12, decimal_places=2)
-	fecha = models.DateField(auto_now=True, null=True)
-	nomina = models.DateField(null=True)
+	valorAhorro = models.DecimalField(max_digits=8, decimal_places=2)
+	nomina = models.DateField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
+	fecha = models.DateField(auto_now=True)
+	userLog = models.ForeignKey(User)

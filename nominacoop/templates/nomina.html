@@ -13,9 +13,7 @@
 
 			<div class="sub-menu">
 				<a href="#" ng-click="toggleGN()">Generar Nomina de la Cooperativa</a>
-
 				<a class="DownArrow" href="#" ng-click="toggleGN()"></a>
-
 			</div>
 
 			<form name="FormGeneraNomina" class="genera-nomina" ng-show="showGN" ng-submit="generarNomina()" novalidate>
@@ -83,24 +81,24 @@
 						</tr>
 
 						<tr class="nomina-sel-detail" ng-repeat="item in nominas">
-							<td>[[item.estatus]]</td>
+							<td class="align-center">[[item.estatus]]</td>
 							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)" title="[[item.nota]]">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
-							<td>[[item.cntEmpleados]]</td>
-							<td>[[item.valorNomina | number: 2]]</td>
-							<td>[[item.ISR | number : 2]]</td>
-							<td>[[item.AFP | number : 2]]</td>
-							<td>[[item.ARS | number : 2]]</td>
-							<td>[[item.CAFETERIA | number : 2]]</td>
-							<td>[[item.VACACIONES | number : 2]]</td>
-							<td>[[item.OTROSINGRESOS | number : 2]]</td>
-							<td>[[item.DESCAHORROS | number : 2]]</td>
-							<td>[[item.DESCPRESTAMOS | number : 2]]</td>
+							<td class="align-center">[[item.cntEmpleados]]</td>
+							<td class="align-right">[[item.valorNomina | number: 2]]</td>
+							<td class="align-right">[[item.ISR | number : 2]]</td>
+							<td class="align-right">[[item.AFP | number : 2]]</td>
+							<td class="align-right">[[item.ARS | number : 2]]</td>
+							<td class="align-right">[[item.CAFETERIA | number : 2]]</td>
+							<td class="align-right">[[item.VACACIONES | number : 2]]</td>
+							<td class="align-right">[[item.OTROSINGRESOS | number : 2]]</td>
+							<td class="align-right">[[item.DESCAHORROS | number : 2]]</td>
+							<td class="align-right">[[item.DESCPRESTAMOS | number : 2]]</td>
 							<td>[[item.tipoNomina]]</td>
-							<td>[[item.quincena]]</td>
+							<td class="align-center">[[item.quincena]]</td>
 							<!-- <td>[[item.tipoPago]]</td> -->
-							<td><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
-							<td><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
-							<td><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
+							<td class="align-center"><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
+							<td class="align-center"><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
+							<td class="align-center"><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
 						</tr>
 
 					</table>

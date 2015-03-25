@@ -33,6 +33,7 @@
 	font-size 1.2em
 	
 .entradaInventario
+	font-family "courier"
 	font-size 12px
 	padding 1em
 	
@@ -90,6 +91,7 @@
 	position relative
 	padding 1em
 	font-size 12px
+	font-family "courier"
 	
 .titulo-f, .localidad-f
 	display block
@@ -221,29 +223,50 @@
 // MODULO FONDO DE CAJAS (DESEMBOLSO)
 .Desembolso 
 	margin 1em
+	font-family "courier"
+	font-size 12px
+	position relative
 	
-.cabecera-desembolso
-	margin 1em 0 0 0 
+	.cabecera-desembolso
+		margin 1em 0 0 0 
 
-.fondo-d, .a-orden-d, .detalle-d
-	display block
-
-.paguese-valor-d
-	margin-left 11em
-
-.detalle-d
-	margin-top 1em
-	width 25em
-
-.detalle-d-text
-	margin-left 5em
-
-.cabecera-desembolso-2
-	float right
-
-.firmas-d
-	margin 2em 0 0 0 
+	.fondo-d, .a-orden-d, .detalle-d
+		display block
 	
+	.detalleHeader
+		margin-left 2.5em
+
+	.paguese-valor-d
+		margin-left 5em
+
+	.detalle-d
+		margin-top .8em
+		width 25em
+
+	.detalle-d-text
+		margin-left 5.5rem
+		display inline-block
+		position relative
+		top -1rem
+		margin-left 8.7rem
+		width 40em
+		
+	.cabecera-desembolso-2
+		font-family "courier"
+		position absolute
+		top 0
+		right 0
+		table
+			font-size 12px
+
+	.firmas-d
+		margin 3em 0 0 0 
+		table
+			font-size 12px
+			tr
+				td
+					padding 0 .5em
+		
 
 
 // SOLICITUD DE PRESTAMO
@@ -489,4 +512,12 @@
 //REPORTE DE UTILIDAD
 .cabecera-utilidades
 	text-align center
+
+
+//REPORTE DE VENTAS DIARIAS
+.rptUtilidad
+	margin 1em
 	
+@media print
+	.busqueda-vd
+		display none

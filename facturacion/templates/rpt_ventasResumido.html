@@ -1,0 +1,55 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Reporte de Resumen de Ventas {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<mensajeerror> </mensajeerror>
+
+<section class="Factura" ng-controller="RPTVentasResumidoCtrl">
+	
+	<div class="rptUtilidad">
+		<div class="align-center">
+			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<p class="titulo-utilidad"> Reporte de Resumen de Ventas </p>
+			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
+		</div>
+
+		<div class="busqueda-vd">
+			<span>Fecha Inicio</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
+			<span>Fecha Fin</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
+			<button class="Boton" ng-click="ventasResumido()">Buscar</button>
+		</div>
+
+		<section class="detalle-utilidad">
+			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
+			<table class="table-producto-factura">
+				<tr>
+					<td>Nombre</td>
+					<td>Valor</td>
+				</tr>
+				<tr ng-repeat="registro in registros">
+					<td>[[registro.nombreCompleto]]</td>
+					<td class="align-right">[[registro.valor | number : 2]]</td>
+				</tr>
+				<tr>
+					<td>TOTALES:</td>
+					<td>[[totalValor | number : 2]]</td>
+				</tr>
+			</table>
+		</section>
+
+	</div>
+	
+</section>
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

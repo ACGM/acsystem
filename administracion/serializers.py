@@ -37,7 +37,7 @@ class SocioSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = Socio
-		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento', 'cedula', 'salario', )
+		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento', 'cedula', 'salario', 'cuotaAhorroQ1', 'cuotaAhorroQ2')
 
 
 class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):

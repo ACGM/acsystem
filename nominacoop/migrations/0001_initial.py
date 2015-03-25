@@ -9,7 +9,11 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+<<<<<<< HEAD
         ('prestamos', '__first__'),
+=======
+        ('prestamos', '0001_initial'),
+>>>>>>> FETCH_HEAD
         ('administracion', '0001_initial'),
     ]
 
@@ -31,11 +35,12 @@ class Migration(migrations.Migration):
             name='CuotasAhorrosEmpresa',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('valorAhorro', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('fecha', models.DateField(auto_now=True, null=True)),
-                ('nomina', models.DateField(null=True)),
+                ('valorAhorro', models.DecimalField(max_digits=8, decimal_places=2)),
+                ('nomina', models.DateField()),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
+                ('fecha', models.DateField(auto_now=True)),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
+                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -45,14 +50,18 @@ class Migration(migrations.Migration):
             name='CuotasPrestamosEmpresa',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('valorCapital', models.DecimalField(max_digits=12, decimal_places=2)),
-                ('valorInteres', models.DecimalField(null=True, max_digits=12, decimal_places=2, blank=True)),
+                ('valorCapital', models.DecimalField(max_digits=8, decimal_places=2)),
+                ('valorInteres', models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)),
                 ('nomina', models.DateField(null=True)),
-                ('fecha', models.DateField(auto_now=True, null=True)),
                 ('estatus', models.CharField(default=b'P', max_length=1, choices=[(b'P', b'Pendiente'), (b'A', b'Aprobado')])),
+<<<<<<< HEAD
                 ('cuota', models.ForeignKey(to='prestamos.PagoCuotasPrestamo')),
+=======
+                ('fecha', models.DateField(auto_now=True)),
+>>>>>>> FETCH_HEAD
                 ('noPrestamo', models.ForeignKey(to='prestamos.MaestraPrestamo')),
                 ('socio', models.ForeignKey(to='administracion.Socio')),
+                ('userLog', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -149,6 +158,17 @@ class Migration(migrations.Migration):
                 'ordering': ['-id'],
                 'verbose_name': 'Nomina Cabecera',
                 'verbose_name_plural': 'Nominas Cabecera',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='NominaPrestamosAhorros',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('nomina', models.DateField()),
+                ('estatus', models.CharField(default=b'PE', max_length=2)),
+            ],
+            options={
             },
             bases=(models.Model,),
         ),

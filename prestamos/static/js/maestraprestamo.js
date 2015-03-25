@@ -118,7 +118,6 @@
         return deferred.promise;
       }
 
-
       //Buscar Prestamos por socio
       function PrestamosbySocio(codigoSocio){
         var deferred = $q.defer();
@@ -137,12 +136,45 @@
         return deferred.promise;
       }
 
+      // Marcar prestamos como posteados.
+      function PostearPrestamosOD(prestamos) {
+        var deferred = $q.defer();
+
+        $http.post('/maestraPrestamos/prestamosOD/postear/', JSON.stringify({'prestamos': prestamos})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Prestamos/OD posteados.
+      function PrestamosPosteados() {
+        var deferred = $q.defer();
+        all().then(function (data) {
+          var result = data.filter(function (documento) {
+            return documento.estatus == 'P';
+          });
+
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
       return {
         all: all,
-        byNoPrestamo: byNoPrestamo,
-        PrestamosbySocio: PrestamosbySocio,
-        PrestamoById: PrestamoById,
-        MarcarPrestamoDC: MarcarPrestamoDC
+        byNoPrestamo : byNoPrestamo,
+        PrestamosbySocio : PrestamosbySocio,
+        PrestamoById : PrestamoById,
+        MarcarPrestamoDC : MarcarPrestamoDC,
+        PostearPrestamosOD : PostearPrestamosOD,
+        PrestamosPosteados : PrestamosPosteados
       };
 
     }])
@@ -349,6 +381,24 @@
         })
       }
 
+      //Postear Prestamos/OD
+      $scope.Postear = function($event) {
+        $event.preventDefault();
+
+        try {
+          MaestraPrestamoService.PostearPrestamosOD($scope.prestamosSeleccionados).then(function (data) {
+            if(data == 1) {
+              $scope.listadoPrestamos();
+            } else {
+              $scope.mostrarError(data);
+            }
+
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+      }
+
       //Cuando se le de click al checkbox del header.
       $scope.seleccionAll = function() {
 
@@ -381,95 +431,6 @@
 
       }
 
-    }])
-
-  //****************************************************
-  //CONTROLLERS PRINT DOCUMENT                         *
-  //****************************************************
-  .controller('ImprimirFacturaCtrl', ['$scope', '$filter', '$window', 'FacturacionService', function ($scope, $filter, $window, FacturacionService) {
-    $scope.factura = JSON.parse($window.sessionStorage['factura']);
-    $scope.dataH = {};
-    $scope.dataD = [];
-
-    FacturacionService.DocumentoById($scope.factura.noFactura).then(function (data) {
-
-      if(data.length > 0) {
-        $scope.dataH.factura = $filter('numberFixedLen')($scope.factura.noFactura, 8);
-        $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-        $scope.socioCodigo = data[0]['socioCodigo'];
-        $scope.socioNombre = data[0]['socioNombre'];
-        $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
-        $scope.dataH.terminos = data[0]['terminos'].replace('CR', 'CREDITO').replace('CO', 'DE CONTADO');
-        $scope.dataH.vendedor = data[0]['vendedor'];
-      //   $scope.dataH.posteo = data[0]['posteo'];
-        $scope.dataH.impresa = data[0]['impresa'];
-
-        data[0]['productos'].forEach(function (item) {
-          item.subtotal = parseFloat(item.descuento) > 0? (item.precio * item.cantidad) - ((item.descuento / 100) * item.cantidad * item.precio) : (item.precio * item.cantidad);
-          $scope.dataD.push(item);
-          // $scope.dataH.almacen = item['almacen'];
-        });
-
-        $scope.totalDescuento_ = $scope.totalDescuento();
-        $scope.totalValor_ = $scope.totalValor();
-      }
-    });
-
-    $scope.imprimirFactura = function() {
-      console.log('ENTRO');
-      // FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
-      //   console.log(data);
-      // });
-      // var doc = jsPDF();
-      // doc.text(20,20, 'HOLA MUDO');
-      // doc.save('pruebaPDF.pdf');
-      // console.log(doc);
-      $scope.displayClass = 'displayNone';
-      console.log($scope.displayClass);
-      
-      window.print();
-      console.log($scope.displayClass);
-    }
-
-    $scope.totalValor = function() {
-      var total = 0.0;
-      var descuento = 0;
-
-      $scope.dataD.forEach(function (item) {
-        if(parseFloat(item.descuento) > 0) {
-          descuento = (parseFloat(item.descuento)/100);
-          descuento = (parseFloat(item.precio) * parseFloat(descuento) * parseFloat(item.cantidad));
-        } else {
-          descuento = 0;
-        }
-        total += (parseFloat(item.precio) * parseFloat(item.cantidad)) - descuento;
-      });
-
-      return total;
-    }
-
-    $scope.totalDescuento = function() {
-      var total = 0.0;
-      var descuento = 0.0;
-
-      $scope.dataD.forEach(function (item) {
-        if(parseFloat(item.descuento) > 0) {
-          descuento = (parseFloat(item.descuento)/100);
-          descuento = (parseFloat(item.precio) * parseFloat(descuento) * parseFloat(item.cantidad));
-        } else {
-          descuento = 0;
-        }
-        total += descuento;
-      });
-
-      return total;
-    }
-
-    $scope.hora = function() {
-      return Date.now();
-    }
-
-  }]);
-   
+    }]);  
 
 })(_);

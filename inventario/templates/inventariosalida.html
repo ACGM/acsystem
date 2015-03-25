@@ -54,7 +54,7 @@
 
 						<tr ng-repeat="salida in salidas" class="listado-entrada-inventario-detail" ng-init="total=0">
 							<td class="align-center"> 
-								<a href="#" class="icon-cog icon-imprimir"></a>
+								<a href="#" class="icon-cog icon-imprimir" ng-click="postear(salida)"></a>
 							</td>
 							<td class="[[salida.posteo | posteoFolderIcon]] posteo-[[salida.posteo]] align-center"></td>
 							<td> <a href="#" class="sp-field" ng-click="DocFullById(salida.id)"> [[salida.id | numberFixedLen: 8]] </a> </td>

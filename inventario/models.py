@@ -208,6 +208,7 @@ class Movimiento(models.Model):
 	producto = models.ForeignKey(Producto)
 	cantidad = models.DecimalField(max_digits=12, decimal_places=2)
 	precio = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	costo = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	almacen = models.ForeignKey(Almacen)
 	fechaMovimiento = models.DateField(auto_now_add=True)
 	documento = models.CharField(max_length=4, choices=doc_choices)

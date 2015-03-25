@@ -303,4 +303,24 @@ class SolicitudODById(LoginRequiredMixin, DetailView):
 				})
 
 		return JsonResponse(data, safe=False)
-	
+
+
+#Imprimir Orden de Despacho
+class ImprimirODView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_ordendespacho.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+			od = data['noSolicitud']
+
+			orden = SolicitudOrdenDespachoH.objects.get(noSolicitud=od)
+			orden.impresa = orden.impresa + 1
+			orden.save()
+
+			return HttpResponse(orden.impresa)
+
+		except Exception as e:
+			return HttpResponse(e)	
