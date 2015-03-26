@@ -272,11 +272,12 @@ class NominaPrestamosAhorros(models.Model):
 	nomina = models.DateField()
 	tipo = models.CharField(max_length=2) # PR = Prestamos, AH = Ahorros, BP = Balance Prestamos, BA = Balance Ahorros
 	estatus = models.CharField(max_length=2, default='PE') # PE = PENDIENTE, PO = PROCESADA
+	infoTipo = models.CharField(max_length=4, null=True, blank=True)
 
 	class Meta:
 		verbose_name = 'Nomina Prestamos Ahorros'
 		verbose_name_plural = 'Nomina Prestamos Ahorros'
-		unique_together = ('nomina', 'tipo')
+		unique_together = ('nomina', 'infoTipo')
 
 
 # Cuotas Prestamos para Nomina Empresa
@@ -291,9 +292,21 @@ class CuotasPrestamosEmpresa(models.Model):
 	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+	infoTipoPrestamo = models.CharField(max_length=4, default='0015')
 
 	fecha = models.DateField(auto_now=True)
 	userLog = models.ForeignKey(User)
+
+	@property
+	def codigoSocio(self):
+		return self.socio.codigo
+
+	@property
+	def montoTotal(self):
+		return self.valorCapital + self.valorInteres
+
+	class Meta:
+		unique_together = ('noPrestamo', 'nomina')
 
 # Cuotas Ahorros para Nomina Empresa
 class CuotasAhorrosEmpresa(models.Model):

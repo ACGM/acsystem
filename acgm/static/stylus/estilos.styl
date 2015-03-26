@@ -425,6 +425,21 @@ footer
 		background mamey
 		border-bottom .35em solid rojoOscuro
 
+.Boton-azul //CLASE para darle formato a los botones
+	background #2665CC
+	border 0
+	border-bottom .3rem solid #0E0E95
+	border-radius 3px 3px 4px 4px
+	color white
+	height 2.2em
+	transition .1s
+	outline none
+	
+	&:hover
+		background amarillo
+		border-bottom .35em solid amarilloOscuro
+		color brown
+		
 .Boton-disabled //CLASE para darle apariencia deshabilitado a botones
 	background lightgray !important
 	border 0 !important
@@ -602,7 +617,7 @@ footer
 	background #FFCDBF
 	border-bottom 1px solid rojoOscuro
 	color red
-	height 5em
+	height 8em
 	left 0
 	overflow hidden
 	padding .3em 0 0 .3em
@@ -623,7 +638,9 @@ footer
 	color white
 	border-radius 50%
 	padding .3em .6em
-	float right
+	position absolute
+	right .1em
+	top .1em
 	margin 0 .2em 0 0
 	&:hover
 		background red
@@ -634,6 +651,8 @@ footer
 	line-height 20px
 	padding-top 1em
 	margin-left .5em
+	word-wrap break-word
+	display block
 		
 .errorMessageIcon
 	
@@ -2171,7 +2190,7 @@ footer
 				text-align right
 
 .boton-guarda-cambios
-	display inline-block
+	display block
 	margin .7em .4em 2em 0 
 	height 3.5em
 	padding 0 .8em

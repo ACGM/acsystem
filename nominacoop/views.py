@@ -1,5 +1,6 @@
 # VIEWS de Nomina
 
+from django.conf import settings
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -237,27 +238,30 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 		return JsonResponse(data, safe=False)
 
 
-# Prestamos Sumarizados
+# Prestamos Regulares Sumarizados
+# SELECT para obtener el listado de prestamos (Sumarizados por socio) que seran generados en el archivo.
 def getPrestamosResumidos(self, fechaNomina):
 
-	fecha = '{0}-{1:0>2}-{2}'.format(fechaNomina.year, fechaNomina.month, fechaNomina.day)
+	fecha = '{0}-{1:0>2}-{2:0>2}'.format(fechaNomina.year, fechaNomina.month, fechaNomina.day)
 
 	registros = CuotasPrestamosEmpresa.objects.raw('SELECT \
 											c.id, \
-											s.codigo codigoSocio, \
+											s.codigo codigoSocioQ, \
 											s.nombreCompleto, \
 											SUM(c.valorCapital) montoCapital, \
 											SUM(c.valorInteres) montoInteres, \
-											SUM(c.valorCapital) + SUM(c.valorInteres) montoTotal \
+											SUM(c.valorCapital) + SUM(c.valorInteres) montoTotalQ \
 										FROM nominacoop_cuotasprestamosempresa c \
 										LEFT JOIN administracion_socio s ON c.socio_id = s.id \
 										GROUP BY c.socio_id \
 										HAVING c.nomina = \'' + fecha + '\' \
+										AND c.infoTipoPrestamo = \'0015\' \
 										ORDER BY c.socio_id \
 										')
 	return registros
 
-# Generar archivo para prestamos
+
+# Generar archivo para prestamos (Regulares, Bonificacion, Vacaciones, ...)
 class GenerarArchivoPrestamos(View):
 
 	def post(self, request, *args, **kwargs):
@@ -267,16 +271,16 @@ class GenerarArchivoPrestamos(View):
 
 			prestamos = data['prestamos']
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
+			InfoTipo = data['infoTipo'] # 0015, entre otros
+			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 			
-			fechanominaSAP = '{0}.{1}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
-
-			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='PR')
+			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='PR', infoTipo=InfoTipo)
 
 			# Preparar archivo .TXT
-			nombreArchivoFinal = 'PA0015.TXT'
-			pathFile = open(nombreArchivoFinal, 'w')
+			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
+			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'w')
 			sysFile = File(pathFile)
-			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\tZBOM\n') # Escribir Cabecera de archivo -- Columnas de header
+			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
 			# Agregar cada prestamo en la tabla de CuotasPrestamosEmpresa
 			if created:
@@ -287,16 +291,26 @@ class GenerarArchivoPrestamos(View):
 					p.valorCapital = prestamo['montoCuotaQ']
 					p.valorInteres = prestamo['cuotaInteresQ']
 					p.nomina = nomina
+					p.infoTipoPrestamo = InfoTipo
 					p.userLog = request.user
 					p.save()
 
-			# SELECT para obtener el listado de prestamos (Sumarizados por socio) que seran generados en el archivo.
-			prestamosResumidos = getPrestamosResumidos(self, nomina)
+			#*******************************************************************************************************************
+			# Aplicacion accion dependiendo del tipo de Prestamos de Nomina (Regulares, Bonificacion, Vacaciones, Regalia, Rifa)
+			#*******************************************************************************************************************
+
+			# PARA PRESTAMOS REGULARES
+			if InfoTipo == '0015':
+				prestamosParaArchivo = getPrestamosResumidos(self, nomina)
+			else:
+				# PARA PRESTAMOS TIPO BONIFICACION, VACACIONES, REGALIAS, RIFAS
+				prestamosParaArchivo = CuotasPrestamosEmpresa.objects.filter(nomina=nomina, infoTipoPrestamo=InfoTipo)
 
 			# Escribir cada linea de prestamo en el archivo
-			for prestamo in prestamosResumidos:
+			for prestamo in prestamosParaArchivo:
+				montoTotal = prestamo.montoTotalQ if InfoTipo == '0015' else prestamo.montoTotal
 
-				lineaFile = '{0}\t{1}\t{2}\t{3}\t{4:0>13.2f}\n'.format(prestamo.codigoSocio,'','0015', fechanominaSAP, prestamo.montoTotal)
+				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
 				sysFile.write(lineaFile)
 
 			sysFile.close()
@@ -318,15 +332,15 @@ class GenerarArchivoAhorros(View):
 			ahorros = data['ahorros']
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
 			
-			fechanominaSAP = '{0}.{1}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 
 			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='AH')
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA0014.TXT'
-			pathFile = open(nombreArchivoFinal, 'w')
+			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'w')
 			sysFile = File(pathFile)
-			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\tZBOM\n') # Escribir Cabecera de archivo -- Columnas de header
+			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
 			# Agregar cada ahorro en la tabla de CuotasAhorrosEmpresa
 			if created:
@@ -341,7 +355,7 @@ class GenerarArchivoAhorros(View):
 			# Recorrer los registros de ahorros generados para archivo .txt
 			for ahorro in CuotasAhorrosEmpresa.objects.filter(nomina=nomina):
 
-				lineaFile = '{0}\t{1}\t{2}\t{3}\t{4:0>13.2f}\n'.format(ahorro.socio.codigo,'','0014', fechanominaSAP, ahorro.valorAhorro)
+				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(ahorro.socio.codigo,'0014', fechanominaSAP, ahorro.valorAhorro)
 				sysFile.write(lineaFile)
 
 			sysFile.close()

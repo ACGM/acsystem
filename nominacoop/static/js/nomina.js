@@ -125,10 +125,10 @@
       }
 
       //Generar Archivo de Nomina para Prestamos
-      function generarArchivoPrestamos(prestamos, fechaNomina) {
+      function generarArchivoPrestamos(prestamos, fechaNomina, tipoPN) {
         var deferred = $q.defer();
 
-        $http.post('/nomina/archivos/prestamos/', JSON.stringify({'prestamos': prestamos, 'fechaNomina': fechaNomina})).
+        $http.post('/nomina/archivos/prestamos/', JSON.stringify({'prestamos': prestamos, 'fechaNomina': fechaNomina, 'infoTipo': tipoPN})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -345,8 +345,8 @@
     //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
     //                                                   *
     //****************************************************
-    .controller('NominaDescuentosCtrl', ['$scope', '$filter', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
-                                          function ($scope, $filter, appService, MaestraPrestamoService, FacturacionService, NominaService) {
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', '$window', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
+                                          function ($scope, $filter, $window, appService, MaestraPrestamoService, FacturacionService, NominaService) {
       $scope.showAHORROS = true;
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
@@ -414,6 +414,7 @@
               prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
               prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
               prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
+              prestamo.balance = $filter('number')(item.balance, 2);
 
               if(parseFloat(prestamo.montoCuotaQ) > 0 && item.tipoPrestamoNomina == tipoPrestamoNom) {
                 $scope.prestamos.push(prestamo);
@@ -523,16 +524,26 @@
       }
 
       // Generar Archivo para Prestamos (envio para nomina empleados)
-      $scope.generarArchivoPrestamos = function() {
+      $scope.archivoPrestamos = function() {
 
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+        var INFOTIPO;
 
-        NominaService.generarArchivoPrestamos($scope.prestamos,fechaFormatted).then(function (data) {
+        switch($scope.tipoPrestamoNomina) {
+          case 'RE': INFOTIPO = '0015'; break;
+          case 'VA': INFOTIPO = '0099'; break;
+          case 'BO': INFOTIPO = '0088'; break;
+          case 'RG': INFOTIPO = '0077'; break;
+          case 'RI': INFOTIPO = '0066'; break;
+        }
+
+        NominaService.generarArchivoPrestamos($scope.prestamos, fechaFormatted, INFOTIPO).then(function (data) {
           if(data != 1) {
             $scope.mostrarError(data);
           } else {
             $scope.mensaje = 'Fue generado el archivo de Prestamos.';
+            $scope.errorShow = false;
           }
         });
       }
@@ -544,12 +555,31 @@
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
         NominaService.generarArchivoAhorros($scope.ahorros,fechaFormatted).then(function (data) {
+          console.log(data)
+
           if(data != 1) {
             $scope.mostrarError(data);
           } else {
             $scope.mensaje = 'Fue generado el archivo de Ahorros.';
           }
         });
+      }
+
+      // Para visualizar los archivos de prestamos generados.
+      $scope.verArchivo = function(tipoArchivo) {
+        var archivo = '';
+
+        switch(tipoArchivo) {
+          case 'RE': archivo = 'PA0015.TXT'; break;
+          case 'VA': archivo = 'PA0099.TXT'; break;
+          case 'BO': archivo = 'PA0088.TXT'; break;
+          case 'RG': archivo = 'PA0077.TXT'; break;
+          case 'RI': archivo = 'PA0066.TXT'; break;
+          case 'AH': archivo = 'PA0014.TXT'; break;
+
+        }
+        $window.open('/static/media/{archivo}'.replace('{archivo}', archivo), target='_blank'); 
+
       }
 
       // Agregar una cuenta

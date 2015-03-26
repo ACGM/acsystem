@@ -17,7 +17,7 @@
 			<span class="fecha-nomina-descuento">Fecha de Nomina:</span> <input type="text" class="fecha-nomina-t" ng-model="fechaNomina" datepicker readonly>
 			<span>Prestamos:</span>			
 			<select name="tipoNomina" id="tnom" ng-model="tipoPrestamoNomina" class="field-choices">
-				<option value="RE">Regular</option>
+				<option value="RE">Regulares</option>
 				<option value="VA">Vacaciones</option>
 				<option value="BO">Bonificacion</option>
 				<option value="RG">Regalia</option>
@@ -47,7 +47,7 @@
 							<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarPrestamo(prestamo)"></a></td>
 							<td>[[prestamo.codigoSocio]]</td>
 							<td>[[prestamo.socio]]</td>
-							<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+							<td title="[[prestamo.balance]]">[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
 							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
@@ -63,9 +63,13 @@
 				</div>
 
 				<section class="acciones-pr">
+					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="archivoPrestamos()">Generar Archivo</button>	
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>	
+					
+					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo para nomina.">Balances</button>	
+
 					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="postearPrestamos()">Aplicar</button>	
-					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="generarArchivoPrestamos()">Generar Archivo</button>	
-					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
+
 				</section>
 			</div>
 		</form>
@@ -96,9 +100,11 @@
 				</div>
 				
 				<section class="acciones-pr">
-					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
 					<button class="Boton icon-document boton-aplicar-prestamos" ng-click="generarArchivoAhorros()">Generar Archivo</button>
-					<button class="Boton icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina.">Verificar Archivo</button>	
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina." ng-click="verArchivo('AH')">Verificar Archivo</button>	
+					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo para nomina.">Balances</button>	
+					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="AplicarPrestamos()">Aplicar</button>	
+
 				</section>
 
 			</div>

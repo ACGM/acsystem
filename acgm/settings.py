@@ -60,7 +60,6 @@ INSTALLED_APPS = (
     'nominacoop',
     'prestamos',
     'reciboingreso',
-
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,6 +107,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/administracion/archivosBanco/'
+if DEBUG:
+    MEDIA_URL = '/media/'
+    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'acgm', 'acgm', 'static')
+    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'acgm', 'acgm', 'static', 'media')
+    STATICFILES_DIRS = (
+        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static'),
 
-MEDIA_ROOT = '/administracion/archivosBanco/'
+        )
+
