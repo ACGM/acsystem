@@ -97,6 +97,8 @@ class RetirosAhorroViewSet(viewsets.ModelViewSet):
     queryset = RetiroAhorro.objects.all()
     serializer_class = RetiroAhorroSerializer
 
+class impRetiroAHorro(TemplateView):
+    template_name ="AhorroPrint.html"
 
 class AhorroView(TemplateView):
 

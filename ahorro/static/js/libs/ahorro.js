@@ -131,9 +131,8 @@
 			};
 		}])
 		
-	  	.controller('AhorroController', ['$scope', '$filter', '$rootScope', 'AhorroServices','$timeout',
-								function ($scope, $filter, $rootScope, AhorroServices, $timeout){
-                                    	
+	  	.controller('AhorroController', ['$scope', '$filter', '$window', '$rootScope', 'AhorroServices','$timeout',
+								function ($scope, $filter, $window , $rootScope, AhorroServices, $timeout){                        	
 			$scope.Ahorros=[];
 			$scope.AhorrosPorSocio=[];
 			$scope.AhorroHistorico=[];
@@ -195,10 +194,13 @@
 					AhorroServices.setAhorroReg($scope.retiro).then(function (data){
 						
 					});
+					debugger;
+					 $window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
 
 					$scope.getListaAhorro();
 					$scope.cancelRetiro();
 					$scope.NoMaestra();
+					$window.open('/impAhorro/', target='_blank'); 
 				}
 
 				catch(ex){
@@ -218,7 +220,7 @@
                     		var salida = reg.maestra.filter(function(ret){
                     			return ret.retiro != '0';
                     		});
-
+                    		console.log(salida);
                     		return salida;
                     	});
                     });
@@ -228,7 +230,8 @@
                    	var xj = $scope.Ahorros.filter(function (data){
                    		return data.id==Id;
                    	});
-
+                   	debugger;
+                   	 $window.sessionStorage['ahorro'] = JSON.stringify(xj[0]);
                    	$scope.retiro['socio'] = xj[0].socioId;
                    	
 					}
@@ -322,5 +325,49 @@
 	       		 });
 	       		 $scope.newRetiro();
 	       	};
+		}])
+.controller('ImprimirAhorroController', ['$scope', '$filter','$window', '$rootScope', 'AhorroServices','$timeout',
+								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){        
+
+				$scope.ahorro=JSON.parse($window.sessionStorage['ahorro']);
+				$scope.retiro = JSON.parse($window.sessionStorage['retiro']);
+				$scope.ahorroDt={}
+				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+				
+				$scope.registro = function(){
+					var balance = $scope.ahorro.balance - $scope.retiro.monto;
+
+					var disponible = $scope.ahorro.disponible - $scope.retiro.monto;
+
+					$scope.ahorroDt.socioId = $scope.ahorro.socioId;
+					$scope.ahorroDt.socio = $scope.ahorro.socio;
+					$scope.ahorroDt.balance = balance;
+					$scope.ahorroDt.disponible = disponible;
+
+					var tipo;
+
+					if ($scope.retiro.tipo == 'A'){
+						tipo ="Retito de Ahorro";
+					}
+					else if($scope.retiro.tipo == 'J'){
+						tipo = "Retiro por Ajuste";
+					}
+					else{
+						tipo = "Retiro Otros";
+					}
+
+					$scope.retiro.tipo = tipo;
+
+				}
+
+				$scope.imprimir = function(){
+					$window.print();
+					
+				}
+
+
+
+
 		}]); 
 })(_);

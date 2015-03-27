@@ -3460,31 +3460,34 @@ footer
 		border 1px solid black
 		&:nth-child(1)
 			text-align center
-		&:nth-child(2) 
+		&:nth-child(2)
+			text-align center
+		&:nth-child(3) 
 			padding-left .3em
 			text-align left
 			
-		&:nth-child(3)
-			width 5.8em
-			padding 0 .6em
-			text-align right
-			color mamey
-			font-weight bold
 		&:nth-child(4)
 			width 5.8em
-			text-align right
 			padding 0 .6em
+			text-align right
 			color mamey
 			font-weight bold
-		&:nth-child(5) //ORDEN C.
+		&:nth-child(5)
 			width 5.8em
 			text-align right
 			padding 0 .6em
 			color mamey
 			font-weight bold
-		&:nth-child(6)
-			padding 0 .3em
+		&:nth-child(6) //ORDEN C.
+			width 5.8em
+			text-align right
+			padding 0 .6em
+			color mamey
+			font-weight bold
+		&:nth-child(7)
+			padding 0 .5em
 			text-align center
+			
 
 .socios-table-search-panel	
 	border 1px solid black
@@ -3507,7 +3510,65 @@ footer
 	width 40em
 	&tr
 		padding 1em
-	
-	
+
+.header-table
+	& td
+		&:nth-child(1)
+			padding-right 3em
+
+.body-table
+	& td
+		&:nth-child(1)
+			padding-left 5em
+			padding-right 12em
+		&:nth-child(2)
+			padding-right 12em
 		
+
+.header-ahorro
+	border solid 1px 
+	border-radius 5px
+	margin 2em 2em 0 3em
+	padding 1.5em
+	
+	&section
+		position relative
+		
+
+.body-ahorro
+	border solid 1px 
+	border-radius 5px
+	margin 2em 2em 0 3em
+	padding 1.5em
+	& p
+		
+		& span
+			padding-right 15em
+		&:nth-child(2)
+			& span
+				padding-right 13em
+				
+				&:nth-child(3)
+					padding-right 14em
+	
+.footer-ahorro
+	border solid 1px 
+	border-radius 5px
+	margin 2em 2em 0 3em
+	padding 1.5em
+
+.printAHorroFecha
+	float right
+
+.Boton-down
+	margin 1em 0 0 6em
+	padding 1em 0.8em 2em 0.8em
+
+.ahorroPrint
+		text-decoration none
+
+@media print
+	.ahorroPrint
+		display None
+	
 	
