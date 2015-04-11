@@ -10,6 +10,7 @@ from .models import DesembolsoH, DesembolsoD
 
 from acgm.views import LoginRequiredMixin
 
+import json
 
 # Vista de desembolsos
 class DesembolsoView(TemplateView):
@@ -77,3 +78,18 @@ class ListadoDesembolsosViewSet(viewsets.ModelViewSet):
 class ImprimirDesembolsoView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'print_desembolso.html'
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+			desembolso = data['desembolso']
+
+			desem = DesembolsoH.objects.get(id=desembolso)
+			desem.impreso = desem.impreso + 1
+			desem.save()
+
+			return HttpResponse(desem.impreso)
+
+		except Exception as e:
+			return HttpResponse(e)

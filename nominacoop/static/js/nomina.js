@@ -76,9 +76,26 @@
           });
 
         return deferred.promise;
-
       }
 
+      //Aplicar prestamos (registrar descuento del balance MaestraPrestamo)
+      function AplicarPrestamos(nomina, tipoPrestamo) {
+        var deferred = $q.defer();
+
+        var fecha = nomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+        $http.post('/nomina/descuentos/aplicar/', JSON.stringify({'nomina': fechaFormatted, 'tipoPrestamo': tipoPrestamo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+      
       //Eliminar nomina (parametros: Fecha y Tipo de Nomina)
       function eliminarNomina(fecha, tipo) {
         var deferred = $q.defer();
@@ -111,10 +128,10 @@
       }
 
       //Consultar existencia de Nomina
-      function getNomina(fechaNomina) {
+      function getNomina(fechaNomina, tipoPrestamo) {
         var deferred = $q.defer();
 
-        $http.get('/nomina/verificarExistencia/?nomina={nomina}'.replace('{nomina}', fechaNomina)).
+        $http.get('/nomina/verificarExistencia/?nomina={nomina}&tipoPrestamo={tipoPrestamo}'.replace('{nomina}', fechaNomina).replace('{tipoPrestamo}', tipoPrestamo)).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -162,7 +179,8 @@
         guardarDetalleEmpleado  : guardarDetalleEmpleado,
         getNomina               : getNomina,
         generarArchivoPrestamos : generarArchivoPrestamos,
-        generarArchivoAhorros   : generarArchivoAhorros
+        generarArchivoAhorros   : generarArchivoAhorros,
+        AplicarPrestamos        : AplicarPrestamos
       };
 
     }])
@@ -508,7 +526,7 @@
         var msgAhorro = '';
         var msgPrestamo = '';
 
-        NominaService.getNomina(fechaFormatted).then(function (data) {
+        NominaService.getNomina(fechaFormatted, $scope.tipoPrestamoNomina).then(function (data) {
           if(data.length > 0) {
             if(data[0]['ahorros'] == 1) {
               msgAhorro = 'Ahorros generados.';
@@ -532,10 +550,10 @@
 
         switch($scope.tipoPrestamoNomina) {
           case 'RE': INFOTIPO = '0015'; break;
-          case 'VA': INFOTIPO = '0099'; break;
-          case 'BO': INFOTIPO = '0088'; break;
-          case 'RG': INFOTIPO = '0077'; break;
-          case 'RI': INFOTIPO = '0066'; break;
+          case 'VA': INFOTIPO = '2010'; break;
+          case 'BO': INFOTIPO = '2012'; break;
+          case 'RG': INFOTIPO = '2008'; break;
+          case 'RI': INFOTIPO = '2012'; break;
         }
 
         NominaService.generarArchivoPrestamos($scope.prestamos, fechaFormatted, INFOTIPO).then(function (data) {
@@ -544,6 +562,7 @@
           } else {
             $scope.mensaje = 'Fue generado el archivo de Prestamos.';
             $scope.errorShow = false;
+            alert('El archivo fue generado!');
           }
         });
       }
@@ -561,6 +580,7 @@
             $scope.mostrarError(data);
           } else {
             $scope.mensaje = 'Fue generado el archivo de Ahorros.';
+            alert('Archivo de ahorros generado!');
           }
         });
       }
@@ -571,10 +591,10 @@
 
         switch(tipoArchivo) {
           case 'RE': archivo = 'PA0015.TXT'; break;
-          case 'VA': archivo = 'PA0099.TXT'; break;
-          case 'BO': archivo = 'PA0088.TXT'; break;
-          case 'RG': archivo = 'PA0077.TXT'; break;
-          case 'RI': archivo = 'PA0066.TXT'; break;
+          case 'VA': archivo = 'PA2010.TXT'; break;
+          case 'BO': archivo = 'PA2012.TXT'; break;
+          case 'RG': archivo = 'PA2008.TXT'; break;
+          case 'RI': archivo = 'PA2012.TXT'; break;
           case 'AH': archivo = 'PA0014.TXT'; break;
 
         }
@@ -605,8 +625,26 @@
         }
       }
 
+      //Funcion para aplicar prestamos (realizar descuentos del monto de balance de la mestra de Prestamos)
+      $scope.aplicarPrestamos = function() {
+        try {
+          NominaService.AplicarPrestamos($scope.fechaNomina, $scope.tipoPrestamoNomina).then(function (data) {
+            if(data == 1) {
+              alert('Fueron aplicados con exito!');
+              $scope.errorShow = false;
+            } else {
+              $scope.mostrarError(data);
+            }
+          });
+
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+
+      }
+
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postearPrestamos = function(){
+      $scope.postearPrestamos = function() {
         var idoc = 0;
         $scope.iDocumentos = 0;
         $scope.totalDebito = 0.00;

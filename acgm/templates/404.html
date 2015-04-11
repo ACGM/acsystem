@@ -4,7 +4,10 @@
 
 {% block content %}
 
+	<script>
+		document.getElementById('idmenu').style.display = 'none';
+	</script>
 
-	<h1 class="msg404"> No se encontro lo que buscaba </h1>
+	<h1 class="msg404"> {{mensaje}} </h1>
 
 {% endblock content %}

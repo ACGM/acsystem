@@ -14,7 +14,8 @@
 			<div class="menu-entrada-inventario-listado">
 				<button class="nuevo icon-file" title="Nueva salida de Inventario" ng-click="nuevaSalida('{{user}}')"></button>
 			</div>
-				<a href="#" ng-click="toggleLSI()">Listado Salidas de Inventario</a>
+			
+			<a href="#" ng-click="toggleLSI()">Listado Salidas de Inventario</a>
 			<a class="[[ArrowLSI]]" href="#" ng-click="toggleLSI()"></a>
 		</div>
 
@@ -143,10 +144,10 @@
 								<td>[[item.codigo]]</td>
 								<td>[[item.descripcion]]</td>
 								<td>[[item.unidad]]</td>
-								<td><input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required select-on-click></td>
-								<td>[[item.costo | number: 2]]</td>
-								<td>[[item.cantidad * item.costo | number: 2]]</td>
-								<td>
+								<td class="align-right"><input type="text" ng-change="calculaTotales()" ng-model="item.cantidad" ng-bind="item.cantidad" class="cantidad-input-ei" required select-on-click></td>
+								<td class="align-right">[[item.costo | number: 2]]</td>
+								<td class="align-right">[[item.cantidad * item.costo | number: 2]]</td>
+								<td class="align-center">
 									<button ng-if="dataH.posteo == 'N'" class="icon-delete eliminar-entrada-producto" ng-click="delProducto($event, item)"></button>
 									<button ng-if="dataH.posteo != 'N'" class="icon-delete eliminar-entrada-producto" ng-disabled="true"></button>
 								</td>

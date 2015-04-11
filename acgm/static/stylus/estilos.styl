@@ -298,7 +298,11 @@ footer
 		font-size 11px
 	
 // CLASES GENERICAS
-		
+
+.msg404
+	margin 1em 0 0 1em
+	color rojoOscuro	
+
 .cuentas-contables-posteo
 	top -1em
 	left 3em
@@ -488,6 +492,7 @@ footer
 
 .icon-eliminar //CLASE con formato especifico para el boton de eliminar
 	text-decoration none
+	outline none
 	color red
 	&:hover
 		color mamey
@@ -1664,23 +1669,20 @@ footer
 	overflow scroll
 	border 1px solid lightgray
 	margin-bottom 1em
-	maring-left 1em
+	margin-left 1em
 	margin-top .3em
 	padding-right 1.5em
 	position relative
 	left 1em
 	width 30%
 
-.acciones-ajuste-inventario
-	position relative
-	& button
-		&:last-child
-			margin-left 2em
-
 .content-productos-ajuste-inv
 	position relative
 	top -1em
 
+.productos-section-ajuste
+	width 65%
+	
 //Para Transferencia entre almacenes
 .ul-almacen-transf
 	display inline-block
@@ -1768,8 +1770,8 @@ footer
 
 .productos-section-transf
 	width 65%
-	margin .5em 0 0 .5em
-	padding .5em
+	margin-left 1em
+	
 
 .productos-table-detail-transf
 	& td
@@ -2897,11 +2899,9 @@ footer
 		border 1px solid black
 
 .boton-guarda-transf
-	margin 1em 0
+	margin 1em 0 1em 1em
 	height 2.8em
 	width 8em
-	margin-bottom 3em
-	margin-left 1em
 	&:before
 		margin-right .4em
 

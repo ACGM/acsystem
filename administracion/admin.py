@@ -34,8 +34,8 @@ class ArchivoBancoDetailNAdmin(admin.ModelAdmin):
 	
 @admin.register(Localidad)
 class LocalidadAdmin(admin.ModelAdmin):
-	list_display = ['id','descripcion',]
-	list_editable = ('descripcion',)
+	list_display = ['id','descripcion', 'descripcionLarga']
+	list_editable = ('descripcion', 'descripcionLarga')
 
 @admin.register(Departamento)
 class DepartamentoAdmin(admin.ModelAdmin):

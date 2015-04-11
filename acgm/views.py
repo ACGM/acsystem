@@ -12,7 +12,7 @@ class LoginRequiredMixin(object):
 		return login_required(super(LoginRequiredMixin, cls).as_view())
 
 
-#Pagina HOME -- principal		
+# Pagina HOME -- principal		
 @login_required
 def home(request):
 	try:
@@ -20,10 +20,11 @@ def home(request):
 		request.session['localidad'] = localidad[0]['localidad__descripcion']
 		
 	except Exception as e:
-		return render(request, '404.html')
+		return render(request, '404.html', {'mensaje': 'No tiene una localidad asignada.'})
 
 	return render(request, 'homepage.html')
 
+# Pagina de login de usuario
 def login(request):
 
 	return HttpResponseRedirect('/admin/login/')

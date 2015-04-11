@@ -215,9 +215,11 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 	def get(self, request, *args, **kwargs):
 
 		nomina = self.request.GET.get('nomina')
+		tipoPrestamo = self.request.GET.get('tipoPrestamo')
 
 		try:
-			nomP = NominaPrestamosAhorros.objects.get(nomina=nomina, tipo='PR')
+			infoTipo = getInfoTipo(tipoPrestamo)
+			nomP = NominaPrestamosAhorros.objects.get(nomina=nomina, infoTipo=infoTipo, tipo='PR')
 			prestamos = 1
 		except NominaPrestamosAhorros.DoesNotExist:
 			prestamos = 0
@@ -253,7 +255,7 @@ def getPrestamosResumidos(self, fechaNomina):
 											SUM(c.valorCapital) + SUM(c.valorInteres) montoTotalQ \
 										FROM nominacoop_cuotasprestamosempresa c \
 										LEFT JOIN administracion_socio s ON c.socio_id = s.id \
-										GROUP BY c.socio_id \
+										GROUP BY c.nomina, c.socio_id \
 										HAVING c.nomina = \'' + fecha + '\' \
 										AND c.infoTipoPrestamo = \'0015\' \
 										ORDER BY c.socio_id \
@@ -273,27 +275,30 @@ class GenerarArchivoPrestamos(View):
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
 			InfoTipo = data['infoTipo'] # 0015, entre otros
 			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
-			
-			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='PR', infoTipo=InfoTipo)
+			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
+
+			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='PR', infoTipo=InfoTipo)
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
-			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'w')
+			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
 			# Agregar cada prestamo en la tabla de CuotasPrestamosEmpresa
-			if created:
-				for prestamo in prestamos:
-					p = CuotasPrestamosEmpresa()
-					p.socio = Socio.objects.get(codigo=prestamo['codigoSocio'])
-					p.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
-					p.valorCapital = prestamo['montoCuotaQ']
-					p.valorInteres = prestamo['cuotaInteresQ']
-					p.nomina = nomina
-					p.infoTipoPrestamo = InfoTipo
-					p.userLog = request.user
-					p.save()
+			if created == False:
+				CuotasPrestamosEmpresa.objects.filter(nomina=fechaNomina, infoTipoPrestamo=InfoTipo, estatus='P').delete()
+
+			for prestamo in prestamos:
+				p = CuotasPrestamosEmpresa()
+				p.socio = Socio.objects.get(codigo=prestamo['codigoSocio'])
+				p.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
+				p.valorCapital = prestamo['montoCuotaQ']
+				p.valorInteres = prestamo['cuotaInteresQ']
+				p.nomina = nomina
+				p.infoTipoPrestamo = InfoTipo
+				p.userLog = request.user
+				p.save()
 
 			#*******************************************************************************************************************
 			# Aplicacion accion dependiendo del tipo de Prestamos de Nomina (Regulares, Bonificacion, Vacaciones, Regalia, Rifa)
@@ -338,7 +343,7 @@ class GenerarArchivoAhorros(View):
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA0014.TXT'
-			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'w')
+			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
@@ -362,6 +367,54 @@ class GenerarArchivoAhorros(View):
 
 			return HttpResponse(1)
 
+		except Exception as e:
+			return HttpResponse(e)
+
+
+#Funcion para retornar el infoTipo dependiendo del Tipo de Prestamo
+def getInfoTipo(tipoPrestamo):
+	
+	if tipoPrestamo == 'RE':
+		infoTipoP = '0015'
+	elif tipoPrestamo == 'VA':
+		infoTipoP = '2010'
+	elif tipoPrestamo == 'BO':
+		infoTipoP = '2012'
+	elif tipoPrestamo == 'RG':
+		infoTipoP = '2008'
+	elif tipoPrestamo == 'RI':
+		infoTipoP = '2012'
+
+	return infoTipoP
+
+
+# Aplicar prestamos -- actualiza balance de prestamos
+class AplicarPrestamos(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+
+			data = json.loads(request.body)
+
+			nomina = data['nomina']
+			tipoPrestamo = data['tipoPrestamo']
+
+			infoTipo = getInfoTipo(tipoPrestamo)
+
+			cuotas = CuotasPrestamosEmpresa.objects.filter(nomina=nomina, infoTipoPrestamo=infoTipo, estatus='P')
+
+			for cuota in cuotas:
+				prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
+				prestamoMaestra.balance -= cuota.valorCapital + cuota.valorInteres
+				prestamoMaestra.save()
+
+			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
+			cuotas.update(estatus='A')
+			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PE').update(estatus='PO')
+
+			return HttpResponse(1)
+		
 		except Exception as e:
 			return HttpResponse(e)
 

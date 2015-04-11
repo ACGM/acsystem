@@ -11,12 +11,15 @@
 		<div class="conteo-fisico">
 			
 			<div class="sub-menu">	
-				
+				<div class="menu-entrada-inventario-listado">
+					<button class="nuevo icon-file" title="Nuevo Ajuste Inventario" ng-click="clearFields($event)"></button>
+				</div>
+
 				<a href="#" ng-click="toggleLAI()">Listado Ajustes de Inventario</a>
 				<a class="[[ArrowLAI]]" href="#" ng-click="toggleLAI()"></a>
 			</div>
 
-			<section class="listado-ajustes" ng-init="ListadoAjustes()">
+			<section class="listado-ajustes" ng-init="ListadoAjustes()" ng-show="showLAI">
 				<figure class="fig-load [[mostrar]]">
 					<img class="img-load" src="/static/images/loading.gif" alt="">
 				</figure>
@@ -43,78 +46,78 @@
 
 			</section>
 
+			<section ng-hide="showLAI">
+				<!--CONTEO FISICO-->
+				<div class="sub-menu">	
+						Ajuste de Inventario
+				</div>
 
-			<!--CONTEO FISICO-->
-			<div class="sub-menu">	
-					Ajuste de Inventario
-			</div>
-
-			<section class="data-entry-section" ng-init="getAlmacen()">
-				<form name="AjusteForm" class="data-entry-transf-header" ng-submit="guardarAjusteInv()" novalidate>
-					
-					<table class="data-entry-header-table">
-						<tr>
-							<td>Numero</td>
-							<td> <input type="text" ng-model="dataH.numero" class="input-disabled" readonly> </td>
-							<td>Fecha</td>
-							<td> <input type="text" class="fecha-solicitud-field-t input-disabled" ng-model="dataH.fecha" ng-disabled="true" datepicker required> </td>
-						</tr>
-						<tr>
-							<td>Nota</td>
-							<td colspan="3">
-								<textarea name="" id="" cols="37" rows="3" ng-model="dataH.notaAjuste"></textarea>
-							 </td>
-						</tr>
-					</table>
-
-					<div class="prod-almacen-ajuste">
-						<div>
-							<span>Almacen</span>
-							<select name="almacen" id="almacen" class="field-choices" ng-model="almacen">
-								<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
-							</select>	
-						</div>
-						<div class="producto-find-ei">
-							<span>Producto</span>
-							<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei" select-on-click>
-							<!-- <a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a>  -->
-						</div>
-					</div>
-					<div class="content-productos-ajuste-inv">
-						<productosSearch> </productosSearch>
-					</div>
-					
-					<section class="productos-section-transf">
-						<table class="productos-table-transf">
-							<tr ng-if="dataD.length > 0 " class="productos-table-header-transf">
-								<td>Codigo</td>
-								<td>Descripcion</td>
-								<td>Almacen</td>
-								<td>Cantidad</td>
-								<td>Teorico</td>
-								<td>Diferencia</td>
-								<td>Eliminar</td>
+				<section class="data-entry-section" ng-init="getAlmacen()">
+					<form name="AjusteForm" class="data-entry-transf-header" ng-submit="guardarAjusteInv()" novalidate>
+						
+						<table class="data-entry-header-table">
+							<tr>
+								<td>Numero</td>
+								<td> <input type="text" ng-model="dataH.numero" class="input-disabled" readonly> </td>
+								<td>Fecha</td>
+								<td> <input type="text" class="fecha-solicitud-field-t input-disabled" ng-model="dataH.fecha" ng-disabled="true" datepicker required> </td>
 							</tr>
-							<tr class="productos-table-detail" ng-repeat="item in dataD">
-								<td>[[item.codigo]]</td>
-								<td>[[item.descripcion]]</td>
-								<td>[[item.almacen]]</td>
-								<td><input type="text" ng-model="item.cantidad" class="text-field-num-table" select-on-click required></td>
-								<td><input type="text" ng-model="item.cantidadTeorico" class="text-field-num-table" readonly></td>
-								<td>[[item.cantidad - item.cantidadTeorico | number : 2]]</td>
-								<td><a class="icon-delete icon-eliminar" href="#" ng-click="delProducto($event, item)"></a></td>
-							</tr>		
-				
+							<tr>
+								<td>Nota</td>
+								<td colspan="3">
+									<textarea name="" id="" cols="37" rows="3" ng-model="dataH.notaAjuste"></textarea>
+								 </td>
+							</tr>
 						</table>
-					</section>
+
+						<div class="prod-almacen-ajuste">
+							<div>
+								<span>Almacen</span>
+								<select name="almacen" id="almacen" class="field-choices" ng-model="almacen">
+									<option ng-repeat="almacen in almacenes" value="[[almacen.id]]">[[almacen.descripcion]]</option>
+								</select>	
+							</div>
+							<div class="producto-find-ei">
+								<span>Producto</span>
+								<input type="text" ng-model="producto" ng-keyup="getProducto($event)" ng-focus="tableProducto=false" ng-click="tableProducto=false; errorShow=false;" class="producto-field-ei" select-on-click>
+								<!-- <a href="#" class="icon-uniE601 icon-buscar" ng-click="getProducto($event)"></a>  -->
+							</div>
+						</div>
+						<div class="content-productos-ajuste-inv">
+							<productosSearch> </productosSearch>
+						</div>
+						
+						<section class="productos-section-ajuste">
+							<table class="productos-table-transf">
+								<tr ng-if="dataD.length > 0 " class="productos-table-header-transf">
+									<td>Codigo</td>
+									<td>Descripcion</td>
+									<td>Almacen</td>
+									<td>Cantidad</td>
+									<td>Teorico</td>
+									<td>Diferencia</td>
+									<td>Eliminar</td>
+								</tr>
+								<tr class="productos-table-detail" ng-repeat="item in dataD">
+									<td>[[item.codigo]]</td>
+									<td>[[item.descripcion]]</td>
+									<td>[[item.almacen]]</td>
+									<td class="align-right"><input type="text" ng-model="item.cantidad" class="text-field-num-table" select-on-click required></td>
+									<td class="align-right"><input type="text" ng-model="item.cantidadTeorico" class="text-field-num-table" readonly></td>
+									<td class="align-right">[[item.cantidad - item.cantidadTeorico | number : 2]]</td>
+									<td class="align-center"><a class="icon-delete icon-eliminar" href="#" ng-click="delProducto($event, item)"></a></td>
+								</tr>		
 					
-					<div class="acciones-ajuste-inventario">
-						<button class="icon-save Boton boton-guarda-transf" type="submit">Guardar</button>
-						<button class="icon-file Boton boton-guarda-transf" ng-click="clearFields($event)">Nuevo</button>
-					</div>
+							</table>
+						</section>
+						
+						<div>
+							<button class="icon-save Boton boton-guarda-transf" type="submit">Guardar</button>
+						</div>
 
-				</form>
+					</form>
 
+				</section>
 			</section>
 
 		</div>

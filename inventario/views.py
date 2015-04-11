@@ -344,7 +344,7 @@ class InventarioEliminarView(LoginRequiredMixin, View):
 
 				mov = Movimiento()
 				mov.producto = item.producto
-				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventario__id=entradaNo).cantidadTeorico) * -1
+				mov.cantidad = decimal.Decimal(InventarioD.objects.get(inventario__id=entradaNo, producto=item.producto, almacen=item.almacen).cantidadTeorico) * -1
 				mov.precio = item.producto.precio
 				mov.costo = item.producto.costo
 				mov.almacen = item.almacen
@@ -724,9 +724,6 @@ class getExistenciaConteoFisicoRPT(ListView):
 		if format == 'json':
 			return self.json_to_response()
 
-		context = self.get_context_data()
-		return self.render_to_response(context)
-
 	def json_to_response(self):
 		data = list()
 
@@ -736,9 +733,11 @@ class getExistenciaConteoFisicoRPT(ListView):
 			cantidad = 0
 			
 			if almacen == '*':
-				existAll = Existencia.objects.filter(producto__codigo=producto.codigo).values('producto').annotate(totalCantidad=Sum('cantidad'))
-				cantidad = existAll[0]['totalCantidad']
-
+				try:
+					existAll = Existencia.objects.filter(producto__codigo=producto.codigo).values('producto').annotate(totalCantidad=Sum('cantidad'))
+					cantidad = existAll[0]['totalCantidad']
+				except Exception as e:
+					cantidad = 0
 			else:
 				try:
 					exist = Existencia.objects.get(producto__codigo=producto.codigo, almacen__id=almacen)

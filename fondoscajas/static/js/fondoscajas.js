@@ -74,13 +74,28 @@
         return deferred.promise;
       }
 
+      //Impresion de Desembolso (incrementa el campo de IMPRESO)
+      function impresionDesembolso(desembolso) {
+        var deferred = $q.defer();
+
+        $http.post('/desembolso/print/{desembolso}/'.replace('{desembolso}', desembolso), {'desembolso': desembolso}).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
 
       return {
         all: all,
         guardaDesembolso: guardaDesembolso,
         byNoCheque: byNoCheque,
         DocumentoByCheque: DocumentoByCheque,
-        DocumentoById: DocumentoById
+        DocumentoById: DocumentoById,
+        impresionDesembolso: impresionDesembolso
       };
 
     }])
@@ -204,6 +219,18 @@
         } catch (e) {
           console.log(e);
         }
+      }
+
+      $scope.imprimirDesembolso = function() {
+
+        FondosCajasService.impresionDesembolso($scope.desembolso.id).then(function (data) {
+          console.log("DATA: " + data);
+
+          document.getElementById('printBoton').style.display = "None";
+          window.print();
+          window.location.reload();
+          document.getElementById('printBoton').style.display = "";
+        });
       }
 
       $scope.totalvalor = function() {

@@ -176,7 +176,7 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaInteresQ1(self):
 		if self.montoCuotaQ1 != None:
-			valor = self.montoCuotaQ1 * (self.tasaInteresMensual/self.quincenas/100)
+			valor = self.balance * (self.tasaInteresMensual/self.quincenas/100)
 		else:
 			valor = 0
 		return valor
@@ -184,7 +184,7 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaInteresQ2(self):
 		if self.montoCuotaQ2 != None:
-			valor = self.montoCuotaQ2 * (self.tasaInteresMensual/self.quincenas/100)
+			valor = self.balance * (self.tasaInteresMensual/self.quincenas/100)
 		else:
 			valor = 0
 		return valor

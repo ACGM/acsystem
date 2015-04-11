@@ -1002,7 +1002,7 @@
       var total = 0.0;
 
       $scope.productos.forEach(function (item) {
-        total += item.costo * (item.cantidad + item.cantidadAnterior);
+        total += item.costo * (item.cantidad);
       });
 
       return total;
@@ -1236,8 +1236,20 @@
     $scope.dataH = {};
     $scope.dataD = [];
     $scope.dataH.numero = 0;
+    $scope.showLAI = true;
+    $scope.ArrowLAI = 'UpArrow'
 
     $scope.mostrar = 'ocultar';
+    
+    $scope.toggleLAI = function() {
+      $scope.showLAI = !$scope.showLAI;
+
+      if($scope.showLAI === true){
+        $scope.ArrowLAI = 'UpArrow';
+      } else {
+        $scope.ArrowLAI = 'DownArrow';
+      }
+    }
 
     // Mostrar/Ocultar error
     $scope.toggleError = function() {
@@ -1378,6 +1390,8 @@
       $scope.dataH.numero = 0;
       $scope.producto = '';
       $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+      $scope.toggleLAI();
     }
 
     // Visualizar Documento (Ajuste de Inventario Existente - desglose)

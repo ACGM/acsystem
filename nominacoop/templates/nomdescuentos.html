@@ -24,7 +24,7 @@
 				<option value="RI">Rifa</option>
 			</select>
 			
-			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)">Procesar</button>
+			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)">Refrescar</button>
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 		</div>
 
@@ -68,7 +68,7 @@
 					
 					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo para nomina.">Balances</button>	
 
-					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="postearPrestamos()">Aplicar</button>	
+					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>	
 
 				</section>
 			</div>
