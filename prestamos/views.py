@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
-from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco
+from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
 
@@ -325,11 +325,16 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 	def json_to_response(self):
 		data = list()
 
-		banco = Banco.objects.latest('codigo')
+		banco = Banco.objects.get(estatus='A')
 
 		for prestamo in self.object_list:
+			maestra = MaestraPrestamo.objects.get(noPrestamo=prestamo.noPrestamo)
+			doc = DocumentoCuentas.objects.filter(documento__codigo='DESE').order_by('accion')
+
 			data.append({
 				'noPrestamo': prestamo.noPrestamo,
+				'cuotas': maestra.cantidadCuotas,
+				'tasaInteresMensual': maestra.tasaInteresMensual,
 				'estatus': prestamo.estatus,
 				'socioCodigo': prestamo.socio.codigo,
 				'socioNombre': prestamo.socio.nombreCompleto,
@@ -340,6 +345,9 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				'bancoNombre': banco.nombre,
 				'netoDesembolsar': prestamo.montoInicial,
 				'fechaDesembolso': prestamo.fechaDesembolso,
+				'cuentaDesembolsoCodigo': doc[0].cuenta.codigo,
+				'cuentaDesembolsoDescrp': doc[0].cuenta.descripcion,
+				'cuentaDesembolsoAuxiliar': doc[1].cuenta.codigo,
 				})
 
 		return JsonResponse(data, safe=False)

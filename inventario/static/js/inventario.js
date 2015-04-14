@@ -1238,6 +1238,7 @@
     $scope.dataH.numero = 0;
     $scope.showLAI = true;
     $scope.ArrowLAI = 'UpArrow'
+    document.getElementById('botonGuardar').style.display = 'None';
 
     $scope.mostrar = 'ocultar';
     
@@ -1390,8 +1391,11 @@
       $scope.dataH.numero = 0;
       $scope.producto = '';
       $scope.dataH.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      document.getElementById('botonGuardar').style.display = '';
 
-      $scope.toggleLAI();
+      if($scope.showLAI == true) {
+        $scope.toggleLAI();
+      }
     }
 
     // Visualizar Documento (Ajuste de Inventario Existente - desglose)

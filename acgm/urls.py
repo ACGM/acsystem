@@ -7,7 +7,8 @@ from rest_framework import routers
 #Vistas 
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
-                                GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos
+                                GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
+                                AplicarAhorros
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -161,7 +162,8 @@ urlpatterns = patterns('',
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^nomina/descuentos/$', NominaDescuentosView.as_view(), name='Nomina_Descuentos'),
-    url(r'^nomina/descuentos/aplicar/$', AplicarPrestamos.as_view(), name='Aplicar_prestamos'),
+    url(r'^nomina/descuentos/aplicar/prestamos/$', AplicarPrestamos.as_view(), name='Aplicar_prestamos'),
+    url(r'^nomina/descuentos/aplicar/ahorros/$', AplicarAhorros.as_view(), name='Aplicar_ahorros'),
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
     url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),

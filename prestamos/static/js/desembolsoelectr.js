@@ -113,6 +113,7 @@
         $scope.NoFoundDoc = '';
         $scope.prestamosSeleccionados = [];
         $scope.valoresChk = [];
+        $scope.netoTotal = 0;
 
         DesembolsoElectronicoService.listadoPrestamos().then(function (data) {
           $scope.prestamos = data;
@@ -122,9 +123,10 @@
             $scope.verTodos = 'ver-todos-ei';
 
             var i = 0;
-            data.forEach(function (data) {
+            data.forEach(function (item) {
               $scope.valoresChk[i] = false;
               i++;
+              $scope.netoTotal += parseFloat(item['netoDesembolsar']);
             });
           } else {
             $scope.NoFoundDoc = "No existen registros para mostrar.";
@@ -316,6 +318,11 @@
         }
       }
 
+      //Imprimir Listado de Desembolsos
+      $scope.imprimirListado = function($event) {
+        $window.print();
+      }
+
       //Imprimir Recibido Conforme
       $scope.imprimirRC = function(prestamo) {
       $window.sessionStorage['prestamoRC'] = JSON.stringify(prestamo);
@@ -333,6 +340,16 @@
     $scope.dataH = {};
     $scope.dataD = [];
 
+    $scope.dataH = JSON.parse($window.sessionStorage['prestamoRC']);
+
+    var fechaP = $filter('date')(Date.now(), 'dd/MM/yyyy').split('/');
+    var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);
+
+    var nextDate = new Date();
+    nextDate.setDate(fechaF.getDate()+parseInt($scope.dataH.cuotas * 15));
+
+    $scope.fechaVencimiento = $filter('date')(nextDate, 'dd/MM/yyyy');
+    
   }]);
    
 

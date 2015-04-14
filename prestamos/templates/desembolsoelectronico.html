@@ -8,6 +8,12 @@
 		
 		<mensajeerror> </mensajeerror>
 
+		<div class="cabecera-rc">
+			<span class="align-center"><h3>COOPERATIVA INDUSTRIAS NACIONALES</h3></span>
+			<span class="rc-titulo">Desembolsos Electronicos</span>
+			<span>[['' | currentdate]]</span>
+		</div>
+
 		<div class="sub-menu">	
 			Prestamos para generar desembolsos electronicos
 		</div>
@@ -52,14 +58,39 @@
 						<td class="align-center"><a href="#" class="icon-printer imprimir-icon" ng-click="imprimirRC(prestamo)"></a></td>
 
 					</tr>
-					
 				</table>
+
+				<div class="totalNeto">
+					<span>TOTAL ----></span>
+					<span class="resaltar-valor align-right">[[netoTotal | number : 2]]</span>
+				</div>
+
 			</div>
 
 			<div class="botones-acciones-desembolso">
 				<button class="Boton botones-desembolso-electr" ng-click="marcarPrestamoDC($event,'D')">Marcar como Desembolso</button>
 				<button class="Boton botones-desembolso-electr" ng-click="GeneraArchivoBanco($event)">Preparar Archivo para Enviar</button>
-				<button class="icon-document Boton botones-desembolso-electr">Imprimir Listado</button>	
+				<button class="icon-document Boton botones-desembolso-electr" ng-click="imprimirListado($event)">Imprimir Listado</button>	
+			</div>
+
+			<div class="firmantes-recibido-conforme pieFirmas">
+				<table>
+					<tr>
+						<td class="align-center">______________________________</td>
+						<td class="align-center">______________________________</td>
+						<td class="align-center">______________________________</td>
+					</tr>
+					<tr>
+						<td class="align-center">Solicitado Por</td>
+						<td class="align-center">Revisado Por</td>
+						<td class="align-center">Aprobado Por</td>
+					</tr>
+					<tr>
+						<td class="align-center">Analista Cooperativa</td>
+						<td class="align-center">Contador General</td>
+						<td class="align-center">Gerente Cooperativa</td>
+					</tr>
+				</table>
 			</div>
 
 		</section>

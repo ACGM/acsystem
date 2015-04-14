@@ -43,7 +43,8 @@ class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):
 
 @admin.register(CuotasAhorrosEmpresa)
 class CuotasAhorrosEmpresaAdmin(admin.ModelAdmin):
-	list_display = ['socio', 'valorAhorro', 'fecha', 'estatus']
+	list_display = ['socio', 'valorAhorro', 'nomina', 'estatus']
+	list_filter = ('nomina',)
 
 @admin.register(NominaPrestamosAhorros)
 class NominasPrestamosAhorrosAdmin(admin.ModelAdmin):

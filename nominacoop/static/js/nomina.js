@@ -85,7 +85,25 @@
         var fecha = nomina.split('/');
         var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
-        $http.post('/nomina/descuentos/aplicar/', JSON.stringify({'nomina': fechaFormatted, 'tipoPrestamo': tipoPrestamo})).
+        $http.post('/nomina/descuentos/aplicar/prestamos/', JSON.stringify({'nomina': fechaFormatted, 'tipoPrestamo': tipoPrestamo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Aplicar ahorros (registrar suma de cuota de ahorro)
+      function AplicarAhorros(nomina) {
+        var deferred = $q.defer();
+
+        var fecha = nomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+        $http.post('/nomina/descuentos/aplicar/ahorros/', JSON.stringify({'nomina': fechaFormatted})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -180,7 +198,8 @@
         getNomina               : getNomina,
         generarArchivoPrestamos : generarArchivoPrestamos,
         generarArchivoAhorros   : generarArchivoAhorros,
-        AplicarPrestamos        : AplicarPrestamos
+        AplicarPrestamos        : AplicarPrestamos,
+        AplicarAhorros          : AplicarAhorros
       };
 
     }])
@@ -630,17 +649,31 @@
         try {
           NominaService.AplicarPrestamos($scope.fechaNomina, $scope.tipoPrestamoNomina).then(function (data) {
             if(data == 1) {
-              alert('Fueron aplicados con exito!');
+              alert('Fueron aplicados los prestamos con exito!');
               $scope.errorShow = false;
             } else {
               $scope.mostrarError(data);
             }
           });
-
         } catch (e) {
           $scope.mostrarError(e);
         }
+      }
 
+      //Funcion para aplicar ahorros (realizar deposito al ahorro del socio)
+      $scope.aplicarAhorros = function() {
+        try {
+          NominaService.AplicarAhorros($scope.fechaNomina).then(function (data) {
+            if(data == 1) {
+              alert('Fueron aplicados los ahorros con exito!');
+              $scope.errorShow = false;
+            } else {
+              $scope.mostrarError(data);
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)

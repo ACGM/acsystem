@@ -58,16 +58,16 @@
 					</tr>
 
 					<tr class="listado-sp-detail" ng-repeat="solicitud in solicitudes">
-						<td><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)" ng-disabled="[[solicitud.estatus | estatusSolicitud]]"> </td>
-						<td class="estatus-[[solicitud.estatus | lowercase]]">[[solicitud.estatus | estatusName]]</td>
+						<td class="align-center"><input type="checkbox" name="c[[solicitud.id]]" ng-checked="valoresChk[solicitud.id]" ng-model="reg[solicitud.id]" ng-click="selectedReg(solicitud)" ng-disabled="[[solicitud.estatus | estatusSolicitud]]"> </td>
+						<td class="estatus-[[solicitud.estatus | lowercase]] align-center">[[solicitud.estatus | estatusName]]</td>
 						<td> <a class="sp-field" title="Ver mas detalle..." href="#" ng-click="SolicitudFullById($event,solicitud.noSolicitud)">[[solicitud.noSolicitud | numberFixedLen : 8]]</a> </td>
 						<td>[[solicitud.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
 						<td>[[solicitud.codigoSocio]]</td>
 						<td>[[solicitud.socio]]</td>
-						<td>[[solicitud.montoSolicitado | number : 2]]</td>
-						<td>[[solicitud.netoDesembolsar | number : 2]]</td>
-						<td><a class="icon-printer icon-imprimir" href="#" ng-click="ImprimirSolicitud(solicitud)"></a></td>
-						<td>
+						<td class="align-right">[[solicitud.montoSolicitado | number : 2]]</td>
+						<td class="align-right">[[solicitud.netoDesembolsar | number : 2]]</td>
+						<td class="align-center"><a class="icon-printer icon-imprimir" href="#" ng-click="ImprimirSolicitud(solicitud)"></a></td>
+						<td class="align-center">
 							<div ng-if="solicitud.estatus == 'P'"> <a class="icon-delete icon-eliminar" href="#" ng-click="AprobarRechazarSolicitudesPrestamos($event,'C', solicitud)"></a> </div>
 							<div ng-if="solicitud.estatus != 'P'"> <a class="icon-delete icon-eliminar disabled" href="#"></a> </div>
 							

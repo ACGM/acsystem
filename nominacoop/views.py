@@ -339,7 +339,7 @@ class GenerarArchivoAhorros(View):
 			
 			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 
-			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='AH')
+			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='AH', infoTipo='0014')
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA0014.TXT'
@@ -412,6 +412,35 @@ class AplicarPrestamos(View):
 			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
 			cuotas.update(estatus='A')
 			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PE').update(estatus='PO')
+
+			return HttpResponse(1)
+		
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Aplicar ahorros -- incrementar el balance de ahorro con la cuota actual
+class AplicarAhorros(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+
+			data = json.loads(request.body)
+
+			nomina = data['nomina']
+
+			cuotas = CuotasAhorrosEmpresa.objects.filter(nomina=nomina, estatus='P')
+
+			#YEISON DEBE PROVEERME LA TABLA DONDE VOY A ESTAR GUARDANDO LA SUMA DEL NUEVO AHORRO
+			# for cuota in cuotas:
+			# 	prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
+			# 	prestamoMaestra.balance -= cuota.valorCapital + cuota.valorInteres
+			# 	prestamoMaestra.save()
+
+			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
+			cuotas.update(estatus='A')
+			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo='0014', tipo='AH', estatus='PE').update(estatus='PO')
 
 			return HttpResponse(1)
 		

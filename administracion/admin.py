@@ -146,7 +146,7 @@ class SocioAdmin(admin.ModelAdmin):
 	list_display = ['id','codigo','nombres','apellidos', 'salario','fechaIngresoCoop','fechaIngresoEmpresa','departamento','estatus','cuentaBancaria']
 	list_editable = ('codigo','nombres','apellidos','departamento','salario','cuentaBancaria')
 	search_fields = ('codigo','nombres','apellidos','cuentaBancaria')
-	list_filter = ('departamento',)
+	list_filter = ('departamento', 'estatus')
 	raw_id_fields = ('departamento',)
 
 	def save_model(self, request, obj, form, change):

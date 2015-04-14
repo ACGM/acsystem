@@ -18,19 +18,19 @@
 
 	<div class="datos-recibido-conforme">
 		<div class="prestamo-rc-desglose">
-			<span>Prestamo No. <strong>9999300</strong></span> <span class="socio-rc">RAFAEL MERCEDES SANTANA</span>
-			<span>Monto del Prestamo <strong>44,5444.55</strong></span>
-			<span>44 Cuotas de : <strong>4,455.54</strong></span>
-			<span>Tasa de Interes <strong>1.50</strong></span>
+			<span>Prestamo No. <strong>[[dataH.noPrestamo | numberFixedLen : 9]]</strong></span> <span class="socio-rc">[[dataH.socioNombre]]</span>
+			<span>Monto del Prestamo <strong>[[dataH.netoDesembolsar | number : 2]]</strong></span>
+			<span>44 Cuotas de : <strong>[[dataH.cuotas]]</strong></span>
+			<span>Tasa de Interes <strong>[[dataH.tasaInteresMensual]]</strong></span>
 		</div>
 		<ul class="fechas-rc">
-			<li class="align-right">Fecha Desembolso 24/12/2014</li>
-			<li class="align-right">Fecha Vencimiento 24/12/2029</li>
+			<li class="align-right">Fecha Desembolso [['' | currentdate]]</li>
+			<li class="align-right">Fecha Vencimiento [[fechaVencimiento]]</li>
 		</ul>
 
 		<div class="bancario">
-			<span><strong>BANCO:</strong> 10101010101 - BANCO FAMOSO</span>
-			<span><strong>CUENTA:</strong> 09388747374</span>
+			<span><strong>BANCO:</strong> [[dataH.bancoCodigo]] - [[dataH.bancoNombre]]</span>
+			<span><strong>CUENTA:</strong> [[dataH.socioCuentaBancaria]]</span>
 		</div>
 
 		<div class="detalle-recibido-conforme">
@@ -42,22 +42,22 @@
 					<td>Creditos</td>
 				</tr>
 				<tr>
-					<td>10010010</td>
-					<td>Desembolso Electronico</td>
+					<td>[[dataH.cuentaDesembolsoCodigo]]</td>
+					<td>[[dataH.cuentaDesembolsoDescrp]]</td>
 					<td></td>
-					<td>54,000.44</td>
+					<td>[[dataH.netoDesembolsar | number : 2]]</td>
 				</tr>
 				<tr>
-					<td>11110022</td>
-					<td>RAFAEL MERCEDES SANTANA</td>
-					<td>54,000.44</td>
+					<td>[[dataH.cuentaDesembolsoAuxiliar]]</td>
+					<td>[[dataH.socioNombre]]</td>
+					<td>[[dataH.netoDesembolsar | number : 2]]</td>
 					<td></td>
 				</tr>
 				<tr><td colspan="4"><hr/></td></tr>
 				<tr>
 					<td colspan="2">Totales</td>
-					<td>54,000.44</td>
-					<td>54,000.44</td>
+					<td>[[dataH.netoDesembolsar | number : 2]]</td>
+					<td>[[dataH.netoDesembolsar | number : 2]]</td>
 				</tr>
 			</table>
 		</div>
