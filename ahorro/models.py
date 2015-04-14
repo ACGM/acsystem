@@ -29,11 +29,13 @@ class AhorroSocio(models.Model):
 
 # Retiros de ahorro
 class RetiroAhorro(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
     retiro_choicer = (('A', 'Retiro Ahorro'), ('J', 'Retiro por Ajuste'), ('O', 'Otros'))
 
+    fecha = models.DateField()
     socio = models.ForeignKey(Socio)
-    ahorro = models.ForeignKey(AhorroSocio)
     tipoRetiro = models.CharField(max_length=1, choices=retiro_choicer, verbose_name="Tipo de Retiro")
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus", default="A")
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=0.00,
                                 verbose_name="Monto a Retirar")
 
@@ -43,13 +45,15 @@ class RetiroAhorro(models.Model):
 
 # Maneja todas las transacciones de ahorro realizada en las quincenas
 class MaestraAhorro(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+
     fecha = models.DateField()
     ahorro = models.ForeignKey(AhorroSocio, null=False, blank=False)
     retiro = models.ForeignKey(RetiroAhorro, null=True, blank=True)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Monto", null=False, blank=False)
     interes = models.ForeignKey(InteresesAhorro)
     balance = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Balance", null=False, blank=False)
-    estatus = models.BooleanField(default=False)
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="ahorro_rel")
 
     def __unicode__(self):

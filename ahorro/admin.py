@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import MaestraAhorro, AhorroSocio, InteresesAhorro
+from .models import MaestraAhorro, AhorroSocio, InteresesAhorro, RetiroAhorro
 
 
 @admin.register(MaestraAhorro)
@@ -16,3 +16,8 @@ class AhorroAdmin(admin.ModelAdmin):
 @admin.register(InteresesAhorro)
 class InteresAdmin(admin.ModelAdmin):
     list_display = ['id', 'descripcion', 'porcentaje']
+
+
+@admin.register(RetiroAhorro)
+class RetiroAdmin(admin.ModelAdmin):
+    list_display = ['id', 'socio', 'tipoRetiro', 'monto' ]

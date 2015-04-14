@@ -2,7 +2,7 @@ import json
 import decimal
 
 from django.http import HttpResponse, JsonResponse
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from rest_framework import viewsets
 
 from .models import InteresesAhorro, MaestraAhorro, AhorroSocio, RetiroAhorro
@@ -15,220 +15,6 @@ class MaestraAhorroView(DetailView):
     queryset = AhorroSocio.objects.all()
 
     # Metodo Post para el proceso completo
-    def post(self, request, *args, **kwargs):
-
-        try:
-            dataT = json.loads(request.body)
-            dataAh =dataT['AhorroSocio']
-            data = dataT['maestra']
-            dataAr = dataT['retiro']
-            ahorroId = data['ahorro']
-            dataCuentas = dataT['cuentas']
-
-            maestraId = data['id']
-
-            # Operacion para registar un retiro de ahorro
-            if len(dataAr) > 0:
-
-                if maestraId == None:
-                    maestra = MaestraAhorro()
-                    listaDiario = []
-
-                    ahorro = AhorroSocio.objects.get(id=ahorroId)
-
-                    # Recalcula el balance y el disponible del socio
-                    balanceAc = ahorro.balance
-                    disponibleAc = ahorro.disponible
-
-                    balanceAc = balanceAc - decimal.Decimal(data['monto'])
-                    disponibleAc = disponibleAc - decimal.Decimal(data['monto'])
-
-                    # Actualiza los cambios en el registro de ahorros
-                    ahorro.balance = balanceAc
-                    ahorro.disponible = disponibleAc
-                    ahorro.save()
-
-
-                    retiro = RetiroAhorro()
-                    retiro.socio = Socio.objects.get(codigo=dataAh['socio'])
-                    retiro.ahorro = ahorro
-                    retiro.tipoRetiro = dataAr['tipoRetiro']
-                    retiro.monto = dataAr['monto']
-                    retiro.save()
-
-
-                    # Registra en el historico de ahorros
-
-                    maestra.ahorro = AhorroSocio.objects.get(id=dataAh['id'])
-                    maestra.fecha = data['fecha']
-                    maestra.retiro = retiro
-                    maestra.monto = data['monto']
-                    maestra.interes = InteresesAhorro.objects.get(id=data['interes'])
-                    maestra.balance = ahorro.balance
-                    maestra.estatus = False
-                    maestra.save()
-
-                       # Registra las cuentas afectadas en el Diario General
-                    for item in dataCuentas:
-                        rsDiario = DiarioGeneral()
-                        if item['cuenta'] !=None:
-                             rsDiario.cuenta = Cuentas.objects.get(codigo=item['cuenta'])
-
-                        if item['auxiliar'] != None:
-                            rsDiario.auxiliar = Auxiliares.objects.get(codigo=item['auxiliar'])
-
-                        rsDiario.fecha = item['fecha']
-                        rsDiario.referencia = item['referencia']
-                        rsDiario.tipoDoc = TipoDocumento.objects.get(tipoDoc=item['tipoDoc'])
-                        rsDiario.estatus = item['estatus']
-                        rsDiario.debito = item['debito']
-                        rsDiario.credito = item['credito']
-                        rsDiario.save()
-                        maestra.cuentas.add(rsDiario)
-                        listaDiario.append(rsDiario.id)
-
-
-                    # Actualiza las referencia de la Maestra
-                    for item in listaDiario:
-                        rsDiarios = DiarioGeneral.objects.get(id=item)
-                        rsDiarios.fecha = dataCuentas[0]['fecha']
-                        rsDiarios.referencia = 'AH-' + str(maestra.id)
-                        rsDiarios.save()
-
-                else:
-                    regMaestra = MaestraAhorro.objects.get(id=maestraId)
-                    ahorroE = AhorroSocio.objects.get(id=dataAh['id'])
-                    retirosE = RetiroAhorro.objects.get(id=dataAr['id'])
-
-                    balanceAnt = regMaestra.monto
-                    balanceArE = ahorroE.balance
-
-                    dispoArE = ahorroE.disponible + balanceAnt
-                    montoArE = decimal.Decimal(data['monto'])
-
-                    balanceArE = balanceArE + balanceAnt
-                    balanceArE = balanceArE - montoArE
-                    dispoArE = dispoArE - montoArE
-
-                    for cuentaAhE in dataCuentas:
-                        rsDiario = DiarioGeneral.objects.get(id=cuentaAhE['id'])
-
-                        for itemCuenta in dataCuentas:
-                            rsDiario.fecha= itemCuenta['fecha']
-                            rsDiario.debito = itemCuenta['debito']
-                            rsDiario.credito = itemCuenta['credito']
-                            rsDiario.save()
-
-                    regMaestra.monto = data['monto']
-                    regMaestra.interes = InteresesAhorro.objects.get(id=data['interes'])
-                    regMaestra.balance = balanceArE
-                    regMaestra.save()
-
-                    retirosE.monto = dataAr['monto']
-                    retirosE.save()
-
-                    ahorroE.balance = balanceArE
-                    ahorroE.disponible = dispoArE
-                    ahorroE.save()
-
-            else:
-                # Corre el escenario de edicion o creacion de registro de ingreso de ahorro en la Maestra
-                if maestraId != None:
-                    regMaestra = MaestraAhorro.objects.get(id=maestraId)
-                    ahorroE = AhorroSocio.objects.get(id=dataAh['id'])
-
-                    # Recalcula el Balance y el Disponible
-                    balanceAnt = regMaestra.monto
-                    balanceArE = ahorroE.balance
-
-                    dispoArE = ahorroE.disponible
-                    montoArE = data['monto']
-
-                    # Recalcula el Balance y el Disponible en caso de ser un prestamo o un ahorro
-
-                    balanceAnt = balanceArE + balanceAnt
-
-                    balanceAnt = balanceAnt - montoArE
-                    dispoArE = dispoArE + balanceArE
-                    dispoArE = dispoArE - montoArE
-
-
-                    # Edital el registro en de las cuentas o auxiliares en el Diario General
-                    for cuentaAhE in regMaestra.cuentas:
-                        rsDiario = DiarioGeneral.objects.get(id=cuentaAhE)
-
-                        for itemCuenta in dataCuentas:
-                            rsDiario.debito = itemCuenta['debito']
-                            rsDiario.credito = itemCuenta['credito']
-                            rsDiario.save()
-
-                    # Guarda los cambios de la Maestra Ahorro
-                    regMaestra.monto = data['monto']
-                    regMaestra.interes = data['interes']
-                    regMaestra.save()
-
-                    # En caso de ser una edicion de un retiro Actualiza el monto de retiro.
-                    # if 'RET' == 'RTE':
-                    retiro = RetiroAhorro.objects.get(ahorro=data['id'])
-                    retiro.monto = dataAh['monto']
-                    retiro.save()
-
-                    # Actualiza el registro de ahorro
-                    ahorroE.balance = balanceAnt
-                    ahorroE.disponible = dispoArE
-                    ahorroE.save()
-
-                else:
-                    # Guarda un registro nuevo en la Maestra
-                    regMaestra = MaestraAhorro()
-                    ahorroE = AhorroSocio.objects.get(id=dataAh['id'])
-                    listaDiario = []
-
-                    balanceAnt = ahorroE.balance
-                    dispoAnt = ahorroE.disponible
-
-                    balanceAnt= balanceAnt + decimal.Decimal(data['monto'])
-                    dispoAnt = dispoAnt + decimal.Decimal(data['monto'])
-
-                    ahorroE.balance = balanceAnt
-                    ahorroE.disponible = dispoAnt
-                    ahorroE.save()
-
-                    regMaestra.fecha = data['fecha']
-                    regMaestra.ahorro = ahorroE
-                    regMaestra.monto = data['monto']
-                    regMaestra.interes = InteresesAhorro.objects.get(id=data['interes'])
-                    regMaestra.balance = ahorroE.balance
-                    regMaestra.estatus = data['estatus']
-                    regMaestra.save()
-
-                    # Registra las cuentas y/o auxiliares en el Diario General
-                    for item in dataCuentas:
-                        rsDiario= DiarioGeneral()
-                        rsDiario.fecha = item['fecha']
-                        rsDiario.referencia = item['referencia']
-                        rsDiario.auxiliar = item['auxiliar']
-                        rsDiario.tipoDoc = TipoDocumento.objects.get(tipoDoc=item['tipoDoc'])
-                        rsDiario.estatus = item['estatus']
-                        rsDiario.debito = item['debito']
-                        rsDiario.credito = item['credito']
-                        rsDiario.save()
-                        listaDiario.append(rsDiario.id)
-                        regMaestra.cuentas.add(rsDiario)
-
-                    # Actualiza las referencia de la Maestra
-                    for item in listaDiario:
-                        rsDiario = DiarioGeneral.objects.get(id=item)
-                        rsDiario.fecha = dataCuentas[0]['fecha']
-                        rsDiario.referencia = 'AH-' + str(regMaestra.id)
-                        rsDiario.save()
-
-
-            return HttpResponse('1')
-
-        except Exception as ex:
-            return HttpResponse(ex)
-
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
 
@@ -247,7 +33,7 @@ class MaestraAhorroView(DetailView):
             for ahorro in self.object_list:
                 data.append({
                     'id': ahorro.id,
-                    'socioId': ahorro.socio.id,
+                    'socioId': ahorro.socio.codigo,
                     'socio': ahorro.socio.nombres + ' ' + ahorro.socio.apellidos,
                     'balance': ahorro.balance,
                     'disponible': ahorro.disponible,
@@ -259,6 +45,7 @@ class MaestraAhorroView(DetailView):
                             'interes': maestra.interes.porcentaje,
                             'balance': maestra.balance,
                             'estatus': maestra.estatus,
+                            'retiro': maestra.retiro.id if maestra.retiro != None else '0',
                             'cuentas': [
                                 {
                                     'id': cuentas.id,
@@ -281,9 +68,10 @@ class MaestraAhorroView(DetailView):
             for retiro in RetiroAhorro.objects.all():
                 data.append({
                     'id': retiro.id,
-                    'socio': retiro.socio.nombres + ' ' + retiro.socio.apellidos,
-                    'ahorro': retiro.socio.id,
-                    'tipoRetiro': retiro.tipoRetiro,
+                    'socio': retiro.socio.codigo,
+                    'fecha': retiro.fecha,
+                    'estatus': retiro.estatus,
+                    'tipo': retiro.tipoRetiro,
                     'monto': retiro.monto
                 })
 
@@ -310,8 +98,116 @@ class RetirosAhorroViewSet(viewsets.ModelViewSet):
     serializer_class = RetiroAhorroSerializer
 
 
+class impRetiroAHorro(TemplateView):
+    template_name = "AhorroPrint.html"
+
+
 class AhorroView(TemplateView):
     template_name = 'ahorro.html'
+
+    def post(self, request, *args, **kwargs):
+        dataT = json.loads(request.body)
+
+        data = dataT['retiro']
+
+        regSocio = Socio.objects.get(codigo=data['socio'])
+        regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
+
+        try:
+
+            if data['id'] is None:
+                regRet = RetiroAhorro()
+                regRet.socio = regSocio
+                regRet.fecha = data['fecha']
+                regRet.estatus = data['estatus']
+                regRet.tipoRetiro = data['tipo']
+                regRet.monto = decimal.Decimal(data['monto'])
+                regRet.save()
+
+                regMaestra = MaestraAhorro()
+                regMaestra.ahorro = regAhorro
+                regMaestra.fecha = data['fecha']
+                regMaestra.retiro = regRet
+                regMaestra.interes = InteresesAhorro.objects.get(id=1)
+                regMaestra.monto = decimal.Decimal(data['monto'])
+                regMaestra.balance = regAhorro.disponible - decimal.Decimal(data['monto'])
+                regMaestra.estatus = 'A'
+                regMaestra.save()
+
+            elif data['estatus'] == 'I':
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+
+                regRet.estatus = data['estatus']
+                regRet.save()
+
+                regMaestra = MaestraAhorro.objects.get(retiro=data['id'])
+                regMaestra.estatus = data['estatus']
+                regMaestra.save()
+
+            elif data['estatus' == "P"]:
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+                regMaestra = MaestraAhorro.objects.get(retiro=regRet)
+
+                regAhorro.disponible = regAhorro.disponible - regMaestra.monto
+                regAhorro.balance = regAhorro.balance - regMaestra.monto
+                regAhorro.save()
+
+                regMaestra.balance = regAhorro.balance
+                regMaestra.save()
+
+            elif data['estatus'] == 'A':
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+
+                montoRetAnt = regRet.monto
+
+                regRet.tipoRetiro = data['tipo']
+                regRet.estatus = data['estatus']
+                regRet.monto = decimal.Decimal(data['monto'])
+                regRet.save()
+
+                regMaestra = MaestraAhorro.objects.get(id=data['maestraId'])
+                regMaestra.monto = decimal.Decimal(data['monto'])
+                regMaestra.balance = (regMaestra.balance + montoRetAnt) - decimal.Decimal(data['monto'])
+                regMaestra.estatus = data['estatus']
+                regMaestra.save()
+
+            else:
+                return HttpResponse('0')
+
+            return HttpResponse('1')
+
+        except Exception as ex:
+            return HttpResponse(ex)
+
+
+class MaestraAhorroApi(DetailView):
+    queryset = MaestraAhorro.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+
+        regSocio = Socio.objects.get(codigo=data['socio'])
+        regAhorro = AhorroSocio.objects.get(socio=regSocio)
+
+        regMaestra = MaestraAhorro()
+        regMaestra.ahorro = regAhorro
+        regAhorro.fecha = data['fecha']
+        regAhorro.monto = data['monto']
+        regMaestra.interes = InteresesAhorro.objects.get(id=1)
+        regMaestra.balance = regAhorro.disponible + decimal.Decimal(data['monto'])
+        regMaestra.estatus = 'A'
+        regMaestra.save()
+
+        regAhorro.balance = regAhorro.balance + data['monto']
+        regAhorro.disponible = regAhorro.disponible + data['monto']
+        regAhorro.save()
+
+
+
+
+
+
+
 
 
 

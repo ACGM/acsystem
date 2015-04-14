@@ -15,21 +15,22 @@ class CxpOrdenView(DetailView):
     queryset = OrdenCompra.objects.all()
 
     def post(self, request):
+
+        dataConsolidate = json.loads(request.body)
+
         try:
-            dataConsolidate = json.loads(request.body)
             data = dataConsolidate['Orden']
             dataDet = dataConsolidate['Detalle']
-            dataCuentas = dataConsolidate['Diario']
 
             if None == data['id']:
 
                 regOrden = OrdenCompra()
                 regOrden.suplidor = Suplidor.objects.get(id=data['suplidor'])
                 regOrden.socio = Socio.objects.get(codigo=data['socio'])
-                regOrden.orden = data['orden']
+                regOrden.orden = int(data['orden'])
                 regOrden.fecha = data['fecha']
                 regOrden.monto = decimal.Decimal(data['monto'])
-                regOrden.cuotas = data['cuotas']
+                regOrden.cuotas = int(data['cuotas'])
                 regOrden.montocuotas = decimal.Decimal(data['montoCuotas'])
                 regOrden.estatus = False
                 regOrden.save()
@@ -42,46 +43,24 @@ class CxpOrdenView(DetailView):
                     regDetalle.save()
                     regOrden.detalleOrden.add(regDetalle)
 
-                for cuenta in dataCuentas:
-                    regCuenta = DiarioGeneral()
-                    if cuenta['cuenta'] is not None:
-                        regCuenta.cuenta = Cuentas.objects.get(codigo=cuenta['cuenta'])
-
-                    if cuenta['auxiliar'] is not None:
-                        regCuenta.auxiliar = Auxiliares.objects.get(codigo=cuenta['auxiliar'])
-
-                    regCuenta.fecha = cuenta['fecha']
-                    regCuenta.referencia = 'CXPO-' + str(regOrden.id)
-                    regCuenta.tipoDoc = TipoDocumento.objects.get(tipoDoc=cuenta['tipoDoc'])
-                    regCuenta.estatus = cuenta['estatus']
-                    regCuenta.debito = cuenta['debito']
-                    regCuenta.credito = cuenta['credito']
-                    regCuenta.save()
-                    regOrden.detalleCuentas.add(regCuenta)
-
             else:
 
                 regOrden = OrdenCompra.objects.filter(id=data['id'])
-                regOrden.monto = data['monto']
-                regOrden.cuotas = data['cuotas']
-                regOrden.montocuotas = data['montoCuotas']
+                regOrden.monto = decimal.Decimal(data['monto'])
+                regOrden.cuotas = int(data['cuotas'])
+                regOrden.montocuotas = decimal.Decimal(data['montoCuotas'])
                 regOrden.save()
 
                 for det in dataDet:
                     regDetalle = DetalleOrden.objects.filter(id=det.id)
                     regDetalle.articulo = det['articulo']
-                    regDetalle.monto = det['monto']
+                    regDetalle.monto = decimal.Decimal(det['monto'])
                     regDetalle.save()
 
-                for cuenta in dataCuentas:
-                    regCuenta = DiarioGeneral.objects.filter(id=cuenta['id'])
-                    regCuenta.debito = cuenta['debito']
-                    regCuenta.credito = cuenta['credito']
-                    regCuenta.save()
 
             return HttpResponse('1')
         except Exception as ex:
-            return HttpResponse(ex)
+             return HttpResponse(ex)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -115,24 +94,7 @@ class CxpOrdenView(DetailView):
                         'articulo': detalle.articulo,
                         'monto': detalle.monto
                     }
-                    for detalle in DetalleOrden.objects.filter(orden=ordenes.id)],
-                'detalleCuentas': [
-                    {
-                        'id': cuentas.id,
-                        'fecha': cuentas.fecha,
-                        'cuentaId': cuentas.cuenta.codigo,
-                        'cuenta': cuentas.cuenta.descripcion,
-                        'referencia': cuentas.referencia,
-                        'auxiliarId': cuentas.auxiliar.codigo if cuentas.auxiliar != None else '',
-                        'auxiliar': cuentas.auxiliar.descripcion if cuentas.auxiliar != None else '',
-                        'tipoDoc': cuentas.tipoDoc.tipoDoc,
-                        'estatus': cuentas.estatus,
-                        'debito': cuentas.debito,
-                        'credito': cuentas.credito,
-
-                    }
-                    for cuentas in DiarioGeneral.objects.filter(referencia='CXPO-' + str(ordenes.id))
-                ]
+                    for detalle in DetalleOrden.objects.filter(orden=ordenes.id)]
             })
         return JsonResponse(data, safe=False)
 

@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cxp', '0006_remove_detalleorden_orden'),
+        ('prestamos', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='detalleorden',
-            name='orden',
-            field=models.PositiveIntegerField(default=1, verbose_name=b'Orden'),
-            preserve_default=False,
+            model_name='maestraprestamo',
+            name='quincenas',
+            field=models.PositiveIntegerField(default=2),
+            preserve_default=True,
         ),
     ]

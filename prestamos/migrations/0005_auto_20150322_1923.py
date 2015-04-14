@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cxp', '0007_detalleorden_orden'),
+        ('prestamos', '0004_auto_20150322_1812'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ordencompra',
-            name='estatus',
-            field=models.CharField(max_length=1, verbose_name=b'Estatus', choices=[(b'A', b'Activas'), (b'I', b'Inactivas'), (b'P', b'Posteada')]),
+            model_name='maestraprestamo',
+            name='posteadoFecha',
+            field=models.DateField(null=True),
             preserve_default=True,
         ),
     ]

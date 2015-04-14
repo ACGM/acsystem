@@ -7,12 +7,12 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cxp', '0001_initial'),
+        ('nominacoop', '0004_nominaprestamosahorros_infotipo'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='cxpsupercoop',
-            name='estatus',
+        migrations.AlterUniqueTogether(
+            name='cuotasprestamosempresa',
+            unique_together=set([('noPrestamo', 'nomina')]),
         ),
     ]

@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cxp', '0004_remove_ordencompra_estatus'),
+        ('prestamos', '0002_maestraprestamo_quincenas'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ordencompra',
-            name='estatus',
-            field=models.BooleanField(default=False),
+            model_name='maestraprestamo',
+            name='tipoNomina',
+            field=models.CharField(default=b'Regular', max_length=15),
             preserve_default=True,
         ),
     ]

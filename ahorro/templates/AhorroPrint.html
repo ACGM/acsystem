@@ -1,0 +1,75 @@
+<div class="ahorroPrint">
+	{% extends "base.html" %}
+	{% block title %} Retiro Socio {% endblock title %}
+
+	{% block content %}
+</div>
+
+<div ng-controller="ImprimirAhorroController" ng-init="registro()">
+	
+	<div class="header-ahorro">
+		<span class="printAHorroFecha">Fecha: [[fecha]]</span>
+		<table class="header-table">
+			<tr>
+				<td><strong>Código socio:</strong> </td>
+				<td>[[ahorroDt.socioId]]</td>
+			</tr>
+			<tr>
+				<td><strong>Nombre:</strong> </td>
+				<td>[[ahorroDt.socio]]</td>
+			</tr>
+			<tr>
+				<td><strong>Balance: </strong></td>
+				<td>[[ahorroDt.balance |number: 2]]</td>
+			</tr>
+			<tr>
+				<td><strong>Disponible: </strong></td>
+				<td>[[ahorroDt.disponible |number: 2]]</td>
+			</tr>
+		</table>
+	</div>
+	<div class="body-ahorro">
+			<p>
+				<span>
+					<strong>Fecha</strong>
+				</span>
+				<span>
+					<strong>Tipo de Retiro</strong>
+				</span>
+				<span>
+					<strong>Monto</strong>
+				</span>
+			</p>
+			<p>
+				<span>
+					[[retiro.fecha | date: 'dd/MM/yyyy']]
+				</span>
+				<span>
+					[[retiro.tipo]]
+				</span>
+				<span>
+					[[retiro.monto |number:2]]
+				</span>
+			</p>
+	</div>
+	<div class="footer-ahorro">
+		<table>
+			<tr>
+				<td>____________________________________</td>
+			</tr>
+			<tr>
+			<td>
+				Firma Socio: [[ahorroDt.socio]]
+			</td>
+				
+			</tr>
+		</table>
+		
+	</div>
+	<div class="ahorroPrint">
+		<button class="Boton  Boton-down icon-printer" ng-click="imprimir()">
+			Imprimir
+		</button>
+	</div>
+</div>
+{% endblock content %}

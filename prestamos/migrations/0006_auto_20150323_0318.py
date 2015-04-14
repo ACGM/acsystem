@@ -7,12 +7,16 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cxp', '0003_cxpsupercoop_estatus'),
+        ('prestamos', '0005_auto_20150322_1923'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='ordencompra',
-            name='estatus',
+            model_name='maestraprestamo',
+            name='montoCuotaQ1',
+        ),
+        migrations.RemoveField(
+            model_name='maestraprestamo',
+            name='montoCuotaQ2',
         ),
     ]

@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title%} Diario General {% endblock title %}
+{% block title%} Mayor General {% endblock title %}
 
 {% block content%}
-<section ng-controller="ContabilidadController" >
+<section ng-controller="MayorController" >
 	<div class="sub-menu">	
-				<a href="#" ng-click="toggleLF()">Diario General</a>
-			<!-- <a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a> -->
+				<a href="#" ng-click="toggleLF()">Mayor General</a>
+			
 	</div>
 	<section class="DiarioSearch" >
-		<div ng-init="FillResult()">
+		<div ng-init="getMayor()">
 			<div class="DiarioHidenTable">
 				<table class="cuentas-table-search" ng-show="tableCuentas">
 							<tr>
@@ -24,22 +24,6 @@
 							<tr ng-repeat="c in cuentas" class="socios-table-detail-search">
 								<td><a href="#" class="select-item" ng-click="selCuenta($event,c)"> [[c.codigo]] </a></td>
 								<td><a href="#" class="select-item" ng-click="selCuenta($event,c)"> [[c.descripcion]] </a></td>
-							</tr>
-						</table>
-
-				<table class="aux-table-search" ng-show="tableAux">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableAux=false"></a>
-								</td>
-							</tr>
-							<tr class="socios-table-header">
-								<td>Codigo</td>
-								<td>descripcion</td>
-							</tr>
-							<tr ng-repeat="a in aux" class="socios-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="selAux($event,a)"> [[a.codigo]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selAux($event,a)"> [[a.descripcion]] </a></td>
 							</tr>
 						</table>
 			</div>
@@ -62,16 +46,8 @@
 								
 								<span class="error-ei"> [[cuentaNoExiste]]</span>
 				</td>
-				<tr>
-					<td colspan="2">
-						<label for="SAux">Auxiliar</label> 
-							<input type="text" ng-model="SAux" ng-keyup="getAux($event)" ng-focus="tableAux=false" ng-click="tableAux=false; errorShow=false; getAux($event);" class="producto-field-ei" style="margin:.5em">
-								
-								<span class="error-ei"> [[auxNoExiste]]</span>
-					</td>
-				</tr>
 			</table>
-			<button class="Boton  BusquedaBtn" ng-click="FillResult()">Buscar <span class="icon-uniE601"></span></button>
+			<button class="Boton  BusquedaBtn" ng-click="result()">Buscar <span class="icon-uniE601"></span></button>
 
 
 			<button class="Boton BusquedaBtn danger" ng-click="Clear()">Limpiar <span class="icon-notification"></span></button>
@@ -86,25 +62,22 @@
 				<tr class="listado-table-header-f">
 					<td>Fecha</td>
 					<td>Cuenta</td>
-					<td>Aux</td>
-					<td>Ref</td>
 					<td>Debito</td>
 					<td>Credito</td>
 				</tr>
-				<tr ng-repeat="reg in diario" class"listado-Dr-detail" >
+				<tr ng-repeat="reg in dataMayor" class"listado-Dr-detail" >
 					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
 					<td style="padding-left:.5em;">[[reg.cuenta ]]</td>
-					<td style="padding-left:.5em;">[[reg.auxiliar ]]</td>
-					<td style="padding-left:.5em;">[[reg.ref]]</td>
 					<td style="text-align:right; padding-right:.5em;">[[reg.debito | number: 2 ]]</td>
 					<td style="text-align:right; padding-right:.5em;">[[reg.credito | number: 2]]</td>
 				</tr>
 				<tr class="[[panelTotal]]">
-					<td colspan="4"></td>
+					<td colspan="2"></td>
 					<td>[[totalDebito | number:2]]</td>
 					<td>[[totalCredito | number:2 ]]</td>
 				</tr>
 			</table>
+			
 		</div>
 	</section>
 </section>
