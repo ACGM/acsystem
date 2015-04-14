@@ -1,13 +1,7 @@
 node_modules
 *.log
-*.pyc
+**/*.pyc
 ./**/migrations
 *.bat
 .idea/
-prestamos/migrations
-inventario/migrations
-facturacion/migrations
-fondoscajas/migrations
-administracion/migrations
-nominacoop/migrations
 
