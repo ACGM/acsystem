@@ -5,7 +5,7 @@
             function getAll() {
                 var deferred = $q.defer();
 
-                $http.get('cxp/')
+                $http.get('cxpOrdenJson/?format=json')
                     .success(function (data) {
                         deferred.resolve(data)
                     })
@@ -117,6 +117,8 @@
                 $scope.getcxpSup = function(){
                     $scope.cxpFilterData= cxpService.getCxpBySuplidor($scope.idSuplidor);
                 }
+
+                
 
                                 } ])
 })(_);

@@ -116,7 +116,7 @@
 									<div ng-if="registro.estatus =='O' "> 
 										<input id="postRetiro" type="checkbox" checked="true" disabled>
 									</div>
-									<div ng-if="registro.estatus =='O' "> 
+									<div ng-if="registro.estatus =='I' "> 
 										<input id="postRetiro" type="checkbox" disabled>
 									</div>
 									<div ng-if="registro.estatus == 'A'">
@@ -132,7 +132,7 @@
 										<span class='utils-gr utils-noDecoration icon-pencil'> </span>
 									</div>
 								</td>
-								<td>[[registro.fecha]]</td>
+								<td>[[registro.fecha |date: DD/mm/yyyy]]</td>
 								<td>[[registro.monto |number:2]]</td>
 								<td>[[registro.balance |number:2]]</td>
 							    <td>
@@ -151,8 +151,11 @@
 							</table>
 							
 						</div>
-						<button class="Boton BusquedaBtn icon-file" ng-click="newRetiro()">Registrar Retiro</button>
+							<button class="Boton BusquedaBtn icon-file" ng-click="newRetiro()">Registrar Retiro</button>
 							<button class="Boton BusquedaBtn danger icon-delete" ng-click="NoMaestra()">Cancelar</button>
+							<div>
+								<button class="Boton BusquedaBtn icon-cog" ng-click="postearAHorro()">Postear Registro</button>
+							</div>
 					</div>
 				</div>
 			</section>

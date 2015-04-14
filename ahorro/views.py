@@ -70,7 +70,7 @@ class MaestraAhorroView(DetailView):
                     'id': retiro.id,
                     'socio': retiro.socio.codigo,
                     'fecha': retiro.fecha,
-                    'estatus' : retiro.estatus,
+                    'estatus': retiro.estatus,
                     'tipo': retiro.tipoRetiro,
                     'monto': retiro.monto
                 })
@@ -97,11 +97,12 @@ class RetirosAhorroViewSet(viewsets.ModelViewSet):
     queryset = RetiroAhorro.objects.all()
     serializer_class = RetiroAhorroSerializer
 
+
 class impRetiroAHorro(TemplateView):
-    template_name ="AhorroPrint.html"
+    template_name = "AhorroPrint.html"
+
 
 class AhorroView(TemplateView):
-
     template_name = 'ahorro.html'
 
     def post(self, request, *args, **kwargs):
@@ -133,14 +134,9 @@ class AhorroView(TemplateView):
                 regMaestra.estatus = 'A'
                 regMaestra.save()
 
-                regAhorro.balance = regAhorro.balance - decimal.Decimal(data['monto'])
-                regAhorro.disponible = regAhorro.disponible - decimal.Decimal(data['monto'])
-                regAhorro.save()
-
             elif data['estatus'] == 'I':
                 regRet = RetiroAhorro.objects.get(id=data['id'])
 
-                montoAnt = regRet.monto
                 regRet.estatus = data['estatus']
                 regRet.save()
 
@@ -148,15 +144,21 @@ class AhorroView(TemplateView):
                 regMaestra.estatus = data['estatus']
                 regMaestra.save()
 
-                regAhorro.balance = (regAhorro.balance + montoAnt)
-                regAhorro.disponible = (regMaestra.balance + montoAnt)
+            elif data['estatus' == "P"]:
+                regRet = RetiroAhorro.objects.get(id=data['id'])
+                regMaestra = MaestraAhorro.objects.get(retiro=regRet)
+
+                regAhorro.disponible = regAhorro.disponible - regMaestra.monto
+                regAhorro.balance = regAhorro.balance - regMaestra.monto
                 regAhorro.save()
+
+                regMaestra.balance = regAhorro.balance
+                regMaestra.save()
 
             elif data['estatus'] == 'A':
                 regRet = RetiroAhorro.objects.get(id=data['id'])
 
                 montoRetAnt = regRet.monto
-
 
                 regRet.tipoRetiro = data['tipo']
                 regRet.estatus = data['estatus']
@@ -164,22 +166,46 @@ class AhorroView(TemplateView):
                 regRet.save()
 
                 regMaestra = MaestraAhorro.objects.get(id=data['maestraId'])
-                regNaestra.monto = decimal.Decimal(data['monto'])
+                regMaestra.monto = decimal.Decimal(data['monto'])
                 regMaestra.balance = (regMaestra.balance + montoRetAnt) - decimal.Decimal(data['monto'])
                 regMaestra.estatus = data['estatus']
                 regMaestra.save()
 
-                regAhorro.balance = (regAhorro.balance + montoRetAnt) - decimal.Decimal(data['monto'])
-                regAhorro.disponible = regMaestra.balance
-                regAhorro.save()
             else:
-                 return HttpResponse('0')
-
+                return HttpResponse('0')
 
             return HttpResponse('1')
 
         except Exception as ex:
             return HttpResponse(ex)
+
+
+class MaestraAhorroApi(DetailView):
+    queryset = MaestraAhorro.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+
+        regSocio = Socio.objects.get(codigo=data['socio'])
+        regAhorro = AhorroSocio.objects.get(socio=regSocio)
+
+        regMaestra = MaestraAhorro()
+        regMaestra.ahorro = regAhorro
+        regAhorro.fecha = data['fecha']
+        regAhorro.monto = data['monto']
+        regMaestra.interes = InteresesAhorro.objects.get(id=1)
+        regMaestra.balance = regAhorro.disponible + decimal.Decimal(data['monto'])
+        regMaestra.estatus = 'A'
+        regMaestra.save()
+
+        regAhorro.balance = regAhorro.balance + data['monto']
+        regAhorro.disponible = regAhorro.disponible + data['monto']
+        regAhorro.save()
+
+
+
+
+
 
 
 

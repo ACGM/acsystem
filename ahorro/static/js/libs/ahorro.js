@@ -194,7 +194,6 @@
 					AhorroServices.setAhorroReg($scope.retiro).then(function (data){
 						
 					});
-					debugger;
 					 $window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
 
 					$scope.getListaAhorro();
@@ -220,7 +219,6 @@
                     		var salida = reg.maestra.filter(function(ret){
                     			return ret.retiro != '0';
                     		});
-                    		console.log(salida);
                     		return salida;
                     	});
                     });
@@ -230,7 +228,6 @@
                    	var xj = $scope.Ahorros.filter(function (data){
                    		return data.id==Id;
                    	});
-                   	debugger;
                    	 $window.sessionStorage['ahorro'] = JSON.stringify(xj[0]);
                    	$scope.retiro['socio'] = xj[0].socioId;
                    	
@@ -285,6 +282,11 @@
 	            }
 	          };
             
+	       	$scope.postearAHorro = function(){
+	       		
+	       		 $scope.showPostear = true;
+	       	};
+
 	       	$scope.selSocio = function($event, s) {
 	       		$event.preventDefault();
 
@@ -369,5 +371,14 @@
 
 
 
-		}]); 
+		}])
+.controller('ImpHistorico', ['$scope', '$filter','$window', '$rootScope', 'AhorroServices','$timeout',
+								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){
+
+				$scope.AhorroDataRegistro = JSON.parse($window.sessionStorage['historico']);
+				$scope.ahorroDt={}
+				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+
+}]); 
 })(_);

@@ -34,7 +34,6 @@ class RetiroAhorro(models.Model):
 
     fecha = models.DateField()
     socio = models.ForeignKey(Socio)
-    # ahorro = models.ForeignKey(AhorroSocio)
     tipoRetiro = models.CharField(max_length=1, choices=retiro_choicer, verbose_name="Tipo de Retiro")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus", default="A")
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=0.00,

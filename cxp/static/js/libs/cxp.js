@@ -132,10 +132,11 @@
                 return deferred.promise;
             }
 
-            function setOrden(Orden, Detalle, Diario){
+            function setOrden(Orden, Detalle){
                 var deferred = $q.defer();
-
-                $http.post('/cxpOrdenJson/', JSON.stringify({'Orden':Orden, 'Detalle':Detalle, 'Diario':Diario }))
+                console.log(Orden);
+                console.log(Detalle);
+                $http.post('/cxpOrdenJson/', JSON.stringify({'Orden':Orden, 'Detalle':Detalle}))
                     .success(function (data){
                         deferred.resolve(data);
                     })
@@ -160,10 +161,11 @@
         }])
         .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout',
             function($scope, $filter, $rootScope, cxpService, $timeout){
-                $scope.cxpData = null;
+                $scope.cxpData = [];
                 $scope.cxpDataDetalle = [];
-                $scope.cxpDiario = null;
-                $scope.cxpFilterData = null;
+                $scope.cxpDiario = [];
+                $scope.cxpFilterData = [];
+                $scope.cxpDataReg =[];
                 $scope.fechaI = null;
                 $scope.fechaF = null;
                 $scope.socioId = null;
@@ -181,6 +183,8 @@
                 $scope.OrdenReg = false;
                 $scope.OrdenList = true;
                 $scope.getdate = false;
+                $scope.selectSocio = null;
+                $scope.detallesOrd={};
 
                 
             $scope.nuevaOrden = function(){
@@ -193,17 +197,11 @@
                 $scope.cxpFilterData = null;
                 $scope.suplidorNombre = null;
                 $scope.socioNombre = null;
-
-                $scope.addDetalle();
-
+                $scope.cxpDataDetalle = [];
+                $scope.cxpDiario = [];
+                $scope.detallesOrd = {};
+                $scope.cxpDataReg.estatus = false;
             };
-
-            $scope.addDetalle = function(){
-                    var detalle ={};
-                        detalle.articulo="";
-                        detalle.monto =0;
-                    $scope.cxpDataDetalle.push(detalle);
-                };
 
             $scope.toggleLF= function(){
         
@@ -254,6 +252,37 @@
                      $scope.OrdenReg = true;
                 }
             };
+
+            $scope.guardarOrden = function($event){
+                debugger;
+                var result = cxpService.setOrden($scope.cxpDataReg, $scope.cxpDataDetalle);
+
+                console.log(result);
+            }
+
+            $scope.calcMonto = function(){
+                var total=0;
+
+                 var detalle ={};
+                    detalle.articulo = $scope.detallesOrd.articulo;
+                    detalle.monto = $scope.detallesOrd.monto;
+
+                $scope.cxpDataDetalle.push(detalle);
+
+                if($scope.cxpDataDetalle != undefined){
+                    
+                    for (i = 0; i < $scope.cxpDataDetalle.length; i++){
+                        total = total + parseInt($scope.cxpDataDetalle[i].monto);
+                    }
+                    $scope.cxpDataReg.monto=total;
+                    $scope.cxpDataReg.montoCuotas=total/36;
+                    $scope.cxpDataReg.cuotas = 36;
+
+                    $scope.detallesOrd.articulo = "";
+                    $scope.detallesOrd.monto = 0;
+
+            }
+            }   
 
             $scope.getSuplidor = function($event){
                     $event.preventDefault();
@@ -316,17 +345,18 @@
             
             $scope.selSocio = function($event, s) {
                 $event.preventDefault();
-
+                
                 $scope.socioNombre = s.nombreCompleto;
-                $scope.cxpFilterData.socio = s.codigo;
+                $scope.cxpDataReg.socioId = s.codigo;
                 $scope.tableSocio = false;
+                
               };
 
             $scope.selSuplidor = function($event, s) {
                 $event.preventDefault();
 
                 $scope.suplidorNombre = s.nombre;
-                $scope.cxpFilterData.suplidor = s.id;
+                $scope.cxpDataReg.suplidorId = s.id;
                 $scope.tableSuplidor= false;
               };
 
@@ -335,7 +365,6 @@
                     cxpService.getAll().then(function (data){
                         var datar = data;
                         $scope.cxpData = datar;
-                        console.log(data);
                     });
                     
                 }  
@@ -363,7 +392,7 @@
             };
 
             $scope.getCxpByDate = function(){
-                $scope.cxpFilterData=cxpService.getCxpByDate($scope.fechaI,$scope.fechaF);
+                $scope.cxpFilterData=cxpService.getCxpByDate($scope.fechaI, $scope.fechaF);
             };
 
             $scope.getCxpSocio = function(){
@@ -374,16 +403,7 @@
                 $scope.cxpFilterData= cxpService.getCxpBySuplidor($scope.idSuplidor);
             };
 
-            $scope.guardarOrden = function($event) {
-                try {
-                  
-                }
-                catch(ex){
-                    console.log("error "+ex.message);
-                }
-            };
-
-
+          
                                 } ]
                                 );
 })(_);
