@@ -207,7 +207,7 @@ class Socio(models.Model):
 	salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
 	cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, blank=True, null=True)
 	tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=1, default='1', blank=True, null=True)
-	foto = models.ImageField(upload_to='administracion', blank=True, null=True)
+	foto = models.FileField(upload_to='administracion', blank=True, null=True)
 	nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
 
 	cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, default=0)

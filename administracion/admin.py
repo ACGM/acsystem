@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from acgm.actions import export_as_excel
+
 from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
@@ -148,6 +150,7 @@ class SocioAdmin(admin.ModelAdmin):
 	search_fields = ('codigo','nombres','apellidos','cuentaBancaria')
 	list_filter = ('departamento', 'estatus')
 	raw_id_fields = ('departamento',)
+	actions = (export_as_excel,)
 
 	def save_model(self, request, obj, form, change):
 		obj.userLog = request.user
