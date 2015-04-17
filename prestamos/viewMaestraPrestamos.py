@@ -9,7 +9,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import MaestraPrestamosListadoSerializer
+from .serializers import MaestraPrestamosListadoSerializer, BalancePrestamosSocioSerializer
 
 from .models import MaestraPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
@@ -38,6 +38,38 @@ class MaestraPrestamosAPIView(APIView):
 			prestamos = MaestraPrestamo.objects.filter(noPrestamo=prestamo)
 		else:
 			prestamos = MaestraPrestamo.objects.all().order_by('-noPrestamo')
+
+		response = self.serializer_class(prestamos, many=True)
+		return Response(response.data)
+
+
+# Listado de Prestamos por Socio
+class PrestamosBySocioAPIView(APIView):
+
+	serializer_class = MaestraPrestamosListadoSerializer
+
+	def get(self, request, socio):
+		prestamos = MaestraPrestamo.objects.filter(socio__codigo=socio)
+
+		response = self.serializer_class(prestamos, many=True)
+		return Response(response.data)
+
+
+# Listado de Prestamos por Socio
+class BalancePrestamosBySocioAPIView(APIView):
+
+	serializer_class = BalancePrestamosSocioSerializer
+
+	def get(self, request, socio):
+		prestamos = MaestraPrestamo.objects.raw('SELECT \
+													p.id, \
+													p.socio_id, \
+													SUM(p.balance) balance \
+												FROM prestamos_maestraprestamo p \
+												INNER JOIN administracion_socio s ON s.id = p.socio_id \
+												GROUP BY p.socio_id \
+												HAVING s.codigo =' + socio \
+												)
 
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)

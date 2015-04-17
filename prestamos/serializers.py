@@ -44,6 +44,16 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 		ordering = ('-noPrestamo',)
 
 
+# Listado de Prestamos (Balance Socio)
+class BalancePrestamosSocioSerializer(serializers.ModelSerializer):
+	socio = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = MaestraPrestamo
+		fields = ('codigoSocio', 'socio', 'balance')
+		ordering = ('-codigoSocio',)
+
+
 # Prestamos Unificados
 class PrestamosUnificados(serializers.HyperlinkedModelSerializer):
 

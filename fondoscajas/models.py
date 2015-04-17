@@ -58,6 +58,9 @@ class DesembolsoH(models.Model):
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 	modificado = models.DateField(auto_now=True, editable=False)
 
+	def get_absolute_url(self):
+		return '/desembolso/print/%i' % (self.id)
+
 	def __unicode__(self):
 		return '%i' % (self.id)
 

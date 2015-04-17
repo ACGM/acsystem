@@ -230,6 +230,26 @@
         return deferred.promise;
       }
 
+      //Solicitudes de Prestamos Emitadas en un rango de fecha.
+      function solicitudesPrestamosEmitidas(fechaI, fechaF) {
+        var deferred = $q.defer();
+
+        var fechaInicio = fechaI.split('/');
+        var fechaInicioFormatted = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+        var fechaFin = fechaF.split('/');
+        var fechaFinFormatted = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+        var url = "/api/prestamos/solicitudes/prestamos/emitidos/{fechaI}/{fechaF}/?format=json".replace("{fechaI}", fechaInicioFormatted).replace('{fechaF}', fechaFinFormatted);
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
 
       return {
         solicitudesprestamos          : solicitudesprestamos,
@@ -243,7 +263,8 @@
         SolicitudPById                : SolicitudPById,
         getAutorizadores              : getAutorizadores,
         getRepresentantes             : getRepresentantes,
-        ValidaAutorizador             : ValidaAutorizador
+        ValidaAutorizador             : ValidaAutorizador,
+        solicitudesPrestamosEmitidas  : solicitudesPrestamosEmitidas
       };
 
     }])
@@ -791,7 +812,30 @@
         $scope.toggleLSP();
       }
 
-        //Imprimir solicitud de prestamo
+      //Reporte Solicitudes de Prestamos Emitidas
+      $scope.solprestamosEmitidas = function() {
+        $scope.totalMontoSolicitado = 0;
+        $scope.totalNetoDesembolsar = 0;
+
+        try {
+          SolicitudPrestamoService.solicitudesPrestamosEmitidas($scope.fechaInicio, $scope.fechaFin).then(function (data) {
+            $scope.registros = data;
+
+            if(data.length > 0) {
+              data.forEach(function (item) {
+                $scope.totalMontoSolicitado += parseFloat(item.montoSolicitado);
+                $scope.totalNetoDesembolsar += parseFloat(item.netoDesembolsar);
+              });
+            }
+
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
+        }
+      }
+
+      //Imprimir solicitud de prestamo
       $scope.ImprimirSolicitud = function(solicitud) {
         $window.sessionStorage['solicitud'] = JSON.stringify(solicitud);
         $window.open('/prestamos/print/solicitudP/', target='_blank'); 

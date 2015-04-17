@@ -30,6 +30,85 @@ class DesembolsoPrestamosView(LoginRequiredMixin, TemplateView):
 	template_name = 'desembolsoelectronico.html'
 
 
+#Vista para Notas de Debito
+class NotaDeDebitoView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'notasdebito.html'
+
+
+#Vista para Notas de Credito
+class NotaDeCreditoView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'notascredito.html'
+
+
+#Vista para Notas de Credito Especiales
+class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'notacreditoespecial.html'
+
+
+#Imprimir Solicitud de Prestamo
+class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_solicitudprestamo.html'
+
+
+#Imprimir Solicitud de Prestamo
+class ImprimirRecibidoConformeView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'print_recibidoconforme.html'
+
+
+#Reporte de Solicitudes de Prestamos Emitidas
+class rptSolPrestamosEmitidas(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_solprestamos.html'
+
+
+# Listado de Solicitudes de Prestamos
+class SolicitudesPrestamosAPIView(APIView):
+
+	serializer_class = SolicitudesPrestamosSerializer
+
+	def get(self, request, solicitud=None):
+		if solicitud != None:
+			solicitudes = SolicitudPrestamo.objects.filter(noSolicitud=solicitud)
+		else:
+			solicitudes = SolicitudPrestamo.objects.all().order_by('-noSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Listado de Solicitudes de Prestamos Por Codigo de Socio
+class SolicitudesPrestamosAPIViewByCodigoNombre(APIView):
+
+	serializer_class = SolicitudesPrestamosSerializer
+
+	def get(self, request, codigo=None, nombre=None):
+		if codigo != None:
+			solicitudes = SolicitudPrestamo.objects.filter(socio__codigo=codigo).order_by('-noSolicitud')
+		else:
+			solicitudes = SolicitudPrestamo.objects.filter(socio__nombreCompleto__contains=nombre).order_by('-noSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Listado de Solicitudes de Prestamos Por Rango de Fecha
+class SolicitudesPrestamosAPIViewByRangoFecha(APIView):
+
+	serializer_class = SolicitudesPrestamosSerializer
+
+	def get(self, request, fechaInicio, fechaFin):
+		
+		solicitudes = SolicitudPrestamo.objects.filter(fechaSolicitud__range=(fechaInicio, fechaFin)).order_by('-fechaSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
 #Vista para Solicitud de Prestamo  -- El POST guarda la Solicitud de Prestamo
 class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
@@ -96,25 +175,6 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			return HttpResponse(e)
 		
 
-
-#Vista para Notas de Debito
-class NotaDeDebitoView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'notasdebito.html'
-
-
-#Vista para Notas de Credito
-class NotaDeCreditoView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'notascredito.html'
-
-
-#Vista para Notas de Credito Especiales
-class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'notacreditoespecial.html'
-
-
 # Verificar Autorizador
 class validarAutorizadorView(LoginRequiredMixin, View):
 
@@ -134,36 +194,6 @@ class validarAutorizadorView(LoginRequiredMixin, View):
 
 		except Exception as e:
 			return HttpResponse(e)
-
-
-# Listado de Solicitudes de Prestamos
-class SolicitudesPrestamosAPIView(APIView):
-
-	serializer_class = SolicitudesPrestamosSerializer
-
-	def get(self, request, solicitud=None):
-		if solicitud != None:
-			solicitudes = SolicitudPrestamo.objects.filter(noSolicitud=solicitud)
-		else:
-			solicitudes = SolicitudPrestamo.objects.all().order_by('-noSolicitud')
-
-		response = self.serializer_class(solicitudes, many=True)
-		return Response(response.data)
-
-
-# Listado de Solicitudes de Prestamos Por Codigo de Socio
-class SolicitudesPrestamosAPIViewByCodigoNombre(APIView):
-
-	serializer_class = SolicitudesPrestamosSerializer
-
-	def get(self, request, codigo=None, nombre=None):
-		if codigo != None:
-			solicitudes = SolicitudPrestamo.objects.filter(socio__codigo=codigo).order_by('-noSolicitud')
-		else:
-			solicitudes = SolicitudPrestamo.objects.filter(socio__nombreCompleto__contains=nombre).order_by('-noSolicitud')
-
-		response = self.serializer_class(solicitudes, many=True)
-		return Response(response.data)
 
 
 # Desglose de Solicitud de Prestamo
@@ -373,16 +403,4 @@ class PostearPrestamosODView(LoginRequiredMixin, View):
 
 		except Exception as e:
 			return HttpResponse(e)
-
-
-#Imprimir Solicitud de Prestamo
-class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'print_solicitudprestamo.html'
-
-
-#Imprimir Solicitud de Prestamo
-class ImprimirRecibidoConformeView(LoginRequiredMixin, TemplateView):
-
-	template_name = 'print_recibidoconforme.html'
 
