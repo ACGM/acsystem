@@ -120,7 +120,9 @@
 						<td>Codigo de empleado</td>
 						<td>
 							<div class="codigo-empleado-field"> 
-								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required><a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event)"></a>
+								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
+
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event);"></a>
 							</div>
 						</td>
 					</tr>
@@ -144,7 +146,7 @@
 							<select name="autorizador" id="autorizador" ng-model="solicitante.autorizadoPor" ng-change="selectAutorizador()" ng-init="autorizadores()" required>
 								<option ng-repeat="autorizador in autorizadores" value="[[autorizador.userName]]">[[autorizador.userName]]</option>
 							</select>
-							<input type="password" place-holder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" autocomplete="off" ng-disabled="solicitante.pinValido">
+							<input type="password" placeholder="PIN" ng-model="solicitante.autorizadorPin" ng-keypress="validaAutorizadorKey($event)" class="field-short" autocomplete="off" ng-disabled="solicitante.pinValido">
 						</td>
 					</tr>
 				</table>
@@ -207,6 +209,10 @@
 								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()" format="number"></td>
 							</tr>
 							<tr>
+								<td>Garante</td>
+								<td><input type="text" class="align-right" ng-model="solicitud.garante" placeholder="Código del garante"></td>
+							</tr>
+							<tr>
 								<td>Valor garantizado</td>
 								<td><input type="text" class="align-right" ng-model="solicitud.valorGarantizado" ng-change="montoNeto()" format="number"></td>
 							</tr>
@@ -216,7 +222,7 @@
 							</tr>
 							<tr>
 								<td>Neto a desembolsar</td>
-								<td><input class="monto-desembolsar-field" type="text" ng-model="solicitud.netoDesembolsar" readonly required></td>
+								<td class="align-right"><input class="monto-desembolsar-field" type="text" ng-model="solicitud.netoDesembolsar" readonly required></td>
 							</tr>
 							<tr>
 								<td colspan="2">Nota/Observacion</td>
@@ -338,26 +344,23 @@
 								</table>
 							</div>
 						</div>
-						<div class="unificar-prestamos-sec" ng-if="1 == 1">
+						<div class="unificar-prestamos-sec" ng-if="prestamosSocio.length > 0">
 							<div class="unificar-prestamos-title">
 								Unificar Prestamos
 							</div>
 
 							<table class="unificar-prestamos-table">
 								<tr>
-									<td><input type="checkbox"></td>
+									<td title="Seleccionar">Sel.</td>
 									<td>Prestamo</td>
 									<td>Capital</td>
 								</tr>
-								<tr>
-									<td><input type="checkbox"></td>
-									<td>00048875</td>
-									<td>20,500.56</td>
-								</tr>
-								<tr>
-									<td><input type="checkbox"></td>
-									<td>00048875</td>
-									<td>20,500.56</td>
+								<tr ng-repeat="p in prestamosSocio">
+									<td>
+										<input type="checkbox" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedReg(p)"> 
+									</td>
+									<td>[[p.noPrestamo | numberFixedLen : 9]]</td>
+									<td>[[p.balance | number : 2]]</td>
 								</tr>
 									
 							</table>

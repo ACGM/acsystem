@@ -93,6 +93,19 @@ class ListadoAlmacenesView(viewsets.ModelViewSet):
 	serializer_class = AlmacenesSerializer
 
 
+# Retorna Entradas de Inventario por suplidor y rango de fecha
+class EntradasInvBySuplidorRangoFecha(APIView):
+
+	serializer_class = EntradasInventarioSerializer
+
+	def get(self, request, suplidor, fechaInicio, fechaFin):
+		
+		entradas = InventarioH.objects.filter(suplidor__id=suplidor, fecha__range=(fechaInicio, fechaFin)).order_by('-fecha')
+
+		response = self.serializer_class(entradas, many=True)
+		return Response(response.data)
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Retornar un documento con todo su detalle (ENTRADA)
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -263,8 +276,6 @@ def reponer_producto(self, codProd, idAlmacen, salidaNo):
 
 	except Existencia.DoesNotExist:
 		return HttpResponse('No se pudo reponer la existencia del producto ' + str(codProd))
-
-
 
 
 # # # # # # # # # # # # # # # # # # # # # # #

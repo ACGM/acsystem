@@ -15,7 +15,7 @@ from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
                                 ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
                                 InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT, \
-                                ProcesarAjusteInvView
+                                ProcesarAjusteInvView, EntradasInvBySuplidorRangoFecha
 
 from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView, RPTVentasDiariasView, \
                                 RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView
@@ -182,10 +182,13 @@ urlpatterns = patterns('',
     url(r'^inventario/ajuste/$', AjusteInvView.as_view(), name='AjusteInventario'),
     url(r'^inventario/ajustejson/$', AjusteInventarioById.as_view(), name='AjusteInventarioById'),
     url(r'^inventario/transferencia/$', TransferenciaInvView.as_view(), name='TransferenciaInventario'),
-    url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     url(r'^inventario/eliminar/$', InventarioEliminarView.as_view(), name='Inventario_eliminar'),
     url(r'^inventario/salida/eliminar/$', InventarioSalidaEliminarView.as_view(), name='Inventario_salida_eliminar'),
     url(r'^inventario/procesarAjuste/$', ProcesarAjusteInvView.as_view(), name='Inventario_procesar_ajuste'),
+    url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
+    url(r'^api/inventario/entradas/(?P<suplidor>[\d]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', EntradasInvBySuplidorRangoFecha.as_view(), \
+                                                                                                            name='Entradas_por_suplidor_y_rangoFecha'),
+
     
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
@@ -263,6 +266,7 @@ urlpatterns = patterns('',
     url(r'^maestraPrestamos/prestamosOD/postear/$', PostearPrestamosODView.as_view(), name='postear_prestamosOD'),
     url(r'^api/prestamos/maestra/socio/detalle/(?P<socio>[\d]+)/$', PrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_detalle'),
     url(r'^api/prestamos/maestra/socio/balance/(?P<socio>[\d]+)/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
+    url(r'^api/prestamos/maestra/socio/balance/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     
 
     #Ahorro

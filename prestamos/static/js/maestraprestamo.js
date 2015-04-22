@@ -154,6 +154,34 @@
         return deferred.promise;
       }
 
+      //Buscar los prestamos de un socio (prestamos aprobados)
+      function prestamosDetalleByCodigoSocio(socio) {
+        var deferred = $q.defer();
+
+        $http.get('/api/prestamos/maestra/socio/detalle/{socio}/?format=json'.replace('{socio}', socio))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Buscar los balances de prestamos de un socio (undefined = todos)
+      function prestamosBalanceByCodigoSocio(socio) {
+        var deferred = $q.defer();
+
+        if(socio == undefined) {
+          url = '/api/prestamos/maestra/socio/balance/?format=json';
+        } else {
+          url = '/api/prestamos/maestra/socio/balance/{socio}/?format=json'.replace('{socio}', socio);
+        }
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byNoPrestamo : byNoPrestamo,
@@ -162,7 +190,9 @@
         MarcarPrestamoDC : MarcarPrestamoDC,
         PostearPrestamosOD : PostearPrestamosOD,
         PrestamosPosteados : PrestamosPosteados,
-        guardarCambios : guardarCambios
+        guardarCambios : guardarCambios,
+        prestamosDetalleByCodigoSocio : prestamosDetalleByCodigoSocio,
+        prestamosBalanceByCodigoSocio : prestamosBalanceByCodigoSocio
       };
 
     }])

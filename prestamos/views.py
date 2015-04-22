@@ -157,6 +157,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
 			SolPrestamo.fechaParaDescuento = fechaDescuento
+			SolPrestamo.garante = Socio.objects.get(codigo=solicitud['garante'])
 
 			SolPrestamo.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual'])
 			SolPrestamo.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
@@ -245,6 +246,7 @@ class SolicitudPrestamoById(LoginRequiredMixin, DetailView):
 				'fechaAprobacion': solicitud.fechaAprobacion if solicitud.fechaAprobacion != None else '',
 				'fechaRechazo': solicitud.fechaRechazo if solicitud.fechaRechazo != None else '',
 				'estatus': solicitud.estatus,
+				'garante': solicitud.garante.codigo,
 				'prestamo': solicitud.prestamo,
 				'userLog': solicitud.userLog.username,
 				'datetimeServer': solicitud.datetimeServer,

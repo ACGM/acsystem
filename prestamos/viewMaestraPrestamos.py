@@ -60,16 +60,28 @@ class BalancePrestamosBySocioAPIView(APIView):
 
 	serializer_class = BalancePrestamosSocioSerializer
 
-	def get(self, request, socio):
-		prestamos = MaestraPrestamo.objects.raw('SELECT \
-													p.id, \
-													p.socio_id, \
-													SUM(p.balance) balance \
-												FROM prestamos_maestraprestamo p \
-												INNER JOIN administracion_socio s ON s.id = p.socio_id \
-												GROUP BY p.socio_id \
-												HAVING s.codigo =' + socio \
-												)
+	def get(self, request, socio=None):
+		if socio == None:
+			prestamos = MaestraPrestamo.objects.raw('SELECT \
+														p.id, \
+														p.socio_id, \
+														SUM(p.balance) balance \
+													FROM prestamos_maestraprestamo p \
+													INNER JOIN administracion_socio s ON s.id = p.socio_id \
+													GROUP BY p.socio_id \
+													HAVING p.estatus = \'P\' \
+													\
+													')
+		else:
+			prestamos = MaestraPrestamo.objects.raw('SELECT \
+														p.id, \
+														p.socio_id, \
+														SUM(p.balance) balance \
+													FROM prestamos_maestraprestamo p \
+													INNER JOIN administracion_socio s ON s.id = p.socio_id \
+													GROUP BY p.socio_id \
+													HAVING p.estatus = \'P\' and s.codigo =' + socio \
+													)
 
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)

@@ -273,8 +273,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService',
-                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService) {
+    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -496,6 +496,9 @@
         $scope.solicitante.cedula = s.cedula;
         $scope.solicitante.salario = $filter('number')(s.salario,2);
         $scope.tableSocio = false;
+
+        $scope.getPrestamosBalances(s.codigo); //Buscar prestamos para unificar.
+
       }
 
       //Seleccionar Categoria de Prestamo
@@ -788,6 +791,8 @@
               $scope.solicitud.prestamo = data[0]['prestamo'] != undefined? $filter('numberFixedLen')(data[0]['prestamo'],8) : '';
               $scope.solicitud.estatus = data[0]['estatus'];
 
+              $scope.solicitud.garante = data[0]['garante'];
+
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
                 $scope.disabledButtonBool = false;
@@ -832,6 +837,23 @@
         } catch (e) {
           $scope.mostrarError(e);
           console.log(e);
+        }
+      }
+
+      //Traer prestamos para unificar.
+      $scope.getPrestamosBalances = function(socio) {
+        try {
+          MaestraPrestamoService.prestamosDetalleByCodigoSocio(socio).then(function (data) {
+            console.log(data);
+
+            if(data.length > 0) {
+              $scope.prestamosSocio = data;
+            } else {
+              throw data;
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
         }
       }
 

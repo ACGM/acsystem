@@ -432,11 +432,11 @@ class AplicarAhorros(View):
 
 			cuotas = CuotasAhorrosEmpresa.objects.filter(nomina=nomina, estatus='P')
 
-			#YEISON DEBE PROVEERME LA TABLA DONDE VOY A ESTAR GUARDANDO LA SUMA DEL NUEVO AHORRO
-			# for cuota in cuotas:
-			# 	prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
-			# 	prestamoMaestra.balance -= cuota.valorCapital + cuota.valorInteres
-			# 	prestamoMaestra.save()
+			#Sumar los montos de ahorros a los socios en el ahorro general.
+			for cuota in CuotasAhorrosEmpresa:
+				ahorro = AhorroSocio.objects.get(socio=cuota.socio)
+				ahorro.balance += cuota.valorAhorro
+				ahorro.save()
 
 			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
 			cuotas.update(estatus='A')
