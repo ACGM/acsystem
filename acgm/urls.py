@@ -188,7 +188,6 @@ urlpatterns = patterns('',
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     url(r'^api/inventario/entradas/(?P<suplidor>[\d]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', EntradasInvBySuplidorRangoFecha.as_view(), \
                                                                                                             name='Entradas_por_suplidor_y_rangoFecha'),
-
     
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),

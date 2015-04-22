@@ -120,7 +120,7 @@
 						<td>Codigo de empleado</td>
 						<td>
 							<div class="codigo-empleado-field"> 
-								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
+								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event);" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
 
 								<a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event);"></a>
 							</div>
@@ -356,7 +356,7 @@
 									<td>Capital</td>
 								</tr>
 								<tr ng-repeat="p in prestamosSocio">
-									<td>
+									<td class="align-center">
 										<input type="checkbox" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedReg(p)"> 
 									</td>
 									<td>[[p.noPrestamo | numberFixedLen : 9]]</td>

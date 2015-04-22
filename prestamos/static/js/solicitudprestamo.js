@@ -499,6 +499,12 @@
 
         $scope.getPrestamosBalances(s.codigo); //Buscar prestamos para unificar.
 
+        MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
+
+          if(data.length > 0) {
+            $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'],2);
+          }
+        });
       }
 
       //Seleccionar Categoria de Prestamo
@@ -569,7 +575,6 @@
         $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
         
         $scope.solicitud.ahorrosCapitalizados = "200,000";
-        $scope.solicitud.deudasPrestamos = "50,000";
 
         $scope.showLSP = false;
         $scope.ArrowLSP = 'DownArrow';
@@ -844,7 +849,6 @@
       $scope.getPrestamosBalances = function(socio) {
         try {
           MaestraPrestamoService.prestamosDetalleByCodigoSocio(socio).then(function (data) {
-            console.log(data);
 
             if(data.length > 0) {
               $scope.prestamosSocio = data;
