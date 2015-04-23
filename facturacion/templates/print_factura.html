@@ -50,24 +50,24 @@
 					<td>Codigo</td>
 					<td>Unidad</td>
 					<td>Descripcion</td>
-					<td>Cantidad</td>
-					<td>Precio</td>
-					<td>% Descuento</td>
-					<td>Monto</td>
+					<td class="align-right">Cantidad</td>
+					<td class="align-right">Precio</td>
+					<td class="align-right">% Descuento</td>
+					<td class="align-right">Monto</td>
 				</tr>
 				<tr ng-repeat="producto in dataD">
 					<td>[[producto.codigo]]</td>
 					<td>[[producto.unidad]]</td>
 					<td>[[producto.descripcion]]</td>
-					<td>[[producto.cantidad | number : 2]]</td>
-					<td>[[producto.precio | number : 2]]</td>
-					<td>[[producto.descuento]]%</td>
-					<td>[[producto.subtotal | number : 2]]</td>
+					<td class="align-right">[[producto.cantidad | number : 2]]</td>
+					<td class="align-right">[[producto.precio | number : 2]]</td>
+					<td class="align-right">[[producto.descuento]]%</td>
+					<td class="align-right">[[producto.subtotal | number : 2]]</td>
 				</tr>
 				<tr>
 					<td colspan="5">TOTALES:</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
+					<td class="align-right">[[totalDescuento_ | number : 2]]</td>
+					<td class="align-right">[[totalValor_ | number : 2]]</td>
 				</tr>
 			</table>
 		</section>
@@ -87,18 +87,18 @@
 			<table>
 				<tr>
 					<td>SubTotal</td>
-					<td>[[totalValor_ | number : 2]]</td>
+					<td class="align-right">[[totalValor_ | number : 2]]</td>
 				</tr>
 				<tr>
 					<td>Descuento</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
+					<td class="align-right">[[totalDescuento_ | number : 2]]</td>
 				</tr>
 				<tr>
 					<td colspan="2"> <hr></td>
 				</tr>
 				<tr>
 					<td>Total RD$</td>
-					<td>[[totalValor_ - totalDescuento_ | number : 2]]</td>
+					<td class="align-right">[[totalValor_ - totalDescuento_ | number : 2]]</td>
 				</tr>
 				<tr>
 					<td colspan="2"> <hr></td>

@@ -161,16 +161,41 @@
         return deferred.promise;
       }
 
+      //Buscar solicitudes por suplidor y rango de fecha
+      function SolicitudesBySuplidorRangoFecha(suplidor, fechaI, fechaF) {
+        var deferred = $q.defer();
+
+        var fechaInicio = fechaI.split('/');
+        var FI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+        var fechaFin = fechaF.split('/');
+        var FF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+        if(suplidor == undefined) {
+          url = '/api/prestamos/solicitudes/od/fecha/{fechaI}/{fechaF}/'.replace('{fechaI}', FI).replace('{fechaF}', FF);
+
+        } else {
+          url = '/api/prestamos/solicitudes/od/suplidor/{suplidor}/{fechaI}/{fechaF}/'.replace('{suplidor}', suplidor).replace('{fechaI}', FI).replace('{fechaF}', FF);
+        }
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
-        solicitudesOD                 : solicitudesOD,
-        solicitudesODBySocio   : solicitudesODBySocio,
-        solicitudesODByEstatus : solicitudesODByEstatus,
-        categoriasPrestamos           : categoriasPrestamos,
-        cantidadCuotasODByMonto : cantidadCuotasODByMonto,
-        guardaSolicitudOD             : guardaSolicitudOD,
-        AprobarRechazarSolicitudes    : AprobarRechazarSolicitudes,
-        SolicitudODById               : SolicitudODById,
-        guardaSolicitudODDetalle      : guardaSolicitudODDetalle
+        solicitudesOD                   : solicitudesOD,
+        solicitudesODBySocio            : solicitudesODBySocio,
+        solicitudesODByEstatus          : solicitudesODByEstatus,
+        categoriasPrestamos             : categoriasPrestamos,
+        cantidadCuotasODByMonto         : cantidadCuotasODByMonto,
+        guardaSolicitudOD               : guardaSolicitudOD,
+        AprobarRechazarSolicitudes      : AprobarRechazarSolicitudes,
+        SolicitudODById                 : SolicitudODById,
+        guardaSolicitudODDetalle        : guardaSolicitudODDetalle,
+        SolicitudesBySuplidorRangoFecha : SolicitudesBySuplidorRangoFecha
       };
 
     }])
@@ -179,8 +204,9 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudODCtrl', ['$scope', '$filter', '$window', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 'InventarioService',
-                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService) {
+    .controller('SolicitudODCtrl', ['$scope', '$filter', '$window', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 
+                                    'InventarioService', 'MaestraPrestamoService',
+                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -201,6 +227,8 @@
       $scope.solicitudesSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
+
+      $scope.reporteSO = {};
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
@@ -431,9 +459,17 @@
         $scope.solicitante.cedula = s.cedula;
         $scope.solicitante.salario = $filter('number')(s.salario,2);
         $scope.tableSocio = false;
+
+        MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
+
+          if(data.length > 0) {
+            $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
+          }
+        });
+
       }
 
-      //Seleccionar Socio
+      //Seleccionar Categoria
       $scope.selCP = function($event, cp) {
         $event.preventDefault();
 
@@ -817,6 +853,72 @@
               $scope.mostrarError(data);
             }
           });
+        }
+      }
+
+      //Seleccionar Suplidor
+      $scope.selSuplidorRPT = function($event, supl) {
+        $event.preventDefault();
+
+        $scope.reporteSO.idSuplidor = supl.id;
+        $scope.reporteSO.suplidorNombre = supl.nombre;
+        $scope.tableSuplidor = false;
+      }
+
+      //Traer suplidores
+      $scope.getSuplidor = function($event) {
+        $event.preventDefault();
+        var suplidor = '';
+
+        if($event.type != 'click') {
+          suplidor = $scope.reporteSO.suplidorNombre;
+        }
+
+        if($scope.reporteSO.suplidorNombre == '' || $scope.reporteSO.suplidorNombre == undefined) {
+          $scope.reporteSO.idSuplidor = '';
+        }
+
+        try {
+          InventarioService.suplidores(suplidor).then(function (data) {
+
+            if(data.length > 0) {
+              $scope.suplidores = data;
+
+              $scope.tableSuplidor = true;
+              $scope.suplidorNoExiste = '';
+            } else {
+              $scope.tableSuplidor = false;
+              $scope.suplidorNoExiste = 'No existe el suplidor';
+              $scope.reporteSO.idSuplidor = '';
+            }
+          });
+
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      //Reporte Solicitudes de Ordenes de Despacho
+      $scope.solOrdenesDespacho = function() {
+        $scope.totalMontoSolicitado = 0;
+        $scope.totalNetoDesembolsar = 0;
+
+        try {
+          SolicitudOrdenDespachoService.SolicitudesBySuplidorRangoFecha($scope.reporteSO.idSuplidor, $scope.fechaInicio, $scope.fechaFin).then(function (data) {
+            $scope.registros = data; console.log(data)
+
+            if(data.length > 0) {
+              data.forEach(function (item) {
+                $scope.totalMontoSolicitado += parseFloat(item.montoSolicitado);
+                $scope.totalNetoDesembolsar += parseFloat(item.netoDesembolsar);
+              });
+            } else {
+              alert('No existen registros para mostrar.-')
+            }
+          }); 
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
         }
       }
 

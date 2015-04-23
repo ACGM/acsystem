@@ -187,6 +187,20 @@
         return deferred.promise;
       }
 
+      //Generar Archivo de Nomina para Balance de Prestamos
+      function generarArchivoPrestamosBalance(infoTipo, fechaNomina) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivos/prestamos/balance/', JSON.stringify({'infoTipo': infoTipo, 'fechaNomina': fechaNomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas        : nominasGeneradas,
         generaNomina            : generaNomina,
@@ -199,7 +213,8 @@
         generarArchivoPrestamos : generarArchivoPrestamos,
         generarArchivoAhorros   : generarArchivoAhorros,
         AplicarPrestamos        : AplicarPrestamos,
-        AplicarAhorros          : AplicarAhorros
+        AplicarAhorros          : AplicarAhorros,
+        generarArchivoPrestamosBalance : generarArchivoPrestamosBalance
       };
 
     }])
@@ -674,6 +689,32 @@
         } catch (e) {
           $scope.mostrarError(e);
         }
+      }
+
+      //Generar archivo de Balances de Prestamos
+      $scope.archivoBalancePrestamos = function($event) {
+        $event.preventDefault();
+
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+
+        NominaService.generarArchivoPrestamosBalance('9999', fechaFormatted).then(function (data) {
+          console.log(data)
+
+          if(data != 1) {
+            $scope.mostrarError(data);
+          } else {
+            $scope.mensaje = 'Fue generado el archivo de Balance de Prestamos.';
+            alert('Archivo de balances de prestamos fue generado!');
+          }
+        });
+      }
+
+      //
+      $scope.verBalancesPrestamos = function($event) {
+        $event.preventDefault();
+
+        $window.open('/static/media/{archivo}'.replace('{archivo}', 'PA9999.TXT'), target='_blank'); 
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
