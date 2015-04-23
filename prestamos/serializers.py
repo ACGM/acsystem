@@ -23,10 +23,11 @@ class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 class SolicitudesOrdenesDespachoSerializer(serializers.HyperlinkedModelSerializer):
 	socio = serializers.StringRelatedField(read_only=True)
 	categoriaPrestamo = serializers.StringRelatedField(read_only=True)
+	suplidor = serializers.StringRelatedField(read_only=True)
 
 	class Meta:
 		model = SolicitudOrdenDespachoH
-		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus')
+		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus', 'suplidor')
 		ordering = ('-noSolicitud',)
 
 

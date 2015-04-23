@@ -54,6 +54,18 @@ class PrestamosBySocioAPIView(APIView):
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)
 
+def getBalancesPrestamos(self):
+	
+	return MaestraPrestamo.objects.raw('SELECT \
+									p.id, \
+									p.socio_id, \
+									SUM(p.balance) balance \
+								FROM prestamos_maestraprestamo p \
+								INNER JOIN administracion_socio s ON s.id = p.socio_id \
+								GROUP BY p.socio_id \
+								HAVING p.estatus = \'P\' \
+								\
+								')
 
 # Listado de Prestamos por Socio
 class BalancePrestamosBySocioAPIView(APIView):
@@ -62,16 +74,7 @@ class BalancePrestamosBySocioAPIView(APIView):
 
 	def get(self, request, socio=None):
 		if socio == None:
-			prestamos = MaestraPrestamo.objects.raw('SELECT \
-														p.id, \
-														p.socio_id, \
-														SUM(p.balance) balance \
-													FROM prestamos_maestraprestamo p \
-													INNER JOIN administracion_socio s ON s.id = p.socio_id \
-													GROUP BY p.socio_id \
-													HAVING p.estatus = \'P\' \
-													\
-													')
+			prestamos = getBalancesPrestamos(self)
 		else:
 			prestamos = MaestraPrestamo.objects.raw('SELECT \
 														p.id, \
