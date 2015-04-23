@@ -21,6 +21,7 @@ from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina, NominaPr
 from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
 
+from prestamos.viewMaestraPrestamos import getBalancesPrestamos
 from acgm.views import LoginRequiredMixin
 
 from datetime import datetime
@@ -261,6 +262,44 @@ def getPrestamosResumidos(self, fechaNomina):
 										ORDER BY c.socio_id \
 										')
 	return registros
+
+
+# Generar archivo balance de prestamos
+class GenerarArchivoPrestamosBalance(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
+			InfoTipo = data['infoTipo'] # 0015, entre otros
+			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
+
+			# nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='PR', infoTipo=InfoTipo)
+
+			# Preparar archivo .TXT
+			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
+			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
+			sysFile = File(pathFile)
+			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
+
+			prestamos = getBalancesPrestamos(self)
+
+			# Escribir cada linea de prestamo en el archivo
+			for prestamo in prestamos:
+				montoTotal = prestamo.balance
+
+				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
+				sysFile.write(lineaFile)
+
+			sysFile.close()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
 
 
 # Generar archivo para prestamos (Regulares, Bonificacion, Vacaciones, ...)

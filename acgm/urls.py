@@ -8,7 +8,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
-                                AplicarAhorros
+                                AplicarAhorros, GenerarArchivoPrestamosBalance
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -29,7 +29,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
-                                        ImprimirODView
+                                        ImprimirODView, SolicitudesODAPIViewByCodigoSuplidor, rptSolicitudesBySuplidorRangoFecha
 
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, guardarCambiosPrestamo, PrestamosBySocioAPIView, \
                                             BalancePrestamosBySocioAPIView
@@ -170,7 +170,8 @@ urlpatterns = patterns('',
     url(r'^nomina/verificarExistencia/$', NominaPrestamosAhorrosView.as_view(), name='verificar_existencia_nomina'),
     url(r'^nomina/archivos/prestamos/$', GenerarArchivoPrestamos.as_view(), name='nomina_archivo_prestamos'),
     url(r'^nomina/archivos/ahorros/$', GenerarArchivoAhorros.as_view(), name='nomina_archivo_ahorros'),
-    
+    url(r'^nomina/archivos/prestamos/balance/$', GenerarArchivoPrestamosBalance.as_view(), name='nomina_archivo_prestamos_balance'),
+
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
 
@@ -253,16 +254,20 @@ urlpatterns = patterns('',
     url(r'^prestamos/solicitudOD/AprobarRechazar/$', AprobarRechazarSolicitudesODView.as_view(), name='Solicitud_de_OD_accion'),
     url(r'^api/prestamos/solicitudes/od/codigo/(?P<codigo>[\d]+)/$', SolicitudesODAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
     url(r'^api/prestamos/solicitudes/od/nombre/(?P<nombre>[\w\s]+)/$', SolicitudesODAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_ByNombre'),
-    # url(r'^api/prestamos/solicitudes/od/(?P<solicitud>[\d]+)/$', SolicitudODById.as_view(), name='solicitud_od_api'),
+    url(r'^api/prestamos/solicitudes/od/suplidor/(?P<suplidor>[\d]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', SolicitudesODAPIViewByCodigoSuplidor.as_view(), \
+                                                                                                            name='solicitud_od_api_BySuplidorRangoFecha'),
+    url(r'^api/prestamos/solicitudes/od/fecha/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', SolicitudesODAPIViewByCodigoSuplidor.as_view(), \
+                                                                                                    name='solicitudes_by_rangoFecha'),
     url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
     url(r'^solicitudODjson/$', SolicitudODById.as_view(), name='Solicitud_ODById'),
     url(r'^solicitudOD/print/(?P<noSolicitud>[\d]+)/$', ImprimirODView.as_view(), name='ordendespacho_print'),
+    url(r'^prestamos/reportes/solicitudesOD/$', rptSolicitudesBySuplidorRangoFecha.as_view(), name='solicitudes_orden_despacho_reporte'),
 
     #Maestra Prestamos    
-    url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
-    url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
     url(r'^maestraPrestamojson/$', PrestamoById.as_view(), name='Maestra_Prestamo'),
     url(r'^maestraPrestamos/prestamosOD/postear/$', PostearPrestamosODView.as_view(), name='postear_prestamosOD'),
+    url(r'^api/prestamos/maestra/listado/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_listado'),
+    url(r'^api/prestamos/maestra/listado/(?P<prestamo>[\d]+)/$', MaestraPrestamosAPIView.as_view(), name='maestra_prestamos_byNo'),
     url(r'^api/prestamos/maestra/socio/detalle/(?P<socio>[\d]+)/$', PrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_detalle'),
     url(r'^api/prestamos/maestra/socio/balance/(?P<socio>[\d]+)/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     url(r'^api/prestamos/maestra/socio/balance/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),

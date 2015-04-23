@@ -10,7 +10,7 @@
 		<mensajeinfo> </mensajeinfo>
 
 		<div class="sub-menu">
-			<a href="#">Nomina de Prestamos y Ahorros</a>
+			Nomina de Prestamos y Ahorros
 		</div>
 
 		<div class="nomina-descuentos-panel">
@@ -63,10 +63,12 @@
 				</div>
 
 				<section class="acciones-pr">
-					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="archivoPrestamos()">Generar Archivo</button>	
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo del tipo de prestamo seleccionado arriba." ng-click="archivoPrestamos()">Generar Archivo</button>	
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo del tipo de prestamo seleccionado arriba." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>	
 					
-					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo para nomina.">Balances</button>	
+					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo con Balances Prestamos." ng-click="archivoBalancePrestamos($event)">Balances</button>	
+
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
 
 					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>	
 

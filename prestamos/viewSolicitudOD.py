@@ -224,6 +224,21 @@ class SolicitudesODAPIViewByCodigoNombre(APIView):
 		return Response(response.data)
 
 
+# Listado de Solicitudes de Ordenes de Despacho Por Codigo de Suplidor
+class SolicitudesODAPIViewByCodigoSuplidor(APIView):
+
+	serializer_class = SolicitudesOrdenesDespachoSerializer
+
+	def get(self, request, fechaInicio, fechaFin, suplidor=None):
+		if suplidor != None:
+			solicitudes = SolicitudOrdenDespachoH.objects.filter(suplidor__id=suplidor, fechaSolicitud__range=(fechaInicio, fechaFin)).order_by('-noSolicitud')
+		else:
+			solicitudes = SolicitudOrdenDespachoH.objects.filter(fechaSolicitud__range=(fechaInicio, fechaFin)).order_by('-noSolicitud')
+
+		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
 # Listado de Solicitudes de Ordenes de Despacho
 class SolicitudesODAPIView(APIView):
 
@@ -324,3 +339,9 @@ class ImprimirODView(LoginRequiredMixin, TemplateView):
 
 		except Exception as e:
 			return HttpResponse(e)	
+
+
+#Reporte de Solicitudes por suplidor y rango de fecha
+class rptSolicitudesBySuplidorRangoFecha(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_solordendespacho.html'

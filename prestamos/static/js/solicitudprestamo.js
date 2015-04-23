@@ -502,7 +502,7 @@
         MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
 
           if(data.length > 0) {
-            $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'],2);
+            $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
           }
         });
       }
