@@ -40,7 +40,7 @@ class SolicitudPrestamo(models.Model):
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
 	
-	garante = models.ForeignKey(Socio, related_name='+', null=True)
+	garante = models.ForeignKey(Socio, related_name='+', null=True, blank=True)
 
 	observacion = models.TextField(max_length=100)
 	categoriaPrestamo = models.ForeignKey(CategoriaPrestamo)
@@ -171,6 +171,9 @@ class MaestraPrestamo(models.Model):
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return '{0:0>9}'.format(self.noPrestamo)
 
 	@property
 	def codigoSocio(self):

@@ -32,18 +32,24 @@
 					<td>Producto</td>
 					<td>Cantidad</td>
 					<td>Precio</td>
-					<td>Valor</td>
 					<td>Costo</td>
-					<td>Margen</td>
+					<td>% Vtas</td>
+					<td>Margen Valor</td>
+					<td>Margen %</td>
+					<td>Precio Promedio</td>
+					<td>Costo Promedio</td>
 				</tr>
 				<tr ng-repeat="registro in registros">
 					<td>[[registro.categoriaDescrp]]</td>
 					<td>[[registro.productoDescrp]]</td>
 					<td>[[registro.cantidad | number : 2]]</td>
 					<td>[[registro.precio | number : 2]]</td>
-					<td>[[registro.valor | number : 2]]</td>
 					<td>[[registro.costo | number : 2]]</td>
+					<td>0</td>
 					<td>[[registro.margen | number : 2]]</td>
+					<td>0%</td>
+					<td>[[registro.precio / registro.cantidad | number : 2]]</td>
+					<td>[[registro.costo / registro.cantidad | number : 2]]</td>
 				</tr>
 				<tr>
 					<td colspan="3">TOTALES:</td>

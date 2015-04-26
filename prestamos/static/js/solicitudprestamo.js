@@ -291,6 +291,7 @@
       $scope.item = {};
       $scope.solicitudes = {};
 
+      $scope.prestamosSocioUnif = [];
       $scope.solicitudesSeleccionadas = [];
       $scope.reg = [];
       $scope.valoresChk = [];
@@ -462,29 +463,34 @@
       $scope.getSocio = function($event) {
         $event.preventDefault();
 
-        $scope.tableSocio = true;
+        if(($event.type == 'keyup' && $event.keyCode == 13) || $event.type == 'click') {
 
-        if($scope.solicitante.codigoEmpleado != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
+          $scope.tableSocio = true;
+
+          if($scope.solicitante.codigoEmpleado != undefined) {
+            FacturacionService.socios().then(function (data) {
+              $scope.socios = data.filter(function (registro) {
+                return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
+              });
+
+              if($scope.socios.length > 0){
+                $scope.tableSocio = true;
+                $scope.socioNoExiste = '';
+              } else {
+                $scope.tableSocio = false;
+                $scope.socioNoExiste = 'No existe el socio';
+              }
+
             });
+          } else {
+            FacturacionService.socios().then(function (data) {
+              $scope.socios = data;
+              $scope.socioCodigo = '';
+            });
+          }
 
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
-
-          });
-        } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
         }
+
       }
 
        //Seleccionar Socio
@@ -503,6 +509,8 @@
 
           if(data.length > 0) {
             $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
+          } else {
+            $scope.solicitud.deudasPrestamos = 0;
           }
         });
       }
@@ -551,10 +559,27 @@
         }
       }
 
+      //Cuando se le de click a un checkbox de la lista de prestamos a unificar.
+      $scope.selectedRegPU = function(iReg) {
+        
+        index = $scope.prestamosSocio.indexOf(iReg);
+
+        if ($scope.reg[$scope.prestamosSocio[index].noPrestamo] === true){
+          $scope.prestamosSocioUnif.push($scope.prestamosSocio[index]);
+        }
+        else{
+          $scope.prestamosSocioUnif = _.without($scope.prestamosSocioUnif, _.findWhere($scope.prestamosSocioUnif, {noPrestamo : iReg.noPrestamo}));
+        }
+
+        console.log($scope.prestamosSocioUnif)
+      }
+
+
       //Nueva Entrada de Factura
       $scope.nuevaEntrada = function(usuario) {
         $scope.solicitante = {};
         $scope.solicitud = {};
+        $scope.prestamosSocioUnif = [];
 
         $scope.solicitante.representanteCodigo = '';
         $scope.solicitante.representanteNombre = undefined;
@@ -851,6 +876,7 @@
           MaestraPrestamoService.prestamosDetalleByCodigoSocio(socio).then(function (data) {
 
             if(data.length > 0) {
+              $scope.prestamosSocioUnif = [];
               $scope.prestamosSocio = data;
             } else {
               throw data;

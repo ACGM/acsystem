@@ -285,6 +285,7 @@
           });
         } catch (e) {
           $scope.mostrarError(e);
+          console.log(e);
         }
       }
 

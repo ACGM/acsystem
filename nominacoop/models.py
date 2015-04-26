@@ -44,7 +44,8 @@ class EmpleadoCoop(models.Model):
 	tipo_cobro_choices = (('Q','Quincenal'),('M','Mensual'),)
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 
-	codigo = models.PositiveIntegerField(max_length=6)
+	#codigo = models.PositiveIntegerField(max_length=6)
+	socio = models.ForeignKey(Socio)
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
 	cedula = models.CharField(max_length=20)
@@ -72,10 +73,13 @@ class EmpleadoCoop(models.Model):
 	def __unicode__(self):
 		return '%s %s' % (self.nombres, self.apellidos)
 
+	def codigoSocio(self):
+		return '%s' % (self.socio.codigo)
+
 	class Meta:
 		verbose_name = 'Empleado Cooperativa'
 		verbose_name_plural = 'Empleados Cooperativa'
-		ordering = ['codigo',]
+		ordering = ['socio',]
 
 
 # Tipos de nominas
@@ -250,7 +254,11 @@ class NominaCoopD(models.Model):
 
 	@property
 	def getcodigo(self):
-		return '%s' % (self.empleado.codigo)
+		return '%s' % (self.empleado.socio.codigo)
+
+	@property
+	def getCuentaBanco(self):
+		return '%s' % (self.empleado.socio.cuentaBancaria)
 
 	@property
 	def pago(self):
@@ -299,7 +307,7 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	@property
 	def codigoSocio(self):
-		return self.socio.codigo
+		return '%s' % (self.socio.codigo)
 
 	@property
 	def montoTotal(self):

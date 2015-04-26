@@ -641,6 +641,7 @@ footer
 		height 0
 		
 .cerrarError
+	font-size 1.2rem
 	text-decoration none
 	background rojoOscuro
 	color white
@@ -648,7 +649,7 @@ footer
 	padding .3em .6em
 	position absolute
 	right .1em
-	top .1em
+	top .18em
 	margin 0 .2em 0 0
 	&:hover
 		background red
@@ -2526,7 +2527,7 @@ footer
 .datos-prestamo-content
 	display block
 	// overflow hidden
-	width 85%
+	width 100%
 	position relative
 	
 .monto-field
@@ -2662,16 +2663,6 @@ footer
 	margin-left 1em
 	position relative
 	
-.datos-prestamo-2-table
-	width 100%
-	margin-bottom .4em
-	& tr
-		&:nth-child(1)
-			& td
-				&:nth-child(2)
-					width 65%
-					padding-bottom .2em
-
 .categoria-prestamo-id
 	display inline-block
 	
@@ -2733,11 +2724,17 @@ footer
 .otros-datos-info
 	margin-bottom .4em
 
+.buscar-categoria-prestamo
+	position relative
+	right 0
+	
 .otros-datos-info-table
+	width 100%
 	& tr
 		& td
 			&:first-child
 				padding-right .5em
+				width 12em
 			&:last-child
 				padding-bottom .3em
 

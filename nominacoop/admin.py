@@ -15,8 +15,8 @@ class CargoCooAdminp(admin.ModelAdmin):
 
 @admin.register(EmpleadoCoop)
 class EmpleadoCoopAdmin(admin.ModelAdmin):
-	list_display = ['id','codigo', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual']
-	list_editable = ('codigo', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual')
+	list_display = ['id', 'codigoSocio', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual']
+	list_editable = ('id', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual')
 	search_fields = ('nombres', 'apellidos')
 
 @admin.register(TipoNomina)
@@ -38,7 +38,7 @@ class NominaCoopDAdmin(admin.ModelAdmin):
 
 @admin.register(CuotasPrestamosEmpresa)
 class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):
-	list_display = ['id', 'valorCapital', 'valorInteres', 'fecha', 'nomina', 'estatus', 'infoTipoPrestamo']
+	list_display = ['id', 'codigoSocio', 'valorCapital', 'valorInteres', 'fecha', 'nomina', 'estatus', 'infoTipoPrestamo']
 	# list_display = ['socio', 'noPrestamo', 'cuota', 'valorCapital', 'valorInteres', 'fecha', 'nomina', 'estatus']
 
 @admin.register(CuotasAhorrosEmpresa)

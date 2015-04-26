@@ -197,7 +197,7 @@ urlpatterns = patterns('',
     url(r'^inventario/reportes/conteoFisico/$', RPTConteoFisicoArticuloView.as_view(), name='Inventario_reporte_conteoFisico'),
     url(r'^inventario/reportes/histMovArt/$', RPTMovimientoArticuloView.as_view(), name='Inventario_reporte_historico'),
     
-    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'), #CONTRUCCION
+    url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
     url(r'^inventario/api/reportes/existencia/conteoFisico/$', getExistenciaConteoFisicoRPT.as_view(), name='existencia_conteoFisico_api'),
     url(r'^api/inventario/movimiento/(?P<codProd>[\w\s]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/(?P<almacen>[\d]+)/$', RPTMovimientoProductoAPIView.as_view(), name='mov_producto_api'),
@@ -206,7 +206,6 @@ urlpatterns = patterns('',
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^facturacion/eliminar/$', FacturaEliminarView.as_view(), name='Facturacion_eliminar'),
-    # url(r'^api/facturacion/detalle/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', DetalleFacturasView.as_view(), name='detalle_facturas'),
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     #Facturacion#Reportes

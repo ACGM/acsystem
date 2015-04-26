@@ -23,7 +23,7 @@ class NominaGeneradaDetalleSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = NominaCoopD
 		fields = ('id', 'nomina', 'getcodigo', 'empleado', 'salario', 'isr', 'afp', 'ars', 'cafeteria', 'horasExtras', \
-					'vacaciones', 'otrosIngresos', 'descAhorros', 'descPrestamos', 'pago','tipoPago', 'estatus')
+					'vacaciones', 'otrosIngresos', 'descAhorros', 'descPrestamos', 'pago','tipoPago', 'estatus', 'getCuentaBanco')
 		ordering = ('empleado',)
 
 

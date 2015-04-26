@@ -224,7 +224,7 @@
     //CONTROLLERS                                        *
     //                                                   *
     //****************************************************
-    .controller('NominaCtrl', ['$scope', '$filter', 'NominaService', function ($scope, $filter, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', 'appService', 'NominaService', function ($scope, $filter, appService, NominaService) {
       $scope.showGN = true;
       $scope.showCN = true;
 
@@ -390,7 +390,77 @@
 
       }
 
+      //Generar archivo para el banco
+      $scope.GeneraArchivoBanco = function($event, valorNomina, cntEmpleados) {
+        $event.preventDefault();
+
+        try {
+
+          //Al metodo principal deben ser pasado los siguientes parametros:
+          // 1) tipoServicio (01 Nomina Automatica, 02 Pago a Suplidores, ..., 06 Transferencia a Cta)
+          // 2) fechaEfectiva YYYYMMDD
+          // 3) cantidadDB
+          // 4) montoTotalDB
+          // 5) cantidadCR
+          // 6) montoTotalCR
+          // 7) numeroAfiliacion
+          // 8) fechaEnvio YYYYMMDD
+          // 9) horaEnvio HHMM
+          var totalDB = 0;
+          var Cabecera = {};
+          var Detalle = [];
+
+          totalDB += parseFloat(valorNomina);
+
+          Cabecera.tipoServicio = '01';
+          Cabecera.fechaEfectiva = $filter('date')(Date.now(), 'yyyyMMdd');
+          Cabecera.cantidadDB = cntEmpleados;
+          Cabecera.montoTotalDB = $filter('number')(totalDB, 2);
+          Cabecera.cantidadCR = 0;
+          Cabecera.montoTotalCR = 0;
+          Cabecera.numeroAfiliacion = '';
+          Cabecera.fechaEnvio = $filter('date')(Date.now(), 'yyyyMMdd');
+          Cabecera.horaEnvio = $filter('date')(Date.now(), 'HHmm');
+
+          // Para el registro N son necesarios los siguientes campos
+          /*
+            1) cuentaDestino
+            2) monedaDestino = 214 para peso dominicano
+            3) montoTransaccion
+            4) codigoSocio / suplidorId
+          */
+          $scope.detalle.forEach(function (registroN) {
+            var item = {};
+console.log(registroN)
+            item.cuentaDestino = registroN.getCuentaBanco;
+            item.monedaDestino = '214';
+            item.montoTransaccion = $filter('number')(registroN.pago.replace('$','').replace(',',''), 2);
+            item.socioCodigo = registroN.getcodigo;
+
+            // item.prestamoNo = registroN.noPrestamo; //Exclusivo para desembolso de prestamos
+
+            Detalle.push(item);
+          });
+          console.log('Cabecera:')
+          console.log(Cabecera)
+          console.log('Detalle')
+          console.log(Detalle)
+
+          //Enviar para crear registros para archivo.
+          appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
+            // $scope.listadoPrestamos();
+            console.log(data)
+            alert('Fue generado el archivo para banco!');
+            $scope.errorShow = false;
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
+        }
+      }
+
     }])
+
 
     //****************************************************
     //                                                   *

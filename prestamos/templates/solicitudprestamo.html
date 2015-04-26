@@ -189,7 +189,7 @@
 								<td>
 									<div class="fecha-prestamo">
 										<span class="fecha-solicitud-field">Fecha Solicitud</span>
-										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud" required>
+										<input class="fecha-solicitud-field-t" type="text" ng-model="solicitud.fechaSolicitud" required readonly>
 									</div>
 								</td>
 							</tr>
@@ -266,24 +266,7 @@
 							</table>
 
 						</div>
-
-
-						<table class="datos-prestamo-2-table">
-							<tr>
-								<td>Categoria Prestamo</td>
-								<td>
-									<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
-									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
-								<td>
-									<a href="#" class="icon-uniE601 icon-buscar" ng-click="categoriasPrestamos(undefined, $event)"></a>
-								</td>
-								</td>
-							</tr>
-							<tr>
-								<td>Fecha para descuento</td>
-								<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" readonly required></td>
-							</tr>
-						</table>
+					
 
 						<!-- <div class="descontar">
 							<span>Descontar</span>
@@ -304,6 +287,23 @@
 
 							<div class="otros-datos-info">
 								<table class="otros-datos-info-table">
+
+									<tr>
+										<td>Categoria Prestamo</td>
+										<td colspan="2">											
+											<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
+											<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
+
+										</td>
+										<td>
+											<a href="#" class="icon-uniE601 icon-buscar buscar-categoria-prestamo" ng-click="categoriasPrestamos(undefined, $event)"></a>										
+										</td>
+									</tr>
+									<tr>
+										<td>Fecha para descuento</td>
+										<td><input type="text" class="fecha-descuento-field" ng-model="solicitud.fechaDescuento" readonly required></td>
+									</tr>
+
 									<tr>
 										<td>Tasa de interes anual</td>
 										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresAnual" readonly></td>
@@ -357,7 +357,7 @@
 								</tr>
 								<tr ng-repeat="p in prestamosSocio">
 									<td class="align-center">
-										<input type="checkbox" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedReg(p)"> 
+										<input type="checkbox" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedRegPU(p)"> 
 									</td>
 									<td>[[p.noPrestamo | numberFixedLen : 9]]</td>
 									<td>[[p.balance | number : 2]]</td>

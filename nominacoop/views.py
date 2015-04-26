@@ -71,7 +71,11 @@ class ListadoTiposNominasViewSet(viewsets.ModelViewSet):
 	serializer_class = TiposNominasSerializer
 
 
-# Generar nomina a partir de la fecha y tipo
+#*********************************************************
+#														 *
+# Generar nomina a partir de la fecha y tipo 			 *
+#														 *
+#*********************************************************
 class generaNominaView(View):
 
 	def post(self, request, *args, **kwargs):
@@ -107,32 +111,30 @@ class generaNominaView(View):
 				nominaD.otrosingresos = 0
 
 				try:
-					socio = Socio.objects.get(codigo=empleado.codigo)
-
 					if nominaH.quincena == 1:
-						montoAhorro = socio.cuotaAhorroQ1
+						montoAhorro = empleado.socio.cuotaAhorroQ1
 					else:
-						montoAhorro = socio.cuotaAhorroQ2
+						montoAhorro = empleado.socio.cuotaAhorroQ2
 
 				except socio.DoesNotExist:
 					raise Exception("Este empleado aun no es socio activo de la cooperativa.")
 
 				nominaD.descAhorros = montoAhorro
 				
-				# try:
-				# 	cuotaPrestamo = 0
-				# 	prestamos = MaestraPrestamo.objects.filter(socio=socio)
-				# 	for prestamo in prestamos:
-				# 		cuota = CuotasPrestamo.objects.values('valorCapital','valorInteres').filter(noPrestamo=prestamo.noPrestamo, estatus='P').latest('id')
-				# 		capital = cuota.valorCapital 
-				# 		interes = cuota.valorInteres
-				# 		cuotaPrestamo = capital + interes
-				# except prestamos.DoesNotExist:
-				# 	cuotaPrestamo = 0
-				# except cuota.DoesNotExist:
-				# 	cuotaPrestamo = 0
+				#Buscar prestamos asociados al socio
+				cuotaPrestamo = 0
 
-				nominaD.descPrestamos = 0 #cuotaPrestamo
+				try:
+					prestamos = CuotasPrestamosEmpresa.objects.get(socio=empleado.socio, estatus='P')
+
+					cuotaPrestamo = prestamos.montoTotal
+				except CuotasPrestamosEmpresa.DoesNotExist:
+					cuotaPrestamo = 0
+
+				except Exception as e:
+					raise Exception(e)
+
+				nominaD.descPrestamos = cuotaPrestamo
 				nominaD.save()
 			
 			return HttpResponse(nominaH.id)
@@ -289,10 +291,11 @@ class GenerarArchivoPrestamosBalance(View):
 
 			# Escribir cada linea de prestamo en el archivo
 			for prestamo in prestamos:
-				montoTotal = prestamo.balance
+				if prestamo.socio.estatus == 'S': #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
+					montoTotal = prestamo.balance
 
-				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
-				sysFile.write(lineaFile)
+					lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
+					sysFile.write(lineaFile)
 
 			sysFile.close()
 
@@ -352,10 +355,12 @@ class GenerarArchivoPrestamos(View):
 
 			# Escribir cada linea de prestamo en el archivo
 			for prestamo in prestamosParaArchivo:
-				montoTotal = prestamo.montoTotalQ if InfoTipo == '0015' else prestamo.montoTotal
+				if prestamo.socio.estatus == 'S': #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
 
-				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
-				sysFile.write(lineaFile)
+					montoTotal = prestamo.montoTotalQ if InfoTipo == '0015' else prestamo.montoTotal
+
+					lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
+					sysFile.write(lineaFile)
 
 			sysFile.close()
 
@@ -398,9 +403,10 @@ class GenerarArchivoAhorros(View):
 
 			# Recorrer los registros de ahorros generados para archivo .txt
 			for ahorro in CuotasAhorrosEmpresa.objects.filter(nomina=nomina):
+				if ahorro.socio.estatus == 'S': #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
 
-				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(ahorro.socio.codigo,'0014', fechanominaSAP, ahorro.valorAhorro)
-				sysFile.write(lineaFile)
+					lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(ahorro.socio.codigo,'0014', fechanominaSAP, ahorro.valorAhorro)
+					sysFile.write(lineaFile)
 
 			sysFile.close()
 

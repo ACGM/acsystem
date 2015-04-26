@@ -98,7 +98,7 @@
 							<!-- <td>[[item.tipoPago]]</td> -->
 							<td class="align-center"><a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a></td>
 							<td class="align-center"><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
-							<td class="align-center"><a href="#" class="icon-archivo icon-archivo-nomina" ng-click=""></a></td>
+							<td class="align-center"><a href="#" class="icon-archivo icon-archivo-nomina" ng-click="GeneraArchivoBanco($event, item.valorNomina, item.cntEmpleados)"></a></td>
 						</tr>
 
 					</table>
@@ -106,7 +106,6 @@
 				
 			</div>
 		</div>
-
 		
 		<div class="detalle-nomina">
 			
@@ -115,10 +114,7 @@
 				
 			</div>
 
-			
-
 			<div class="detalle-nomina-desglosado">
-
 				
 				<div class="listado-empleados-panel">
 
@@ -130,6 +126,7 @@
 							</tr>
 
 							<tr class="empleados-listado-detail" ng-repeat="item in detalle">
+
 								<td>[[item.getcodigo]]</td>
 								<td><a href="#" ng-click="selEmpleado(nomina, item)" class="select-item" ng-class="reg[item.id]"> [[item.empleado]]</a></td>
 								<td>[[item.pago]]</td>
@@ -149,7 +146,7 @@
 								<td rowspan="6"> <button class="icon-save Boton boton-desglose-empleado" type="submit">Guardar</button> </td>
 							</tr>
 							<tr>
-								<td class="first-row">Salario</td>
+								<td class="first-row" title="Salario Quincenal">Salario Q.</td>
 								<td> <input type="text" ng-bind="empleado.salario" ng-model="empleado.salario" select-on-click> </td>
 								<td class="egreso-field">ARS </td>
 								<td> <input type="text" ng-bind="empleado.ars" ng-model="empleado.ars" select-on-click> </td>

@@ -116,3 +116,4 @@ if DEBUG:
 
         )
 
+LOGIN_REDIRECT_URL = '/'
