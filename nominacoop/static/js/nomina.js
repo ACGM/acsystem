@@ -373,6 +373,7 @@
       //Guardar cambios en detalle de empleado.
       $scope.guardarDE = function() {
         try {
+          console.log($scope.empleado)
           NominaService.guardarDetalleEmpleado($scope.nomina, $scope.tipoNomina, $scope.empleado).then(function (data) {
 
             console.log('Fueron guardados los cambios con exito.');
@@ -431,7 +432,7 @@
           */
           $scope.detalle.forEach(function (registroN) {
             var item = {};
-console.log(registroN)
+
             item.cuentaDestino = registroN.getCuentaBanco;
             item.monedaDestino = '214';
             item.montoTransaccion = $filter('number')(registroN.pago.replace('$','').replace(',',''), 2);
@@ -441,15 +442,10 @@ console.log(registroN)
 
             Detalle.push(item);
           });
-          console.log('Cabecera:')
-          console.log(Cabecera)
-          console.log('Detalle')
-          console.log(Detalle)
 
           //Enviar para crear registros para archivo.
           appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
             // $scope.listadoPrestamos();
-            console.log(data)
             alert('Fue generado el archivo para banco!');
             $scope.errorShow = false;
           });

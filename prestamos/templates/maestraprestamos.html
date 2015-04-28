@@ -68,7 +68,7 @@
 							<td class="resaltar-valor align-right verde">[[prestamo.balance | number : 2]]</td>
 							<td>[[prestamo.categoriaPrestamo]]</td>
 							<td class="align-center">
-								<a ng-if="prestamo.estatus == 'E' && prestamo.noSolicitudPrestamo > 0" href="#" class="icon-coin icon-imprimir comoCheque" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque Prestamo No. [[prestamo.noPrestamo | numberFixedLen : 9]]"></a> 
+								<a ng-if="prestamo.estatus == 'E' && prestamo.noSolicitudPrestamo > 0" href="#" class="icon-coin icon-imprimir toolTip" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque Prestamo No. [[prestamo.noPrestamo | numberFixedLen : 9]]"></a> 
 							</td>
 						</tr>
 					</table>

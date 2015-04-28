@@ -28,36 +28,47 @@
 			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
 			<table class="table-producto-factura">
 				<tr>
+					<td colspan="2"></td>
+					<td colspan="2" class="align-center">Ventas Brutas</td>
+					<td colspan="2" class="align-center">Costos Ventas</td>
+					<td colspan="2" class="align-center">Margenes</td>
+					<td class="align-right">Precio Promedio</td>
+					<td class="align-right">Costo Promedio</td>
+				</tr>
+				<tr>
 					<td>Categoria</td>
 					<td>Producto</td>
-					<td>Cantidad</td>
-					<td>Precio</td>
-					<td>Costo</td>
-					<td>% Vtas</td>
-					<td>Margen Valor</td>
-					<td>Margen %</td>
-					<td>Precio Promedio</td>
-					<td>Costo Promedio</td>
+					<td class="align-right">Cantidad</td>
+					<td class="align-right">Precio</td>
+					<td class="align-right">Costo</td>
+					<td class="align-right">% Vtas</td>
+					<td class="align-right">Margen Valor</td>
+					<td class="align-right">Margen %</td>
+					<td class="align-right"></td>
+					<td class="align-right"></td>
 				</tr>
 				<tr ng-repeat="registro in registros">
 					<td>[[registro.categoriaDescrp]]</td>
 					<td>[[registro.productoDescrp]]</td>
-					<td>[[registro.cantidad | number : 2]]</td>
-					<td>[[registro.precio | number : 2]]</td>
-					<td>[[registro.costo | number : 2]]</td>
-					<td>0</td>
-					<td>[[registro.margen | number : 2]]</td>
-					<td>0%</td>
-					<td>[[registro.precio / registro.cantidad | number : 2]]</td>
-					<td>[[registro.costo / registro.cantidad | number : 2]]</td>
+					<td class="align-right">[[registro.cantidad | number : 2]]</td>
+					<td class="align-right">[[registro.precio | number : 2]]</td>
+					<td class="align-right">[[registro.costo | number : 2]]</td>
+					<td class="align-right">[[(registro.costo/registro.precio) * 100 | number : 0]]%</td>
+					<td class="align-right">[[registro.margen | number : 2]]</td>
+					<td class="align-right">[[(registro.margen/registro.costo) * 100 | number : 2]]%</td>
+					<td class="align-right">[[registro.precio / registro.cantidad | number : 2]]</td>
+					<td class="align-right">[[registro.costo / registro.cantidad | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="3">TOTALES:</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
+					<td colspan="2">TOTALES:</td>
+					<td class="align-right">[[totalCantidad_ | number : 2]]</td>
+					<td class="align-right">[[totalPrecio_ | number : 2]]</td>
+					<td class="align-right">[[totalCosto_ | number : 2]]</td>
+					<td class="align-right">[[totalPorcentajeCosto_ / registros.length | number : 2]]%</td>
+					<td class="align-right">[[totalMargen_ | number : 2]]</td>
+					<td class="align-right">[[totalPorcentajeMargen_ / registros.length | number : 2]]%</td>
+					<td></td>
+					<td></td>
 				</tr>
 			</table>
 		</section>

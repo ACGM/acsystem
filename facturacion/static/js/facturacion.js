@@ -1053,10 +1053,27 @@
         var fechaFin = $scope.fechaFin.split('/');
         var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
 
+        $scope.totalCantidad_ = 0;
+        $scope.totalPrecio_ = 0;
+        $scope.totalCosto_ = 0;
+        $scope.totalPorcentajeCosto_ = 0;
+        $scope.totalMargen_ = 0;
+        $scope.totalPorcentajeMargen_ = 0;
+
         FacturacionService.reporteUtilidad().then(function (data) {
           $scope.registros = data.filter(function (item) {
             return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
           });
+
+          $scope.registros.forEach(function (item) {
+            $scope.totalCantidad_ += parseFloat(item.cantidad);
+            $scope.totalPrecio_ += parseFloat(item.precio);
+            $scope.totalCosto_ += parseFloat(item.costo);
+            $scope.totalPorcentajeCosto_ += parseFloat((item.costo/item.precio) * 100);
+            $scope.totalMargen_ += parseFloat(item.margen);
+            $scope.totalPorcentajeMargen_ += parseFloat((item.margen/item.costo) * 100)
+
+          })
         });
 
       } catch (e) {

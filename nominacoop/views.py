@@ -152,7 +152,6 @@ class guardarDetalleEmpleado(View):
 	def post(self, request, *args, **kwargs):
 
 		try:
-
 			# Tomar los parametros enviados por el Post en JSON
 			data = json.loads(request.body)
 
@@ -164,7 +163,7 @@ class guardarDetalleEmpleado(View):
 			nominaH = NominaCoopH.objects.get(fechaNomina=nomina, tipoNomina__descripcion=tipoNomina)
 
 			#Paso 2: Tomar el empleado que sera modificado en dicha nomina
-			emp = EmpleadoCoop.objects.get(codigo=detalle['codigo'])
+			emp = EmpleadoCoop.objects.get(socio__codigo=detalle['codigo'])
 
 			#Paso 3: Tomar el detalle del empleado que sera modificado
 			nominaD = NominaCoopD.objects.get(nomina=nominaH, empleado=emp)
