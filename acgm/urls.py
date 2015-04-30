@@ -8,7 +8,7 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
-                                AplicarAhorros, GenerarArchivoPrestamosBalance
+                                AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -174,6 +174,8 @@ urlpatterns = patterns('',
 
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
+
+    url(r'^nomina/reporte/quincena/$', rptNominaQuincenal.as_view(), name='reporte_nomina_quincena'),
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),

@@ -42,6 +42,12 @@ class NominaDescuentosView(LoginRequiredMixin, TemplateView):
 	template_name = 'nomdescuentos.html'
 
 
+# Reporte Nomina Quincenal
+class rptNominaQuincenal(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_nomina.html'
+
+
 # Listado de Nominas Generadas
 class ListadoNominasGeneradasViewSet(viewsets.ModelViewSet):
 

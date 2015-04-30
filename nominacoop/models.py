@@ -262,11 +262,19 @@ class NominaCoopD(models.Model):
 
 	@property
 	def pago(self):
-		descuentos = self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
-		ingresos = self.vacaciones + self.otrosIngresos
-		neto = self.salario + ingresos - descuentos
+		descuentos = self.descuentos #self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
+		ingresos = self.ingresos #self.vacaciones + self.otrosIngresos
+		neto = ingresos - descuentos #self.salario + ingresos - descuentos
 
 		return '$%s' % str(format(neto,',.2f'))
+
+	@property
+	def descuentos(self):
+		return self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
+
+	@property
+	def ingresos(self):
+		return self.salario + self.vacaciones + self.otrosIngresos
 
 	class Meta:
 		unique_together = ('nomina', 'empleado')

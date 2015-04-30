@@ -224,7 +224,7 @@
     //CONTROLLERS                                        *
     //                                                   *
     //****************************************************
-    .controller('NominaCtrl', ['$scope', '$filter', 'appService', 'NominaService', function ($scope, $filter, appService, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', function ($scope, $filter, $window, appService, NominaService) {
       $scope.showGN = true;
       $scope.showCN = true;
 
@@ -454,6 +454,64 @@
           console.log(e);
         }
       }
+
+      //Reporte Nomina Quincenal
+      $scope.reporteNominaQ = function($event, fechaNomina, tipoNomina) {
+        $event.preventDefault();
+
+        try {
+          NominaService.detalleNomina(fechaNomina).then(function (data) {
+            
+            $window.sessionStorage['nominareporte'] = JSON.stringify(data);
+            $window.open('/nomina/reporte/quincena/', target='_blank');           
+
+          });
+          // $scope.getDetalleNomina(fechaNomina, tipoNomina);
+          // console.log($scope.registros)
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
+        }
+      }
+
+    }])
+
+    //****************************************************
+    //CONTROLLERS REPORTE NOMINA                         *
+    //****************************************************
+    .controller('NominaReporteCtrl', ['$scope', '$filter', '$window', 'NominaService', function ($scope, $filter, $window, NominaService) {
+      $scope.totalSueldoMensual = 0;
+      $scope.totalSueldoQuincenal = 0;
+      $scope.totalHorasExtras = 0;
+      $scope.totalOtrosIngresos = 0;
+      $scope.totalISR = 0;
+      $scope.totalSeguroSocial = 0;
+      $scope.totalAFP = 0;
+      $scope.totalARS = 0;
+      $scope.totalCafeteria = 0;
+      $scope.totalDescAhorros = 0;
+      $scope.totalDescPrestamos = 0;
+      $scope.totalDescuentos = 0;
+      $scope.totalNeto = 0;
+
+      $scope.registros = JSON.parse($window.sessionStorage['nominareporte']);
+
+      $scope.registros.forEach(function (item) {
+        $scope.totalSueldoMensual += parseFloat(item.salario) * 2;
+        $scope.totalSueldoQuincenal += parseFloat(item.salario);
+        $scope.totalHorasExtras += parseFloat(item.horasExtras);
+        $scope.totalOtrosIngresos += parseFloat(item.otrosIngresos);
+        $scope.totalISR += parseFloat(item.isr);
+        $scope.totalSeguroSocial += parseFloat(0);
+        $scope.totalAFP += parseFloat(item.afp);
+        $scope.totalARS += parseFloat(item.ars);
+        $scope.totalCafeteria += parseFloat(item.cafeteria);
+        $scope.totalDescAhorros += parseFloat(item.descAhorros);
+        $scope.totalDescPrestamos += parseFloat(item.descPrestamos);
+        $scope.totalDescuentos += parseFloat(item.descuentos);
+        $scope.totalNeto += parseFloat(item.ingresos) - parseFloat(item.descuentos);
+
+      });
 
     }])
 
