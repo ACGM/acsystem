@@ -184,7 +184,6 @@ class guardarDetalleEmpleado(View):
 			nominaD.save()
 			
 			return HttpResponse(detalle['codigo'])
-			# return HttpResponse(1)
 
 		except IntegrityError as ie:
 			return HttpResponse(-1)
@@ -271,6 +270,16 @@ def getPrestamosResumidos(self, fechaNomina):
 	return registros
 
 
+# Guardar relacion del archivo de Pago de Nomina COOP con Nomina
+def relacionArchivoBancoConNomina(request):
+	
+	data = json.loads(request.body)
+
+	NominaCoopH.objects.filter(fechaNomina=data['fechaNomina'], tipoNomina=TipoNomina.objects.get(descripcion=data['tipoNomina'])).update(archivoBanco=data['archivoBanco'])
+
+	return HttpResponse(1)
+
+
 # Generar archivo balance de prestamos
 class GenerarArchivoPrestamosBalance(View):
 
@@ -288,7 +297,7 @@ class GenerarArchivoPrestamosBalance(View):
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
-			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
+			pathFile = open(settings.ARCHIVOS_NOMINA + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
@@ -328,7 +337,7 @@ class GenerarArchivoPrestamos(View):
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
-			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
+			pathFile = open(settings.ARCHIVOS_NOMINA + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
@@ -392,7 +401,7 @@ class GenerarArchivoAhorros(View):
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA0014.TXT'
-			pathFile = open(settings.MEDIA_ROOT + '/' + nombreArchivoFinal, 'wb+')
+			pathFile = open(settings.ARCHIVOS_NOMINA + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 

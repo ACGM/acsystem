@@ -106,14 +106,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-if DEBUG:
-    MEDIA_URL = '/media/'
-    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'acgm', 'acgm', 'static')
-    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'acgm', 'acgm', 'static', 'media')
-    STATICFILES_DIRS = (
-        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static'),
+# STATIC_ROOT = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/'
+# MEDIA_ROOT = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/'
 
-        )
+STATIC_ROOT = './acgm/static/'
+MEDIA_ROOT = './acgm/static/media/'
 
-LOGIN_REDIRECT_URL = '/'
+ARCHIVOS_NOMINA = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosNomina/'
+ARCHIVOS_BANCO = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosBanco/'
+ARCHIVOS_BANCO_NOMINA = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosBanco/nomina/'
+
+# STATICFILES_DIRS = (
+#         '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/',
+# )

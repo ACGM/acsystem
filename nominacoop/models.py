@@ -110,6 +110,7 @@ class NominaCoopH(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)
 	nota = models.TextField(blank=True)
+	archivoBanco = models.CharField(max_length=25, null=True, blank=True)
 
 	posteada = models.CharField(max_length=1, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)

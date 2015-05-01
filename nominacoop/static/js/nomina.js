@@ -201,6 +201,20 @@
         return deferred.promise;
       }
 
+      //Relacionar nomina con el archivo de banco generado.
+      function relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, archivoBanco) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivo-banco/set/', JSON.stringify({'fechaNomina': fechaNomina, 'tipoNomina': tipoNomina, 'archivoBanco': archivoBanco})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas        : nominasGeneradas,
         generaNomina            : generaNomina,
@@ -214,7 +228,8 @@
         generarArchivoAhorros   : generarArchivoAhorros,
         AplicarPrestamos        : AplicarPrestamos,
         AplicarAhorros          : AplicarAhorros,
-        generarArchivoPrestamosBalance : generarArchivoPrestamosBalance
+        generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
+        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco
       };
 
     }])
@@ -392,10 +407,15 @@
       }
 
       //Generar archivo para el banco
-      $scope.GeneraArchivoBanco = function($event, valorNomina, cntEmpleados) {
+      $scope.GeneraArchivoBanco = function($event, valorNomina, cntEmpleados, fechaNomina, tipoNomina) {
         $event.preventDefault();
 
         try {
+          //BLOQUE ESPECIAL PARA NOMINA
+          if($scope.detalle.length == 0) {
+            throw 'Favor desplegar la nomina haciendo click a la fecha de la misma.';
+          }
+          //FIN DE BLOQUE ESPECIAL
 
           //Al metodo principal deben ser pasado los siguientes parametros:
           // 1) tipoServicio (01 Nomina Automatica, 02 Pago a Suplidores, ..., 06 Transferencia a Cta)
@@ -445,13 +465,31 @@
 
           //Enviar para crear registros para archivo.
           appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
-            // $scope.listadoPrestamos();
-            alert('Fue generado el archivo para banco!');
-            $scope.errorShow = false;
+
+            if(data.substring(0,2) == 'PE') {
+              NominaService.relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, data).then(function (data) {
+                $scope.getNominasGeneradas();
+
+                alert('Fue generado el archivo para banco!');
+
+                $scope.errorShow = false;
+              });
+            }
           });
         } catch (e) {
           $scope.mostrarError(e);
           console.log(e);
+        }
+      }
+
+      //Ver archivo de nomina para Banco
+      $scope.verArchivoBanco = function($event, archivoBanco) {
+        $event.preventDefault();
+
+        if(archivoBanco == undefined) {
+          alert('No se ha generado archivo de banco para esta nomina.')
+        } else {
+          $window.open('/static/media/archivosBanco/{archivoBanco}'.replace('{archivoBanco}', archivoBanco), target='_blank'); 
         }
       }
 
@@ -756,7 +794,7 @@
           case 'AH': archivo = 'PA0014.TXT'; break;
 
         }
-        $window.open('/static/media/{archivo}'.replace('{archivo}', archivo), target='_blank'); 
+        $window.open('/static/media/archivosNomina/{archivo}'.replace('{archivo}', archivo), target='_blank'); 
 
       }
 
@@ -838,7 +876,7 @@
       $scope.verBalancesPrestamos = function($event) {
         $event.preventDefault();
 
-        $window.open('/static/media/{archivo}'.replace('{archivo}', 'PA9999.TXT'), target='_blank'); 
+        $window.open('/static/media/archivosNomina/{archivo}'.replace('{archivo}', 'PA9999.TXT'), target='_blank'); 
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
