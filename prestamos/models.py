@@ -164,6 +164,7 @@ class MaestraPrestamo(models.Model):
 	fechaAprobacion = models.DateField(auto_now_add=True, null=True)
 	quincenas = models.PositiveIntegerField(default=2)
 	tipoPrestamoNomina = models.CharField(max_length=2, choices=tipoPrestamoNomina_choices, default='RE') # Bonificacion, Vacaciones, Regalia, Rifa
+	archivoBanco = models.CharField(max_length=25, null=True, blank=True)
 
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 

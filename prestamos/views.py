@@ -344,6 +344,17 @@ class MarcarPrestamoComoDCView(LoginRequiredMixin, View):
 			return HttpResponse(e)
 
 
+# Guardar relacion del archivo de Deposito Banco con el prestamo
+def relacionArchivoBancoConDesembolsoElectronico(request):
+	
+	data = json.loads(request.body)
+
+	for prestamo in data['prestamos']:
+		MaestraPrestamo.objects.filter(noPrestamo=prestamo['noPrestamo']).update(archivoBanco=data['archivoBanco'])
+
+	return HttpResponse(1)
+
+
 # Prestamos para Desembolso Electronico
 class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 
@@ -380,6 +391,7 @@ class PrestamosDesembolsoElectronico(LoginRequiredMixin, DetailView):
 				'cuentaDesembolsoCodigo': doc[0].cuenta.codigo,
 				'cuentaDesembolsoDescrp': doc[0].cuenta.descripcion,
 				'cuentaDesembolsoAuxiliar': doc[1].cuenta.codigo,
+				'archivoBanco': prestamo.archivoBanco,
 				})
 
 		return JsonResponse(data, safe=False)

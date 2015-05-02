@@ -52,10 +52,25 @@
         return deferred.promise;
       }
 
+      //Relacionar prestamos con el archivo de banco generado.
+      function relacionarPrestamosConArchivoBanco(prestamos, archivoBanco) {
+        var deferred = $q.defer();
+
+        $http.post('/prestamos/archivo-banco/set/', JSON.stringify({'prestamos': prestamos, 'archivoBanco': archivoBanco})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         listadoPrestamos: listadoPrestamos,
         byNoPrestamo: byNoPrestamo,
-        PrestamosbySocio: PrestamosbySocio
+        PrestamosbySocio: PrestamosbySocio,
+        relacionarPrestamosConArchivoBanco: relacionarPrestamosConArchivoBanco
         // PrestamoById: PrestamoById
       };
 
@@ -280,13 +295,25 @@
   
           //Enviar para crear registros para archivo.
           appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
-            $scope.listadoPrestamos();
-            $scope.errorShow = false;
+
+            DesembolsoElectronicoService.relacionarPrestamosConArchivoBanco($scope.prestamosSeleccionados, data).then(function (data) {
+              $scope.listadoPrestamos();
+
+              alert('Fue generado el archivo para banco!');
+              $scope.errorShow = false;
+            });
           });
         } catch (e) {
           $scope.mostrarError(e);
           console.log(e);
         }
+      }
+
+      //Ver archivo de desembolso para Banco
+      $scope.verArchivoBanco = function($event, archivoBanco) {
+        $event.preventDefault();
+
+        $window.open('/static/media/archivosBanco/{archivoBanco}'.replace('{archivoBanco}', archivoBanco), target='_blank'); 
       }
 
       //Cuando se le de click al checkbox del header.

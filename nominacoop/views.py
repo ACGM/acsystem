@@ -224,6 +224,7 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 		nomina = self.request.GET.get('nomina')
 		tipoPrestamo = self.request.GET.get('tipoPrestamo')
 
+		# PRESTAMOS PARA LA NOMINA ESPECIFICADA
 		try:
 			infoTipo = getInfoTipo(tipoPrestamo)
 			nomP = NominaPrestamosAhorros.objects.get(nomina=nomina, infoTipo=infoTipo, tipo='PR')
@@ -231,17 +232,34 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 		except NominaPrestamosAhorros.DoesNotExist:
 			prestamos = 0
 
+		# AHORROS PARA LA NOMINA ESPECIFICADA
 		try:
 			nomA = NominaPrestamosAhorros.objects.get(nomina=nomina, tipo='AH')
 			ahorros = 1
 		except NominaPrestamosAhorros.DoesNotExist:
 			ahorros = 0
 
+		# BALANCES DE PRESTAMOS PARA LA NOMINA ESPECIFICADA
+		try:
+			Balances = NominaPrestamosAhorros.objects.get(nomina=nomina, infoTipo='2018', tipo='BP')
+			balancesPrestamos = 1
+		except NominaPrestamosAhorros.DoesNotExist:
+			balancesPrestamos = 0
+
+		# BALANCES DE AHORROS PARA LA NOMINA ESPECIFICADA
+		try:
+			Balances = NominaPrestamosAhorros.objects.get(nomina=nomina, infoTipo='2017', tipo='BA')
+			balancesAhorros = 1
+		except NominaPrestamosAhorros.DoesNotExist:
+			balancesAhorros = 0
+
 		data = list()
 
 		data.append({
 			'ahorros': ahorros,
 			'prestamos': prestamos,
+			'balancesPrestamos': balancesPrestamos,
+			'balancesAhorros': balancesAhorros,
 			})		
 
 		return JsonResponse(data, safe=False)
@@ -290,7 +308,7 @@ class GenerarArchivoPrestamosBalance(View):
 
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
 			InfoTipo = data['infoTipo'] # 0015, entre otros
-			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechanominaSAP = '{0:0>2}.{1:0>2}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
 
 			# nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='PR', infoTipo=InfoTipo)
@@ -330,7 +348,7 @@ class GenerarArchivoPrestamos(View):
 			prestamos = data['prestamos']
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
 			InfoTipo = data['infoTipo'] # 0015, entre otros
-			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechanominaSAP = '{0:0>2}.{1:0>2}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
 
 			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='PR', infoTipo=InfoTipo)
@@ -395,7 +413,7 @@ class GenerarArchivoAhorros(View):
 			ahorros = data['ahorros']
 			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
 			
-			fechanominaSAP = '{0}.{1:0>2}.{2:0>2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechanominaSAP = '{0:0>2}.{1:0>2}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 
 			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=nomina, tipo='AH', infoTipo='0014')
 

@@ -25,7 +25,8 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             SolicitudesPrestamosAPIViewByCodigoNombre, SolicitudPrestamoById, \
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
-                            PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha
+                            PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
+                            relacionArchivoBancoConDesembolsoElectronico
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
@@ -231,6 +232,8 @@ urlpatterns = patterns('',
     url(r'^prestamos/validaAutorizador/$', validarAutorizadorView.as_view(), name='valida_autorizador'),
     url(r'^prestamos/maestra/marcarcomo/$', MarcarPrestamoComoDCView.as_view(), name='marcar_prestamo_como'),
     url(r'^prestamos/maestra/cambios/$', guardarCambiosPrestamo.as_view(), name='Maestra_Prestamos_cambios'),
+    url(r'^prestamos/archivo-banco/set/$', relacionArchivoBancoConDesembolsoElectronico, name='prestamos_archivo_banco'),
+
     
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),

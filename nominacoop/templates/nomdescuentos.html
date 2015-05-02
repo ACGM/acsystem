@@ -24,7 +24,10 @@
 				<option value="RI">Rifa</option>
 			</select>
 			
-			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)">Refrescar</button>
+			<button class="icon-dollar Boton boton-postear-inventario boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)" title="Presionar este boton para ver el listado de Prestamos.">Prestamos</button>
+
+			<button class="icon-moneybag Boton boton-postear-inventario boton-nomina" ng-click="listadoAhorros($event)" title="Presionar este boton para ver el listado de Ahorros.">Ahorros</button>
+
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 		</div>
 
@@ -63,16 +66,17 @@
 				</div>
 
 				<section class="acciones-pr">
-					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo del tipo de prestamo seleccionado arriba." ng-click="archivoPrestamos()">Generar Archivo</button>	
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo del tipo de prestamo seleccionado arriba." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>	
+					<button class="Boton icon-document boton-aplicar-prestamos [[GenerarArchivoPrestamosStatus]]" title="Generar archivo del tipo de prestamo seleccionado arriba." ng-click="archivoPrestamos()" ng-disabled="[[GenerarArchivoPrestamosBool]]">Generar Archivo</button>
+
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[VerificarArchivoPrestamosStatus]]" title="Ver archivo del tipo de prestamo seleccionado arriba." ng-click="verArchivo(tipoPrestamoNomina)" ng-disabled="[[VerificarArchivoPrestamosBool]]">Verificar Archivo</button>
 					
-					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo con Balances Prestamos." ng-click="archivoBalancePrestamos($event)">Balances</button>	
+					<button class="Boton-azul icon-document boton-aplicar-prestamos [[BalancesPrestamosStatus]]" title="Generar archivo con Balances Prestamos." ng-click="archivoBalancePrestamos($event)" ng-disabled="[[BalancesPrestamosBool]]">Balances</button>
 
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
+					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesPrestamosStatus]]" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)" ng-disabled="[[verBalancesPrestamosBool]]">ver Balances</button>
 
-					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>
+					<button class="Boton icon-cog boton-aplicar-prestamos [[AplicarPrestamosStatus]]" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()" ng-disabled="[[AplicarPrestamosBool]]">Aplicar</button>
 
-					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Prestamos"></a>	
+					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Prestamos"></a>
 
 				</section>
 			</div>

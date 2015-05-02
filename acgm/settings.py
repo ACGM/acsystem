@@ -93,7 +93,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'es-DO'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santo_Domingo'
 
 USE_I18N = True
 
