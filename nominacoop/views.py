@@ -10,7 +10,6 @@ from django.views.generic import TemplateView, View, DetailView
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 
-
 from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,6 +19,7 @@ from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, Nom
 from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina, NominaPrestamosAhorros, CuotasPrestamosEmpresa, CuotasAhorrosEmpresa
 from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
+from ahorro.views import regMaestraView
 
 from prestamos.viewMaestraPrestamos import getBalancesPrestamos
 from acgm.views import LoginRequiredMixin
@@ -253,6 +253,20 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 		except NominaPrestamosAhorros.DoesNotExist:
 			balancesAhorros = 0
 
+		# NOMINA PRESTAMOS APLICADOS
+		try:
+			prAplicados = NominaPrestamosAhorros.objects.get(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PO')
+			prestamosAplicados = 1
+		except NominaPrestamosAhorros.DoesNotExist:
+			prestamosAplicados = 0
+
+		# NOMINA AHORROS APLICADOS
+		try:
+			ahAplicados = NominaPrestamosAhorros.objects.get(nomina=nomina, tipo='AH', estatus='PO')
+			ahorrosAplicados = 1
+		except NominaPrestamosAhorros.DoesNotExist:
+			ahorrosAplicados = 0
+
 		data = list()
 
 		data.append({
@@ -260,6 +274,8 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
 			'prestamos': prestamos,
 			'balancesPrestamos': balancesPrestamos,
 			'balancesAhorros': balancesAhorros,
+			'prestamosAplicados': prestamosAplicados,
+			'ahorrosAplicados': ahorrosAplicados,
 			})		
 
 		return JsonResponse(data, safe=False)
@@ -311,7 +327,7 @@ class GenerarArchivoPrestamosBalance(View):
 			fechanominaSAP = '{0:0>2}.{1:0>2}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
 			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
 
-			# nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='PR', infoTipo=InfoTipo)
+			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='BP', infoTipo=InfoTipo)
 
 			# Preparar archivo .TXT
 			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
@@ -336,6 +352,31 @@ class GenerarArchivoPrestamosBalance(View):
 		except Exception as e:
 			return HttpResponse(e)
 
+
+# Aplicar ahorros -- incrementar el balance de ahorro con la cuota actual
+class AplicarAhorros(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			nomina = data['nomina']
+			cuotas = CuotasAhorrosEmpresa.objects.filter(nomina=nomina, estatus='P')
+
+			for cuota in cuotas:
+				regMaestraView.insMaestra(self, cuota.socio.codigo, nomina, cuota.valorAhorro)
+
+			# Actualizar los estatus de la tabla CuotasAhorrosEmpresa y NominaAhorrosAhorros para que no esten pendiente.
+			cuotas.update(estatus='A')
+			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo='0014', tipo='AH', estatus='PE').update(estatus='PO')
+			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo='2017', tipo='BA', estatus='PE').update(estatus='PO')
+
+			return HttpResponse(1)
+		
+		except Exception as e:
+			return HttpResponse(e)
+			
 
 # Generar archivo para prestamos (Regulares, Bonificacion, Vacaciones, ...)
 class GenerarArchivoPrestamos(View):
@@ -489,35 +530,7 @@ class AplicarPrestamos(View):
 			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
 			cuotas.update(estatus='A')
 			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PE').update(estatus='PO')
-
-			return HttpResponse(1)
-		
-		except Exception as e:
-			return HttpResponse(e)
-
-
-# Aplicar ahorros -- incrementar el balance de ahorro con la cuota actual
-class AplicarAhorros(View):
-
-	def post(self, request, *args, **kwargs):
-
-		try:
-
-			data = json.loads(request.body)
-
-			nomina = data['nomina']
-
-			cuotas = CuotasAhorrosEmpresa.objects.filter(nomina=nomina, estatus='P')
-
-			#Sumar los montos de ahorros a los socios en el ahorro general.
-			for cuota in CuotasAhorrosEmpresa:
-				ahorro = AhorroSocio.objects.get(socio=cuota.socio)
-				ahorro.balance += cuota.valorAhorro
-				ahorro.save()
-
-			# Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
-			cuotas.update(estatus='A')
-			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo='0014', tipo='AH', estatus='PE').update(estatus='PO')
+			NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo='2018', tipo='BP', estatus='PE').update(estatus='PO')
 
 			return HttpResponse(1)
 		
