@@ -6,7 +6,8 @@ from django.views.generic import DetailView, TemplateView, View
 
 from django.shortcuts import render
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
+from .models import Cuentas, Auxiliares, DiarioGeneral, CuentasControl
+from administracion import TipoDocumento
 from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer, TipoDocSerializer, \
     CuentasControlSerializer
 
