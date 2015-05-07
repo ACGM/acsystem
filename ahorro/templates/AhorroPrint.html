@@ -31,39 +31,33 @@
 	<div class="body-ahorro">
 			<p>
 				<span>
-					<strong>Fecha</strong>
+					<strong style="padding-right: 12.3em;">Fecha</strong> <span>[[retiro.fecha | date: 'dd/MM/yyyy']]</span>
 				</span>
+				</br>
 				<span>
-					<strong>Tipo de Retiro</strong>
+					<strong style="padding-right: 3em;">Balance Anters del Retiro</strong> [[ahorroDt.disponible | number:2]]
 				</span>
+				</br>
 				<span>
-					<strong>Monto</strong>
+					<strong style="padding-right: .7em;">Balance Deuda Por prestamos</strong> [[ahorroDt.deuda | number:2]]
 				</span>
-			</p>
-			<p>
+				</br>
 				<span>
-					[[retiro.fecha | date: 'dd/MM/yyyy']]
+					<strong style="padding-right: 9em;">Ahorro Libre </strong> [[ahorroDt.libre | number:2]]
 				</span>
+				</br>
 				<span>
-					[[retiro.tipo]]
+					<strong style="padding-right: 7.3em;">Monto a retirado </strong> [[ahorroDt.retiro | number:2]]
 				</span>
+				</br>
+				</br>
 				<span>
-					[[retiro.monto |number:2]]
+					<strong style="padding-right: 1.7em;">>Balance despues del retiro</strong> [[ahorroDt.retiro | number:2]]
 				</span>
 			</p>
 	</div>
 	<div class="footer-ahorro">
-		<table>
-			<tr>
-				<td>____________________________________</td>
-			</tr>
-			<tr>
-			<td>
-				Firma Socio: [[ahorroDt.socio]]
-			</td>
-				
-			</tr>
-		</table>
+	
 		
 	</div>
 	<div class="ahorroPrint">
