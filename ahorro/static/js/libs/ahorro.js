@@ -331,14 +331,18 @@
 .controller('ImprimirAhorroController', ['$scope', '$filter','$window', '$rootScope', 'AhorroServices','$timeout',
 								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){        
 
-				$scope.ahorro=JSON.parse($window.sessionStorage['ahorro']);
+				$scope.ahorro = JSON.parse($window.sessionStorage['ahorro']);
 				$scope.retiro = JSON.parse($window.sessionStorage['retiro']);
-				$scope.ahorroDt={}
+				$scope.ahorroDt = {}
 				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 				
 				$scope.registro = function(){
 					var balance = $scope.ahorro.balance - $scope.retiro.monto;
+					var retiro = $scope.retiro.monto;
+					var deuda = $scope.ahorro.balance - $scope.ahorro.disponible;
+					var libre = (disponible - deuda)- retiro;
+
 
 					var disponible = $scope.ahorro.disponible - $scope.retiro.monto;
 
@@ -346,6 +350,11 @@
 					$scope.ahorroDt.socio = $scope.ahorro.socio;
 					$scope.ahorroDt.balance = balance;
 					$scope.ahorroDt.disponible = disponible;
+					$scope.ahorroDt.retiro = retiro;
+					$scope.ahorroDt.deuda = deuda;
+					$scope.ahorroDt.libre = libre;
+
+
 
 					var tipo;
 
@@ -366,7 +375,7 @@
 				$scope.imprimir = function(){
 					$window.print();
 					
-				}
+				};
 
 
 

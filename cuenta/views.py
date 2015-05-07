@@ -17,7 +17,6 @@ import json
 def cuentasSearch(request):
     return render(request, 'cuentas_search.html')
 
-
 class MaestroView(View):
 
     def get(self, request, *args, **kwargs):
