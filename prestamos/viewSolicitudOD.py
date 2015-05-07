@@ -148,65 +148,66 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 
 	def post(self, request, *args, **kwargs):
 
-		with transaction.atomic():
+		try:
+			data = json.loads(request.body)
 
-			try:
-				data = json.loads(request.body)
+			solicitudes = data['solicitudes']
+			accion = data['accion']
 
-				solicitudes = data['solicitudes']
-				accion = data['accion']
+			for solicitud in solicitudes:
+				oSolicitud = SolicitudOrdenDespachoH.objects.get(noSolicitud=solicitud['noSolicitud'])
+				
+				#Si la Orden de Despacho no tiene detalle digitado no puede ser aprobada
+				try:
+					d = SolicitudOrdenDespachoD.objects.filter(ordenDespacho=oSolicitud)
 
-				for solicitud in solicitudes:
-					oSolicitud = SolicitudOrdenDespachoH.objects.get(noSolicitud=solicitud['noSolicitud'])
-					
-					#Si la Orden de Despacho no tiene detalle digitado no puede ser aprobada
-					try:
-						SolicitudOrdenDespachoD.objects.filter(ordenDespacho=oSolicitud)
-					except SolicitudOrdenDespachoD.DoesNotExist:
+					if d.count() == 0:
 						raise Exception('La Solicitud No. ' + '{:0>8}'.format(oSolicitud.noSolicitud) + ' no tiene detalle digitado.')
+				except Exception as e:
+					raise Exception(e)
 
-					oSolicitud.estatus = accion
-					oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
-					oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
-					oSolicitud.aprobadoRechazadoPor = request.user
+				oSolicitud.estatus = accion
+				oSolicitud.fechaAprobacion = datetime.datetime.now() if accion == 'A' else None
+				oSolicitud.fechaRechazo = datetime.datetime.now() if accion == 'R' or accion == 'C' else None
+				oSolicitud.aprobadoRechazadoPor = request.user
+				oSolicitud.save()
+
+				#Crear prestamo en la maestra de prestamos si es APROBADO
+				if oSolicitud.estatus == 'A':
+
+					try:
+						maestra = MaestraPrestamo()
+						maestra.noPrestamo = MaestraPrestamo.objects.latest('noPrestamo').noPrestamo + 1
+					except MaestraPrestamo.DoesNotExist:
+						maestra.noPrestamo = 1
+
+					maestra.noSolicitudOD = oSolicitud
+					maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
+					maestra.socio = oSolicitud.socio
+					maestra.representante = oSolicitud.representante
+					maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
+					maestra.localidad = oSolicitud.localidad
+					maestra.montoInicial = oSolicitud.netoDesembolsar
+					maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
+					maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
+					maestra.pagoPrestamoAnterior = 0
+					maestra.cantidadCuotas = oSolicitud.cantidadCuotas
+					maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+					maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+					maestra.valorGarantizado = oSolicitud.valorGarantizado
+					maestra.balance = oSolicitud.netoDesembolsar
+					maestra.userLog = request.user
+
+					maestra.save()
+
+					#Guardar No. de Prestamo en la Solicitud
+					oSolicitud.prestamo = maestra.noPrestamo
 					oSolicitud.save()
 
-					#Crear prestamo en la maestra de prestamos si es APROBADO
-					if oSolicitud.estatus == 'A':
+			return HttpResponse(1)
 
-						try:
-							maestra = MaestraPrestamo()
-							maestra.noPrestamo = MaestraPrestamo.objects.latest('noPrestamo').noPrestamo + 1
-						except MaestraPrestamo.DoesNotExist:
-							maestra.noPrestamo = 1
-
-						maestra.noSolicitudOD = oSolicitud
-						maestra.categoriaPrestamo = oSolicitud.categoriaPrestamo
-						maestra.socio = oSolicitud.socio
-						maestra.representante = oSolicitud.representante
-						maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
-						maestra.localidad = oSolicitud.localidad
-						maestra.montoInicial = oSolicitud.netoDesembolsar
-						maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
-						maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
-						maestra.pagoPrestamoAnterior = 0
-						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
-						maestra.valorGarantizado = oSolicitud.valorGarantizado
-						maestra.balance = oSolicitud.netoDesembolsar
-						maestra.userLog = request.user
-
-						maestra.save()
-
-						#Guardar No. de Prestamo en la Solicitud
-						oSolicitud.prestamo = maestra.noPrestamo
-						oSolicitud.save()
-
-				return HttpResponse(1)
-
-			except Exception as e:
-				return HttpResponse(e)
+		except Exception as e:
+			return HttpResponse(e)
 
 
 # Listado de Solicitudes de Ordenes de Despacho Por Codigo de Socio

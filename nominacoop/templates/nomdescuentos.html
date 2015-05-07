@@ -24,7 +24,10 @@
 				<option value="RI">Rifa</option>
 			</select>
 			
-			<button class="icon-cog Boton boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)">Refrescar</button>
+			<button class="icon-dollar Boton boton-postear-inventario boton-nomina" ng-click="listadoPrestamos($event, tipoPrestamoNomina)" title="Presionar este boton para ver el listado de Prestamos.">Prestamos</button>
+
+			<button class="icon-moneybag Boton boton-postear-inventario boton-nomina" ng-click="listadoAhorros($event)" title="Presionar este boton para ver el listado de Ahorros.">Ahorros</button>
+
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 		</div>
 
@@ -32,6 +35,21 @@
 			<a href="#" class="resaltar-valor verde" ng-click="ocultarAhorros($event)">PRESTAMOS </a>
 			
 			<div class="section-prestamo">
+				<section class="acciones-pr">
+					<button id="GAPS" class="Boton icon-document boton-aplicar-prestamos [[GenerarArchivoPrestamosStatus]]" title="Generar archivo del tipo de prestamo seleccionado arriba." ng-click="archivoPrestamos()">Generar Archivo</button>
+
+					<button id="VAPS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[VerificarArchivoPrestamosStatus]]" title="Ver archivo del tipo de prestamo seleccionado arriba." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>
+					
+					<button id="APS" class="Boton icon-cog boton-aplicar-prestamos [[AplicarPrestamosStatus]]" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>
+					
+					<button id="BPS" class="Boton-azul icon-document boton-aplicar-prestamos [[BalancesPrestamosStatus]]" title="Generar archivo con Balances Prestamos." ng-click="archivoBalancePrestamos($event)">Balances</button>
+
+					<button id="vBPS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesPrestamosStatus]]" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
+
+					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Prestamos"></a>
+
+				</section>
+
 				<div class="registrosPanel--grande" id="panelPrestamos">
 					<table class="listado-table">
 						<tr class="suplidores-table-header">
@@ -62,17 +80,6 @@
 					</table>
 				</div>
 
-				<section class="acciones-pr">
-					<button class="Boton icon-document boton-aplicar-prestamos" title="Generar archivo del tipo de prestamo seleccionado arriba." ng-click="archivoPrestamos()">Generar Archivo</button>	
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo del tipo de prestamo seleccionado arriba." ng-click="verArchivo(tipoPrestamoNomina)">Verificar Archivo</button>	
-					
-					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo con Balances Prestamos." ng-click="archivoBalancePrestamos($event)">Balances</button>	
-
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
-
-					<button class="Boton icon-cog boton-aplicar-prestamos" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>	
-
-				</section>
 			</div>
 		</form>
 
@@ -81,6 +88,21 @@
 			<a href="#" class="resaltar-valor verde" ng-click="ocultarPrestamos($event)">AHORROS</a>
 
 			<div class="section-ahorro">
+				<section class="acciones-pr">
+					<button id="GAAS" class="Boton icon-document boton-aplicar-prestamos [[GenerarArchivoAhorrosStatus]]" ng-click="generarArchivoAhorros()">Generar Archivo</button>
+
+					<button id="VAAS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[VerificarArchivoAhorrosStatus]]" title="Ver archivo para nomina." ng-click="verArchivo('AH')">Verificar Archivo</button>	
+
+					<button id="AAS" class="Boton icon-cog boton-aplicar-prestamos [[AplicarAhorrosStatus]]" ng-click="aplicarAhorros()">Aplicar</button>
+
+					<button id="BAS" class="Boton-azul icon-document boton-aplicar-prestamos [[BalancesAhorrosStatus]]" title="Generar archivo de balances Ahorros." ng-click="archivoBalancesAhorros($event)">Balances</button>
+
+					<button id="vBAS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesAhorrosStatus]]" title="Ver archivo de balances de ahorros." ng-click="verBalancesAhorros($event)">ver Balances</button>
+
+					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Ahorros"></a>	
+
+				</section>
+
 				<div class="registrosPanel--grande" id="panelAhorros">
 					<table class="listado-table">
 						<tr class="suplidores-table-header">
@@ -101,14 +123,6 @@
 					</table>
 				</div>
 				
-				<section class="acciones-pr">
-					<button class="Boton icon-document boton-aplicar-prestamos" ng-click="generarArchivoAhorros()">Generar Archivo</button>
-					<button class="Boton-azul icon-uniE601 boton-aplicar-prestamos" title="Ver archivo para nomina." ng-click="verArchivo('AH')">Verificar Archivo</button>	
-					<button class="Boton-azul icon-document boton-aplicar-prestamos" title="Generar archivo para nomina.">Balances</button>	
-					<button class="Boton icon-cog boton-aplicar-prestamos" ng-click="aplicarAhorros()">Aplicar</button>	
-
-				</section>
-
 			</div>
 		</form>
 

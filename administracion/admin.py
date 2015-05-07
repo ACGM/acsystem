@@ -25,6 +25,10 @@ class OpcionInline(admin.StackedInline):
 class ArchivoBancoAdmin(admin.ModelAdmin):
 	list_display = ['id', 'bancoAsign', 'tipoServicio', 'envio', 'secuencia', 'userLog']
 
+	def save_model(self, request, obj, form, change):
+		obj.userLog = request.user
+		obj.save()
+
 @admin.register(ArchivoBancoHeader)
 class ArchivoBancoHeaderAdmin(admin.ModelAdmin):
 	list_display = ['id', 'tipoRegistro', 'idCompania', 'nombreCompania', 'secuencia']

@@ -1,0 +1,90 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Reporte de Quincena {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<section class="Factura" ng-controller="NominaReporteCtrl">
+	
+	<div class="rptUtilidad">
+		<div class="align-center">
+			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<p class="titulo-utilidad"> Nomina de Pago </p>
+			<p class="fecha-utilidad"> Correspondiente a la 2da Quincena de Marzo de 2014 </p>
+		</div>
+
+		<div>
+			<p>Empresa: COOPERATIVA</p>
+			<p>Tipo de Nomina: Quincenal</p>
+			<p>Forma de Pago: BANCO</p>
+		</div>
+
+		<section class="detalle-utilidad">
+			<!-- <span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span> -->
+			<table class="table-producto-factura">
+				<tr>
+					<td>Codigo</td>
+					<td>Nombre del Empleado</td>
+					<td class="align-right">Sueldo Mensual</td>
+					<td class="align-right">Sueldo Quincenal</td>
+					<td class="align-right">Horas Extras</td>
+					<td class="align-right">Otros Ingresos</td>
+					<td class="align-right">ISR</td>
+					<td class="align-right">Seguro Social</td>
+					<td class="align-right">AFP</td>
+					<td class="align-right">SFS</td>
+					<td class="align-right">Cafeteria</td>
+					<td class="align-right">Ahorros</td>
+					<td class="align-right">Prestamos</td>
+					<td class="align-right">Total Desc.</td>
+					<td class="align-right">Neto a Cobrar</td>
+
+				</tr>
+				<tr ng-repeat="registro in registros">
+					<td>[[registro.getcodigo]]</td>
+					<td>[[registro.empleado]]</td>
+					<td class="align-right">[[registro.salario * 2 | number : 2]]</td>
+					<td class="align-right">[[registro.salario | number : 2]]</td>
+					<td class="align-right">[[registro.horasExtras | number : 2]]</td>
+					<td class="align-right">[[registro.otrosIngresos | number : 2]]</td>
+					<td class="align-right">[[registro.isr | number : 2]]</td>
+					<td class="align-right">[[0 | number : 2]]</td>
+					<td class="align-right">[[registro.afp | number : 2]]</td>
+					<td class="align-right">[[registro.ars | number : 2]]</td>
+					<td class="align-right">[[registro.cafeteria | number : 2]]</td>
+					<td class="align-right">[[registro.descAhorros | number : 2]]</td>
+					<td class="align-right">[[registro.descPrestamos | number : 2]]</td>
+					<td class="align-right">[[registro.descuentos | number : 2]]</td>
+					<td class="align-right">[[registro.ingresos - registro.descuentos | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="2">TOTALES:</td>
+					<td class="align-right">[[totalSueldoMensual | number : 2]]</td>
+					<td class="align-right">[[totalSueldoQuincenal | number : 2]]</td>
+					<td class="align-right">[[totalHorasExtras | number : 2]]</td>
+					<td class="align-right">[[totalOtrosIngresos | number : 2]]%</td>
+					<td class="align-right">[[totalISR | number : 2]]</td>
+					<td class="align-right">[[totalSeguroSocial | number : 2]]</td>
+					<td class="align-right">[[totalAFP | number : 2]]</td>
+					<td class="align-right">[[totalARS | number : 2]]</td>
+					<td class="align-right">[[totalCafeteria | number : 2]]</td>
+					<td class="align-right">[[totalDescAhorros | number : 2]]</td>
+					<td class="align-right">[[totalDescPrestamos | number : 2]]</td>
+					<td class="align-right">[[totalDescuentos | number : 2]]</td>
+					<td class="align-right">[[totalNeto | number : 2]]</td>
+				</tr>
+			</table>
+		</section>
+
+	</div>
+	
+</section>
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

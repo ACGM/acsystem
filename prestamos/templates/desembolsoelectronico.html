@@ -54,7 +54,10 @@
 						<td>[[prestamo.socioCuentaBancaria]]</td>
 						<td>[[prestamo.bancoCodigo]]</td>
 						<td>[[prestamo.bancoNombre]]</td>
-						<td class="resaltar-valor align-right"><span ng-if="prestamo.fechaDesembolso.length > 0 " class="icon-document desembolso-ejecutado" title="Este prestamo fue generado en un archivo para el banco."></span>[[prestamo.netoDesembolsar | number : 2]]</td>
+						<td class="resaltar-valor align-right">
+							<a href="" ng-if="prestamo.fechaDesembolso.length > 0 " class="icon-document icon-buscar desembolso-ejecutado" title="Este prestamo fue generado en un archivo para el banco." ng-click="verArchivoBanco($event, prestamo.archivoBanco)"> </a>
+							[[prestamo.netoDesembolsar | number : 2]]
+						</td>
 						<td class="align-center"><a href="#" class="icon-printer imprimir-icon" ng-click="imprimirRC(prestamo)"></a></td>
 
 					</tr>
@@ -68,8 +71,8 @@
 			</div>
 
 			<div class="botones-acciones-desembolso">
-				<button class="Boton botones-desembolso-electr" ng-click="marcarPrestamoDC($event,'D')">Marcar como Desembolso</button>
 				<button class="Boton botones-desembolso-electr" ng-click="GeneraArchivoBanco($event)">Preparar Archivo para Enviar</button>
+				<button class="Boton botones-desembolso-electr" ng-click="marcarPrestamoDC($event,'D')">Marcar como Desembolso</button>
 				<button class="icon-document Boton botones-desembolso-electr" ng-click="imprimirListado($event)">Imprimir Listado</button>	
 			</div>
 

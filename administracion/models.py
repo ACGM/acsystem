@@ -541,10 +541,10 @@ class DocumentoCuentas(models.Model):
 # Archivos para Banco
 class ArchivoBanco(models.Model):
 
-	bancoAsign = models.CharField(max_length=5) # Numero Asignado a la Empresa de cinco posiciones
-	tipoServicio = models.CharField(max_length=2) #Tipo de Servicio de dos posiciones
-	envio = models.CharField(max_length=4) # MMDD mes y dia en que se envia el archivo
-	secuencia = models.PositiveIntegerField(default=0) # Secuencia del header de siete posiciones
+	bancoAsign = models.CharField("Numero Asignado a Empresa (desde el Banco)", max_length=5) # Numero Asignado a la Empresa de cinco posiciones
+	tipoServicio = models.CharField("Tipo Servicio (dos posiciones)", max_length=2) #Tipo de Servicio de dos posiciones
+	envio = models.CharField("Envio (MMDD)", max_length=4) # MMDD mes y dia en que se envia el archivo
+	secuencia = models.PositiveIntegerField("Secuencia (7 posiciones)", default=0) # Secuencia del header de siete posiciones
 	archivoNombre = models.CharField(max_length=25, null=True, blank=True)
 
 	datetimeServer = models.DateTimeField(auto_now_add=True)

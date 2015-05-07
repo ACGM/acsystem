@@ -201,6 +201,20 @@
         return deferred.promise;
       }
 
+      //Relacionar nomina con el archivo de banco generado.
+      function relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, archivoBanco) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivo-banco/set/', JSON.stringify({'fechaNomina': fechaNomina, 'tipoNomina': tipoNomina, 'archivoBanco': archivoBanco})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas        : nominasGeneradas,
         generaNomina            : generaNomina,
@@ -214,7 +228,8 @@
         generarArchivoAhorros   : generarArchivoAhorros,
         AplicarPrestamos        : AplicarPrestamos,
         AplicarAhorros          : AplicarAhorros,
-        generarArchivoPrestamosBalance : generarArchivoPrestamosBalance
+        generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
+        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco
       };
 
     }])
@@ -224,7 +239,7 @@
     //CONTROLLERS                                        *
     //                                                   *
     //****************************************************
-    .controller('NominaCtrl', ['$scope', '$filter', 'NominaService', function ($scope, $filter, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', function ($scope, $filter, $window, appService, NominaService) {
       $scope.showGN = true;
       $scope.showCN = true;
 
@@ -373,6 +388,7 @@
       //Guardar cambios en detalle de empleado.
       $scope.guardarDE = function() {
         try {
+          console.log($scope.empleado)
           NominaService.guardarDetalleEmpleado($scope.nomina, $scope.tipoNomina, $scope.empleado).then(function (data) {
 
             console.log('Fueron guardados los cambios con exito.');
@@ -390,7 +406,153 @@
 
       }
 
+      //Generar archivo para el banco
+      $scope.GeneraArchivoBanco = function($event, valorNomina, cntEmpleados, fechaNomina, tipoNomina) {
+        $event.preventDefault();
+
+        try {
+          //BLOQUE ESPECIAL PARA NOMINA
+          if($scope.detalle.length == 0) {
+            throw 'Favor desplegar la nomina haciendo click a la fecha de la misma.';
+          }
+          //FIN DE BLOQUE ESPECIAL
+
+          //Al metodo principal deben ser pasado los siguientes parametros:
+          // 1) tipoServicio (01 Nomina Automatica, 02 Pago a Suplidores, ..., 06 Transferencia a Cta)
+          // 2) fechaEfectiva YYYYMMDD
+          // 3) cantidadDB
+          // 4) montoTotalDB
+          // 5) cantidadCR
+          // 6) montoTotalCR
+          // 7) numeroAfiliacion
+          // 8) fechaEnvio YYYYMMDD
+          // 9) horaEnvio HHMM
+          var totalDB = 0;
+          var Cabecera = {};
+          var Detalle = [];
+
+          totalDB += parseFloat(valorNomina);
+
+          Cabecera.tipoServicio = '01';
+          Cabecera.fechaEfectiva = $filter('date')(Date.now(), 'yyyyMMdd');
+          Cabecera.cantidadDB = cntEmpleados;
+          Cabecera.montoTotalDB = $filter('number')(totalDB, 2);
+          Cabecera.cantidadCR = 0;
+          Cabecera.montoTotalCR = 0;
+          Cabecera.numeroAfiliacion = '';
+          Cabecera.fechaEnvio = $filter('date')(Date.now(), 'yyyyMMdd');
+          Cabecera.horaEnvio = $filter('date')(Date.now(), 'HHmm');
+
+          // Para el registro N son necesarios los siguientes campos
+          /*
+            1) cuentaDestino
+            2) monedaDestino = 214 para peso dominicano
+            3) montoTransaccion
+            4) codigoSocio / suplidorId
+          */
+          $scope.detalle.forEach(function (registroN) {
+            var item = {};
+
+            item.cuentaDestino = registroN.getCuentaBanco;
+            item.monedaDestino = '214';
+            item.montoTransaccion = $filter('number')(registroN.pago.replace('$','').replace(',',''), 2);
+            item.socioCodigo = registroN.getcodigo;
+
+            // item.prestamoNo = registroN.noPrestamo; //Exclusivo para desembolso de prestamos
+
+            Detalle.push(item);
+          });
+
+          //Enviar para crear registros para archivo.
+          appService.generarArchivoBanco(Cabecera, Detalle).then(function (data) {
+
+            if(data.substring(0,2) == 'PE') {
+              NominaService.relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, data).then(function (data) {
+                $scope.getNominasGeneradas();
+
+                alert('Fue generado el archivo para banco!');
+
+                $scope.errorShow = false;
+              });
+            }
+          });
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
+        }
+      }
+
+      //Ver archivo de nomina para Banco
+      $scope.verArchivoBanco = function($event, archivoBanco) {
+        $event.preventDefault();
+
+        if(archivoBanco == undefined) {
+          alert('No se ha generado archivo de banco para esta nomina.')
+        } else {
+          $window.open('/static/media/archivosBanco/{archivoBanco}'.replace('{archivoBanco}', archivoBanco), target='_blank'); 
+        }
+      }
+
+      //Reporte Nomina Quincenal
+      $scope.reporteNominaQ = function($event, fechaNomina, tipoNomina) {
+        $event.preventDefault();
+
+        try {
+          NominaService.detalleNomina(fechaNomina).then(function (data) {
+            
+            $window.sessionStorage['nominareporte'] = JSON.stringify(data);
+            $window.open('/nomina/reporte/quincena/', target='_blank');           
+
+          });
+          // $scope.getDetalleNomina(fechaNomina, tipoNomina);
+          // console.log($scope.registros)
+        } catch (e) {
+          $scope.mostrarError(e);
+          console.log(e);
+        }
+      }
+
     }])
+
+    //****************************************************
+    //CONTROLLERS REPORTE NOMINA                         *
+    //****************************************************
+    .controller('NominaReporteCtrl', ['$scope', '$filter', '$window', 'NominaService', function ($scope, $filter, $window, NominaService) {
+      $scope.totalSueldoMensual = 0;
+      $scope.totalSueldoQuincenal = 0;
+      $scope.totalHorasExtras = 0;
+      $scope.totalOtrosIngresos = 0;
+      $scope.totalISR = 0;
+      $scope.totalSeguroSocial = 0;
+      $scope.totalAFP = 0;
+      $scope.totalARS = 0;
+      $scope.totalCafeteria = 0;
+      $scope.totalDescAhorros = 0;
+      $scope.totalDescPrestamos = 0;
+      $scope.totalDescuentos = 0;
+      $scope.totalNeto = 0;
+
+      $scope.registros = JSON.parse($window.sessionStorage['nominareporte']);
+
+      $scope.registros.forEach(function (item) {
+        $scope.totalSueldoMensual += parseFloat(item.salario) * 2;
+        $scope.totalSueldoQuincenal += parseFloat(item.salario);
+        $scope.totalHorasExtras += parseFloat(item.horasExtras);
+        $scope.totalOtrosIngresos += parseFloat(item.otrosIngresos);
+        $scope.totalISR += parseFloat(item.isr);
+        $scope.totalSeguroSocial += parseFloat(0);
+        $scope.totalAFP += parseFloat(item.afp);
+        $scope.totalARS += parseFloat(item.ars);
+        $scope.totalCafeteria += parseFloat(item.cafeteria);
+        $scope.totalDescAhorros += parseFloat(item.descAhorros);
+        $scope.totalDescPrestamos += parseFloat(item.descPrestamos);
+        $scope.totalDescuentos += parseFloat(item.descuentos);
+        $scope.totalNeto += parseFloat(item.ingresos) - parseFloat(item.descuentos);
+
+      });
+
+    }])
+
 
     //****************************************************
     //                                                   *
@@ -403,6 +565,30 @@
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
       $scope.showPRESTAMOS = true;
+
+      //BOTONES DE SECCION PRESTAMOS
+      $scope.GenerarArchivoPrestamosStatus = 'Boton-disabled';
+      $window.document.getElementById('GAPS').disabled = true;
+      $scope.VerificarArchivoPrestamosStatus = 'Boton-disabled';
+      $window.document.getElementById('VAPS').disabled = true;
+      $scope.BalancesPrestamosStatus = 'Boton-disabled';
+      $window.document.getElementById('BPS').disabled = true;
+      $scope.verBalancesPrestamosStatus = 'Boton-disabled';
+      $window.document.getElementById('vBPS').disabled = true;
+      $scope.AplicarPrestamosStatus = 'Boton-disabled';
+      $window.document.getElementById('APS').disabled = true;
+
+      //BOTONES DE SECCION AHORROS
+      $scope.GenerarArchivoAhorrosStatus = 'Boton-disabled';
+      $window.document.getElementById('GAAS').disabled = true;
+      $scope.VerificarArchivoAhorrosStatus = 'Boton-disabled';
+      $window.document.getElementById('VAAS').disabled = true;
+      $scope.BalancesAhorrosStatus = 'Boton-disabled';
+      $window.document.getElementById('BAS').disabled = true;
+      $scope.verBalancesAhorrosStatus = 'Boton-disabled';
+      $window.document.getElementById('vBAS').disabled = true;
+      $scope.AplicarAhorrosStatus = 'Boton-disabled';
+      $window.document.getElementById('AAS').disabled = true;
 
       $scope.nominaH = {};
       $scope.reg = [];
@@ -446,11 +632,11 @@
         $scope.prestamos = [];
 
         try {
-          $scope.verificarExistenciaNomina();
-
           if($scope.fechaNomina == undefined) {
             throw "Verifique que la fecha de nomina no tiene errores."
           }
+
+          $scope.verificarExistenciaNomina('PRESTAMOS');
 
           MaestraPrestamoService.PrestamosPosteados(tipoPrestamoNom).then(function (data) {
             var fecha = $scope.fechaNomina.split('/');
@@ -473,8 +659,10 @@
               }
               $scope.totalesPrestamos();
             });
+            $scope.GenerarArchivoPrestamosStatus = '';
+            $window.document.getElementById('GAPS').disabled = false;
 
-            $scope.listadoAhorros();
+            $scope.ocultarAhorros($event);
             $scope.errorShow = false;
           });
         } catch (e) {
@@ -483,27 +671,43 @@
       }
 
       // Trae el listado de ahorros de todos los socios activos.
-      $scope.listadoAhorros = function() {
+      $scope.listadoAhorros = function($event) {
         $scope.ahorros = [];
 
-        FacturacionService.socios().then(function (data) {
-          var fecha = $scope.fechaNomina.split('/');
-          var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+        try {
+          if($scope.fechaNomina == undefined) {
+            throw "Verifique que la fecha de nomina no tiene errores."
+          }
 
-          var ahorro;
-          
-          data.forEach(function (item) {
-            ahorro = {};
-            ahorro.codigo = item.codigo;
-            ahorro.nombreCompleto = item.nombreCompleto;
-            ahorro.cuotaAhorro = fecha[0] > 15? item.cuotaAhorroQ2 : item.cuotaAhorroQ1;
+          $scope.verificarExistenciaNomina('AHORRO');
 
-            if(parseFloat(ahorro.cuotaAhorro) > 0) {
-              $scope.ahorros.push(ahorro);
-            }
-            $scope.totalAhorros();
+          FacturacionService.socios().then(function (data) {
+            var fecha = $scope.fechaNomina.split('/');
+            var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+            var ahorro;
+            
+            data.forEach(function (item) {
+              ahorro = {};
+              ahorro.codigo = item.codigo;
+              ahorro.nombreCompleto = item.nombreCompleto;
+              ahorro.cuotaAhorro = fecha[0] > 15? item.cuotaAhorroQ2 : item.cuotaAhorroQ1;
+
+              if(parseFloat(ahorro.cuotaAhorro) > 0) {
+                $scope.ahorros.push(ahorro);
+              }
+              $scope.GenerarArchivoAhorrosStatus = '';
+              $window.document.getElementById('GAAS').disabled = false;
+
+              $scope.ocultarPrestamos($event);
+              $scope.totalAhorros();
+              $scope.errorShow = false;
+            });
           });
-        });
+        } catch (e) {
+          $scope.mostrarError(e);
+        }
+        
       }
 
       // Calcula totales para prestamos regulares.
@@ -553,7 +757,7 @@
       }
 
       // Verificar si existe nomina.
-      $scope.verificarExistenciaNomina = function() {
+      $scope.verificarExistenciaNomina = function(tipo) {
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
@@ -562,14 +766,78 @@
 
         NominaService.getNomina(fechaFormatted, $scope.tipoPrestamoNomina).then(function (data) {
           if(data.length > 0) {
-            if(data[0]['ahorros'] == 1) {
-              msgAhorro = 'Ahorros generados.';
+console.log(data)
+            if(tipo == 'AHORRO') { //SECCION DE AHORROS
+              //Existencia de Ahorros Generados.
+              if(data[0]['ahorros'] == 1) {
+                $scope.VerificarArchivoAhorrosStatus = '';
+                $window.document.getElementById('VAAS').disabled = false;
+
+                $scope.AplicarAhorrosStatus = '';
+                $window.document.getElementById('AAS').disabled = false;
+              } else {
+                $scope.VerificarArchivoAhorrosStatus = 'Boton-disabled';
+                $window.document.getElementById('VAAS').disabled = true;
+              }
+
+              //Existencia de Balance de Ahorros Generados.
+              if(data[0]['balancesAhorros'] == 1) {
+                $scope.verBalancesAhorrosStatus = '';
+                $window.document.getElementById('vBAS').disabled = false;
+              } else {
+                $scope.verBalancesAhorrosStatus = 'Boton-disabled';
+                $window.document.getElementById('vBAS').disabled = true;
+              }
+
+              //Se aplico el ahorro.
+              if(data[0]['ahorrosAplicados'] == 1) {
+                $scope.BalancesAhorrosStatus = '';
+                $window.document.getElementById('BAS').disabled = false;
+              } else {
+                $scope.BalancesAhorrosStatus = 'Boton-disabled';
+                $window.document.getElementById('BAS').disabled = true;
+              }
+
+            } else { //SECCION DE PRESTAMOS
+              //Existencia de Prestamos Generados.
+              if(data[0]['prestamos'] == 1) {
+                $scope.VerificarArchivoPrestamosStatus = '';
+                $window.document.getElementById('VAPS').disabled = false;
+
+                $scope.AplicarPrestamosStatus = '';
+                $window.document.getElementById('APS').disabled = false;
+              } else {
+                $scope.VerificarArchivoPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('VAPS').disabled = true;
+
+                $scope.AplicarPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('APS').disabled = true;
+              }  
+
+              //Existencia de Balance de Prestamos Generados.
+              if(data[0]['balancesPrestamos'] == 1) {
+                $scope.verBalancesPrestamosStatus = '';
+                $window.document.getElementById('vBPS').disabled = false;
+              } else {
+                $scope.verBalancesPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('vBPS').disabled = true;
+              }
+
+              //Se aplicaron los prestamos.
+              if(data[0]['prestamosAplicados'] == 1) {
+                $scope.BalancesPrestamosStatus = '';
+                $window.document.getElementById('BPS').disabled = false;
+              } else {
+                $scope.BalancesPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('BPS').disabled = true;
+              }
             }
-            if(data[0]['prestamos'] == 1) {
-              msgPrestamo = 'Prestamos generados.';
-            }
+
+            msgAhorro = data[0]['ahorros'] == 1? 'Ahorros generados.' : '';
+            msgPrestamo = data[0]['prestamos'] == 1? 'Prestamos generados.': '';
+
             if(data[0]['ahorros'] == 1 || data[0]['prestamos'] == 1) {
-              $scope.mensaje = 'Existe ' + msgPrestamo + ' ' + msgAhorro;
+              $scope.mensaje = 'Para esta nomina existen ' + msgPrestamo + ' ' + msgAhorro;
             }
           }
         });
@@ -597,6 +865,11 @@
             $scope.mensaje = 'Fue generado el archivo de Prestamos.';
             $scope.errorShow = false;
             alert('El archivo fue generado!');
+
+            $scope.VerificarArchivoPrestamosStatus = '';
+            $window.document.getElementById('VAPS').disabled = false;
+            $scope.AplicarPrestamosStatus = '';
+            $window.document.getElementById('APS').disabled = false;
           }
         });
       }
@@ -608,13 +881,17 @@
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
         NominaService.generarArchivoAhorros($scope.ahorros,fechaFormatted).then(function (data) {
-          console.log(data)
 
           if(data != 1) {
             $scope.mostrarError(data);
           } else {
             $scope.mensaje = 'Fue generado el archivo de Ahorros.';
             alert('Archivo de ahorros generado!');
+
+            $scope.VerificarArchivoAhorrosStatus = '';
+            $window.document.getElementById('VAAS').disabled = false;
+            $scope.AplicarAhorrosStatus = '';
+            $window.document.getElementById('AAS').disabled = false;
           }
         });
       }
@@ -632,7 +909,7 @@
           case 'AH': archivo = 'PA0014.TXT'; break;
 
         }
-        $window.open('/static/media/{archivo}'.replace('{archivo}', archivo), target='_blank'); 
+        $window.open('/static/media/archivosNomina/{archivo}'.replace('{archivo}', archivo), target='_blank'); 
 
       }
 
@@ -666,6 +943,10 @@
             if(data == 1) {
               alert('Fueron aplicados los prestamos con exito!');
               $scope.errorShow = false;
+
+              $scope.BalancesPrestamosStatus = '';
+              $window.document.getElementById('BPS').disabled = false;
+
             } else {
               $scope.mostrarError(data);
             }
@@ -680,8 +961,13 @@
         try {
           NominaService.AplicarAhorros($scope.fechaNomina).then(function (data) {
             if(data == 1) {
+              console.log(data)
               alert('Fueron aplicados los ahorros con exito!');
               $scope.errorShow = false;
+
+              $scope.BalancesAhorrosStatus = '';
+              $window.document.getElementById('BAS').disabled = false;
+
             } else {
               $scope.mostrarError(data);
             }
@@ -698,7 +984,7 @@
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
-        NominaService.generarArchivoPrestamosBalance('9999', fechaFormatted).then(function (data) {
+        NominaService.generarArchivoPrestamosBalance('2018', fechaFormatted).then(function (data) {
           console.log(data)
 
           if(data != 1) {
@@ -706,6 +992,9 @@
           } else {
             $scope.mensaje = 'Fue generado el archivo de Balance de Prestamos.';
             alert('Archivo de balances de prestamos fue generado!');
+
+            $scope.verBalancesPrestamosStatus = '';
+            $window.document.getElementById('vBPS').disabled = false;
           }
         });
       }
@@ -714,7 +1003,7 @@
       $scope.verBalancesPrestamos = function($event) {
         $event.preventDefault();
 
-        $window.open('/static/media/{archivo}'.replace('{archivo}', 'PA9999.TXT'), target='_blank'); 
+        $window.open('/static/media/archivosNomina/{archivo}'.replace('{archivo}', 'PA2018.TXT'), target='_blank'); 
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)

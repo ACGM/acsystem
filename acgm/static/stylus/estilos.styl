@@ -378,19 +378,21 @@ footer
 		display inline-block
 
 
-.comoCheque
+.toolTip
 	position relative
 	&:hover
 		&:after
+			font-size 16px
+			padding-left .2rem
 			content attr(data-info)
 			color verdeMuyOscuro
 			border 2px solid verde
 			background verdeSuave
-			height 2.4em
-			width 14em
+			height 2.4rem
+			width 14rem
 			position absolute
-			left -14.4em
-			top -.6em
+			left -14.6rem
+			top -.6rem
 			z-index 1999
 			border-radius 5px 5px 5px 5px
 
@@ -641,6 +643,7 @@ footer
 		height 0
 		
 .cerrarError
+	font-size 1.2rem
 	text-decoration none
 	background rojoOscuro
 	color white
@@ -648,7 +651,7 @@ footer
 	padding .3em .6em
 	position absolute
 	right .1em
-	top .1em
+	top .18em
 	margin 0 .2em 0 0
 	&:hover
 		background red
@@ -1219,7 +1222,7 @@ footer
 				font-size 1.1em
 
 .boton-desglose-empleado
-	height 6em
+	height 4.5em
 	margin 0 .4em 0 .7em
 	width 8.5em
 	padding-right .7em
@@ -1270,7 +1273,7 @@ footer
 		display none
 
 .acciones-pr
-	margin .5em 0 0 0 
+	margin .5em 0 .5em 0 
 	display block
 
 .boton-aplicar-prestamos
@@ -1280,7 +1283,7 @@ footer
 		margin-right .4em
 	
 .nomina-descuentos-panel
-	height 4em
+	height 4.7em
 	background verdeSuave
 	color verde
 	margin-bottom .4em
@@ -1290,14 +1293,28 @@ footer
 		display inline-block
 	
 	.boton-nomina
-		padding 0 1em
+		margin-left 1em
+		height 2.6rem
 		&:before
-			margin-right .4em
+			font-size 1.2rem
+			margin 0
+			padding 0
+			display block
 
 .boton-aplicar-ahorros
 	height 3em
 	width 9em
 	margin-bottom 2em
+	
+.reporte-nomdesc
+	text-decoration none
+	font-size 2.8rem
+	margin-left .2em
+	position absolute
+	color verde
+	&:hover
+		color mamey
+		font-weight bold
 	
 // FIN MODULO DE NOMINA  **********************************
 
@@ -2526,7 +2543,7 @@ footer
 .datos-prestamo-content
 	display block
 	// overflow hidden
-	width 85%
+	width 100%
 	position relative
 	
 .monto-field
@@ -2661,7 +2678,7 @@ footer
 	width 48%
 	margin-left 1em
 	position relative
-	
+
 .datos-prestamo-2-table
 	width 100%
 	margin-bottom .4em
@@ -2671,7 +2688,7 @@ footer
 				&:nth-child(2)
 					width 65%
 					padding-bottom .2em
-
+					
 .categoria-prestamo-id
 	display inline-block
 	
@@ -2733,11 +2750,17 @@ footer
 .otros-datos-info
 	margin-bottom .4em
 
+.buscar-categoria-prestamo
+	position relative
+	right 0
+	
 .otros-datos-info-table
+	width 100%
 	& tr
 		& td
 			&:first-child
 				padding-right .5em
+				width 12em
 			&:last-child
 				padding-bottom .3em
 

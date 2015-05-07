@@ -1,5 +1,6 @@
 # VIEWS de Administracion
 
+from django.conf import settings
 from django.core.files import File
 from django.shortcuts import render
 from django.views.generic import View
@@ -205,7 +206,7 @@ class GenerarArchivoBancoView(View):
 			archivoB.save()
 
 			nombreArchivoFinal = archivoB.archivoNombre #El nombre del archivo que sera creado (.txt)
-			pathFile = open(nombreArchivoFinal, 'w')
+			pathFile = open(settings.ARCHIVOS_BANCO + nombreArchivoFinal, 'wb+')
 			sysFile = File(pathFile)
 
 			# Preparar cabecera de archivo de Banco
@@ -273,7 +274,7 @@ class GenerarArchivoBancoView(View):
 
 			# PENDIENTE -- Implementacion de Registros R -> para pago a Suplidores
 
-			return HttpResponse(1)
+			return HttpResponse(nombreArchivoFinal)
 
 		except Exception as e:
 			return HttpResponse(e)

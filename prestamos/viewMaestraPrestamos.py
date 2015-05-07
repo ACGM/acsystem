@@ -54,18 +54,30 @@ class PrestamosBySocioAPIView(APIView):
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)
 
-def getBalancesPrestamos(self):
+def getBalancesPrestamos(self, socio=None):
 	
-	return MaestraPrestamo.objects.raw('SELECT \
-									p.id, \
-									p.socio_id, \
-									SUM(p.balance) balance \
-								FROM prestamos_maestraprestamo p \
-								INNER JOIN administracion_socio s ON s.id = p.socio_id \
-								GROUP BY p.socio_id \
-								HAVING p.estatus = \'P\' \
-								\
-								')
+	if socio == None:
+
+		return MaestraPrestamo.objects.raw('SELECT \
+										p.id, \
+										p.socio_id, \
+										SUM(p.balance) balance \
+									FROM prestamos_maestraprestamo p \
+									INNER JOIN administracion_socio s ON s.id = p.socio_id \
+									GROUP BY p.socio_id \
+									HAVING p.estatus = \'P\' \
+									\
+									')
+	else:
+		return MaestraPrestamo.objects.raw('SELECT \
+										p.id, \
+										p.socio_id, \
+										SUM(p.balance) balance \
+									FROM prestamos_maestraprestamo p \
+									INNER JOIN administracion_socio s ON s.id = p.socio_id \
+									GROUP BY p.socio_id \
+									HAVING p.estatus = \'P\' and s.codigo =' + socio \
+									)
 
 # Listado de Prestamos por Socio
 class BalancePrestamosBySocioAPIView(APIView):
@@ -73,18 +85,8 @@ class BalancePrestamosBySocioAPIView(APIView):
 	serializer_class = BalancePrestamosSocioSerializer
 
 	def get(self, request, socio=None):
-		if socio == None:
-			prestamos = getBalancesPrestamos(self)
-		else:
-			prestamos = MaestraPrestamo.objects.raw('SELECT \
-														p.id, \
-														p.socio_id, \
-														SUM(p.balance) balance \
-													FROM prestamos_maestraprestamo p \
-													INNER JOIN administracion_socio s ON s.id = p.socio_id \
-													GROUP BY p.socio_id \
-													HAVING p.estatus = \'P\' and s.codigo =' + socio \
-													)
+		
+		prestamos = getBalancesPrestamos(self, socio)
 
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)

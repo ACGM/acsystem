@@ -44,7 +44,8 @@ class EmpleadoCoop(models.Model):
 	tipo_cobro_choices = (('Q','Quincenal'),('M','Mensual'),)
 	tipo_pago_choices = (('E','Efectivo'),('C','Cheque'),('B','Banco'),)
 
-	codigo = models.PositiveIntegerField(max_length=6)
+	#codigo = models.PositiveIntegerField(max_length=6)
+	socio = models.ForeignKey(Socio)
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
 	cedula = models.CharField(max_length=20)
@@ -72,10 +73,13 @@ class EmpleadoCoop(models.Model):
 	def __unicode__(self):
 		return '%s %s' % (self.nombres, self.apellidos)
 
+	def codigoSocio(self):
+		return '%s' % (self.socio.codigo)
+
 	class Meta:
 		verbose_name = 'Empleado Cooperativa'
 		verbose_name_plural = 'Empleados Cooperativa'
-		ordering = ['codigo',]
+		ordering = ['socio',]
 
 
 # Tipos de nominas
@@ -106,6 +110,7 @@ class NominaCoopH(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 	quincena = models.PositiveIntegerField(choices=quincena_choices, default=1)
 	nota = models.TextField(blank=True)
+	archivoBanco = models.CharField(max_length=25, null=True, blank=True)
 
 	posteada = models.CharField(max_length=1, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
@@ -250,15 +255,27 @@ class NominaCoopD(models.Model):
 
 	@property
 	def getcodigo(self):
-		return '%s' % (self.empleado.codigo)
+		return '%s' % (self.empleado.socio.codigo)
+
+	@property
+	def getCuentaBanco(self):
+		return '%s' % (self.empleado.socio.cuentaBancaria)
 
 	@property
 	def pago(self):
-		descuentos = self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
-		ingresos = self.vacaciones + self.otrosIngresos
-		neto = self.salario + ingresos - descuentos
+		descuentos = self.descuentos #self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
+		ingresos = self.ingresos #self.vacaciones + self.otrosIngresos
+		neto = ingresos - descuentos #self.salario + ingresos - descuentos
 
 		return '$%s' % str(format(neto,',.2f'))
+
+	@property
+	def descuentos(self):
+		return self.isr + self.afp + self.ars + self.cafeteria + self.descAhorros + self.descPrestamos
+
+	@property
+	def ingresos(self):
+		return self.salario + self.vacaciones + self.otrosIngresos
 
 	class Meta:
 		unique_together = ('nomina', 'empleado')
@@ -299,7 +316,7 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	@property
 	def codigoSocio(self):
-		return self.socio.codigo
+		return '%s' % (self.socio.codigo)
 
 	@property
 	def montoTotal(self):
