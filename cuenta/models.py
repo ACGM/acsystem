@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from administracion.models import TipoDocumento
 
 
 class CuentasControl(models.Model):
@@ -57,15 +58,6 @@ class Auxiliares(models.Model):
 
     class Meta:
         ordering = ['codigo']
-
-
-class TipoDocumento(models.Model):
-    tipoDoc = models.CharField(max_length=4, verbose_name='Tipo de Documento', blank=False, unique=True)
-    descripcion = models.CharField(max_length=100, verbose_name='Descripcion', blank=False)
-
-    def __unicode__(self):
-        return '%s' % (self.tipoDoc)
-
 
 class DiarioGeneral(models.Model):
     estatus_choicer = (('P', 'Posteada'), ('R', 'Registrada'), ('C', 'Cancelada'))

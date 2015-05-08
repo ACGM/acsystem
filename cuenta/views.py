@@ -6,7 +6,8 @@ from django.views.generic import DetailView, TemplateView, View
 
 from django.shortcuts import render
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
+from .models import Cuentas, Auxiliares, DiarioGeneral, CuentasControl
+from administracion import TipoDocumento
 from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer, TipoDocSerializer, \
     CuentasControlSerializer
 
@@ -16,7 +17,6 @@ import json
 # Cuentas Busqueda (GENERICO)
 def cuentasSearch(request):
     return render(request, 'cuentas_search.html')
-
 
 class MaestroView(View):
 

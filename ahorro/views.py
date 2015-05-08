@@ -14,28 +14,26 @@ from administracion.models import Socio
 from .serializers import interesAhorroSerializer, maestraAhorroSerializer, AhorroSocioSerializer, RetiroAhorroSerializer
 
 
-class regMaestraView(DetailView):
-    queryset = MaestraAhorro.objects.all()
 
-    def insMaestra(self, CodSocio, Fecha, Monto):
-        regSocio = AhorroSocio.objects.get(codigo=CodSocio)
-        regInteres = InteresesAhorro.objects.get(id=1)
 
-        regMaestra = MaestraAhorro()
-        regMaestra.estatus = "A"
-        regMaestra.fecha = Fecha
-        regMaestra.interes = regInteres
-        regMaestra.monto = Monto
-        regMaestra.ahorro = regSocio
-        regMaestra.balance = Monto + regSocio.balance
-        regMaestra.save()
+def insMaestra(self, CodSocio, Fecha, Monto):
+    regSocio = AhorroSocio.objects.get(codigo=CodSocio)
+    regInteres = InteresesAhorro.objects.get(id=1)
+    regMaestra = MaestraAhorro()
+    regMaestra.estatus = "A"
+    regMaestra.fecha = Fecha
+    regMaestra.interes = regInteres
+    regMaestra.monto = Monto
+    regMaestra.ahorro = regSocio
+    regMaestra.balance = Monto + regSocio.balance
+    regMaestra.save()
 
-    def getSocioAhorro(self, codSocio):
-        regSocio = AhorroSocio.objects.raw('select socio_id'
-                                           ', balance '
-                                           'from ahorro_ahorrosocio '
-                                           'where socio_id =' + codSocio)
-        return regSocio
+def getSocioAhorro(self, codSocio):
+    regSocio = AhorroSocio.objects.raw('select socio_id'
+                                       ', balance '
+                                       'from ahorro_ahorrosocio '
+                                       'where socio_id =' + codSocio)
+    return regSocio
 
 
 class MaestraAhorroView(DetailView):
