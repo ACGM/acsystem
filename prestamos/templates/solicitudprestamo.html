@@ -17,7 +17,7 @@
 			<a class="DownArrow" href="#" ng-click="toggleLSP()"></a>
 		</div>
 
-		<section class="listado-reg-sp cssSlideUp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
+		<section id="panelPrestamos" class="listado-reg-sp cssSlideUp" ng-show="showLSP" ng-init="listadoSolicitudes(undefined)">
 				<span>Codigo</span>
 				<input type="text" class="doc-no-ei" ng-model="socioCodigo" ng-keypress="solicitudesprestamosBySocio($event, socioCodigo)">
 

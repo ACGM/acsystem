@@ -286,15 +286,16 @@ class NotaDeCreditoEspecial(models.Model):
 class NotaDeDebitoPrestamo(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	posteo_choices = (('N','NO'),('S','SI'))
 
 	fecha = models.DateField(auto_now=True)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
-	posteado = models.BooleanField(default=False)
+	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')

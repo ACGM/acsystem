@@ -8,6 +8,7 @@
     'cooperativa.inventario',
     'cooperativa.inventarioRPT',
     'cooperativa.fondoscajas',
+    'cooperativa.notadebito',
     'cooperativa.ahorro',
     'cooperativa.solicitudprestamo',
     'cooperativa.maestraprestamo',

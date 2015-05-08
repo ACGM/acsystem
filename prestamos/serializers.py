@@ -81,8 +81,12 @@ class NotasCreditoEspecialesListado(serializers.HyperlinkedModelSerializer):
 
 # Notas de Debito a Prestamos
 class NotasDebitoListado(serializers.HyperlinkedModelSerializer):
+	noPrestamo = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = NotaDeDebitoPrestamo
+		fields = ('id', 'fecha', 'noPrestamo', 'valorCapital', 'valorInteres', 'concepto', 'estatus', 'posteado')
+		ordering = ('-fecha',)
 
 
 # Distribucion de Excedentes (proceso de calculos de interes - Anual)

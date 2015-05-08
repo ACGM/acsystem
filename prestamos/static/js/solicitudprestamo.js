@@ -299,6 +299,13 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
 
+      window.onresize = function(event) {
+        panelesSize();
+      }
+
+      function panelesSize() {
+        document.getElementById('panelPrestamos').style.height = (window.innerHeight - 280) + 'px';
+      }
       
       // Mostrar/Ocultar panel de Listado de Desembolsos
       $scope.toggleLSP = function() {

@@ -4,6 +4,12 @@ from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDe
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
 					NotaDeDebitoPrestamo
 
+@admin.register(NotaDeDebitoPrestamo)
+class NotaDeDebitoPrestamoAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'fecha', 'noPrestamo', 'valorCapital', 'valorInteres', 'concepto', 'estatus']
+
+
 @admin.register(SolicitudPrestamo)
 class SolicitudPrestamoAdmin(admin.ModelAdmin):
 

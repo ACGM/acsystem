@@ -766,7 +766,7 @@
 
         NominaService.getNomina(fechaFormatted, $scope.tipoPrestamoNomina).then(function (data) {
           if(data.length > 0) {
-console.log(data)
+
             if(tipo == 'AHORRO') { //SECCION DE AHORROS
               //Existencia de Ahorros Generados.
               if(data[0]['ahorros'] == 1) {
