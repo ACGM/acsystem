@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento
+from .models import Cuentas, Auxiliares, DiarioGeneral
 
 
 @admin.register(Cuentas)
@@ -20,7 +20,4 @@ class DiarioAdmin(admin.ModelAdmin):
     list_display = ("id", "fecha", "cuenta", "referencia", "auxiliar", "tipoDoc", "estatus", "debito", "credito")
 
 
-@admin.register(TipoDocumento)
-class TipoDocDiarioAdmin(admin.ModelAdmin):
-    list_display = ("tipoDoc", "descripcion")
 
