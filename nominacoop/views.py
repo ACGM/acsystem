@@ -19,10 +19,10 @@ from .serializers import NominasGeneradasSerializer, TiposNominasSerializer, Nom
 from .models import NominaCoopH, NominaCoopD, EmpleadoCoop, TipoNomina, NominaPrestamosAhorros, CuotasPrestamosEmpresa, CuotasAhorrosEmpresa
 from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
-from ahorro.views import regMaestraView
 
 from prestamos.viewMaestraPrestamos import getBalancesPrestamos
 from acgm.views import LoginRequiredMixin
+from ahorro.views import insMaestra, getSocioAhorro
 
 from datetime import datetime
 
@@ -365,7 +365,7 @@ class AplicarAhorros(View):
 			cuotas = CuotasAhorrosEmpresa.objects.filter(nomina=nomina, estatus='P')
 
 			for cuota in cuotas:
-				regMaestraView.insMaestra(self, cuota.socio.codigo, nomina, cuota.valorAhorro)
+				insMaestra(self, cuota.socio.codigo, nomina, cuota.valorAhorro)
 
 			# Actualizar los estatus de la tabla CuotasAhorrosEmpresa y NominaAhorrosAhorros para que no esten pendiente.
 			cuotas.update(estatus='A')

@@ -17,7 +17,7 @@ from .serializers import interesAhorroSerializer, maestraAhorroSerializer, Ahorr
 
 
 def insMaestra(self, CodSocio, Fecha, Monto):
-    regSocio = AhorroSocio.objects.get(codigo=CodSocio)
+    regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)
     regInteres = InteresesAhorro.objects.get(id=1)
     regMaestra = MaestraAhorro()
     regMaestra.estatus = "A"

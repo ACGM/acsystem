@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, TipoDocumento, CuentasControl
+from .models import Cuentas, Auxiliares, DiarioGeneral, CuentasControl
+from administracion.models import TipoDocumento
 
 
 class CuentasControlSerializer(serializers.HyperlinkedModelSerializer):
