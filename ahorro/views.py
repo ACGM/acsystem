@@ -2,7 +2,7 @@ import json
 import decimal
 
 from django.http import HttpResponse, JsonResponse
-from django.views.generic import TemplateView, DetailView, View
+from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
 from .models import InteresesAhorro, MaestraAhorro, AhorroSocio, RetiroAhorro
@@ -12,9 +12,6 @@ from prestamos.models import MaestraPrestamo
 from administracion.models import Socio
 
 from .serializers import interesAhorroSerializer, maestraAhorroSerializer, AhorroSocioSerializer, RetiroAhorroSerializer
-
-
-
 
 def insMaestra(self, CodSocio, Fecha, Monto):
     regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)

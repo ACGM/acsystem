@@ -57,10 +57,9 @@ class CxpOrdenView(DetailView):
                     regDetalle.monto = decimal.Decimal(det['monto'])
                     regDetalle.save()
 
-
             return HttpResponse('1')
         except Exception as ex:
-             return HttpResponse(ex)
+            return HttpResponse(ex)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -106,39 +105,19 @@ class CxpSuperCoop(DetailView):
         data = request.body
         dataCuentas = data['cuentas']
 
-        cxpSuperId = data['id']
-
-        if cxpSuperId == None:
+        if data['id'] is None:
             cxpSuper = CxpSuperCoop()
             cxpSuper.factura = data['factura']
             cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
             cxpSuper.fecha = data['fecha']
             cxpSuper.concepto = data['concepto']
             cxpSuper.descuento = data['descuento']
-            cxpSuper.monto = data['monto']
+            cxpSuper.monto = decimal.Decimal(data['monto'])
             cxpSuper.estatus = data['estatus']
 
             cxpSuper.save()
-
-            for cuenta in dataCuentas:
-                regCuenta = DiarioGeneral()
-                if cuenta['cuenta'] is not None:
-                    regCuenta.cuenta = Cuentas.objects.get(codigo=cuenta['cuenta'])
-
-                if cuenta['auxiliar'] is not None:
-                    regCuenta.auxiliar = Auxiliares.objects.get(codigo=cuenta['auxiliar'])
-
-                regCuenta.fecha = cuenta['fecha']
-                regCuenta.referencia = 'CXPS-' + cxpSuper.id
-                regCuenta.tipoDoc = TipoDocumento.objects.get(tipoDoc=cuenta['tipoDoc'])
-                regCuenta.estatus = cuenta['estatus']
-                regCuenta.debito = cuenta['debito']
-                regCuenta.credito = cuenta['credito']
-                regCuenta.save()
-                cxpSuper.detalleCuentas.add(regCuenta)
-
         else:
-            cxpSuper = CxpSuperCoop.objects.filter(id=cxpSuperId)
+            cxpSuper = CxpSuperCoop.objects.filter(id=data['id'])
             cxpSuper.factura = data['factura']
             cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
             cxpSuper.fecha = data['fecha']
@@ -148,21 +127,10 @@ class CxpSuperCoop(DetailView):
             cxpSuper.estatus = data['estatus']
             cxpSuper.save()
 
-            for cuenta in dataCuentas:
-                regCuenta = DiarioGeneral.objects.filter(id=dataCuentas['id'])
-                if cuenta['cuenta'] is not None:
-                    regCuenta.cuenta = Cuentas.objects.get(codigo=cuenta['cuenta'])
-
-                if cuenta['auxiliar'] is not None:
-                    regCuenta.auxiliar = Auxiliares.objects.get(codigo=cuenta['auxiliar'])
-
-                regCuenta.fecha = cuenta['fecha']
-                regCuenta.referencia = 'CXPS-' + cxpSuper.id
-                regCuenta.tipoDoc = TipoDocumento.objects.get(tipoDoc=cuenta['tipoDoc'])
-                regCuenta.estatus = cuenta['estatus']
-                regCuenta.debito = cuenta['debito']
-                regCuenta.credito = cuenta['credito']
-                regCuenta.save()
+            if dataCuentas[0]["diario"] is not None:
+                for cuenta in dataCuentas:
+                    regCuenta = DiarioGeneral.objects.get(id=cuenta)
+                    cxpSuper.detalleCuentas = regCuenta
 
         return HttpResponse('1')
 
@@ -222,6 +190,9 @@ class DetalleOrderViewSet(viewsets.ModelViewSet):
 
 class CxpView(TemplateView):
     template_name = 'CxpOrden.html'
+
+class cxpSuperView(TemplateView):
+    template_name = 'CxpOrdenSuper'
 
 
 

@@ -134,8 +134,7 @@
 
             function setOrden(Orden, Detalle){
                 var deferred = $q.defer();
-                console.log(Orden);
-                console.log(Detalle);
+
                 $http.post('/cxpOrdenJson/', JSON.stringify({'Orden':Orden, 'Detalle':Detalle}))
                     .success(function (data){
                         deferred.resolve(data);
@@ -145,6 +144,34 @@
                     });
                 return deferred.promise;
             }
+
+            function getOcSuplidor(Suplidor, FechaI, FechaF){
+                var deferred = $q.defer();
+
+                $http.get('/api/prestamos/solicitudes/od/suplidor/'+suplidor+'/'+FechaI+'/'+FechaF)
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve(err);
+                    });
+                return  deferred.promise;
+            }
+
+            function getOcFecha(FechaI, FechaF){
+                var deferred = $q.defer();
+
+                $http.get('/api/prestamos/solicitudes/od/fecha/'+FechaI+'/'+FechaF)
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve(err);
+                    });
+
+                return deferred.promise;
+            }
+
             return {
                 getAll: getAll,
                 getCxpsById: getCxpsById,
@@ -154,7 +181,9 @@
                 getCxpByOrden: getCxpByOrden,
                 socios: socios,
                 suplidor: suplidor,
-                setOrden: setOrden
+                setOrden: setOrden,
+                getOcSuplidor: getOcSuplidor,
+                getOcFecha: getOcFecha
                 
             };
 
@@ -405,5 +434,11 @@
 
           
                                 } ]
-                                );
+                                )
+    .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout' 
+        , function ($scope, $filter, $rootScope, cxpService, $timeout) {
+
+
+        
+    }]);
 })(_);
