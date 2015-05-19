@@ -48,6 +48,18 @@ class rptNominaQuincenal(LoginRequiredMixin, TemplateView):
 	template_name = 'rpt_nomina.html'
 
 
+# Reporte Nomina Descuentos por Ahorros
+class rptNominaDescAhorros(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_DescAhorros.html'
+
+
+# Reporte Nomina Descuentos por Prestamos
+class rptNominaDescPrestamos(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_DescPrestamos.html'
+
+
 # Listado de Nominas Generadas
 class ListadoNominasGeneradasViewSet(viewsets.ModelViewSet):
 
@@ -344,6 +356,45 @@ class GenerarArchivoPrestamosBalance(View):
 
 					lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP, montoTotal)
 					sysFile.write(lineaFile)
+
+			sysFile.close()
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Generar archivo balance de ahorros
+class GenerarArchivoAhorrosBalance(View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			nomina = datetime.strptime(data['fechaNomina'], '%Y%m%d')
+			InfoTipo = data['infoTipo']
+			fechanominaSAP = '{0:0>2}.{1:0>2}.{2}'.format(nomina.day, nomina.month, nomina.year) #Fecha con formato para SAP.
+			fechaNomina = '{0}-{1:0>2}-{2:0>2}'.format(nomina.year, nomina.month, nomina.day)
+
+			nominaH, created = NominaPrestamosAhorros.objects.get_or_create(nomina=fechaNomina, tipo='BA', infoTipo=InfoTipo)
+
+			# Preparar archivo .TXT
+			nombreArchivoFinal = 'PA{0}.TXT'.format(InfoTipo)
+			pathFile = open(settings.ARCHIVOS_NOMINA + nombreArchivoFinal, 'wb+')
+			sysFile = File(pathFile)
+			sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
+
+			socios = Socio.objects.filter(estatus='S').values('codigo', 'id')
+
+			# Escribir cada linea de prestamo en el archivo
+			for socio in socios:
+				ahorro = getSocioAhorro(self, socio['id'])
+				montoTotal = ahorro[0].balance
+
+				lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(socio['codigo'], InfoTipo, fechanominaSAP, montoTotal)
+				sysFile.write(lineaFile)
 
 			sysFile.close()
 

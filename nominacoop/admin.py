@@ -18,6 +18,7 @@ class EmpleadoCoopAdmin(admin.ModelAdmin):
 	list_display = ['id', 'codigoSocio', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual']
 	list_editable = ('id', 'nombres', 'apellidos', 'cedula', 'departamento', 'sueldoActual')
 	search_fields = ('nombres', 'apellidos')
+	raw_id_fields = ('socio',)
 
 @admin.register(TipoNomina)
 class TipoNominaAdmin(admin.ModelAdmin):

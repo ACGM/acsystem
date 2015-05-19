@@ -46,7 +46,7 @@
 
 					<button id="vBPS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesPrestamosStatus]]" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
 
-					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Prestamos"></a>
+					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Prestamos" ng-click="reporteDescPrestamos($event)"></a>
 
 				</section>
 
@@ -57,9 +57,9 @@
 							<td>Socio</td>
 							<td>Nombre</td>
 							<td>Prestamo</td>
-							<td>Capital</td>
-							<td>Interes</td>
-							<td>Total</td>
+							<td class="align-right">Capital</td>
+							<td class="align-right">Interes</td>
+							<td class="align-right">Total</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
 							<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarPrestamo(prestamo)"></a></td>
@@ -99,7 +99,7 @@
 
 					<button id="vBAS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesAhorrosStatus]]" title="Ver archivo de balances de ahorros." ng-click="verBalancesAhorros($event)">ver Balances</button>
 
-					<a href="#" class="icon-document reporte-nomdesc toolTip" data-info="Ver Reporte Ahorros"></a>	
+					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Ahorros" ng-click="reporteDescAhorros($event)"></a>	
 
 				</section>
 
@@ -108,7 +108,7 @@
 						<tr class="suplidores-table-header">
 							<td>Socio</td>
 							<td>Nombre</td>
-							<td>Ahorro</td>
+							<td class="align-right">Ahorro</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail" ng-repeat="ahorro in ahorros">
 							<td>[[ahorro.codigo]]</td>
