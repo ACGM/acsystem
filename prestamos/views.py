@@ -124,6 +124,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			solicitud = data['solicitud']
 			fechaSolicitud = data['fechaSolicitud']
 			fechaDescuento = data['fechaDescuento']
+			prestamosUnificados = data['prestamosUnificados']
 
 			solicitudNo = solicitud['solicitudNo']
 
@@ -140,7 +141,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 					SolPrestamo.noSolicitud = SolicitudPrestamo.objects.latest('noSolicitud').noSolicitud + 1
 				except SolPrestamo.DoesNotExist:
 					SolPrestamo.noSolicitud = 1
-
+				
 			SolPrestamo.socio = socio
 			SolPrestamo.fechaSolicitud = fechaSolicitud
 			SolPrestamo.salarioSocio = decimal.Decimal(solicitante['salario'].replace(',','')) if solicitante['salario'] != None else 0
@@ -169,6 +170,22 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.userLog = User.objects.get(username=request.user.username)
 
 			SolPrestamo.save()
+
+			#Guardar los prestamos a Unificar
+			montoPrestamosUnificados = 0
+
+			for pu in prestamosUnificados:
+				prestamoUnif = PrestamoUnificado()
+				prestamoUnif.solicitudPrestamo = SolPrestamo
+				prestamoUnif.prestamoUnificado =  MaestraPrestamo.objects.get(noPrestamo=pu['noPrestamo'])
+				prestamoUnif.capitalUnificado = pu['balance']
+				prestamoUnif.save()
+
+				montoPrestamosUnificados += decimal.Decimal(prestamoUnif.capitalUnificado)
+			#Fin Prestamos a Unificar
+
+			SolPrestamo.netoDesembolsar -= montoPrestamosUnificados
+			SolPrestamo.save() 
 
 			return HttpResponse(SolPrestamo.noSolicitud)
 
@@ -251,11 +268,11 @@ class SolicitudPrestamoById(LoginRequiredMixin, DetailView):
 				'userLog': solicitud.userLog.username,
 				'datetimeServer': solicitud.datetimeServer,
 				'PrestamosUnificados': [ 
-					{	'prestamoUnificado': pu.prestamoUnificado.noPrestamo,
-						'capitalUnificado': pu.capitalUnificado,
+					{	'noPrestamo': pu.prestamoUnificado.noPrestamo,
+						'balance': pu.capitalUnificado,
 						'estatus': pu.estatus,
 					} 
-					for pu in PrestamoUnificado.objects.filter(prestamoPrincipal__noSolicitud=solicitud.noSolicitud)],
+					for pu in PrestamoUnificado.objects.filter(solicitudPrestamo__noSolicitud=solicitud.noSolicitud)],
 				})
 
 		return JsonResponse(data, safe=False)
@@ -314,6 +331,9 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						#Guardar No. de Prestamo en la Solicitud
 						oSolicitud.prestamo = maestra.noPrestamo
 						oSolicitud.save()
+
+						#Para cuando existe(n) Prestamo(s) Unificado(s)
+						
 
 				return HttpResponse(1)
 

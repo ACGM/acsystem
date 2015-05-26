@@ -36,7 +36,7 @@ from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODA
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, guardarCambiosPrestamo, PrestamosBySocioAPIView, \
                                             BalancePrestamosBySocioAPIView
 
-from prestamos.viewNotaDebito import ListadoNDViewSet
+from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
@@ -283,6 +283,9 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/maestra/socio/balance/(?P<socio>[\d]+)/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     url(r'^api/prestamos/maestra/socio/balance/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     
+    #Nota de Debito
+
+    url(r'^prestamos/nota-de-debito/guardar/$', guardarNotaDebito.as_view(), name='guardar_nota_de_debito'),
 
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
