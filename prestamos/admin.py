@@ -35,3 +35,9 @@ class MaestraPrestamoAdmin(admin.ModelAdmin):
 
 	list_display = ['noPrestamo', 'fechaDesembolso','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio']
 	search_fields = ('noPrestamo',)
+
+
+@admin.register(PrestamoUnificado)
+class PrestamoUnificadoAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'solicitudPrestamo', 'prestamoUnificado', 'capitalUnificado', 'estatus']

@@ -226,7 +226,7 @@ class PrestamoUnificado(models.Model):
 
 	estatus_choices = (('P','En Proceso'),('A','Aprobado'),('R','Rechazado'))
 
-	prestamoPrincipal = models.ForeignKey(SolicitudPrestamo, related_name='+')
+	solicitudPrestamo = models.ForeignKey(SolicitudPrestamo, related_name='+')
 	prestamoUnificado = models.ForeignKey(MaestraPrestamo, related_name='+')
 	capitalUnificado = models.DecimalField(max_digits=12, decimal_places=2)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')

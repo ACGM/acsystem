@@ -87,7 +87,7 @@
 				<a class="DownArrow" href="#"></a>
 			</div>
 
-			<form name="NDForm" class="nd-sec data-entry-section" ng-submit="guardarND($event)" novalidate>
+			<form name="NDForm" class="nd-sec data-entry-section" ng-submit="guardaNotaDebito($event)" novalidate>
 				<table class="data-entry-header-table-nd">
 					<tr>
 						<td>Numero del Debito</td>
@@ -101,7 +101,7 @@
 						<td>Prestamo No.</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+								<input type="text" ng-model="ND.prestamo"><a class="icon-uniE601 icon-buscar" href=""></a>
 							</div>  
 						</td>
 					</tr>

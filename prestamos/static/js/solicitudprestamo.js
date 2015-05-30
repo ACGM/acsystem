@@ -30,13 +30,14 @@
     .factory('SolicitudPrestamoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       //Guardar Solicitud de Prestamo
-      function guardaSolicitudPrestamo(solicitante, solicitud, fechaSolicitud, fechaDescuento) {
+      function guardaSolicitudPrestamo(solicitante, solicitud, fechaSolicitud, fechaDescuento, prestamosUnificados) {
         var deferred = $q.defer();
 
         $http.post('/prestamos/solicitudP/', JSON.stringify({'solicitante': solicitante, 
                                                               'solicitud': solicitud, 
                                                               'fechaSolicitud': fechaSolicitud,
-                                                              'fechaDescuento': fechaDescuento})).
+                                                              'fechaDescuento': fechaDescuento,
+                                                              'prestamosUnificados': prestamosUnificados})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -470,34 +471,32 @@
       $scope.getSocio = function($event) {
         $event.preventDefault();
 
-        if(($event.type == 'keyup' && $event.keyCode == 13) || $event.type == 'click') {
+        // if(($event.type == 'keyup' && $event.keyCode == 13) || $event.type == 'click') {
 
-          $scope.tableSocio = true;
+        $scope.tableSocio = true;
 
-          if($scope.solicitante.codigoEmpleado != undefined) {
-            FacturacionService.socios().then(function (data) {
-              $scope.socios = data.filter(function (registro) {
-                return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-              });
-
-              if($scope.socios.length > 0){
-                $scope.tableSocio = true;
-                $scope.socioNoExiste = '';
-              } else {
-                $scope.tableSocio = false;
-                $scope.socioNoExiste = 'No existe el socio';
-              }
-
+        if($scope.solicitante.codigoEmpleado != undefined) {
+          FacturacionService.socios().then(function (data) {
+            $scope.socios = data.filter(function (registro) {
+              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
             });
-          } else {
-            FacturacionService.socios().then(function (data) {
-              $scope.socios = data;
-              $scope.socioCodigo = '';
-            });
-          }
 
+            if($scope.socios.length > 0){
+              $scope.tableSocio = true;
+              $scope.socioNoExiste = '';
+            } else {
+              $scope.tableSocio = false;
+              $scope.socioNoExiste = 'No existe el socio';
+            }
+
+          });
+        } else {
+          FacturacionService.socios().then(function (data) {
+            $scope.socios = data;
+            $scope.socioCodigo = '';
+          });
         }
-
+        // }
       }
 
        //Seleccionar Socio
@@ -592,7 +591,7 @@
         $scope.solicitante.representanteNombre = undefined;
         $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
-        $scope.solicitante.autorizadoPor = '';
+        $scope.solicitante.autorizadoPor = usuario;
 
         $scope.solicitud.solicitudNo = 0;
         $scope.solicitud.valorGarantizado = undefined;
@@ -659,7 +658,11 @@
             $scope.solicitud.prestacionesLaborales = '0';
           }
 
-          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante, $scope.solicitud, fechaSolicitudFormatted, fechaDescuentoFormatted).then(function (data) {
+          SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante, 
+                                                            $scope.solicitud, 
+                                                            fechaSolicitudFormatted, 
+                                                            fechaDescuentoFormatted,
+                                                            $scope.prestamosSocioUnif).then(function (data) {
             if(isNaN(parseInt(data))) {
               $scope.mostrarError(data);
               throw data;
@@ -838,7 +841,7 @@
                 $scope.disabledButtonBool = true;
               }
 
-              $scope.solicitud.prestamosUnificados = data[0]['PrestamosUnificados'];
+              $scope.prestamosSocio = data[0]['PrestamosUnificados'];
             }
 
           }, 

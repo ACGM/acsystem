@@ -8,7 +8,8 @@ from rest_framework import routers
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
-                                AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal, relacionArchivoBancoConNomina
+                                AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal, relacionArchivoBancoConNomina, \
+                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -35,7 +36,7 @@ from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODA
 from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, guardarCambiosPrestamo, PrestamosBySocioAPIView, \
                                             BalancePrestamosBySocioAPIView
 
-from prestamos.viewNotaDebito import ListadoNDViewSet
+from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
@@ -165,6 +166,8 @@ urlpatterns = patterns('',
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^nomina/descuentos/$', NominaDescuentosView.as_view(), name='Nomina_Descuentos'),
+    url(r'^nomina/descuentos/ahorros/reporte/$', rptNominaDescAhorros.as_view(), name='Nomina_Descuentos_Ahorros_Reporte'),
+    url(r'^nomina/descuentos/prestamos/reporte/$', rptNominaDescPrestamos.as_view(), name='Nomina_Descuentos_Prestamos_Reporte'),
     url(r'^nomina/descuentos/aplicar/prestamos/$', AplicarPrestamos.as_view(), name='Aplicar_prestamos'),
     url(r'^nomina/descuentos/aplicar/ahorros/$', AplicarAhorros.as_view(), name='Aplicar_ahorros'),
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
@@ -173,7 +176,8 @@ urlpatterns = patterns('',
     url(r'^nomina/verificarExistencia/$', NominaPrestamosAhorrosView.as_view(), name='verificar_existencia_nomina'),
     url(r'^nomina/archivos/prestamos/$', GenerarArchivoPrestamos.as_view(), name='nomina_archivo_prestamos'),
     url(r'^nomina/archivos/ahorros/$', GenerarArchivoAhorros.as_view(), name='nomina_archivo_ahorros'),
-    url(r'^nomina/archivos/prestamos/balance/$', GenerarArchivoPrestamosBalance.as_view(), name='nomina_archivo_prestamos_balance'),
+    url(r'^nomina/archivos/prestamos/balance/$', GenerarArchivoPrestamosBalance.as_view(), name='nomina_archivo_ahorros_balance'),
+    url(r'^nomina/archivos/ahorros/balance/$', GenerarArchivoAhorrosBalance.as_view(), name='nomina_archivo_prestamos_balance'),
     url(r'^nomina/archivo-banco/set/$', relacionArchivoBancoConNomina, name='nomina_archivo_banco'),
 
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
@@ -279,6 +283,9 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/maestra/socio/balance/(?P<socio>[\d]+)/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     url(r'^api/prestamos/maestra/socio/balance/$', BalancePrestamosBySocioAPIView.as_view(), name='prestamos_by_socio_balance'),
     
+    #Nota de Debito
+
+    url(r'^prestamos/nota-de-debito/guardar/$', guardarNotaDebito.as_view(), name='guardar_nota_de_debito'),
 
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),

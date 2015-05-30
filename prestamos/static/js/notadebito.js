@@ -5,10 +5,15 @@
     .factory('NotaDebitoService', ['$http', '$q', '$filter', function ($http, $q, $filter) {
 
       //Guardar Nota de Debito
-      function guardarND(dataH, dataD) {
+      function guardarND(fecha, ND) {
         var deferred = $q.defer();
-
-        $http.post('/facturacion/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
+console.log(ND)
+        $http.post('/prestamos/nota-de-debito/guardar/', JSON.stringify({'noND': ND.noND, 
+                                                                          'fecha': fecha, 
+                                                                          'prestamo': ND.prestamo,
+                                                                          'valorCapital': ND.valorCapital,
+                                                                          'valorInteres': ND.valorInteres,
+                                                                          'concepto': ND.concepto})).
           success(function (data) {
             deferred.resolve(data);
           }).
@@ -171,7 +176,6 @@
         $scope.valoresChk = [];
 
         NotaDebitoService.all().then(function (data) {
-          console.log(data)
           $scope.notasdebito = data;
           $scope.regAll = false;
 
@@ -188,7 +192,7 @@
       }
 
       //Guardar Nota de Debito
-      $scope.guardarND = function($event) {
+      $scope.guardaNotaDebito = function($event) {
         $event.preventDefault();
 
         try {
@@ -196,34 +200,20 @@
             throw "Verifique que todos los campos esten completados correctamente.";
           }
 
-          var fechaP = $scope.dataH.fecha.split('/');
+          var fechaP = $scope.ND.fecha.split('/');
           var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-          var dataH = new Object();
-
-          dataH.factura = $scope.dataH.factura != undefined? $scope.dataH.factura : 0;
-          dataH.fecha = fechaFormatted;
-          dataH.terminos = $scope.dataH.terminos;
-          dataH.vendedor = $scope.dataH.vendedor;
-          dataH.almacen = $scope.dataH.almacen;
-          dataH.socio = $scope.socioCodigo != undefined? $scope.socioCodigo : null;
-          dataH.orden = $scope.orden != undefined? $scope.orden : null;
-
-          if ($scope.dataD.length == 0) {
-            throw "Debe agregar un producto al menos.";
-          }
-
-          NotaDebitoService.guardarND(dataH,$scope.dataD).then(function (data) {
+          NotaDebitoService.guardarND(fechaFormatted,$scope.ND).then(function (data) {
 
             if(isNaN(data)) {
               $scope.mostrarError(data);
               throw data;
             }
 
-            $scope.dataH.factura = $filter('numberFixedLen')(data, 8)
+            $scope.ND.noND = $filter('numberFixedLen')(data, 8)
 
             $scope.errorShow = false;
-            $scope.listadoFacturas();
+            $scope.listadoND();
           },
             (function () {
               $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -399,6 +389,7 @@
       $scope.nuevaEntrada = function(usuario) {
         $scope.ND = {};
         $scope.ND.noND = 0;
+        $scope.ND.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
         $scope.showLND = false;
         $scope.ArrowLND = 'DownArrow';

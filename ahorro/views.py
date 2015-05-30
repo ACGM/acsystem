@@ -26,10 +26,10 @@ def insMaestra(self, CodSocio, Fecha, Monto):
     regMaestra.save()
 
 def getSocioAhorro(self, codSocio):
-    regSocio = AhorroSocio.objects.raw('select socio_id'
+    regSocio = AhorroSocio.objects.raw('select id, socio_id'
                                        ', balance '
                                        'from ahorro_ahorrosocio '
-                                       'where socio_id =' + codSocio)
+                                       'where socio_id =' + str(codSocio))
     return regSocio
 
 
