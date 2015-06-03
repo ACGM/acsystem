@@ -1,4 +1,4 @@
-# VIEWS de Notas de Debito
+# VIEWS de Notas de Credito
 
 from django.contrib.auth.models import User
 from django.shortcuts import render
@@ -10,9 +10,9 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import NotasDebitoListado
+from .serializers import NotasCreditoListado
 
-from prestamos.models import NotaDeDebitoPrestamo, MaestraPrestamo
+from prestamos.models import NotaDeCreditoPrestamo, MaestraPrestamo
 
 from acgm.views import LoginRequiredMixin
 
@@ -22,15 +22,15 @@ import decimal
 import datetime
 
 
-# Listado de Notas de Debito
-class ListadoNDViewSet(viewsets.ModelViewSet):
+# Listado de Notas de Credito
+class ListadoNCViewSet(viewsets.ModelViewSet):
 
-	queryset = NotaDeDebitoPrestamo.objects.all().order_by('-id')
-	serializer_class = NotasDebitoListado
+	queryset = NotaDeCreditoPrestamo.objects.all().order_by('-id')
+	serializer_class = NotasCreditoListado
 
 
-# Guardar Nota de Debito
-class guardarNotaDebito(View):
+# Guardar Nota de Credito
+class guardarNotaCredito(View):
 
 	def post(self, request, *args, **kwargs):
 

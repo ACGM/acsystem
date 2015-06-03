@@ -69,8 +69,13 @@ class CuotasPrestamos(serializers.HyperlinkedModelSerializer):
 
 # Notas de Credito a Prestamos
 class NotasCreditoListado(serializers.HyperlinkedModelSerializer):
+	noPrestamo = serializers.StringRelatedField(read_only=True)
+	aplicadoACuota = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = NotaDeCreditoPrestamo
+		fields = ('id', 'fecha', 'noPrestamo', 'aplicadoACuota', 'valorCapital', 'valorInteres', 'concepto', 'posteado', 'getSocio')
+		ordering = ('-fecha',)
 
 
 # Notas de Credito Especiales a Prestamos

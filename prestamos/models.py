@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# from nominacoop.models import CuotasPrestamosEmpresa
 from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Banco, Localidad
 from facturacion.models import Factura
 
@@ -235,38 +236,51 @@ class PrestamoUnificado(models.Model):
 # Cuotas de Pago de Prestamos
 class PagoCuotasPrestamo(models.Model):
 
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),('N','Nota de Credito'),('D','Nota de Debito'))
+	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	tipo_pago_choices = (('NC','Nota de Credito'),('ND','Nota de Debito'), ('NM', 'Nomina'), ('RI', 'Recibo Ingreso'), ('AH', 'Ahorros'))
 
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True)
 	fechaPago = models.DateField(auto_now_add=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+	tipoPago = models.CharField(max_length=2, choices=tipo_pago_choices, default='N')
 
+	def __unicode__(self):
+		return '%i' % self.id
 
 # Nota de Credito a Prestamo
 class NotaDeCreditoPrestamo(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	posteo_choices = (('N','NO'),('S','SI'))
 
 	fecha = models.DateField(auto_now=True)
 	aplicadoACuota = models.ForeignKey(PagoCuotasPrestamo)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	valorCapital = models.DecimalField(max_digits=18, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=18, decimal_places=2, null=True)
+	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
+	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
 
-	posteado = models.BooleanField(default=False)
+	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return '%i' % self.id
+
+	@property
+	def getSocio(self):
+		return self.noPrestamo.socio.nombreCompleto
 
 
 # Nota de Credito Especial
 class NotaDeCreditoEspecial(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	posteo_choices = (('N','NO'),('S','SI'))
 
 	fecha = models.DateField(auto_now=True)
 	ordenDespacho = models.ForeignKey(SolicitudOrdenDespachoH)
@@ -275,7 +289,7 @@ class NotaDeCreditoEspecial(models.Model):
 	nota = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	
-	posteado = models.BooleanField(default=False)
+	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')

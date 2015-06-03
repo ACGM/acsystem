@@ -7,7 +7,7 @@
       //Guardar Nota de Debito
       function guardarND(fecha, ND) {
         var deferred = $q.defer();
-console.log(ND)
+
         $http.post('/prestamos/nota-de-debito/guardar/', JSON.stringify({'noND': ND.noND, 
                                                                           'fecha': fecha, 
                                                                           'prestamo': ND.prestamo,
@@ -64,11 +64,11 @@ console.log(ND)
       }
 
       //Buscar un documento en especifico (Desglose)
-      function DocumentoById(NoFact) {
+      function DocumentoById(NoND) {
         var deferred = $q.defer();
-        var doc = NDNo != undefined? NoFact : 0;
+        var doc = NoND != undefined? NoND : 0;
 
-        $http.get('/facturajson/?nofact={NoFact}&format=json'.replace('{NoFact}', doc))
+        $http.get('/notadebitojson/?noND={NoND}&format=json'.replace('{NoND}', doc))
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -386,7 +386,7 @@ console.log(ND)
       }
 
       //Nueva Entrada de Factura
-      $scope.nuevaEntrada = function(usuario) {
+      $scope.nuevaEntrada = function(usuario, $event) {
         $scope.ND = {};
         $scope.ND.noND = 0;
         $scope.ND.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
@@ -396,6 +396,8 @@ console.log(ND)
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+
+        return false;
       }
 
       // Agregar una cuenta

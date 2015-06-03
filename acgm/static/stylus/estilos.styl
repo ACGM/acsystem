@@ -272,6 +272,9 @@ amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
 colorBordeSubMenu = lightgreen
 
+[ng\:cloak], [ng-cloak], .ng-cloak
+	display none !important
+	
 body
 	font-family "Arial", sans-serif, "serif"
 	font-size 13px
@@ -2308,15 +2311,11 @@ footer
 	& td
 		padding .1em .15em .1em .1em
 		border 1px solid black
-		&:nth-child(1),&:nth-child(2) 
-			text-align center
-		&:nth-child(7),&:nth-child(8)
-			text-align right
+		
+		&:nth-child(7),
+		&:nth-child(8)
 			padding 0 .3em
 		
-		&:nth-child(9),&:nth-child(10),&:nth-child(11)
-			text-align center
-
 .nc-field
 	text-decoration none
 	color verde

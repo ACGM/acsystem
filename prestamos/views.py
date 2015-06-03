@@ -332,8 +332,24 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						oSolicitud.prestamo = maestra.noPrestamo
 						oSolicitud.save()
 
-						#Para cuando existe(n) Prestamo(s) Unificado(s)
-						
+
+					#Para cuando existe(n) Prestamo(s) Unificado(s)
+					try:
+						prestamosUnif = PrestamoUnificado.objects.filter(solicitudPrestamo__noSolicitud=oSolicitud.noSolicitud)
+
+						for p in prestamosUnif:
+							if oSolicitud.estatus == 'A':
+								prestamo = MaestraPrestamo.objects.get(noPrestamo=p.prestamoUnificado.noPrestamo)
+								prestamo.estatus = 'S'
+								prestamo.balance = 0
+								prestamo.save()
+
+							p.estatus = oSolicitud.estatus
+							p.save()
+					except:
+						pass
+					#Fin condicion Prestamo(s) Unificado(s)
+
 
 				return HttpResponse(1)
 

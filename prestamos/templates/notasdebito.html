@@ -107,21 +107,21 @@
 					</tr>
 					<tr>
 						<td>Valor de Capital</td>
-						<td><input type="text" ng-model="ND.valorCapital"></td>
+						<td><input type="text" ng-model="ND.valorCapital" required></td>
 					</tr>
 					<tr>
 						<td>Valor de Interes</td>
-						<td><input type="text" ng-model="ND.valorInteres"></td>
+						<td><input type="text" ng-model="ND.valorInteres" required></td>
 					</tr>
 				</table>
 
 				<span class="concepto-field">Concepto</span>
 
-				<textarea name="concepto" id="concepto" cols="45" rows="4" ng-model="ND.concepto"></textarea>
+				<textarea name="concepto" id="concepto" cols="45" rows="4" ng-model="ND.concepto" required></textarea>
 
 				<div class="botones-acciones">
 					<button class="icon-save Boton boton-guarda-nd" type="submit">Guardar</button>
-					<button class="icon-spinner Boton boton-cancelar-nd" ng-click="nuevaEntrada('{{user}}')">Cancelar</button>
+					<!-- <button class="icon-spinner Boton boton-cancelar-nd" ng-click="nuevaEntrada('{{user}}')">Cancelar</button> -->
 					
 				</div>
 			</form>
