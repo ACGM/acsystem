@@ -61,3 +61,32 @@ class guardarNotaDebito(View):
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+# Desglose de Nota de Debito
+class NotaDeDebitoById(LoginRequiredMixin, DetailView):
+
+	queryset = NotaDeDebitoPrestamo.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoND = self.request.GET.get('nond')
+
+		self.object_list = self.get_queryset().filter(id=NoND)
+		return self.json_to_response()
+		
+	def json_to_response(self):
+		data = list()
+
+		for notadebito in self.object_list:
+			data.append({
+				'fecha': notadebito.fecha,
+				'noPrestamo': notadebito.noPrestamo.noPrestamo,
+				'valorCapital': notadebito.valorCapital,
+				'valorInteres': notadebito.valorInteres,
+				'concepto': notadebito.concepto,
+				'estatus': notadebito.estatus,
+				'posteado': notadebito.posteado,
+				'fechaPosteo': notadebito.fechaPosteo,
+			})
+
+		return JsonResponse(data, safe=False)

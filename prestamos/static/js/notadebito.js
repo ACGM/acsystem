@@ -65,10 +65,11 @@
 
       //Buscar un documento en especifico (Desglose)
       function DocumentoById(NoND) {
+        console.log(NoND)
         var deferred = $q.defer();
         var doc = NoND != undefined? NoND : 0;
 
-        $http.get('/notadebitojson/?noND={NoND}&format=json'.replace('{NoND}', doc))
+        $http.get('/notadedebitojson/?nond={NoND}'.replace('{NoND}', doc))
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -246,7 +247,7 @@
       }
 
       // Visualizar Documento (ND Existente - desglose)
-      $scope.FactFullById = function(NoND, usuario) {
+      $scope.NDFullById = function(NoND, usuario) {
         try {
 
           NotaDebitoService.DocumentoById(NoND).then(function (data) {
@@ -258,33 +259,16 @@
               $scope.errorMsg = '';
               $scope.errorShow = false;
 
-              $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
-              $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-              $scope.socioCodigo = data[0]['socioCodigo'];
-              $scope.socioNombre = data[0]['socioNombre'];
-              $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
-              $scope.dataH.terminos = data[0]['terminos'];
-              $scope.dataH.vendedor = data[0]['vendedor'];
-              $scope.dataH.posteo = data[0]['posteo'];
-              $scope.dataH.impresa = data[0]['impresa'];
-              $scope.dataH.borrado = data[0]['borrado'];
-              $scope.dataH.borradoPor = data[0]['borradoPor'];
-              $scope.dataH.borradoFecha = data[0]['borradoFecha'];
-
-              data[0]['productos'].forEach(function (item) {
-                $scope.dataD.push(item);
-                $scope.dataH.almacen = item['almacen'];
-              })
-              $scope.calculaTotales();
-
-              if(data[0]['orden'] > 0) {
-                $rootScope.clearOrden();
-                $rootScope.FullOrden(data[0]['ordenDetalle']);
-              }
+              $scope.ND.noND = $filter('numberFixedLen')(NoND, 8);
+              $scope.ND.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+              $scope.ND.prestamo = data[0]['noPrestamo'];
+              $scope.ND.valorCapital = data[0]['valorCapital'];
+              $scope.ND.valorInteres = data[0]['valorInteres'];
+              $scope.ND.concepto = data[0]['concepto'];
             }
           }, 
             (function () {
-              $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
+              $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoND);
             }
           ));
         }

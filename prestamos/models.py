@@ -261,6 +261,7 @@ class NotaDeCreditoPrestamo(models.Model):
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
+	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
@@ -284,8 +285,8 @@ class NotaDeCreditoEspecial(models.Model):
 
 	fecha = models.DateField(auto_now=True)
 	ordenDespacho = models.ForeignKey(SolicitudOrdenDespachoH)
-	totalMontoOrden = models.DecimalField(max_digits=18, decimal_places=2)
-	montoConsumido = models.DecimalField(max_digits=18, decimal_places=2)
+	totalMontoOrden = models.DecimalField(max_digits=12, decimal_places=2)
+	montoConsumido = models.DecimalField(max_digits=12, decimal_places=2)
 	nota = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	
@@ -295,6 +296,9 @@ class NotaDeCreditoEspecial(models.Model):
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
+	class Meta:
+		verbose_name = "Nota de Credito Especial"
+		verbose_name_plural = "Notas de Credito Especiales"
 
 # Nota de Debito a Prestamo
 class NotaDeDebitoPrestamo(models.Model):

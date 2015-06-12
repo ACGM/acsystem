@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from .serializers import NotasCreditoListado
 
-from prestamos.models import NotaDeCreditoPrestamo, MaestraPrestamo
+from prestamos.models import NotaDeCreditoPrestamo, MaestraPrestamo, PagoCuotasPrestamo
 
 from acgm.views import LoginRequiredMixin
 
@@ -38,26 +38,58 @@ class guardarNotaCredito(View):
 			# Tomar los parametros enviados por el Post en JSON
 			data = json.loads(request.body)
 
-			noND = data['noND']
+			noNC = float(data['noNC'])
 			fecha = data['fecha']
 			prestamo = data['prestamo']
+			aplicaCuota = data['aplicaCuota']
 			vc = data['valorCapital']
 			vi = data['valorInteres']
 			concepto = data['concepto']
 
-			if noND == 0:
-				nd = NotaDeDebitoPrestamo()
+			if noNC == 0:
+				nc = NotaDeCreditoPrestamo()
 			else:
-				nd = NotaDeDebitoPrestamo.objects.get(id=noND)
+				nc = NotaDeCreditoPrestamo.objects.get(id=noNC)
 
-			nd.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo)
-			nd.valorCapital = decimal.Decimal(vc)
-			nd.valorInteres = decimal.Decimal(vi)
-			nd.concepto = concepto
-			nd.userLog = request.user
-			nd.save()
+			nc.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo)
+			nc.aplicadoACuota = PagoCuotasPrestamo.objects.get(id=aplicaCuota)
+			nc.valorCapital = decimal.Decimal(vc)
+			nc.valorInteres = decimal.Decimal(vi)
+			nc.concepto = concepto
+			nc.userLog = request.user
+			nc.save()
 			
-			return HttpResponse(nd.id)
+			return HttpResponse(nc.id)
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+# Desglose de Nota de Credito
+class NotaDeCreditoById(LoginRequiredMixin, DetailView):
+
+	queryset = NotaDeCreditoPrestamo.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoNC = self.request.GET.get('nonc')
+
+		self.object_list = self.get_queryset().filter(id=NoNC)
+		return self.json_to_response()
+		
+	def json_to_response(self):
+		data = list()
+
+		for notacredito in self.object_list:
+			data.append({
+				'fecha': notacredito.fecha,
+				'aplicadoACuota': notacredito.aplicadoACuota.id,
+				'noPrestamo': notacredito.noPrestamo.noPrestamo,
+				'valorCapital': notacredito.valorCapital,
+				'valorInteres': notacredito.valorInteres,
+				'concepto': notacredito.concepto,
+				'estatus': notacredito.estatus,
+				'posteado': notacredito.posteado,
+				'fechaPosteo': notacredito.fechaPosteo,
+			})
+
+		return JsonResponse(data, safe=False)

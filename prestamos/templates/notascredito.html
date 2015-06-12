@@ -6,8 +6,8 @@
 
 	<div class="NotasDeCredito" ng-controller="NotaCreditoCtrl">
 		
-		<!-- <mensajeerror> </mensajeerror>
-		<mensajeinfo> </mensajeinfo> -->
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 
 		<div class="sub-menu">	
 			<div class="menu-entrada-nc-listado">
@@ -21,20 +21,20 @@
 
 			<section class="listado-reg-nd">
 				<span> Prestamo No. </span>
-				<input type="text" id="PrestamoNo" class="doc-no-ei">
+				<input type="text" id="PrestamoNo" class="doc-no-ei" ng-model="NoPrestamo" ng-keyup="filtrarPorNoPrestamo($event, NoPrestamo)">
 				<span>Socio</span>
-				<input type="text" placeholder="Nombre del Socio">
+				<input type="text" placeholder="Nombre del Socio" ng-model="nombreSocio" ng-keyup="filtrarPorSocio($event, nombreSocio)">
 
-				<a href="#" class="icon-uniE601 icon-buscar" ng-click="filtrarPorNoNC(NoNC)"></a>
+				<!-- <a href="#" class="icon-uniE601 icon-buscar"></a> -->
 				<span class="error-ei"> [[NoFoundDoc]]</span>
 				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoNC()">Ver todos</a>
 
-				<div class="filtro-posteadas">
+				<div class="posteo-ei">
 					<span>Posteadas</span>
-					<select name="posteadas" id="posteadas">
-						<option value="Todas">Todas</option>
-						<option value="Si">Si</option>
-						<option value="No">No</option>
+					<select class="field-choices" name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
+						<option value="*">TODOS</option>
+						<option value="S">SI</option>
+						<option value="N">NO</option>
 					</select>
 				</div>
 
@@ -86,21 +86,21 @@
 				<a class="DownArrow" href="#"></a>
 			</div>
 
-			<section class="nc-sec data-entry-section">
+			<form name="NCForm" class="nc-sec data-entry-section" ng-submit="guardaNotaCredito($event)" novalidate>
 				<table class="data-entry-header-table-nc">
 					<tr>
 						<td>Numero del Credito</td>
-						<td> <input type="text"> </td>
+						<td> <input type="text" class="input-disabled align-right" ng-model="NC.noNC" readonly> </td>
 					</tr>
 					<tr>
 						<td>Fecha</td>
-						<td> <input type="text"> </td>
+						<td> <input type="text" ng-model="NC.fecha" datepicker readonly> </td>
 					</tr>
 					<tr>
 						<td>Prestamo No.</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+								<input type="text" ng-model="NC.prestamo" required><a class="icon-uniE601 icon-buscar" href="#"></a>
 							</div>  
 						</td>
 					</tr>
@@ -108,32 +108,32 @@
 						<td>Aplicado a Cta. Cap/Int</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
+								<input type="text" ng-model="NC.AplicadoCuota" required><a class="icon-uniE601 icon-buscar" href="#"></a>
 							</div>  
 						</td>
 					</tr>
 					<tr>
 						<td>Valor de Capital</td>
-						<td><input type="text"></td>
+						<td><input type="text" ng-model="NC.valorCapital" required></td>
 					</tr>
 					<tr>
 						<td>Valor de Interes</td>
-						<td><input type="text"></td>
+						<td><input type="text" ng-model="NC.valorInteres" required></td>
 					</tr>
 				</table>
 
 				<span class="concepto-field">Concepto</span>
 
-				<textarea name="concepto" id="concepto" cols="47" rows="4"></textarea>
+				<textarea name="concepto" id="concepto" cols="47" rows="4" ng-model="NC.concepto"></textarea>
 
 				<div class="botones-acciones">
-					<button class="icon-save Boton boton-guarda-nc">Guardar</button>
-					<button class="icon-spinner Boton boton-cancelar-nc">Cancelar</button>
+					<button class="icon-save Boton boton-guarda-nc" type="submit">Guardar</button>
+					<!-- <button class="icon-spinner Boton boton-cancelar-nc">Cancelar</button> -->
 					
 				</div>
-			</section>
+			</form>
 
-			<section class="cuotas-select-nc">
+			<section class="cuotas-select-nc" ng-show="AplicaAShow">
 				<table class="cuotas-select-nc-table">
 					<tr>
 						<td> <input type="checkbox"> </td>

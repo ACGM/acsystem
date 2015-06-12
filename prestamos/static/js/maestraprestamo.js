@@ -281,6 +281,7 @@
         MaestraPrestamoService.guardarCambios(prestamo).then(function (data) {
           if(data == 1) {
             $scope.PrestamoFullById($event, $scope.dataH.noPrestamo);
+            alert('Los cambios fueron guardados.');
           } else {
             $scope.mostrarError(data);
           }

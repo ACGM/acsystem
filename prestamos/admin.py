@@ -4,10 +4,29 @@ from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDe
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
 					NotaDeDebitoPrestamo
 
+
+@admin.register(PagoCuotasPrestamo)
+class PagoCuotasPrestamoAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago']
+
+
 @admin.register(NotaDeDebitoPrestamo)
 class NotaDeDebitoPrestamoAdmin(admin.ModelAdmin):
 
-	list_display = ['id', 'fecha', 'noPrestamo', 'valorCapital', 'valorInteres', 'concepto', 'estatus']
+	list_display = ['id', 'fecha', 'noPrestamo', 'valorCapital', 'valorInteres', 'concepto', 'estatus', 'posteado', 'fechaPosteo']
+
+
+@admin.register(NotaDeCreditoPrestamo)
+class NotaDeCreditoPrestamoAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'fecha', 'noPrestamo', 'aplicadoACuota', 'valorCapital', 'valorInteres', 'concepto', 'estatus']
+
+
+@admin.register(NotaDeCreditoEspecial)
+class NotaDeCreditoEspecialAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'fecha', 'ordenDespacho', 'totalMontoOrden', 'montoConsumido', 'nota', 'estatus', 'posteado', 'fechaPosteo']
 
 
 @admin.register(SolicitudPrestamo)
