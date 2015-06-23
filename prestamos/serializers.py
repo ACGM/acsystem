@@ -80,8 +80,13 @@ class NotasCreditoListado(serializers.HyperlinkedModelSerializer):
 
 # Notas de Credito Especiales a Prestamos
 class NotasCreditoEspecialesListado(serializers.HyperlinkedModelSerializer):
+	ordenDespacho = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = NotaDeCreditoEspecial
+		fields = ('id', 'fecha', 'ordenDespacho', 'totalMontoOrden', 'montoConsumido', 'nota', 'estatus', 'posteado', \
+					'fechaPosteo', 'getSocio', 'getMontoAhorro')
+		ordering = ('-fecha')
 
 
 # Notas de Debito a Prestamos

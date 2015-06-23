@@ -25,33 +25,33 @@
         return deferred.promise;
       }
 
-      //Eliminar Nota de Credito
-      function eliminarNC(notaCreditoNo) {
-        var deferred = $q.defer();
+      // //Eliminar Nota de Credito
+      // function eliminarNC(notaCreditoNo) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
-      //Impresion de Nota de Credito (incrementa el campo de IMPRESA)
-      function impresionNC(NC) {
-        var deferred = $q.defer();
+      // //Impresion de Nota de Credito (incrementa el campo de IMPRESA)
+      // function impresionNC(NC) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
       //Llenar el listado de Notas de Credito
       function all() {
@@ -67,7 +67,7 @@
       //Buscar un documento en especifico (Desglose)
       function DocumentoById(NoNC) {
         var deferred = $q.defer();
-        var doc = NoNC != undefined? NoNC : 0;
+        var doc = NoNC != undefined? NoNCE : 0;
 
         $http.get('/notadecreditojson/?nonc={NoNC}'.replace('{NoNC}', doc))
           .success(function (data) {
@@ -128,16 +128,102 @@
         return deferred.promise;
       }
 
+      //*************************************************************************
+      //*************************************************************************
+      // NOTA DE CREDITO ESPECIAL
+      //*************************************************************************
+      //*************************************************************************
+
+      //Llenar el listado de Notas de Credito Especiales
+      function NotasCreditoEspeciales() {
+        var deferred = $q.defer();
+
+        $http.get('/api/notascreditoespecial/?format=json')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Buscar un documento en especifico (Desglose)
+      function DocumentoByIdNCE(NoNCE) {
+        var deferred = $q.defer();
+        var doc = NoNCE != undefined? NoNCE : 0;
+
+        $http.get('/notadecreditoEjson/?nonce={NoNCE}'.replace('{NoNCE}', doc))
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Buscar un numero de orden en especifico en listado de documentos
+      function byNoOrdenNCE(NoOrden) {
+        var deferred = $q.defer();
+        NotasCreditoEspeciales().then(function (data) {
+          var result = data.filter(function (documento) {
+            return parseFloat(documento.ordenDespacho) == parseFloat(NoOrden);
+          });
+
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
+      //Buscar un socio en especifico en listado de documentos
+      function bySocioNCE(socio) {
+        var deferred = $q.defer();
+        NotasCreditoEspeciales().then(function (data) {
+          var result = data.filter(function (documento) {
+            return documento.getSocio.toLowerCase().substring(0, socio.length) == socio;
+          });
+
+          if(result.length > 0) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
+      //Buscar por tipo de posteo
+      function byPosteoNCE(valor){
+        var deferred = $q.defer();
+
+        NotasCreditoEspeciales().then(function (data) {
+          var results = data.filter(function (registros) {
+            return registros.posteado == valor;
+          });
+
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
 
       return {
-        all: all,
-        byPosteo: byPosteo,
-        byNoPrestamo: byNoPrestamo,
-        bySocio: bySocio,
-        guardarNC: guardarNC,
-        DocumentoById: DocumentoById,
-        impresionNC: impresionNC,
-        eliminarNC : eliminarNC
+        all             : all,
+        byPosteo        : byPosteo,
+        byNoPrestamo    : byNoPrestamo,
+        bySocio         : bySocio,
+        guardarNC       : guardarNC,
+        DocumentoById   : DocumentoById,
+        // impresionNC     : impresionNC,
+        // eliminarNC      : eliminarNC,
+        NotasCreditoEspeciales: NotasCreditoEspeciales,
+        byPosteoNCE     : byPosteoNCE,
+        byNoOrdenNCE    : byNoOrdenNCE,
+        bySocioNCE      : bySocioNCE,
+        DocumentoByIdNCE: DocumentoByIdNCE
       };
 
     }])
@@ -152,24 +238,18 @@
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
       $scope.disabledButtonBool = true;
-      $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLNC = true;
-      $scope.regAll = false;
       $scope.tableProducto = false;
       $scope.tableSocio = false;
 
       $scope.item = {};
       $scope.notascredito = {};
 
-      $scope.ncSeleccionadas = [];
-      $scope.reg = [];
-      $scope.valoresChk = [];
       $scope.dataD = [];
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-      $scope.ArrowLND = 'UpArrow';
-
+      $scope.ArrowLNC = 'UpArrow';
       
       // Mostrar/Ocultar panel de Listado de Notas de Credito
       $scope.toggleLNC = function() {
@@ -187,24 +267,15 @@
         $scope.showPostear = !$scope.showPostear;
       }
 
-      //Listado de todas las Notas de Debito
+      //Listado de todas las Notas de Credito
       $scope.listadoNC = function() {
         $scope.NoFoundDoc = '';
-        $scope.ndSeleccionadas = [];
-        $scope.valoresChk = [];
 
         NotaCreditoService.all().then(function (data) {
           $scope.notascredito = data;
-          $scope.regAll = false;
 
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
-
-            var i = 0;
-            data.forEach(function (data) {
-              $scope.valoresChk[i] = false;
-              i++;
-            });
           }
         });
       }
@@ -244,24 +315,24 @@
       }
 
       //Eliminar NC.
-      $scope.eliminarNC = function($event) {
-        $event.preventDefault();
+      // $scope.eliminarNC = function($event) {
+      //   $event.preventDefault();
 
-        try {
-          NotaCreditoService.eliminarNC($scope.dataH.nc).then(function (data) {
-            if(data == 1) {
-              $scope.errorShow = false;
-              $scope.listadoNC();
-              $scope.nuevaEntrada();
-              $scope.toggleLNC();
-            } else {
-              $scope.mostrarError(data);
-            }
-          });
-        } catch (e) {
-          $scope.mostrarError(e);
-        }
-      }
+      //   try {
+      //     NotaCreditoService.eliminarNC($scope.dataH.nc).then(function (data) {
+      //       if(data == 1) {
+      //         $scope.errorShow = false;
+      //         $scope.listadoNC();
+      //         $scope.nuevaEntrada();
+      //         $scope.toggleLNC();
+      //       } else {
+      //         $scope.mostrarError(data);
+      //       }
+      //     });
+      //   } catch (e) {
+      //     $scope.mostrarError(e);
+      //   }
+      // }
 
       // Visualizar Documento (NC Existente - desglose)
       $scope.NCFullById = function(NoNC, usuario) {
@@ -376,39 +447,6 @@
         $scope.errorMsg = error;
         $scope.errorShow = true;
         // $timeout($scope.toggleError(), 3000);
-      }
-
-      //Cuando se le de click al checkbox del header.
-      $scope.seleccionAll = function() {
-        $scope.ndSeleccionadas = [];
-
-        $scope.notasdebito.forEach(function (data) {
-          if (data.posteo == 'N') {
-            if ($scope.regAll === true){
-
-              $scope.valoresChk[data.id] = true;
-              $scope.ndSeleccionadas.push(data);
-            }
-            else{
-
-              $scope.valoresChk[data.id] = false;
-              $scope.ndSeleccionadas.splice(data);
-            }
-          }
-        });
-      }
-
-      //Cuando se le de click a un checkbox de la lista
-      $scope.selectedReg = function(iReg) {
-        
-        index = $scope.notasdebito.indexOf(iReg);
-
-        if ($scope.reg[$scope.notasdebito[index].id] === true){
-          $scope.ndSeleccionadas.push($scope.notasdebito[index]);
-        }
-        else{
-          $scope.ndSeleccionadas = _.without($scope.ndSeleccionadas, _.findWhere($scope.ndSeleccionadas, {id : iReg.id}));
-        }
       }
 
       //Nueva Entrada de Nota de Credito
@@ -546,7 +584,7 @@
 
 
   //****************************************************
-  //CONTROLLERS                                        *
+  //CONTROLLERS   (2)                                  *
   //****************************************************
   .controller('NotaCreditoEspecialCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaCreditoService',
                                       function ($scope, $filter, $window, appService, NotaCreditoService) {
@@ -556,31 +594,27 @@
     $scope.disabledButtonBool = true;
     $scope.posteof = '*';
     $scope.errorShow = false;
-    $scope.showLNC = true;
-    $scope.regAll = false;
+    $scope.showLNCE = true;
     $scope.tableProducto = false;
     $scope.tableSocio = false;
 
     $scope.item = {};
-    $scope.notascredito = {};
+    $scope.notascreditoE = {};
 
-    $scope.ncSeleccionadas = [];
-    $scope.reg = [];
-    $scope.valoresChk = [];
     $scope.dataD = [];
 
     $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-    $scope.ArrowLND = 'UpArrow';
+    $scope.ArrowLNCE = 'UpArrow';
 
     
-    // Mostrar/Ocultar panel de Listado de Notas de Credito
-    $scope.toggleLNC = function() {
-      $scope.showLNC = !$scope.showLNC;
+    // Mostrar/Ocultar panel de Listado de Notas de Credito Especial
+    $scope.toggleLNCE = function() {
+      $scope.showLNCE = !$scope.showLNCE;
 
-      if($scope.showLNC === true) {
-        $scope.ArrowLNC = 'UpArrow';
+      if($scope.showLNCE === true) {
+        $scope.ArrowLNCE = 'UpArrow';
       } else {
-        $scope.ArrowLNC = 'DownArrow';
+        $scope.ArrowLNCE = 'DownArrow';
       }
     }
 
@@ -589,51 +623,42 @@
       $scope.showPostear = !$scope.showPostear;
     }
 
-    //Listado de todas las Notas de Debito
-    $scope.listadoNC = function() {
+    //Listado de todas las Notas de Credito Especiales
+    $scope.listadoNCE = function() {
       $scope.NoFoundDoc = '';
-      $scope.ndSeleccionadas = [];
-      $scope.valoresChk = [];
 
-      NotaCreditoService.all().then(function (data) {
-        $scope.notascredito = data;
-        $scope.regAll = false;
+      NotaCreditoService.NotasCreditoEspeciales().then(function (data) {
+        $scope.notascreditoE = data;
 
         if(data.length > 0) {
           $scope.verTodos = 'ver-todos-ei';
-
-          var i = 0;
-          data.forEach(function (data) {
-            $scope.valoresChk[i] = false;
-            i++;
-          });
         }
       });
     }
 
-    //Guardar Nota de Credito
-    $scope.guardaNotaCredito = function($event) {
+    //Guardar Nota de Credito Especial
+    $scope.guardaNotaCreditoE = function($event) {
       $event.preventDefault();
 
       try {
-        if (!$scope.NCForm.$valid) {
+        if (!$scope.NCEForm.$valid) {
           throw "Verifique que todos los campos esten completados correctamente.";
         }
 
-        var fechaP = $scope.NC.fecha.split('/');
+        var fechaP = $scope.NCE.fecha.split('/');
         var fechaFormatted = fechaP[2] + '-' + fechaP[1] + '-' + fechaP[0];
 
-        NotaCreditoService.guardarNC(fechaFormatted, $scope.NC).then(function (data) {
+        NotaCreditoService.guardarNCE(fechaFormatted, $scope.NCE).then(function (data) {
 
           if(isNaN(data)) {
             $scope.mostrarError(data);
             throw data;
           }
 
-          $scope.NC.noNC = $filter('numberFixedLen')(data, 8)
+          $scope.NCE.noNCE = $filter('numberFixedLen')(data, 8)
 
           $scope.errorShow = false;
-          $scope.listadoNC();
+          $scope.listadoNCE();
         },
           (function () {
             $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -645,31 +670,31 @@
       }
     }
 
-    //Eliminar NC.
-    $scope.eliminarNC = function($event) {
-      $event.preventDefault();
+    //Eliminar NCE.
+    // $scope.eliminarNCE = function($event) {
+    //   $event.preventDefault();
 
+    //   try {
+    //     NotaCreditoService.eliminarNCE($scope.NCE.noNCE).then(function (data) {
+    //       if(data == 1) {
+    //         $scope.errorShow = false;
+    //         $scope.listadoNCE();
+    //         $scope.nuevaEntrada();
+    //         $scope.toggleLNCE();
+    //       } else {
+    //         $scope.mostrarError(data);
+    //       }
+    //     });
+    //   } catch (e) {
+    //     $scope.mostrarError(e);
+    //   }
+    // }
+
+    // Visualizar Documento (NCE Existente - desglose)
+    $scope.NCEFullById = function(NoNCE, usuario) {
       try {
-        NotaCreditoService.eliminarNC($scope.dataH.nc).then(function (data) {
-          if(data == 1) {
-            $scope.errorShow = false;
-            $scope.listadoNC();
-            $scope.nuevaEntrada();
-            $scope.toggleLNC();
-          } else {
-            $scope.mostrarError(data);
-          }
-        });
-      } catch (e) {
-        $scope.mostrarError(e);
-      }
-    }
 
-    // Visualizar Documento (NC Existente - desglose)
-    $scope.NCFullById = function(NoNC, usuario) {
-      try {
-
-        NotaCreditoService.DocumentoById(NoNC).then(function (data) {
+        NotaCreditoService.DocumentoByIdNCE(NoNCE).then(function (data) {
 
           if(data.length > 0) {
             //completar los campos
@@ -678,9 +703,9 @@
             $scope.errorMsg = '';
             $scope.errorShow = false;
 
-            $scope.NC.noNC = $filter('numberFixedLen')(NoNC, 8);
-            $scope.NC.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-            $scope.NC.AplicadoCuota = data[0]['aplicadoACuota'];
+            $scope.NCE.noNCE = $filter('numberFixedLen')(NoNCE, 8);
+            $scope.NCE.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+            $scope.NCE.AplicadoCuota = data[0]['aplicadoACuota'];
             $scope.NC.prestamo = data[0]['noPrestamo'];
             $scope.NC.valorCapital = data[0]['valorCapital'];
             $scope.NC.valorInteres = data[0]['valorInteres'];
@@ -688,41 +713,38 @@
           }
         }, 
           (function () {
-            $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoNC);
+            $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoNCE);
           }
         ));
       }
       catch (e) {
         $rootScope.mostrarError(e);
       }
-      $scope.toggleLNC();
+      $scope.toggleLNCE();
     }
 
-    //Filtrar las Notas de Debito por posteo (SI/NO)
+    //Filtrar las Notas de Credito Especial por posteo (SI/NO)
     $scope.filtrarPosteo = function() {
-      $scope.ndSeleccionadas = [];
-      $scope.valoresChk = [];
-      $scope.regAll = false;
 
       if($scope.posteof != '*') {
-        NotaCreditoService.byPosteo($scope.posteof).then(function (data) {
-          $scope.notascredito = data;
+        NotaCreditoService.byPosteoNCE($scope.posteof).then(function (data) {
+          $scope.notascreditoE = data;
 
           if(data.length > 0){
             $scope.verTodos = '';
           }
       });
       } else {
-        $scope.listadoND();
+        $scope.listadoNCE();
       }        
     }
 
-    //Buscar un prestamo en especifico
-    $scope.filtrarPorNoPrestamo = function($event, NoPrestamo) {
+    //Buscar una orden en especifico
+    $scope.filtrarPorNoOrden = function($event, NoOrden) {
       try {
         if($event.keyCode == 13) {
-          NotaCreditoService.byNoPrestamo(NoPrestamo).then(function (data) {
-            $scope.notascredito = data;
+          NotaCreditoService.byNoOrdenNCE(NoOrden).then(function (data) {
+            $scope.notascreditoE = data;
 
             if(data.length > 0) {
               $scope.verTodos = '';
@@ -730,7 +752,7 @@
             }
           }, 
             (function () {
-              $scope.NoFoundDoc = 'No se encontró el prestamo #' + NoPrestamo;
+              $scope.NoFoundDoc = 'No se encontró la orden #' + NoOrden;
             }
           ));          
         }
@@ -743,8 +765,8 @@
     $scope.filtrarPorSocio = function($event, socio) {
       try {
         if($event.keyCode == 13) {
-          NotaCreditoService.bySocio(socio).then(function (data) {
-            $scope.notascredito = data;
+          NotaCreditoService.bySocioNCE(socio).then(function (data) {
+            $scope.notascreditoE = data;
 
             if(data.length > 0) {
               $scope.verTodos = '';
@@ -762,9 +784,9 @@
     }
 
     //Buscar Documento por ENTER
-    $scope.buscarND = function($event, NoND) {
+    $scope.buscarNCE = function($event, NoNCE) {
       if($event.keyCode == 13) {
-        $scope.filtrarPorNoND(NoND);
+        $scope.filtrarPorNoNCE(NoNCE);
       }
     }
 
@@ -780,47 +802,14 @@
       // $timeout($scope.toggleError(), 3000);
     }
 
-    //Cuando se le de click al checkbox del header.
-    $scope.seleccionAll = function() {
-      $scope.ndSeleccionadas = [];
-
-      $scope.notasdebito.forEach(function (data) {
-        if (data.posteo == 'N') {
-          if ($scope.regAll === true){
-
-            $scope.valoresChk[data.id] = true;
-            $scope.ndSeleccionadas.push(data);
-          }
-          else{
-
-            $scope.valoresChk[data.id] = false;
-            $scope.ndSeleccionadas.splice(data);
-          }
-        }
-      });
-    }
-
-    //Cuando se le de click a un checkbox de la lista
-    $scope.selectedReg = function(iReg) {
-      
-      index = $scope.notasdebito.indexOf(iReg);
-
-      if ($scope.reg[$scope.notasdebito[index].id] === true){
-        $scope.ndSeleccionadas.push($scope.notasdebito[index]);
-      }
-      else{
-        $scope.ndSeleccionadas = _.without($scope.ndSeleccionadas, _.findWhere($scope.ndSeleccionadas, {id : iReg.id}));
-      }
-    }
-
     //Nueva Entrada de Nota de Credito
     $scope.nuevaEntrada = function(usuario, $event) {
-      $scope.NC = {};
-      $scope.NC.noNC = 0;
-      $scope.NC.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+      $scope.NCE = {};
+      $scope.NCE.noNCE = 0;
+      $scope.NCE.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
-      $scope.showLNC = false;
-      $scope.ArrowLNC = 'DownArrow';
+      $scope.showLNCE = false;
+      $scope.ArrowLNCE = 'DownArrow';
 
       $scope.disabledButton = 'Boton';
       $scope.disabledButtonBool = false;
@@ -888,9 +877,9 @@
       });
     }
 
-    //Imprimir Nota de Debito
-    $scope.ImprimirND = function(nd) {
-      $window.sessionStorage['notadebito'] = JSON.stringify(nd);
+    //Imprimir Nota de Credito Especial
+    $scope.ImprimirNCE = function(nce) {
+      $window.sessionStorage['notadebito'] = JSON.stringify(nce);
       $window.open('/facturacion/print/{nd}'.replace('{nd}',nd.noND), target='_blank'); 
     }
 

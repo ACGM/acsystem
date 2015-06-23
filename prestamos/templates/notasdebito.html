@@ -39,8 +39,8 @@
 
 					<table class="listado-table-f" id="table-lf-listado">
 						<tr class="listado-table-header-f">
-							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
 							<td>Estatus</td>
+							<td>Postear</td>
 							<td>Fecha</td>
 							<td>No. Doc.</td>
 							<td>Prestamo</td>
@@ -52,10 +52,8 @@
 						</tr>
 
 						<tr ng-repeat="nd in notasdebito" class="listado-nd-detail" ng-init="total=0">
-							<td class="align-center">
-								<input type="checkbox" name="c[[nd.id]]" ng-disabled="[[nd.posteado | posteo]]" ng-checked="valoresChk[nd.id]" ng-model="reg[nd.id]" ng-click="selectedReg(nd)"> 
-							</td>
 							<td class="[[nd.posteado | posteoFolderIcon]] posteo-[[nd.posteado]] align-center"></td>
+							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
 							<td>[[nd.fecha | date: 'dd/MM/yyyy']]</td>
 							<td><a href="#" class="sp-field" ng-click="NDFullById(nd.id)"> [[nd.id | numberFixedLen: 8]] </a></td>
 							<td>[[nd.noPrestamo | numberFixedLen: 8]]</td>
@@ -74,7 +72,7 @@
 
 				</section>
 
-				<button class="icon-cog Boton boton-postear-factura" ng-click="postear()"> Postear</button>
+				<button class="Boton boton-postear-factura" ng-click="listadoND()">Refrescar</button>
 			</section>
 		
 		</div>
@@ -126,10 +124,8 @@
 				</div>
 			</form>
 		</div>
-		
-		
+				
 	</div>
-
 
 
 {% endblock content %}

@@ -296,6 +296,14 @@ class NotaDeCreditoEspecial(models.Model):
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
+	@property
+	def getSocio(self):
+		return self.ordenDespacho.socio.nombreCompleto
+
+	@property
+	def getMontoAhorro(self):
+		return 0
+
 	class Meta:
 		verbose_name = "Nota de Credito Especial"
 		verbose_name_plural = "Notas de Credito Especiales"

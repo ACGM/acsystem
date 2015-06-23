@@ -24,33 +24,33 @@
         return deferred.promise;
       }
 
-      //Eliminar Nota de Debito
-      function eliminarND(notaDebitoNo) {
-        var deferred = $q.defer();
+      // //Eliminar Nota de Debito
+      // function eliminarND(notaDebitoNo) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
-      //Impresion de Nota de Debito (incrementa el campo de IMPRESA)
-      function impresionND(fact) {
-        var deferred = $q.defer();
+      // //Impresion de Nota de Debito (incrementa el campo de IMPRESA)
+      // function impresionND(fact) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
       //Llenar el listado de Notas de Debito
       function all() {
@@ -118,9 +118,9 @@
         byPosteo: byPosteo,
         byNoND: byNoND,
         guardarND: guardarND,
-        DocumentoById: DocumentoById,
-        impresionND: impresionND,
-        eliminarND : eliminarND
+        DocumentoById: DocumentoById
+        // impresionND: impresionND,
+        // eliminarND : eliminarND
       };
 
     }])

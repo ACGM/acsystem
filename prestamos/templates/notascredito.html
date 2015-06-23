@@ -42,8 +42,8 @@
 				
 					<table class="listado-table-f">
 						<tr class="listado-table-nc-header">
-							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
 							<td>Estatus</td>
+							<td>Postear</td>
 							<td>Numero</td>
 							<td>Fecha</td>
 							<td>Aplicado A</td>
@@ -56,10 +56,8 @@
 						</tr>
 
 						<tr ng-repeat="nc in notascredito" class="listado-nc-detail" ng-init="total=0">
-							<td class="align-center">
-								<input type="checkbox" name="c[[nc.id]]" ng-disabled="[[nc.posteado | posteo]]" ng-checked="valoresChk[nc.id]" ng-model="reg[nc.id]" ng-click="selectedReg(nc)"> 
-							</td>
 							<td class="[[nc.posteado | posteoFolderIcon]] posteo-[[nc.posteado]] align-center"></td>
+							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
 							<td> <a class="nc-field" title="Ver detalle..." href="#" ng-click="NCFullById(nc.id)">[[nc.id | numberFixedLen: 8]]</a> </td>
 							<td>[[nc.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[nc.aplicadoACuota | numberFixedLen: 9]]</td>
@@ -74,7 +72,7 @@
 				
 				</section>
 
-				<button class="Boton boton-postear-nc"> Postear</button>
+				<button class="Boton boton-postear-nc" ng-click="listadoNC()">Refrescar</button>
 			</section>
 		</div>
 

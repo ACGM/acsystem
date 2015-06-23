@@ -10,9 +10,9 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import NotasCreditoListado
+from .serializers import NotasCreditoListado, NotasCreditoEspecialesListado
 
-from prestamos.models import NotaDeCreditoPrestamo, MaestraPrestamo, PagoCuotasPrestamo
+from prestamos.models import NotaDeCreditoPrestamo, NotaDeCreditoEspecial, MaestraPrestamo, PagoCuotasPrestamo
 
 from acgm.views import LoginRequiredMixin
 
@@ -27,6 +27,13 @@ class ListadoNCViewSet(viewsets.ModelViewSet):
 
 	queryset = NotaDeCreditoPrestamo.objects.all().order_by('-id')
 	serializer_class = NotasCreditoListado
+
+
+# Listado de Notas de Credito Especiales
+class ListadoNCEViewSet(viewsets.ModelViewSet):
+
+	queryset = NotaDeCreditoEspecial.objects.all().order_by('-id')
+	serializer_class = NotasCreditoEspecialesListado
 
 
 # Guardar Nota de Credito

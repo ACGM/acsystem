@@ -37,7 +37,7 @@ from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, g
                                             BalancePrestamosBySocioAPIView
 
 from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito, NotaDeDebitoById
-from prestamos.viewNotaCredito import ListadoNCViewSet, guardarNotaCredito, NotaDeCreditoById
+from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guardarNotaCredito, NotaDeCreditoById
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
@@ -137,6 +137,7 @@ router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 #prestamos
 router.register(r'notasdebito', ListadoNDViewSet)
 router.register(r'notascredito', ListadoNCViewSet)
+router.register(r'notascreditoespecial', ListadoNCEViewSet)
 
 urlpatterns = patterns('',
 
