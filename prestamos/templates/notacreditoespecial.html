@@ -11,7 +11,7 @@
 		
 		<div class="sub-menu">	
 			<div class="menu-entrada-nce-listado">
-				<button class="nuevo icon-file" title="Nueva Nota de Credito Especial"></button>
+				<button class="nuevo icon-file" title="Nueva Nota de Credito Especial" ng-click="nuevaEntrada('{{user}}')"></button>
 			</div>
 				<a href="#" ng-click="toggleLNCE()">Listado de Notas de Credito Especiales</a>
 			<a class="[[ArrowLNCE]]" href="#"></a>
@@ -86,12 +86,12 @@
 					Nota de Credito
 			</div>
 
-			<div class="detalle-nce-sec">
+			<form name="NCEForm" class="detalle-nce-sec" ng-submit="guardarNotaCreditoE($event)" novalidate>
 				
 				<section class="nce-section-1">
 					<div class="nce-sub-1">	
 						<span>Numero</span>
-						<input type="text">
+						<input type="text" class="input-disabled align-right" ng-model="NCE.noNCE" readonly>
 						<span>Fecha</span>
 						<input type="text">
 					</div>
@@ -186,7 +186,7 @@
 					<table>
 						<tr>
 							<td>Orden No.</td>
-							<td><input type="text"></td>
+							<td><input type="text" ng-model="OrdenNo" ng-keypress="getOrden($event, OrdenNo)"></td>
 						</tr>
 						<tr>
 							<td>Total Monto Orden</td>
@@ -228,7 +228,7 @@
 					</table>
 					
 				</section>
-			</div>
+			</form>
 
 			<section class="acciones-botones">
 				<button class="Boton boton-guardar-nce">Guardar</button>

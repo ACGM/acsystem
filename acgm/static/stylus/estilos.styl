@@ -276,7 +276,7 @@ colorBordeSubMenu = lightgreen
 	display none !important
 	
 body
-	font-family "Arial", sans-serif, "serif"
+	font-family sans-serif, "serif", "Arial"
 	font-size 13px
 	
 footer
@@ -2224,6 +2224,28 @@ footer
 
 
 // SECCION NOTA DE DEBITO
+.prestamos-table-search	
+	border 1px solid black
+	position absolute
+	top 4rem
+	z-index 100
+	width 34rem
+	& tr
+		&:first-child
+			text-align center
+		&:nth-child(2)
+			& td
+				&:nth-child(1)
+					width 4em
+				&:nth-child(2)
+					width 22em
+				&:nth-child(3)
+					width 7em
+
+.prestamoBuscarField
+	width 99%
+	background verdeMuySuave
+					
 .menu-entrada-nd-listado
 	position absolute
 	right 4em
@@ -2797,6 +2819,9 @@ footer
 
 //SOLICITUD ORDEN DE DESPACHO
 
+.suplidor-orden-despacho
+	left 13em
+	
 .content-suplidores-table-od
 	position relative
 	top 1.45em

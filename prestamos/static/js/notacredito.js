@@ -586,8 +586,8 @@
   //****************************************************
   //CONTROLLERS   (2)                                  *
   //****************************************************
-  .controller('NotaCreditoEspecialCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaCreditoService',
-                                      function ($scope, $filter, $window, appService, NotaCreditoService) {
+  .controller('NotaCreditoEspecialCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaCreditoService', 'SolicitudOrdenDespachoService',
+                                      function ($scope, $filter, $window, appService, NotaCreditoService, SolicitudOrdenDespachoService) {
     
     //Inicializacion de variables
     $scope.disabledButton = 'Boton-disabled';
@@ -634,6 +634,16 @@
           $scope.verTodos = 'ver-todos-ei';
         }
       });
+    }
+
+    //Obtener Orden de Despacho
+    $scope.getOrden = function($event, OrdenNo) {
+      if($event.keyCode == 13) {
+        SolicitudOrdenDespachoService.SolicitudODById(OrdenNo).then(function (data) {
+          $scope.OrdenDespacho = data;
+          console.log(data);
+        });
+      }
     }
 
     //Guardar Nota de Credito Especial

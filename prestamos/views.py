@@ -24,6 +24,11 @@ import decimal
 import datetime
 
 
+# Prestamos Busqueda (GENERICO)
+def prestamosSearch(request):
+	return render(request, 'prestamos_search.html')
+
+
 #Vista para Desembolso Electronico de Prestamos
 class DesembolsoPrestamosView(LoginRequiredMixin, TemplateView):
 

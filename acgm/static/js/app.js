@@ -183,6 +183,14 @@
     }
   });
 
+  // Directiva para tabla de prestamos.
+  app.directive('prestamossearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/prestamosSearch'
+    }
+  });
+
   // Directiva para cuando se haya focus en un campo se seleccione todo el texto automaticamente.
   app.directive('selectOnClick', function () {
     return {

@@ -79,7 +79,7 @@
 
 
 		<!--DETALLE ND-->
-		<div class="detalleND" ng-hide="showLND">
+		<div class="detalleND" ng-hide="showLND" ng-init="prestamosFind()">
 			<div class="sub-menu">	
 					Detalle Nota de Debito
 				<a class="DownArrow" href="#"></a>
@@ -88,7 +88,7 @@
 			<form name="NDForm" class="nd-sec data-entry-section" ng-submit="guardaNotaDebito($event)" novalidate>
 				<table class="data-entry-header-table-nd">
 					<tr>
-						<td>Numero del Debito</td>
+						<td>No. del Debito</td>
 						<td> <input type="text" class="input-disabled align-right" ng-model="ND.noND" readonly> </td>
 					</tr>
 					<tr>
@@ -99,8 +99,9 @@
 						<td>Prestamo No.</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text" ng-model="ND.prestamo"><a class="icon-uniE601 icon-buscar" href=""></a>
+								<input type="text" ng-model="ND.prestamo"><a class="icon-uniE601 icon-buscar" href="#" ng-click="PrestamosSel($event)"></a>
 							</div>  
+							<span ng-if="ND.prestamo.length > 0">[[ND.categoriaPrestamo]] (socio: [[ND.socio]]) </span>
 						</td>
 					</tr>
 					<tr>
@@ -112,12 +113,14 @@
 						<td><input type="text" ng-model="ND.valorInteres" required></td>
 					</tr>
 				</table>
+				<prestamosSearch></prestamosSearch>
+
 
 				<span class="concepto-field">Concepto</span>
 
 				<textarea name="concepto" id="concepto" cols="45" rows="4" ng-model="ND.concepto" required></textarea>
 
-				<div class="botones-acciones">
+				<div>
 					<button class="icon-save Boton boton-guarda-nd" type="submit">Guardar</button>
 					<!-- <button class="icon-spinner Boton boton-cancelar-nd" ng-click="nuevaEntrada('{{user}}')">Cancelar</button> -->
 					

@@ -229,6 +229,8 @@ urlpatterns = patterns('',
     url(r'^facturacion/reportes/ventasResumido/json/$', RPTResumenVentas.as_view(), name='Reporte_ventasResumido_json'),
 
     #Prestamos
+    url(r'^prestamosSearch/$', 'prestamos.views.prestamosSearch', name='prestamos_search'),
+
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota_de_Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota_de_Credito'),
     url(r'^prestamos/nce/$', NotaDeCreditoEspView.as_view(), name='Nota_de_Credito_Especial'),

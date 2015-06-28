@@ -129,8 +129,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService',
-                                        function ($scope, $filter, $window, appService, NotaDebitoService) {
+    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $window, appService, NotaDebitoService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -138,22 +138,52 @@
       $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLND = true;
-      $scope.regAll = false;
-      $scope.tableProducto = false;
-      $scope.tableSocio = false;
+      $scope.tablePrestamo = false;
 
       $scope.item = {};
       $scope.notasdebito = {};
 
-      $scope.ndSeleccionadas = [];
-      $scope.reg = [];
-      $scope.valoresChk = [];
       $scope.dataD = [];
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLND = 'UpArrow';
 
       
+      // Mostrar/Ocultar table prestamos.
+      $scope.PrestamosSel = function() {
+        $scope.tablePrestamo = !$scope.tablePrestamo;
+      }
+
+      // Prestamos Posteados para llenar table de Prestamos.
+      $scope.prestamosFind = function() {
+        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          $scope.prestamos = data;
+        });
+      }
+
+      // Prestamo Seleccionado.
+      $scope.selPrestamo = function($event, prestamo) {
+        $scope.ND.prestamo = $filter('numberFixedLen') (prestamo.noPrestamo, 9);
+        $scope.ND.categoriaPrestamo = prestamo.categoriaPrestamo;
+        $scope.ND.socio = prestamo.socio;
+        $scope.tablePrestamo = false;
+      }
+
+      // Buscar prestamo de un socio en especifico.
+      $scope.gePrestamoSocio = function($event, nombreSocio) {
+        if($event.keyCode == 13) {
+          if (nombreSocio.length > 0) {
+            $scope.prestamos = $scope.prestamos.filter(function (item) {
+              return item.socio.toLowerCase().substring(0, nombreSocio.length) == nombreSocio;
+            });
+          } else {
+            $scope.prestamosFind();
+          }
+
+          console.log($scope.prestamos);
+        }
+      }
+
       // Mostrar/Ocultar panel de Listado de Notas de Debito
       $scope.toggleLND = function() {
         $scope.showLND = !$scope.showLND;
@@ -215,6 +245,7 @@
 
             $scope.errorShow = false;
             $scope.listadoND();
+            $scope.toggleLND();
           },
             (function () {
               $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -261,10 +292,12 @@
 
               $scope.ND.noND = $filter('numberFixedLen')(NoND, 8);
               $scope.ND.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-              $scope.ND.prestamo = data[0]['noPrestamo'];
+              $scope.ND.prestamo = $filter('numberFixedLen')(data[0]['noPrestamo'], 9);
               $scope.ND.valorCapital = data[0]['valorCapital'];
               $scope.ND.valorInteres = data[0]['valorInteres'];
               $scope.ND.concepto = data[0]['concepto'];
+              $scope.ND.socio = data[0]['socio'];
+              $scope.ND.categoriaPrestamo = data[0]['categoriaPrestamo'];
             }
           }, 
             (function () {

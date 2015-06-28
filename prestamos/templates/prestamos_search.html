@@ -1,0 +1,23 @@
+<table class="prestamos-table-search" ng-show="tablePrestamo">
+	<tr>
+		<td colspan="3" class="cerrar-table">
+			<a href="#" class="icon-delete" ng-click="tablePrestamo=false"></a>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<input type="text" class="prestamoBuscarField" ng-model="nombreSocio" ng-keypress="gePrestamoSocio($event, nombreSocio)" placeholder="Nombre del Socio">
+		</td>
+	</tr>
+	<tr class="productos-table-header">
+		<td>Prestamo</td>
+		<td>Categoria</td>
+		<td>Socio</td>
+	</tr>
+	<tr ng-repeat="prestamo in prestamos" class="productos-table-detail-search">
+		<td><a href="#" class="select-item" ng-click="selPrestamo($event,prestamo)"> [[prestamo.noPrestamo | numberFixedLen: 9]] </a></td>
+		<td><a href="#" class="select-item" ng-click="selPrestamo($event,prestamo)"> [[prestamo.categoriaPrestamo]] </a></td>
+		<td><a href="#" class="select-item" ng-click="selPrestamo($event,prestamo)"> [[prestamo.socio]] </a></td>
+	</tr>
+</table>
+<span class="error-ei"> [[prestamoNoExiste]]</span>

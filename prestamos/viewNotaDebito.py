@@ -81,12 +81,14 @@ class NotaDeDebitoById(LoginRequiredMixin, DetailView):
 			data.append({
 				'fecha': notadebito.fecha,
 				'noPrestamo': notadebito.noPrestamo.noPrestamo,
+				'categoriaPrestamo': notadebito.noPrestamo.categoriaPrestamo.descripcion,
 				'valorCapital': notadebito.valorCapital,
 				'valorInteres': notadebito.valorInteres,
 				'concepto': notadebito.concepto,
 				'estatus': notadebito.estatus,
 				'posteado': notadebito.posteado,
 				'fechaPosteo': notadebito.fechaPosteo,
+				'socio': notadebito.noPrestamo.socio.nombreCompleto,
 			})
 
 		return JsonResponse(data, safe=False)
