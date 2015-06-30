@@ -74,7 +74,7 @@ from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getEx
                                 getExistenciaRPT, RPTMovimientoProductoAPIView
 
 from nominacoop.views import DetalleNominaGeneradaAPIView
-from prestamos.views import SolicitudesPrestamosAPIView
+from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
 
@@ -244,6 +244,8 @@ urlpatterns = patterns('',
     url(r'^prestamos/maestra/marcarcomo/$', MarcarPrestamoComoDCView.as_view(), name='marcar_prestamo_como'),
     url(r'^prestamos/maestra/cambios/$', guardarCambiosPrestamo.as_view(), name='Maestra_Prestamos_cambios'),
     url(r'^prestamos/archivo-banco/set/$', relacionArchivoBancoConDesembolsoElectronico, name='prestamos_archivo_banco'),
+    url(r'^prestamos/pago-cuotas/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
+    url(r'^prestamos/pago-cuotas/(?P<noPrestamo>[\d]+)/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
 
     
     #Prestamos#Imprimir

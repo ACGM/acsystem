@@ -157,7 +157,14 @@
       // Prestamos Posteados para llenar table de Prestamos.
       $scope.prestamosFind = function() {
         MaestraPrestamoService.PrestamosPosteados().then(function (data) {
-          $scope.prestamos = data;
+          if(data.length > 0) {
+            $scope.prestamos = data;
+            $scope.prestamoNoExiste = '';
+          } else {
+            $scope.prestamoNoExiste = 'No existe prestamo.';
+          }
+          
+          $scope.tmpPrestamos = data; //Esta variable es para cuando se hagan busqueda de prestamos se mantenga la lista original.
         });
       }
 
@@ -170,16 +177,25 @@
       }
 
       // Buscar prestamo de un socio en especifico.
-      $scope.gePrestamoSocio = function($event, nombreSocio) {
+      $scope.getPrestamoSocio = function($event, datoBuscar) {
+
         if($event.keyCode == 13) {
-          if (nombreSocio.length > 0) {
+          $event.preventDefault();
+
+          if (datoBuscar.length > 0) {
+            $scope.prestamos = $scope.tmpPrestamos;
+
             $scope.prestamos = $scope.prestamos.filter(function (item) {
-              return item.socio.toLowerCase().substring(0, nombreSocio.length) == nombreSocio;
+
+             if (isNaN(datoBuscar)) {
+                return item.socio.toLowerCase().substring(0, datoBuscar.length) == datoBuscar;
+              } else {
+                return item.noPrestamo == datoBuscar;
+              }
             });
           } else {
             $scope.prestamosFind();
           }
-
           console.log($scope.prestamos);
         }
       }

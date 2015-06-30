@@ -67,7 +67,7 @@
       //Buscar un documento en especifico (Desglose)
       function DocumentoById(NoNC) {
         var deferred = $q.defer();
-        var doc = NoNC != undefined? NoNCE : 0;
+        var doc = NoNC != undefined? NoNC : 0;
 
         $http.get('/notadecreditojson/?nonc={NoNC}'.replace('{NoNC}', doc))
           .success(function (data) {
@@ -232,16 +232,16 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('NotaCreditoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaCreditoService',
-                                        function ($scope, $filter, $window, appService, NotaCreditoService) {
+    .controller('NotaCreditoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaCreditoService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $window, appService, NotaCreditoService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
       $scope.disabledButtonBool = true;
       $scope.errorShow = false;
+      $scope.posteof = '*';
       $scope.showLNC = true;
-      $scope.tableProducto = false;
-      $scope.tableSocio = false;
+      $scope.tablePrestamo = false;
 
       $scope.item = {};
       $scope.notascredito = {};
@@ -251,6 +251,58 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLNC = 'UpArrow';
       
+      // Mostrar/Ocultar table prestamos.
+      $scope.PrestamosSel = function() {
+        $scope.tablePrestamo = !$scope.tablePrestamo;
+      }
+
+      // Prestamos Posteados para llenar table de Prestamos.
+      $scope.prestamosFind = function() {
+        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          if(data.length > 0) {
+            $scope.prestamos = data;
+            $scope.prestamoNoExiste = '';
+          } else {
+            $scope.prestamoNoExiste = 'No existe prestamo.';
+          }
+
+          $scope.tmpPrestamos = data; //Esta variable es para cuando se hagan busqueda de prestamos se mantenga la lista original.
+        });
+      }
+
+      // Prestamo Seleccionado.
+      $scope.selPrestamo = function($event, prestamo) {
+        $scope.NC.prestamo = $filter('numberFixedLen') (prestamo.noPrestamo, 9);
+        $scope.NC.categoriaPrestamo = prestamo.categoriaPrestamo;
+        $scope.NC.socio = prestamo.socio;
+        $scope.NC.AplicadoCuota = '';
+        $scope.tablePrestamo = false;
+      }
+
+      // Buscar prestamo de un socio en especifico.
+      $scope.getPrestamoSocio = function($event, datoBuscar) {
+
+        if($event.keyCode == 13) {
+          $event.preventDefault();
+
+          if (datoBuscar.length > 0) {
+            $scope.prestamos = $scope.tmpPrestamos;
+
+            $scope.prestamos = $scope.prestamos.filter(function (item) {
+
+             if (isNaN(datoBuscar)) {
+                return item.socio.toLowerCase().substring(0, datoBuscar.length) == datoBuscar;
+              } else {
+                return item.noPrestamo == datoBuscar;
+              }
+            });
+          } else {
+            $scope.prestamosFind();
+          }
+          console.log($scope.prestamos);
+        }
+      }
+
       // Mostrar/Ocultar panel de Listado de Notas de Credito
       $scope.toggleLNC = function() {
         $scope.showLNC = !$scope.showLNC;
@@ -339,7 +391,6 @@
         try {
 
           NotaCreditoService.DocumentoById(NoNC).then(function (data) {
-
             if(data.length > 0) {
               //completar los campos
               $scope.nuevaEntrada();
@@ -350,28 +401,27 @@
               $scope.NC.noNC = $filter('numberFixedLen')(NoNC, 8);
               $scope.NC.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
               $scope.NC.AplicadoCuota = data[0]['aplicadoACuota'];
-              $scope.NC.prestamo = data[0]['noPrestamo'];
+              $scope.NC.prestamo = $filter('numberFixedLen') (data[0]['noPrestamo'], 9);
               $scope.NC.valorCapital = data[0]['valorCapital'];
               $scope.NC.valorInteres = data[0]['valorInteres'];
               $scope.NC.concepto = data[0]['concepto'];
+              $scope.NC.socio = data[0]['socio'];
+              $scope.NC.categoriaPrestamo = data[0]['categoriaPrestamo'];
             }
           }, 
             (function () {
-              $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoNC);
+              $scope.mostrarError('No pudo encontrar el desglose del documento #' + NoNC);
             }
           ));
         }
         catch (e) {
-          $rootScope.mostrarError(e);
+          $scope.mostrarError(e);
         }
         $scope.toggleLNC();
       }
 
       //Filtrar las Notas de Debito por posteo (SI/NO)
       $scope.filtrarPosteo = function() {
-        $scope.ndSeleccionadas = [];
-        $scope.valoresChk = [];
-        $scope.regAll = false;
 
         if($scope.posteof != '*') {
           NotaCreditoService.byPosteo($scope.posteof).then(function (data) {
@@ -382,7 +432,7 @@
             }
         });
         } else {
-          $scope.listadoND();
+          $scope.listadoNC();
         }        
       }
 

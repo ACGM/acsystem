@@ -91,12 +91,14 @@ class NotaDeCreditoById(LoginRequiredMixin, DetailView):
 				'fecha': notacredito.fecha,
 				'aplicadoACuota': notacredito.aplicadoACuota.id,
 				'noPrestamo': notacredito.noPrestamo.noPrestamo,
+				'categoriaPrestamo': notacredito.noPrestamo.categoriaPrestamo.descripcion,
 				'valorCapital': notacredito.valorCapital,
 				'valorInteres': notacredito.valorInteres,
 				'concepto': notacredito.concepto,
 				'estatus': notacredito.estatus,
 				'posteado': notacredito.posteado,
 				'fechaPosteo': notacredito.fechaPosteo,
+				'socio': notacredito.noPrestamo.socio.nombreCompleto,
 			})
 
 		return JsonResponse(data, safe=False)

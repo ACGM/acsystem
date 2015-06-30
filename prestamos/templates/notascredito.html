@@ -78,7 +78,7 @@
 
 	
 		<!--DETALLE NC-->
-		<div class="detalleNC" ng-hide="showLNC">
+		<div class="detalleNC" ng-hide="showLNC" ng-init="prestamosFind()">
 			<div class="sub-menu">	
 					Detalle Nota de Credito
 				<a class="DownArrow" href="#"></a>
@@ -87,7 +87,7 @@
 			<form name="NCForm" class="nc-sec data-entry-section" ng-submit="guardaNotaCredito($event)" novalidate>
 				<table class="data-entry-header-table-nc">
 					<tr>
-						<td>Numero del Credito</td>
+						<td>No. del Credito</td>
 						<td> <input type="text" class="input-disabled align-right" ng-model="NC.noNC" readonly> </td>
 					</tr>
 					<tr>
@@ -98,15 +98,18 @@
 						<td>Prestamo No.</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text" ng-model="NC.prestamo" required><a class="icon-uniE601 icon-buscar" href="#"></a>
+								<input type="text" ng-model="NC.prestamo" required readonly>
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="PrestamosSel($event)"></a>
 							</div>  
+							<span ng-if="NC.prestamo.length > 0">[[NC.categoriaPrestamo]] (socio: [[NC.socio]]) </span>
 						</td>
 					</tr>
 					<tr>
 						<td>Aplicado a Cta. Cap/Int</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text" ng-model="NC.AplicadoCuota" required><a class="icon-uniE601 icon-buscar" href="#"></a>
+								<input type="text" ng-model="NC.AplicadoCuota" required readonly>
+								<a class="icon-uniE601 icon-buscar" href="#"></a>
 							</div>  
 						</td>
 					</tr>
@@ -119,12 +122,13 @@
 						<td><input type="text" ng-model="NC.valorInteres" required></td>
 					</tr>
 				</table>
+				<prestamosSearch></prestamosSearch>
 
 				<span class="concepto-field">Concepto</span>
 
 				<textarea name="concepto" id="concepto" cols="47" rows="4" ng-model="NC.concepto"></textarea>
 
-				<div class="botones-acciones">
+				<div>
 					<button class="icon-save Boton boton-guarda-nc" type="submit">Guardar</button>
 					<!-- <button class="icon-spinner Boton boton-cancelar-nc">Cancelar</button> -->
 					

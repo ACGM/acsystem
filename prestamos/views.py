@@ -11,9 +11,9 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import SolicitudesPrestamosSerializer
+from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -111,6 +111,21 @@ class SolicitudesPrestamosAPIViewByRangoFecha(APIView):
 		solicitudes = SolicitudPrestamo.objects.filter(fechaSolicitud__range=(fechaInicio, fechaFin)).order_by('-fechaSolicitud')
 
 		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Listado de Pagos de Cuotas de Prestamos
+class PagoCuotasPrestamoAPIViewByNoPrestamo(APIView):
+
+	serializer_class = PagoCuotasPrestamoSerializer
+
+	def get(self, request, noPrestamo=None):
+		if noPrestamo == None:
+			pagos = PagoCuotasPrestamo.objects.all().order_by('-fechaPago')
+		else:
+			pagos = PagoCuotasPrestamo.objects.filter(noPrestamo__noPrestamo=noPrestamo).order_by('-fechaPago')
+
+		response = self.serializer_class(pagos, many=True)
 		return Response(response.data)
 
 

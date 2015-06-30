@@ -55,6 +55,16 @@ class BalancePrestamosSocioSerializer(serializers.ModelSerializer):
 		ordering = ('-codigoSocio',)
 
 
+# Listado de Pagos de Cuotas Prestamos 
+class PagoCuotasPrestamoSerializer(serializers.ModelSerializer):
+	noPrestamo = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = PagoCuotasPrestamo
+		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago')
+		ordering = ('-id',)
+
+
 # Prestamos Unificados
 class PrestamosUnificados(serializers.HyperlinkedModelSerializer):
 
