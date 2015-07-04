@@ -12,8 +12,8 @@
                                                                           'fecha': fecha, 
                                                                           'prestamo': NC.prestamo,
                                                                           'aplicaCuota': NC.AplicadoCuota,
-                                                                          'valorCapital': NC.valorCapital,
-                                                                          'valorInteres': NC.valorInteres,
+                                                                          'valorCapital': NC.valorCapital.replace(',',''),
+                                                                          'valorInteres': NC.valorInteres.replace(',',''),
                                                                           'concepto': NC.concepto})).
           success(function (data) {
             deferred.resolve(data);
@@ -241,7 +241,9 @@
       $scope.errorShow = false;
       $scope.posteof = '*';
       $scope.showLNC = true;
+
       $scope.tablePrestamo = false;
+      $scope.tablePagoCuotas = false;
 
       $scope.item = {};
       $scope.notascredito = {};
@@ -251,9 +253,11 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLNC = 'UpArrow';
       
+      //****************************VENTANA SELECCIONAR PRESTAMO**********************************
       // Mostrar/Ocultar table prestamos.
       $scope.PrestamosSel = function() {
         $scope.tablePrestamo = !$scope.tablePrestamo;
+        $scope.tablePagoCuotas = false;
       }
 
       // Prestamos Posteados para llenar table de Prestamos.
@@ -301,6 +305,39 @@
           }
           console.log($scope.prestamos);
         }
+      }
+
+      // *********************VENTANA PARA SELECCIONAR CUOTA********************************
+      // Mostrar/Ocultar table PagoCuotas.
+      $scope.PagoCuotasSel = function($event, NoPrestamo) {
+        $scope.tablePagoCuotas = !$scope.tablePagoCuotas;
+
+        if($scope.tablePagoCuotas == true) {
+          $scope.PagoCuotasFind(parseFloat(NoPrestamo));
+        }
+      }
+
+      // Pagos de cuotas correspondientes al prestamo seleccionado.
+      $scope.PagoCuotasFind = function(NoPrestamo) {
+        MaestraPrestamoService.PagoCuotasPrestamosByNoPrestamo(NoPrestamo).then(function (data) {
+          if(data.length > 0) {
+
+            $scope.pagoCuotas = data;
+            $scope.pagoCuotasNoExiste = '';
+          } else {
+            alert('No existen pagos de cuotas');
+            $scope.pagoCuotasNoExiste = 'No existen pagos de cuotas.';
+          }
+        });
+      }
+ 
+      // PagoCuota Seleccionado.
+      $scope.selPagoCuota = function($event, cuota) {
+        $scope.NC.AplicadoCuota = $filter('numberFixedLen') (cuota.id, 0);
+        $scope.NC.valorCapital = $filter('number')(cuota.valorCapital,2);
+        $scope.NC.valorInteres = $filter('number')(cuota.valorInteres,2);
+        $scope.tablePagoCuotas = false;
+
       }
 
       // Mostrar/Ocultar panel de Listado de Notas de Credito
@@ -355,6 +392,7 @@
 
             $scope.errorShow = false;
             $scope.listadoNC();
+            $scope.showLNC = true;
           },
             (function () {
               $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -402,8 +440,8 @@
               $scope.NC.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
               $scope.NC.AplicadoCuota = data[0]['aplicadoACuota'];
               $scope.NC.prestamo = $filter('numberFixedLen') (data[0]['noPrestamo'], 9);
-              $scope.NC.valorCapital = data[0]['valorCapital'];
-              $scope.NC.valorInteres = data[0]['valorInteres'];
+              $scope.NC.valorCapital = $filter('number')(data[0]['valorCapital'],2);
+              $scope.NC.valorInteres = $filter('number')(data[0]['valorInteres'],2);
               $scope.NC.concepto = data[0]['concepto'];
               $scope.NC.socio = data[0]['socio'];
               $scope.NC.categoriaPrestamo = data[0]['categoriaPrestamo'];

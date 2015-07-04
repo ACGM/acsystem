@@ -11,8 +11,8 @@
         $http.post('/prestamos/nota-de-debito/guardar/', JSON.stringify({'noND': ND.noND, 
                                                                           'fecha': fecha, 
                                                                           'prestamo': ND.prestamo,
-                                                                          'valorCapital': ND.valorCapital,
-                                                                          'valorInteres': ND.valorInteres,
+                                                                          'valorCapital': ND.valorCapital.replace(',',''),
+                                                                          'valorInteres': ND.valorInteres.replace(',',''),
                                                                           'concepto': ND.concepto})).
           success(function (data) {
             deferred.resolve(data);

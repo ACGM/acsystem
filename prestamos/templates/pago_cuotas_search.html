@@ -1,0 +1,27 @@
+<table class="pago-cuotas-table-search" ng-show="tablePagoCuotas">
+	<tr>
+		<td colspan="5" class="cerrar-table">
+			<a href="#" class="icon-delete" ng-click="tablePagoCuotas=false"></a>
+		</td>
+	</tr>
+	<!-- <tr>
+		<td colspan="3">
+			<input type="text" class="prestamoBuscarField" ng-model="datoBuscar" ng-keypress="getPrestamoSocio($event, datoBuscar)" placeholder="Nombre del Socio o Numero de Prestamo">
+		</td>
+	</tr> -->
+	<tr class="productos-table-header">
+		<td>Id</td>
+		<td>Fecha Pago</td>
+		<td class="align-rigth">Valor Capital</td>
+		<td class="align-rigth">Valor Interes</td>
+		<td>Tipo Pago</td>
+	</tr>
+	<tr ng-repeat="cuota in pagoCuotas" class="productos-table-detail-search">
+		<td><a href="#" class="select-item" ng-click="selPagoCuota($event,cuota)"> [[cuota.id]] </a></td>
+		<td><a href="#" class="select-item" ng-click="selPagoCuota($event,cuota)"> [[cuota.fechaPago | date: 'dd/MM/yyyy']] </a></td>
+		<td><a href="#" class="select-item align-right" ng-click="selPagoCuota($event,cuota)"> [[cuota.valorCapital | number: 2]] </a></td>
+		<td><a href="#" class="select-item align-right" ng-click="selPagoCuota($event,cuota)"> [[cuota.valorInteres | number: 2]] </a></td>
+		<td><a href="#" class="select-item" ng-click="selPagoCuota($event,cuota)"> [[cuota.tipoPago]] </a></td>
+	</tr>
+</table>
+<span class="error-ei"> [[pagoCuotaNoExiste]]</span>

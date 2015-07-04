@@ -230,6 +230,7 @@ urlpatterns = patterns('',
 
     #Prestamos
     url(r'^prestamosSearch/$', 'prestamos.views.prestamosSearch', name='prestamos_search'),
+    url(r'^pagoCuotasSearch/$', 'prestamos.views.pagoCuotasSearch', name='pago_cuotas_search'),
 
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota_de_Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota_de_Credito'),

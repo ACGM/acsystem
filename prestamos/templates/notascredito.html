@@ -66,7 +66,9 @@
 							<td class="align-right">[[nc.valorCapital | number : 2]]</td>
 							<td class="align-right">[[nc.valorInteres | number : 2]]</td>
 							<td class="align-center"><a class="icon-printer icon-imprimir" href=""></a></td>
-							<td class="align-center"><a class="icon-delete icon-eliminar" href=""></a></td>
+							<td class="align-center">
+								<div ng-if="nc.posteado == 'N'"> <a class="icon-delete icon-eliminar" href="#"></a> </div>
+							</td>
 						</tr>
 					</table>
 				
@@ -109,24 +111,25 @@
 						<td> 
 							<div class="prestamo-field"> 
 								<input type="text" ng-model="NC.AplicadoCuota" required readonly>
-								<a class="icon-uniE601 icon-buscar" href="#"></a>
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="PagoCuotasSel($event, NC.prestamo)"></a>
 							</div>  
 						</td>
 					</tr>
 					<tr>
 						<td>Valor de Capital</td>
-						<td><input type="text" ng-model="NC.valorCapital" required></td>
+						<td><input type="text" ng-model="NC.valorCapital" required readonly></td>
 					</tr>
 					<tr>
 						<td>Valor de Interes</td>
-						<td><input type="text" ng-model="NC.valorInteres" required></td>
+						<td><input type="text" ng-model="NC.valorInteres" required readonly></td>
 					</tr>
 				</table>
 				<prestamosSearch></prestamosSearch>
+				<pagoCuotasSearch></pagoCuotasSearch>
 
 				<span class="concepto-field">Concepto</span>
 
-				<textarea name="concepto" id="concepto" cols="47" rows="4" ng-model="NC.concepto"></textarea>
+				<textarea name="concepto" id="concepto" cols="47" rows="4" ng-model="NC.concepto" required></textarea>
 
 				<div>
 					<button class="icon-save Boton boton-guarda-nc" type="submit">Guardar</button>

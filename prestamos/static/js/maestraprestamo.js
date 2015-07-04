@@ -182,6 +182,23 @@
         return deferred.promise;
       }
 
+      //Pagos Cuotas de Prestamos
+      function PagoCuotasPrestamosByNoPrestamo(NoPrestamo) {
+        var deferred = $q.defer();
+
+        if(NoPrestamo != undefined) {
+          url = '/prestamos/pago-cuotas/{NoPrestamo}/?format=json'.replace('{NoPrestamo}', NoPrestamo);
+        } else {
+          url = '/prestamos/pago-cuotas/?format=json';
+        }
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byNoPrestamo : byNoPrestamo,
@@ -192,7 +209,8 @@
         PrestamosPosteados : PrestamosPosteados,
         guardarCambios : guardarCambios,
         prestamosDetalleByCodigoSocio : prestamosDetalleByCodigoSocio,
-        prestamosBalanceByCodigoSocio : prestamosBalanceByCodigoSocio
+        prestamosBalanceByCodigoSocio : prestamosBalanceByCodigoSocio,
+        PagoCuotasPrestamosByNoPrestamo : PagoCuotasPrestamosByNoPrestamo
       };
 
     }])

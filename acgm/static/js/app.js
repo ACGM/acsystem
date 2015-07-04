@@ -191,6 +191,14 @@
     }
   });
 
+  // Directiva para tabla de Pago de Cuotas.
+  app.directive('pagocuotassearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/pagoCuotasSearch'
+    }
+  });
+
   // Directiva para cuando se haya focus en un campo se seleccione todo el texto automaticamente.
   app.directive('selectOnClick', function () {
     return {

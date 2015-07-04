@@ -29,6 +29,11 @@ def prestamosSearch(request):
 	return render(request, 'prestamos_search.html')
 
 
+# Pago Cuotas Busqueda (GENERICO)
+def pagoCuotasSearch(request):
+	return render(request, 'pago_cuotas_search.html')
+
+
 #Vista para Desembolso Electronico de Prestamos
 class DesembolsoPrestamosView(LoginRequiredMixin, TemplateView):
 
