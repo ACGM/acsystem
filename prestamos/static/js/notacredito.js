@@ -334,8 +334,8 @@
       // PagoCuota Seleccionado.
       $scope.selPagoCuota = function($event, cuota) {
         $scope.NC.AplicadoCuota = $filter('numberFixedLen') (cuota.id, 0);
-        $scope.NC.valorCapital = $filter('number')(cuota.valorCapital,2);
-        $scope.NC.valorInteres = $filter('number')(cuota.valorInteres,2);
+        $scope.NC.valorCapital = $filter('number')(cuota.valorCapital, 2);
+        $scope.NC.valorInteres = $filter('number')(cuota.valorInteres, 2);
         $scope.tablePagoCuotas = false;
 
       }
@@ -518,13 +518,6 @@
         }
       }
 
-      //Buscar Documento por ENTER
-      $scope.buscarND = function($event, NoND) {
-        if($event.keyCode == 13) {
-          $scope.filtrarPorNoND(NoND);
-        }
-      }
-
       // Mostrar/Ocultar error
       $scope.toggleError = function() {
         $scope.errorShow = !$scope.errorShow;
@@ -585,7 +578,7 @@
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
 
-        appService.getDocumentoCuentas('FACT').then(function (data) {
+        appService.getDocumentoCuentas('NDCR').then(function (data) {
           $scope.documentoCuentas = data;
   
           //Prepara cada linea de posteo
@@ -728,7 +721,18 @@
     $scope.getOrden = function($event, OrdenNo) {
       if($event.keyCode == 13) {
         SolicitudOrdenDespachoService.SolicitudODById(OrdenNo).then(function (data) {
-          $scope.OrdenDespacho = data;
+          if(data.length > 0) {
+            $scope.NCE.socioCodigo = data[0]['socioCodigo'];
+            $scope.NCE.socioNombre = data[0]['socioNombre'];
+            $scope.NCE.montoOrden = $filter('number')(data[0]['netoDesembolsar'], 2);
+            $scope.NCE.suplidorCodigo = data[0]['idSuplidor'];
+            $scope.NCE.suplidorNombre = data[0]['suplidorNombre'];
+          } else {
+            alert('La orden No. ' + OrdenNo + ' No existe');
+          }
+
+
+
           console.log(data);
         });
       }

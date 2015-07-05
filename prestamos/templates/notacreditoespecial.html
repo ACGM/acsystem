@@ -81,7 +81,7 @@
 		<div class="detalleNCE" ng-hide="showLNCE">
 			
 			<div class="sub-menu">	
-					Nota de Credito
+					Nota de Credito Especial
 			</div>
 
 			<form name="NCEForm" class="detalle-nce-sec" ng-submit="guardarNotaCreditoE($event)" novalidate>
@@ -91,12 +91,13 @@
 						<span>Numero</span>
 						<input type="text" class="input-disabled align-right" ng-model="NCE.noNCE" readonly>
 						<span>Fecha</span>
-						<input type="text">
+						<input type="text" ng-model="NCE.fecha">
 					</div>
 					
 					<div class="nce-sub-2">
-						<span>Socio</span>
-						<input type="text">
+						<span>Socio: </span>
+						<span>[[NCE.socioCodigo]] - </span>
+						<input type="text" class="nce-socio-nombre-field-t resaltar-valor" ng-model="NCE.socioNombre">
 					</div>
 
 					<div class="nce-table">
@@ -111,8 +112,8 @@
 							</tr>
 						</table>
 
-						<span>Balance Pendiente</span>
-						<table class="nce-table-2">
+						<span class="resaltar-valor verde">Balance Pendiente</span>
+						<table class="nce-table-1">
 							<tr>
 								<td>Capital</td>
 								<td><input type="text"></td>
@@ -123,7 +124,56 @@
 							</tr>
 						</table>
 					</div>
+				</section>
+				
+				<section class="nce-section-2">
+					
+					<table class="listado-table-f">
+						<tr>
+							<td>Orden No.</td>
+							<td><input type="text" ng-model="OrdenNo" class="resaltar-valor azul-light" ng-keypress="getOrden($event, OrdenNo)"></td>
+						</tr>
+						<tr>
+							<td>Total Monto Orden</td>
+							<td><input type="text" ng-model="NCE.montoOrden" class="resaltar-valor verde" readonly></td>
+						</tr>
+						<tr>
+							<td>Monto de la Orden consumido por el socio</td>
+							<td><input type="text" class="resaltar-valor" ng-model="NCE.montoConsumido"></td>
+						</tr>
+					</table>
+					
+					<hr>
 
+					<span><h3>Cuentas por Pagar</h3> </span>
+					<span>Suplidor:</span>
+					<span class="resaltar-valor verde">[[NCE.suplidorCodigo]] - [[NCE.suplidorNombre]]</span>
+					
+					<table>
+						<tr>
+							<td>Valor Pendiente</td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td>Valor a Acreditar</td>
+							<td><input type="text"></td>
+						</tr>
+					</table>
+					
+					<hr>
+
+					<span><h3>Ahorros</h3></span>
+
+					<table>
+						<tr>
+							<td>Valor Ahorros</td>
+							<td><input type="text"></td>
+						</tr>
+					</table>
+					
+				</section>
+
+				<section class="cuotas-orden">
 					<div class="nce-detalle-sec">
 						<span class="nce-detalle-span">Detalle</span>
 						<input type="text">
@@ -176,55 +226,6 @@
 							<td>2,300</td>					
 						</tr>
 					</table>
-
-				</section>
-				
-				<section class="nce-section-2">
-					
-					<table>
-						<tr>
-							<td>Orden No.</td>
-							<td><input type="text" ng-model="OrdenNo" ng-keypress="getOrden($event, OrdenNo)"></td>
-						</tr>
-						<tr>
-							<td>Total Monto Orden</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Monto de la Orden consumido por el socio</td>
-							<td><input type="text"></td>
-						</tr>
-					</table>
-					
-					<hr>
-
-					<span><h3>Cuentas por Pagar</h3> </span>
-					<span>Suplidor</span>
-					<input type="text">
-					<input type="text">
-					
-					<table>
-						<tr>
-							<td>Valor Pendiente</td>
-							<td><input type="text"></td>
-						</tr>
-						<tr>
-							<td>Valor a Acreditar</td>
-							<td><input type="text"></td>
-						</tr>
-					</table>
-					
-					<hr>
-
-					<span><h3>Ahorros</h3></span>
-
-					<table>
-						<tr>
-							<td>Valor Ahorros</td>
-							<td><input type="text"></td>
-						</tr>
-					</table>
-					
 				</section>
 			</form>
 
