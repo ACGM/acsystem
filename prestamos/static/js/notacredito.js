@@ -727,6 +727,9 @@
             $scope.NCE.montoOrden = $filter('number')(data[0]['netoDesembolsar'], 2);
             $scope.NCE.suplidorCodigo = data[0]['idSuplidor'];
             $scope.NCE.suplidorNombre = data[0]['suplidorNombre'];
+
+            $scope.NCE.OrdenNO = OrdenNo;
+            
           } else {
             alert('La orden No. ' + OrdenNo + ' No existe');
           }
