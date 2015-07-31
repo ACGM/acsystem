@@ -313,19 +313,23 @@
 								<table class="otros-datos-info-table">
 									<tr>
 										<td>Tasa de interes anual</td>
-										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresAnual" readonly></td>
+										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresAnual" readonly>%</td>
 									</tr>
 									<tr>
 										<td>Tasa de int. mensual</td>
-										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresMensual" readonly></td>
+										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresMensual" readonly>%</td>
 									</tr>
 									<tr>
 										<td>Cantidad de cuotas</td>
 										<td><input type="text" class="field-short" ng-model="solicitud.cantidadCuotas" readonly required></td>
 									</tr>
 									<tr>
-										<td>Valor de Cuotas</td>
+										<td>Valor de Cuotas s/interes</td>
 										<td><input type="text" ng-model="solicitud.valorCuotas" readonly required></td>
+									</tr>
+									<tr ng-if="solicitud.solicitudNo > 0">
+										<td>Valor de Cuotas c/interes</td>
+										<td><input type="text" ng-model="solicitud.valorCuotasCI" readonly></td>
 									</tr>
 
 									<tr>

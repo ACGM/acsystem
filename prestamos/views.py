@@ -58,6 +58,12 @@ class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
 	template_name = 'notacreditoespecial.html'
 
 
+#Vista para Distribucion de Intereses
+class DistribucionInteresesView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'distribucion_intereses.html'
+
+
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
 

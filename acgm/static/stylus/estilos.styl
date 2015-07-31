@@ -271,12 +271,9 @@ amarillo = #FFF676
 amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
 colorBordeSubMenu = lightgreen
-
-[ng\:cloak], [ng-cloak], .ng-cloak
-	display none !important
 	
 body
-	font-family sans-serif, "serif", "Arial"
+	font-family "Arial", sans-serif, "serif" !important
 	font-size 13px
 	
 footer
@@ -295,7 +292,9 @@ footer
 	
 .imgHome
 	width 50% //312px
-	
+
+[ng\:cloak], [ng-cloak], .ng-cloak
+	display none !important	
 
 @media screen and (max-width: 800px)
 	body
@@ -2939,6 +2938,11 @@ footer
 		width 9em
 		&:before
 			margin-right .45em
+
+//DISTRIBUCION DE INTERESES SOBRE PRESTAMOS
+.distribucion-intereses
+	margin 1rem
+
 //TRANSFERENCIA INVENTARIO
 
 .producto-find

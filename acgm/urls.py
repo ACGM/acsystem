@@ -27,7 +27,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
-                            relacionArchivoBancoConDesembolsoElectronico
+                            relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
@@ -298,6 +298,10 @@ urlpatterns = patterns('',
     #Nota de Credito
     url(r'^prestamos/nota-de-credito/guardar/$', guardarNotaCredito.as_view(), name='guardar_nota_de_credito'),
     url(r'^notadecreditojson/$', NotaDeCreditoById.as_view(), name='notadecreditoById'),
+
+    #Distribucion de Intereses
+    url(r'^prestamos/distribucion-intereses/$', DistribucionInteresesView.as_view(), name='distribucion-intereses'),
+
 
     #Ahorro
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
