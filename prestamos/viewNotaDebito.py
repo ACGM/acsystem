@@ -45,8 +45,11 @@ class guardarNotaDebito(View):
 			vi = data['valorInteres']
 			concepto = data['concepto']
 
-			# nd, created = NotaDeDebitoPrestamo.objects.get_or_create(id=noND)
-			nd = NotaDeDebitoPrestamo()
+			if noND == 0:
+				nd = NotaDeDebitoPrestamo()
+			else:
+				nd = NotaDeDebitoPrestamo.objects.get(id=noND)
+
 			nd.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo)
 			nd.valorCapital = decimal.Decimal(vc)
 			nd.valorInteres = decimal.Decimal(vi)
@@ -58,3 +61,34 @@ class guardarNotaDebito(View):
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+# Desglose de Nota de Debito
+class NotaDeDebitoById(LoginRequiredMixin, DetailView):
+
+	queryset = NotaDeDebitoPrestamo.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		NoND = self.request.GET.get('nond')
+
+		self.object_list = self.get_queryset().filter(id=NoND)
+		return self.json_to_response()
+		
+	def json_to_response(self):
+		data = list()
+
+		for notadebito in self.object_list:
+			data.append({
+				'fecha': notadebito.fecha,
+				'noPrestamo': notadebito.noPrestamo.noPrestamo,
+				'categoriaPrestamo': notadebito.noPrestamo.categoriaPrestamo.descripcion,
+				'valorCapital': notadebito.valorCapital,
+				'valorInteres': notadebito.valorInteres,
+				'concepto': notadebito.concepto,
+				'estatus': notadebito.estatus,
+				'posteado': notadebito.posteado,
+				'fechaPosteo': notadebito.fechaPosteo,
+				'socio': notadebito.noPrestamo.socio.nombreCompleto,
+			})
+
+		return JsonResponse(data, safe=False)

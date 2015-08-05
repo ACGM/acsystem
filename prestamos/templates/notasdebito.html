@@ -39,8 +39,8 @@
 
 					<table class="listado-table-f" id="table-lf-listado">
 						<tr class="listado-table-header-f">
-							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
 							<td>Estatus</td>
+							<td>Postear</td>
 							<td>Fecha</td>
 							<td>No. Doc.</td>
 							<td>Prestamo</td>
@@ -52,12 +52,10 @@
 						</tr>
 
 						<tr ng-repeat="nd in notasdebito" class="listado-nd-detail" ng-init="total=0">
-							<td class="align-center">
-								<input type="checkbox" name="c[[nd.id]]" ng-disabled="[[nd.posteado | posteo]]" ng-checked="valoresChk[nd.id]" ng-model="reg[nd.id]" ng-click="selectedReg(nd)"> 
-							</td>
 							<td class="[[nd.posteado | posteoFolderIcon]] posteo-[[nd.posteado]] align-center"></td>
+							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
 							<td>[[nd.fecha | date: 'dd/MM/yyyy']]</td>
-							<td><a href="#" class="sp-field" ng-click="NDFullById(ND.id)"> [[nd.id | numberFixedLen: 8]] </a></td>
+							<td><a href="#" class="sp-field" ng-click="NDFullById(nd.id)"> [[nd.id | numberFixedLen: 8]] </a></td>
 							<td>[[nd.noPrestamo | numberFixedLen: 8]]</td>
 							<td class="align-right resaltar-valor verde">[[nd.valorCapital | number : 2]]</td>
 							<td class="align-right resaltar-valor verde">[[nd.valorInteres | number : 2]]</td>
@@ -74,14 +72,14 @@
 
 				</section>
 
-				<button class="icon-cog Boton boton-postear-factura" ng-click="postear()"> Postear</button>
+				<button class="Boton boton-postear-factura" ng-click="listadoND()">Refrescar</button>
 			</section>
 		
 		</div>
 
 
 		<!--DETALLE ND-->
-		<div class="detalleND" ng-hide="showLND">
+		<div class="detalleND" ng-hide="showLND" ng-init="prestamosFind()">
 			<div class="sub-menu">	
 					Detalle Nota de Debito
 				<a class="DownArrow" href="#"></a>
@@ -90,7 +88,7 @@
 			<form name="NDForm" class="nd-sec data-entry-section" ng-submit="guardaNotaDebito($event)" novalidate>
 				<table class="data-entry-header-table-nd">
 					<tr>
-						<td>Numero del Debito</td>
+						<td>No. del Debito</td>
 						<td> <input type="text" class="input-disabled align-right" ng-model="ND.noND" readonly> </td>
 					</tr>
 					<tr>
@@ -101,35 +99,36 @@
 						<td>Prestamo No.</td>
 						<td> 
 							<div class="prestamo-field"> 
-								<input type="text" ng-model="ND.prestamo"><a class="icon-uniE601 icon-buscar" href=""></a>
+								<input type="text" ng-model="ND.prestamo">
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="PrestamosSel($event)"></a>
 							</div>  
+							<span ng-if="ND.prestamo.length > 0">[[ND.categoriaPrestamo]] (socio: [[ND.socio]]) </span>
 						</td>
 					</tr>
 					<tr>
 						<td>Valor de Capital</td>
-						<td><input type="text" ng-model="ND.valorCapital"></td>
+						<td><input type="text" ng-model="ND.valorCapital" required></td>
 					</tr>
 					<tr>
 						<td>Valor de Interes</td>
-						<td><input type="text" ng-model="ND.valorInteres"></td>
+						<td><input type="text" ng-model="ND.valorInteres" required></td>
 					</tr>
 				</table>
+				<prestamosSearch></prestamosSearch>
 
 				<span class="concepto-field">Concepto</span>
 
-				<textarea name="concepto" id="concepto" cols="45" rows="4" ng-model="ND.concepto"></textarea>
+				<textarea name="concepto" id="concepto" cols="45" rows="4" ng-model="ND.concepto" required></textarea>
 
-				<div class="botones-acciones">
+				<div>
 					<button class="icon-save Boton boton-guarda-nd" type="submit">Guardar</button>
-					<button class="icon-spinner Boton boton-cancelar-nd" ng-click="nuevaEntrada('{{user}}')">Cancelar</button>
+					<!-- <button class="icon-spinner Boton boton-cancelar-nd" ng-click="nuevaEntrada('{{user}}')">Cancelar</button> -->
 					
 				</div>
 			</form>
 		</div>
-		
-		
+				
 	</div>
-
 
 
 {% endblock content %}

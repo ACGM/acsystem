@@ -11,9 +11,9 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import SolicitudesPrestamosSerializer
+from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -22,6 +22,16 @@ import json
 import math
 import decimal
 import datetime
+
+
+# Prestamos Busqueda (GENERICO)
+def prestamosSearch(request):
+	return render(request, 'prestamos_search.html')
+
+
+# Pago Cuotas Busqueda (GENERICO)
+def pagoCuotasSearch(request):
+	return render(request, 'pago_cuotas_search.html')
 
 
 #Vista para Desembolso Electronico de Prestamos
@@ -46,6 +56,12 @@ class NotaDeCreditoView(LoginRequiredMixin, TemplateView):
 class NotaDeCreditoEspView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'notacreditoespecial.html'
+
+
+#Vista para Distribucion de Intereses
+class DistribucionInteresesView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'distribucion_intereses.html'
 
 
 #Imprimir Solicitud de Prestamo
@@ -106,6 +122,21 @@ class SolicitudesPrestamosAPIViewByRangoFecha(APIView):
 		solicitudes = SolicitudPrestamo.objects.filter(fechaSolicitud__range=(fechaInicio, fechaFin)).order_by('-fechaSolicitud')
 
 		response = self.serializer_class(solicitudes, many=True)
+		return Response(response.data)
+
+
+# Listado de Pagos de Cuotas de Prestamos
+class PagoCuotasPrestamoAPIViewByNoPrestamo(APIView):
+
+	serializer_class = PagoCuotasPrestamoSerializer
+
+	def get(self, request, noPrestamo=None):
+		if noPrestamo == None:
+			pagos = PagoCuotasPrestamo.objects.all().order_by('-fechaPago')
+		else:
+			pagos = PagoCuotasPrestamo.objects.filter(noPrestamo__noPrestamo=noPrestamo).order_by('-fechaPago')
+
+		response = self.serializer_class(pagos, many=True)
 		return Response(response.data)
 
 
@@ -332,8 +363,24 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						oSolicitud.prestamo = maestra.noPrestamo
 						oSolicitud.save()
 
-						#Para cuando existe(n) Prestamo(s) Unificado(s)
-						
+
+					#Para cuando existe(n) Prestamo(s) Unificado(s)
+					try:
+						prestamosUnif = PrestamoUnificado.objects.filter(solicitudPrestamo__noSolicitud=oSolicitud.noSolicitud)
+
+						for p in prestamosUnif:
+							if oSolicitud.estatus == 'A':
+								prestamo = MaestraPrestamo.objects.get(noPrestamo=p.prestamoUnificado.noPrestamo)
+								prestamo.estatus = 'S'
+								prestamo.balance = 0
+								prestamo.save()
+
+							p.estatus = oSolicitud.estatus
+							p.save()
+					except:
+						pass
+					#Fin condicion Prestamo(s) Unificado(s)
+
 
 				return HttpResponse(1)
 

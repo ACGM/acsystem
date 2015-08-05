@@ -4,210 +4,183 @@
 
 {% block content %}
 
-	<div class="NotasDeCredito" ng-app="cooperativa">
+	<div class="NotasDeCredito" ng-controller="NotaCreditoCtrl">
 		
-		<div class="sub-menu" ng-controller="notasDeCredito">	
-			<div class="menu-entrada-nc-listado">
-				<button class="nuevo icon-file" title="Nueva Nota de Credito"></button>
-			</div>
-				Listado de Notas de Credito
-			<a class="DownArrow" href="#"></a>
-		</div>
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 
-		<section class="listado-reg-nd">
-			<span> Prestamo No. </span>
-			<input type="text" id="PrestamoNo">
-			<span>Socio</span>
-			<input type="text">
-
-			<div class="filtro-posteadas">
-				<span>Posteadas</span>
-				<select name="posteadas" id="posteadas">
-					<option value="Todas">Todas</option>
-					<option value="Si">Si</option>
-					<option value="No">No</option>
-				</select>
-			</div>
-
-			<table class="listado-table">
-				<tr class="listado-table-nc-header">
-					<td><input type="checkbox"> </td>
-					<td>Estatus</td>
-					<td>Numero</td>
-					<td>Fecha</td>
-					<td>Aplicado A</td>
-					<td>Prestamo</td>
-					<td>Socio</td>
-					<td>Capital</td>
-					<td>Interes</td>
-					<td>Imprimir</td>
-					<td>Eliminar</td>
-				</tr>
-
-				<tr class="listado-nc-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>00094773</td>
-					<td>00094432</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-nc-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>00094773</td>
-					<td>00094432</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-nc-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>00094773</td>
-					<td>00094432</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-nc-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>00094773</td>
-					<td>00094432</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-				<tr class="listado-nc-detail">
-					<td><input type="checkbox"> </td>
-					<td class="icon-coin"></td>
-					<td> <a class="nc-field" title="Ver detalle..." href="">0003922</a> </td>
-					<td>08/12/2014</td>
-					<td>00094773</td>
-					<td>00094432</td>
-					<td>Rafael Mercedes Santana Perez</td>
-					<td>8,948.45</td>
-					<td>1,240.54</td>
-					<td><a class="icon-printer icon-imprimir" href=""></a></td>
-					<td><a class="icon-delete icon-eliminar" href=""></a></td>
-				</tr>
-										
-			</table>
-
-			<button class="Boton boton-postear-nc"> Postear</button>
-		</section>
-
-		<!--DETALLE NC-->
 		<div class="sub-menu">	
-				Detalle Nota de Credito
+			<div class="menu-entrada-nc-listado">
+				<button class="nuevo icon-file" title="Nueva Nota de Credito" ng-click="nuevaEntrada('{{user}}')"></button>
+			</div>
+				<a href="#" ng-click="toggleLNC()">Listado de Notas de Credito</a>
 			<a class="DownArrow" href="#"></a>
 		</div>
 
-		<section class="nc-sec data-entry-section">
-			<table class="data-entry-header-table-nc">
-				<tr>
-					<td>Numero del Credito</td>
-					<td> <input type="text"> </td>
-				</tr>
-				<tr>
-					<td>Fecha</td>
-					<td> <input type="text"> </td>
-				</tr>
-				<tr>
-					<td>Prestamo No.</td>
-					<td> 
-						<div class="prestamo-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>  
-					</td>
-				</tr>
-				<tr>
-					<td>Aplicado a Cta. Cap/Int</td>
-					<td> 
-						<div class="prestamo-field"> 
-							<input type="text"><a class="icon-uniE601 icon-buscar" href=""></a>
-						</div>  
-					</td>
-				</tr>
-				<tr>
-					<td>Valor de Capital</td>
-					<td><input type="text"></td>
-				</tr>
-				<tr>
-					<td>Valor de Interes</td>
-					<td><input type="text"></td>
-				</tr>
-			</table>
+		<div class="facturacion cssSlideUp" ng-show="showLNC" ng-init="listadoNC()">
 
-			<span class="concepto-field">Concepto</span>
+			<section class="listado-reg-nd">
+				<span> Prestamo No. </span>
+				<input type="text" id="PrestamoNo" class="doc-no-ei" ng-model="NoPrestamo" ng-keyup="filtrarPorNoPrestamo($event, NoPrestamo)">
+				<span>Socio</span>
+				<input type="text" placeholder="Nombre del Socio" ng-model="nombreSocio" ng-keyup="filtrarPorSocio($event, nombreSocio)">
 
-			<textarea name="concepto" id="concepto" cols="47" rows="4"></textarea>
+				<!-- <a href="#" class="icon-uniE601 icon-buscar"></a> -->
+				<span class="error-ei"> [[NoFoundDoc]]</span>
+				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoNC()">Ver todos</a>
 
-			<div class="botones-acciones">
-				<button class="icon-save Boton boton-guarda-nc">Guardar</button>
-				<button class="icon-spinner Boton boton-cancelar-nc">Cancelar</button>
+				<div class="posteo-ei">
+					<span>Posteadas</span>
+					<select class="field-choices" name="posteo" id="posteo" ng-model="posteof" ng-change="filtrarPosteo()">
+						<option value="*">TODOS</option>
+						<option value="S">SI</option>
+						<option value="N">NO</option>
+					</select>
+				</div>
+
+				<section class="registrosPanel">	
 				
-			</div>
-		</section>
+					<table class="listado-table-f">
+						<tr class="listado-table-nc-header">
+							<td>Estatus</td>
+							<td>Postear</td>
+							<td>Numero</td>
+							<td>Fecha</td>
+							<td>Aplicado A</td>
+							<td class="align-right">Prestamo</td>
+							<td>Socio</td>
+							<td class="align-right">Capital</td>
+							<td class="align-right">Interes</td>
+							<td>Imprimir</td>
+							<td>Eliminar</td>
+						</tr>
 
-		<section class="cuotas-select-nc">
-			<table class="cuotas-select-nc-table">
-				<tr>
-					<td> <input type="checkbox"> </td>
-					<td> Cuota No.</td>
-					<td> Capital </td>
-					<td> Interes </td>
-					<td> Fecha </td>
-				</tr>
-				<tr>
-					<td> <input type="checkbox"> </td>
-					<td> 01 </td>
-					<td> 1,234.56 </td>
-					<td> 200.34 </td>
-					<td> 08/12/2014 </td>
-				</tr>
-				<tr>
-					<td> <input type="checkbox"> </td>
-					<td> 01 </td>
-					<td> 1,234.56 </td>
-					<td> 200.34 </td>
-					<td> 08/12/2014 </td>
-				</tr>
-				<tr>
-					<td> <input type="checkbox"> </td>
-					<td> 01 </td>
-					<td> 1,234.56 </td>
-					<td> 200.34 </td>
-					<td> 08/12/2014 </td>
-				</tr>
-				<tr>
-					<td> <input type="checkbox"> </td>
-					<td> 01 </td>
-					<td> 1,234.56 </td>
-					<td> 200.34 </td>
-					<td> 08/12/2014 </td>
-				</tr>
-			</table>
-			<button class="Boton boton-seleccionar-cuotas">Seleccionar</button>
-		</section>				
+						<tr ng-repeat="nc in notascredito" class="listado-nc-detail" ng-init="total=0">
+							<td class="[[nc.posteado | posteoFolderIcon]] posteo-[[nc.posteado]] align-center"></td>
+							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
+							<td> <a class="nc-field" title="Ver detalle..." href="#" ng-click="NCFullById(nc.id)">[[nc.id | numberFixedLen: 8]]</a> </td>
+							<td>[[nc.fecha | date: 'dd/MM/yyyy']]</td>
+							<td>[[nc.aplicadoACuota | numberFixedLen: 9]]</td>
+							<td class="align-right">[[nc.noPrestamo | numberFixedLen: 8]]</td>
+							<td>[[nc.getSocio]]</td>
+							<td class="align-right">[[nc.valorCapital | number : 2]]</td>
+							<td class="align-right">[[nc.valorInteres | number : 2]]</td>
+							<td class="align-center"><a class="icon-printer icon-imprimir" href=""></a></td>
+							<td class="align-center">
+								<div ng-if="nc.posteado == 'N'"> <a class="icon-delete icon-eliminar" href="#"></a> </div>
+							</td>
+						</tr>
+					</table>
+				
+				</section>
+
+				<button class="Boton boton-postear-nc" ng-click="listadoNC()">Refrescar</button>
+			</section>
+		</div>
+
+	
+		<!--DETALLE NC-->
+		<div class="detalleNC" ng-hide="showLNC" ng-init="prestamosFind()">
+			<div class="sub-menu">	
+					Detalle Nota de Credito
+				<a class="DownArrow" href="#"></a>
+			</div>
+
+			<form name="NCForm" class="nc-sec data-entry-section" ng-submit="guardaNotaCredito($event)" novalidate>
+				<table class="data-entry-header-table-nc">
+					<tr>
+						<td>No. del Credito</td>
+						<td> <input type="text" class="input-disabled align-right" ng-model="NC.noNC" readonly> </td>
+					</tr>
+					<tr>
+						<td>Fecha</td>
+						<td> <input type="text" ng-model="NC.fecha" datepicker readonly> </td>
+					</tr>
+					<tr>
+						<td>Prestamo No.</td>
+						<td> 
+							<div class="prestamo-field"> 
+								<input type="text" ng-model="NC.prestamo" required readonly>
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="PrestamosSel($event)"></a>
+							</div>  
+							<span ng-if="NC.prestamo.length > 0">[[NC.categoriaPrestamo]] (socio: [[NC.socio]]) </span>
+						</td>
+					</tr>
+					<tr>
+						<td>Aplicado a Cta. Cap/Int</td>
+						<td> 
+							<div class="prestamo-field"> 
+								<input type="text" ng-model="NC.AplicadoCuota" required readonly>
+								<a class="icon-uniE601 icon-buscar" href="#" ng-click="PagoCuotasSel($event, NC.prestamo)"></a>
+							</div>  
+						</td>
+					</tr>
+					<tr>
+						<td>Valor de Capital</td>
+						<td><input type="text" ng-model="NC.valorCapital" required readonly></td>
+					</tr>
+					<tr>
+						<td>Valor de Interes</td>
+						<td><input type="text" ng-model="NC.valorInteres" required readonly></td>
+					</tr>
+				</table>
+				<prestamosSearch></prestamosSearch>
+				<pagoCuotasSearch></pagoCuotasSearch>
+
+				<span class="concepto-field">Concepto</span>
+
+				<textarea name="concepto" id="concepto" cols="47" rows="4" ng-model="NC.concepto" required></textarea>
+
+				<div>
+					<button class="icon-save Boton boton-guarda-nc" type="submit">Guardar</button>
+					<!-- <button class="icon-spinner Boton boton-cancelar-nc">Cancelar</button> -->
+					
+				</div>
+			</form>
+
+			<section class="cuotas-select-nc" ng-show="AplicaAShow">
+				<table class="cuotas-select-nc-table">
+					<tr>
+						<td> <input type="checkbox"> </td>
+						<td> Cuota No.</td>
+						<td> Capital </td>
+						<td> Interes </td>
+						<td> Fecha </td>
+					</tr>
+					<tr>
+						<td> <input type="checkbox"> </td>
+						<td> 01 </td>
+						<td> 1,234.56 </td>
+						<td> 200.34 </td>
+						<td> 08/12/2014 </td>
+					</tr>
+					<tr>
+						<td> <input type="checkbox"> </td>
+						<td> 01 </td>
+						<td> 1,234.56 </td>
+						<td> 200.34 </td>
+						<td> 08/12/2014 </td>
+					</tr>
+					<tr>
+						<td> <input type="checkbox"> </td>
+						<td> 01 </td>
+						<td> 1,234.56 </td>
+						<td> 200.34 </td>
+						<td> 08/12/2014 </td>
+					</tr>
+					<tr>
+						<td> <input type="checkbox"> </td>
+						<td> 01 </td>
+						<td> 1,234.56 </td>
+						<td> 200.34 </td>
+						<td> 08/12/2014 </td>
+					</tr>
+				</table>
+				<button class="Boton boton-seleccionar-cuotas">Seleccionar</button>
+			</section>					
+		</div>
+
+		
 	</div>
 
 

@@ -55,6 +55,16 @@ class BalancePrestamosSocioSerializer(serializers.ModelSerializer):
 		ordering = ('-codigoSocio',)
 
 
+# Listado de Pagos de Cuotas Prestamos 
+class PagoCuotasPrestamoSerializer(serializers.ModelSerializer):
+	noPrestamo = serializers.StringRelatedField(read_only=True)
+
+	class Meta:
+		model = PagoCuotasPrestamo
+		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago')
+		ordering = ('-id',)
+
+
 # Prestamos Unificados
 class PrestamosUnificados(serializers.HyperlinkedModelSerializer):
 
@@ -69,14 +79,24 @@ class CuotasPrestamos(serializers.HyperlinkedModelSerializer):
 
 # Notas de Credito a Prestamos
 class NotasCreditoListado(serializers.HyperlinkedModelSerializer):
+	noPrestamo = serializers.StringRelatedField(read_only=True)
+	aplicadoACuota = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = NotaDeCreditoPrestamo
+		fields = ('id', 'fecha', 'noPrestamo', 'aplicadoACuota', 'valorCapital', 'valorInteres', 'concepto', 'posteado', 'getSocio')
+		ordering = ('-fecha',)
 
 
 # Notas de Credito Especiales a Prestamos
 class NotasCreditoEspecialesListado(serializers.HyperlinkedModelSerializer):
+	ordenDespacho = serializers.StringRelatedField(read_only=True)
 
-	pass
+	class Meta:
+		model = NotaDeCreditoEspecial
+		fields = ('id', 'fecha', 'ordenDespacho', 'totalMontoOrden', 'montoConsumido', 'nota', 'estatus', 'posteado', \
+					'fechaPosteo', 'getSocio', 'getMontoAhorro')
+		ordering = ('-fecha')
 
 
 # Notas de Debito a Prestamos

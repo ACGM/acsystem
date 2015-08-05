@@ -304,7 +304,6 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	socio = models.ForeignKey(Socio)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
-	# cuota = models.ForeignKey(PagoCuotasPrestamo)
 	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
@@ -314,6 +313,15 @@ class CuotasPrestamosEmpresa(models.Model):
 	fecha = models.DateField(auto_now=True)
 	userLog = models.ForeignKey(User)
 
+	def save(self, *args, **kwargs):
+		pago = PagoCuotasPrestamo()
+		pago.noPrestamo = self.noPrestamo
+		pago.valorCapital = self.valorCapital
+		pago.valorInteres = self.valorInteres
+		pago.save()
+
+		super(self, CuotasPrestamosEmpresa).save(*args, **kwargs)
+		
 	@property
 	def codigoSocio(self):
 		return '%s' % (self.socio.codigo)

@@ -9,6 +9,7 @@
     'cooperativa.inventarioRPT',
     'cooperativa.fondoscajas',
     'cooperativa.notadebito',
+    'cooperativa.notacredito',
     'cooperativa.ahorro',
     'cooperativa.solicitudprestamo',
     'cooperativa.maestraprestamo',
@@ -179,6 +180,22 @@
     return {
       restrict: 'E',
       templateUrl: '/productosSearch'
+    }
+  });
+
+  // Directiva para tabla de prestamos.
+  app.directive('prestamossearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/prestamosSearch'
+    }
+  });
+
+  // Directiva para tabla de Pago de Cuotas.
+  app.directive('pagocuotassearch', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/pagoCuotasSearch'
     }
   });
 

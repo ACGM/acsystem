@@ -758,6 +758,10 @@
               $scope.solicitud.tasaInteresMensual = data[0]['tasaInteresMensual'];
               $scope.solicitud.cantidadCuotas = data[0]['cantidadCuotas'];
               $scope.solicitud.valorCuotas = $filter('number')(data[0]['valorCuotasCapital'],2);
+              $scope.solicitud.valorCuotasCI = $filter('number')(
+                                                                  parseFloat(data[0]['valorCuotasCapital']) + 
+                                                                  (parseFloat(data[0]['valorCuotasCapital']) * 
+                                                                    (parseFloat(data[0]['tasaInteresMensual']/10))), 2);
               $scope.solicitud.fechaAprobacion = data[0]['fechaAprobacion'] != undefined? $filter('date')(data[0]['fechaAprobacion'],'dd/MM/yyyy') : '';
               $scope.solicitud.fechaRechazo = data[0]['fechaRechazo'] != undefined? $filter('date')(data[0]['fechaRechazo'],'dd/MM/yyyy') : '';
               $scope.solicitud.solicitudNo = $filter('numberFixedLen')(data[0]['noSolicitud'],8);

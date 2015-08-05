@@ -271,9 +271,9 @@ amarillo = #FFF676
 amarilloOscuro = #CCA915
 verdeMuyOscuro = #132B14
 colorBordeSubMenu = lightgreen
-
+	
 body
-	font-family "Arial", sans-serif, "serif"
+	font-family "Arial", sans-serif, "serif" !important
 	font-size 13px
 	
 footer
@@ -292,7 +292,9 @@ footer
 	
 .imgHome
 	width 50% //312px
-	
+
+[ng\:cloak], [ng-cloak], .ng-cloak
+	display none !important	
 
 @media screen and (max-width: 800px)
 	body
@@ -2221,6 +2223,28 @@ footer
 
 
 // SECCION NOTA DE DEBITO
+.prestamos-table-search	
+	border 1px solid black
+	position absolute
+	top 4rem
+	z-index 100
+	width 34rem
+	& tr
+		&:first-child
+			text-align center
+		&:nth-child(2)
+			& td
+				&:nth-child(1)
+					width 4em
+				&:nth-child(2)
+					width 22em
+				&:nth-child(3)
+					width 7em
+
+.prestamoBuscarField
+	width 99%
+	background verdeMuySuave
+					
 .menu-entrada-nd-listado
 	position absolute
 	right 4em
@@ -2290,6 +2314,28 @@ footer
 
 
 //NOTA DE CREDITO
+.pago-cuotas-table-search	
+	border 1px solid black
+	position absolute
+	top 5.5rem
+	z-index 100
+	width 28rem
+	& tr
+		&:first-child
+			text-align center
+		&:nth-child(2)
+			& td
+				&:nth-child(1)
+					width 2em
+				&:nth-child(2)
+					width 6em
+				&:nth-child(3)
+					width 10em
+				&:nth-child(4)
+					width 7em
+				&:nth-child(5)
+					width 10em
+					
 .menu-entrada-nc-listado
 	position absolute
 	right 4em
@@ -2308,15 +2354,11 @@ footer
 	& td
 		padding .1em .15em .1em .1em
 		border 1px solid black
-		&:nth-child(1),&:nth-child(2) 
-			text-align center
-		&:nth-child(7),&:nth-child(8)
-			text-align right
+		
+		&:nth-child(7),
+		&:nth-child(8)
 			padding 0 .3em
 		
-		&:nth-child(9),&:nth-child(10),&:nth-child(11)
-			text-align center
-
 .nc-field
 	text-decoration none
 	color verde
@@ -2798,6 +2840,9 @@ footer
 
 //SOLICITUD ORDEN DE DESPACHO
 
+.suplidor-orden-despacho
+	left 13em
+	
 .content-suplidores-table-od
 	position relative
 	top 1.45em
@@ -2893,6 +2938,11 @@ footer
 		width 9em
 		&:before
 			margin-right .45em
+
+//DISTRIBUCION DE INTERESES SOBRE PRESTAMOS
+.distribucion-intereses
+	margin 1rem
+
 //TRANSFERENCIA INVENTARIO
 
 .producto-find
@@ -2941,16 +2991,8 @@ footer
 
 .listado-nce-detail
 	& td
-		padding .1em .15em .1em .1em
+		padding .1em .2em
 		border 1px solid black
-		&:nth-child(1),&:nth-child(2) 
-			text-align center
-		&:nth-child(7),&:nth-child(8),&:nth-child(9)
-			text-align right
-			padding 0 .3em
-		
-		&:nth-child(10),&:nth-child(11)
-			text-align center
 
 .detalle-nce-sec
 	display inline-block
@@ -2958,6 +3000,9 @@ footer
 .nce-section-1
 	margin 1em 0 0 1em
 	float left
+	border 2px solid red
+	padding 1rem 1rem 3.1rem 1rem
+	box-shadow 2px 2px 3px 3px pink
 
 .nce-sub-2
 	margin .7em 0
@@ -2966,14 +3011,10 @@ footer
 	display block
 
 .nce-table-1
+	border 1px solid lightgray
+	display block
 	margin 1.18em .5em .5em 0
 	padding .5em
-	float left
-	border 1px solid lightgray
-
-.nce-table-2
-	border 1px solid lightgray
-	margin-left 1em
 
 .nce-detalle-sec
 	display block
@@ -3005,10 +3046,12 @@ footer
 			text-align center
 
 .nce-section-2
-	float left
+	display inline-block
 	margin 1em 0 0 1em
-	border-left 1px solid gray
-	padding-left .2em
+	border 2px solid gray
+	padding 1rem
+	box-shadow 2px 2px 3px 3px lightgray
+	
 
 .acciones-botones
 	margin .5em 0 0 1em
@@ -3018,7 +3061,14 @@ footer
 	width 8em
 	display inline-block
 
+.cuotas-orden
+	display block
+	margin-top 1rem
+	margin-left 1em
 
+.nce-socio-nombre-field-t
+	width 18rem
+	
 // MODULO DESEMBOLSOS (FONDOS DE CAJAS)
 
 .menu-entrada-desembolso-listado	

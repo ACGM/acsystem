@@ -7,12 +7,12 @@
       //Guardar Nota de Debito
       function guardarND(fecha, ND) {
         var deferred = $q.defer();
-console.log(ND)
+
         $http.post('/prestamos/nota-de-debito/guardar/', JSON.stringify({'noND': ND.noND, 
                                                                           'fecha': fecha, 
                                                                           'prestamo': ND.prestamo,
-                                                                          'valorCapital': ND.valorCapital,
-                                                                          'valorInteres': ND.valorInteres,
+                                                                          'valorCapital': ND.valorCapital.replace(',',''),
+                                                                          'valorInteres': ND.valorInteres.replace(',',''),
                                                                           'concepto': ND.concepto})).
           success(function (data) {
             deferred.resolve(data);
@@ -24,33 +24,33 @@ console.log(ND)
         return deferred.promise;
       }
 
-      //Eliminar Nota de Debito
-      function eliminarND(notaDebitoNo) {
-        var deferred = $q.defer();
+      // //Eliminar Nota de Debito
+      // function eliminarND(notaDebitoNo) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/eliminar/', JSON.stringify({'facturaNo': facturaNo})).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
-      //Impresion de Nota de Debito (incrementa el campo de IMPRESA)
-      function impresionND(fact) {
-        var deferred = $q.defer();
+      // //Impresion de Nota de Debito (incrementa el campo de IMPRESA)
+      // function impresionND(fact) {
+      //   var deferred = $q.defer();
 
-        $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
+      //   $http.post('/facturacion/print/{factura}/'.replace('{factura}',fact), {'factura': fact}).
+      //     success(function (data) {
+      //       deferred.resolve(data);
+      //     }).
+      //     error(function (data) {
+      //       deferred.resolve(data);
+      //     });
+      //   return deferred.promise;
+      // }
 
       //Llenar el listado de Notas de Debito
       function all() {
@@ -64,11 +64,12 @@ console.log(ND)
       }
 
       //Buscar un documento en especifico (Desglose)
-      function DocumentoById(NoFact) {
+      function DocumentoById(NoND) {
+        console.log(NoND)
         var deferred = $q.defer();
-        var doc = NDNo != undefined? NoFact : 0;
+        var doc = NoND != undefined? NoND : 0;
 
-        $http.get('/facturajson/?nofact={NoFact}&format=json'.replace('{NoFact}', doc))
+        $http.get('/notadedebitojson/?nond={NoND}'.replace('{NoND}', doc))
           .success(function (data) {
             deferred.resolve(data);
           });
@@ -117,9 +118,9 @@ console.log(ND)
         byPosteo: byPosteo,
         byNoND: byNoND,
         guardarND: guardarND,
-        DocumentoById: DocumentoById,
-        impresionND: impresionND,
-        eliminarND : eliminarND
+        DocumentoById: DocumentoById
+        // impresionND: impresionND,
+        // eliminarND : eliminarND
       };
 
     }])
@@ -128,8 +129,8 @@ console.log(ND)
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService',
-                                        function ($scope, $filter, $window, appService, NotaDebitoService) {
+    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $window, appService, NotaDebitoService, MaestraPrestamoService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -137,22 +138,68 @@ console.log(ND)
       $scope.posteof = '*';
       $scope.errorShow = false;
       $scope.showLND = true;
-      $scope.regAll = false;
-      $scope.tableProducto = false;
-      $scope.tableSocio = false;
+      $scope.tablePrestamo = false;
 
       $scope.item = {};
       $scope.notasdebito = {};
 
-      $scope.ndSeleccionadas = [];
-      $scope.reg = [];
-      $scope.valoresChk = [];
       $scope.dataD = [];
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLND = 'UpArrow';
 
       
+      // Mostrar/Ocultar table prestamos.
+      $scope.PrestamosSel = function() {
+        $scope.tablePrestamo = !$scope.tablePrestamo;
+      }
+
+      // Prestamos Posteados para llenar table de Prestamos.
+      $scope.prestamosFind = function() {
+        MaestraPrestamoService.PrestamosPosteados().then(function (data) {
+          if(data.length > 0) {
+            $scope.prestamos = data;
+            $scope.prestamoNoExiste = '';
+          } else {
+            $scope.prestamoNoExiste = 'No existe prestamo.';
+          }
+          
+          $scope.tmpPrestamos = data; //Esta variable es para cuando se hagan busqueda de prestamos se mantenga la lista original.
+        });
+      }
+
+      // Prestamo Seleccionado.
+      $scope.selPrestamo = function($event, prestamo) {
+        $scope.ND.prestamo = $filter('numberFixedLen') (prestamo.noPrestamo, 9);
+        $scope.ND.categoriaPrestamo = prestamo.categoriaPrestamo;
+        $scope.ND.socio = prestamo.socio;
+        $scope.tablePrestamo = false;
+      }
+
+      // Buscar prestamo de un socio en especifico.
+      $scope.getPrestamoSocio = function($event, datoBuscar) {
+
+        if($event.keyCode == 13) {
+          $event.preventDefault();
+
+          if (datoBuscar.length > 0) {
+            $scope.prestamos = $scope.tmpPrestamos;
+
+            $scope.prestamos = $scope.prestamos.filter(function (item) {
+
+             if (isNaN(datoBuscar)) {
+                return item.socio.toLowerCase().substring(0, datoBuscar.length) == datoBuscar;
+              } else {
+                return item.noPrestamo == datoBuscar;
+              }
+            });
+          } else {
+            $scope.prestamosFind();
+          }
+          console.log($scope.prestamos);
+        }
+      }
+
       // Mostrar/Ocultar panel de Listado de Notas de Debito
       $scope.toggleLND = function() {
         $scope.showLND = !$scope.showLND;
@@ -214,6 +261,7 @@ console.log(ND)
 
             $scope.errorShow = false;
             $scope.listadoND();
+            $scope.toggleLND();
           },
             (function () {
               $scope.mostrarError('Hubo un error. Contacte al administrador del sistema.');
@@ -246,7 +294,7 @@ console.log(ND)
       }
 
       // Visualizar Documento (ND Existente - desglose)
-      $scope.FactFullById = function(NoND, usuario) {
+      $scope.NDFullById = function(NoND, usuario) {
         try {
 
           NotaDebitoService.DocumentoById(NoND).then(function (data) {
@@ -258,33 +306,18 @@ console.log(ND)
               $scope.errorMsg = '';
               $scope.errorShow = false;
 
-              $scope.dataH.factura = $filter('numberFixedLen')(NoFact, 8);
-              $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
-              $scope.socioCodigo = data[0]['socioCodigo'];
-              $scope.socioNombre = data[0]['socioNombre'];
-              $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
-              $scope.dataH.terminos = data[0]['terminos'];
-              $scope.dataH.vendedor = data[0]['vendedor'];
-              $scope.dataH.posteo = data[0]['posteo'];
-              $scope.dataH.impresa = data[0]['impresa'];
-              $scope.dataH.borrado = data[0]['borrado'];
-              $scope.dataH.borradoPor = data[0]['borradoPor'];
-              $scope.dataH.borradoFecha = data[0]['borradoFecha'];
-
-              data[0]['productos'].forEach(function (item) {
-                $scope.dataD.push(item);
-                $scope.dataH.almacen = item['almacen'];
-              })
-              $scope.calculaTotales();
-
-              if(data[0]['orden'] > 0) {
-                $rootScope.clearOrden();
-                $rootScope.FullOrden(data[0]['ordenDetalle']);
-              }
+              $scope.ND.noND = $filter('numberFixedLen')(NoND, 8);
+              $scope.ND.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+              $scope.ND.prestamo = $filter('numberFixedLen')(data[0]['noPrestamo'], 9);
+              $scope.ND.valorCapital = data[0]['valorCapital'];
+              $scope.ND.valorInteres = data[0]['valorInteres'];
+              $scope.ND.concepto = data[0]['concepto'];
+              $scope.ND.socio = data[0]['socio'];
+              $scope.ND.categoriaPrestamo = data[0]['categoriaPrestamo'];
             }
           }, 
             (function () {
-              $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoFact);
+              $rootScope.mostrarError('No pudo encontrar el desglose del documento #' + NoND);
             }
           ));
         }
@@ -386,7 +419,7 @@ console.log(ND)
       }
 
       //Nueva Entrada de Factura
-      $scope.nuevaEntrada = function(usuario) {
+      $scope.nuevaEntrada = function(usuario, $event) {
         $scope.ND = {};
         $scope.ND.noND = 0;
         $scope.ND.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
@@ -396,6 +429,8 @@ console.log(ND)
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+
+        return false;
       }
 
       // Agregar una cuenta

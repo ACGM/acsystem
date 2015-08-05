@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+
+{% block title %} Facturacion {% endblock title %}
+
+{% block content %}
+	<div class="distribucion-intereses" ng-controller="OrdenSuperCoopCtrl" ng-submit="guardarOrden($event)">
+		<h1>DISTRIBUCION DE INTERESES</h1>
+
+		<form name="OrdenForm" novalidate>
+			<div>
+				<table class="table-orden-factura">
+					<tr>
+						<td colspan="2"> <span>DISTRIBUCION INTERESES</span></td>
+					</tr>
+					<tr>
+						<td>Para el año</td>
+						<td><input type="text" ng-model="OC.solicitud"></td>
+					</tr>
+					<tr>
+						<td>Al</td>
+						<td><input type="text" ng-model="OC.categoriaDescrp" datepicker readonly></td>
+					</tr>
+					<tr>
+						<td>% Prestamos</td>
+						<td><input type="text" ng-model="OC.autorizador"></td>
+						
+					</tr>
+					<tr>
+						<td>Fecha Posteo</td>
+						<td>
+							<input type="text" ng-model="OC.representante" datepicker readonly>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+			
+		</form>
+		
+	</div>
+
+{% endblock content %}

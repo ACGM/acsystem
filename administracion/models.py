@@ -289,8 +289,8 @@ class CategoriaPrestamo(models.Model):
 
 	class Meta:
 		ordering = ['descripcion']
-		verbose_name = 'Categoria de Prestamo'
-		verbose_name_plural = 'Config 6.1) Categorias de Prestamos'
+		verbose_name = 'Categoria de Prestamo/Orden'
+		verbose_name_plural = 'Config 6.1) Categorias de Prestamos/Ordenes'
 
 
 # Cuotas de montos segun Prestamos
