@@ -32,8 +32,12 @@
 							<input type="text" ng-model="OC.representante" datepicker readonly>
 						</td>
 					</tr>
-					
 				</table>
+			</div>
+
+			<div class="botones-acciones-distribucion-intereses">
+				<button class="icon-uniE601 Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'A', undefined)">Visualizar</button>
+				<button class="icon-cog Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'R', undefined)">Procesar</button>
 			</div>
 			
 		</form>

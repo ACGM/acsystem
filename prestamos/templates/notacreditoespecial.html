@@ -139,7 +139,7 @@
 						</tr>
 						<tr>
 							<td>Monto de la Orden consumido por el socio</td>
-							<td><input type="text" class="resaltar-valor" ng-model="NCE.montoConsumido"></td>
+							<td><input type="text" class="resaltar-valor" ng-model="NCE.montoConsumido" ng-keypress="calculaConsumido($event, NCE.montoConsumido)"></td>
 						</tr>
 					</table>
 					
@@ -152,11 +152,11 @@
 					<table>
 						<tr>
 							<td>Valor Pendiente</td>
-							<td><input type="text"></td>
+							<td><input class="resaltar-valor verde" type="text" ng-model="NCE.valorPendiente"></td>
 						</tr>
 						<tr>
 							<td>Valor a Acreditar</td>
-							<td><input type="text"></td>
+							<td><input class="resaltar-valor verde" type="text" ng-model="NCE.valorAcreditar"></td>
 						</tr>
 					</table>
 					
