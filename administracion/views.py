@@ -96,6 +96,19 @@ class RepresentantesViewSet(viewsets.ModelViewSet):
 	serializer_class = RepresentantesSerializer
 
 
+# Consultar un socio en especifico
+class SocioByCodigoView(APIView):
+
+	serializer_class = SocioSerializer
+
+	def get(self, request, codigo):
+		
+		socio = Socio.objects.filter(codigo=codigo)
+
+		response = self.serializer_class(socio, many=True)
+		return Response(response.data)
+
+
 # Documentos Relacionados a Cuentas
 class DocumentoCuentasView(APIView):
 

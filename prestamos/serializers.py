@@ -12,10 +12,14 @@ from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDe
 class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 	socio = serializers.StringRelatedField(read_only=True)
 	categoriaPrestamo = serializers.StringRelatedField(read_only=True)
+	representante = serializers.StringRelatedField(read_only=True)
 
 	class Meta:
 		model = SolicitudPrestamo
-		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus')
+		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar',  \
+					'categoriaPrestamo', 'estatus', 'representante', 'tasaInteresMensual', 'cantidadCuotas', 'valorCuotasCapital', \
+					'ahorrosCapitalizados', 'prestacionesLaborales', 'valorGarantizado', 'deudasPrestamos', 'codigoRepresentante', \
+					'codigoCategoria')
 		ordering = ('-noSolicitud',)
 
 

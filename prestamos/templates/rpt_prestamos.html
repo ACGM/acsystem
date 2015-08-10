@@ -1,0 +1,63 @@
+<div class="head">
+
+{% extends "base.html" %}
+{% block title %} Reporte de Prestamos {% endblock title %}
+
+{% block content %}
+
+</div>
+
+<mensajeerror> </mensajeerror>
+
+<section class="Factura" ng-controller="SolicitudPrestamoCtrl">
+	
+	<div class="rptUtilidad">
+		<div class="align-center">
+			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<p class="titulo-utilidad"> Reporte de Prestamos </p>
+			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
+		</div>
+
+		<div class="busqueda-vd">
+			<span>Fecha Inicio</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
+			<span>Fecha Fin</span>
+			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
+			<button class="Boton" ng-click="solprestamosEmitidas()">Buscar</button>
+		</div>
+
+		<section class="detalle-utilidad">
+			<table class="table-producto-factura">
+				<tr>
+					<td>Fecha</td>
+					<td>Solicitud No.</td>
+					<td>Categoria</td>
+					<td>Socio</td>
+					<td class="align-right">Monto Solicitado</td>
+					<td class="align-right">Neto Desembolsar</td>
+				</tr>
+				<tr ng-repeat="registro in registros">
+					<td>[[registro.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
+					<td>[[registro.noSolicitud | numberFixedLen : 8]]</td>
+					<td>[[registro.categoriaPrestamo]]</td>
+					<td>[[registro.socio]]</td>
+					<td class="align-right">[[registro.montoSolicitado | number : 2]]</td>
+					<td class="align-right">[[registro.netoDesembolsar | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="4">TOTALES:</td>
+					<td class="align-right">[[totalMontoSolicitado | number : 2]]</td>
+					<td class="align-right">[[totalNetoDesembolsar | number : 2]]</td>
+				</tr>
+			</table>
+		</section>
+
+	</div>
+	
+</section>
+
+
+<div class="pie">
+{% endblock content %}
+	
+</div>

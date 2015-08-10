@@ -21,31 +21,31 @@
 			<table class="table-datos-personales">
 				<tr>
 					<td>Apellidos</td>
-					<td>MERCEDES SANTANA</td>
+					<td>[[dataSolicitante.apellidos]]</td>
 					<td>Cedula</td>
-					<td>000-00000000-1</td>
+					<td>[[dataSolicitante.cedula]]</td>
 				</tr>
 				<tr>
 					<td>Nombres</td>
-					<td>RAFAEL</td>
+					<td>[[dataSolicitante.nombres]]</td>
 					<td>Telefono</td>
-					<td>000-000-0000</td>
+					<td>[[dataSolicitante.telefono]]</td>
 				</tr>
 				<tr>
 					<td>Codigo</td>
-					<td>241000</td>
+					<td>[[dataSolicitante.codigo]]</td>
 					<td>Localidad</td>
-					<td>PIDI</td>
+					<td>[[dataSolicitante.localidad]]</td>
 				</tr>
 				<tr>
 					<td>Departamento</td>
-					<td>TECNOLOGIA DE LA INFORMACION</td>
+					<td>[[dataSolicitante.departamento]]</td>
 					<td>Fecha Ing. Coop.</td>
-					<td>02/02/2016</td>
+					<td>[[dataSolicitante.fechaIngresoCoop | date: 'MM/dd/yyyy']]</td>
 				</tr>
 				<tr>
 					<td>Fecha Ing. Cia.</td>
-					<td>01/01/1987</td>
+					<td>[[dataSolicitante.fechaIngresoEmpresa | date: 'MM/dd/yyyy']]</td>
 				</tr>
 			</table>
 		</div> <!-- FIN Seccion de Datos Personales -->
@@ -55,57 +55,57 @@
 			<table class="table-datos-prestamo">
 				<tr>
 					<td>Categoria</td>
-					<td>0033 ADELANTO BONO VEHICULO</td>
+					<td>[[solicitudP.codigoCategoria]] [[solicitudP.categoriaPrestamo]]</td>
 					<td>Tasa Interes Mensual</td>
-					<td class="align-right">9.00</td>
+					<td class="align-right">[[solicitudP.tasaInteresMensual]]</td>
 				</tr>
 				<tr>
 					<td>Representante</td>
-					<td>0002 MERSANT CORPORATIONS</td>
+					<td>[[solicitudP.codigoRepresentante]] [[solicitudP.representante]]</td>
 					<td>Cantidad Cuotas</td>
-					<td class="align-right">1</td>
+					<td class="align-right">[[solicitudP.cantidadCuotas]]</td>
 				</tr>
 				<tr>
 					<td>Auxiliar</td>
-					<td>0003 RAFAEL MERCEDES SANTANA</td>
+					<td>**** ***************************</td>
 					<td>Valor de las Cuotas</td>
-					<td class="align-right">44,333.54</td>
+					<td class="align-right">[[solicitudP.valorCuotasCapital | number: 2]]</td>
 				</tr>
 				<tr>
 					<td colspan="4"> <hr/> </td>
 				</tr>
 				<tr>
 					<td>Ahorros Capitalizados</td>
-					<td class="align-right padding-right-6">10,233.45</td>
+					<td class="align-right padding-right-6">[[solicitudP.ahorrosCapitalizados | number: 2]]</td>
 					<td>Monto Solicitado</td>
-					<td class="align-right">33,444.54</td>
+					<td class="align-right">[[solicitudP.montoSolicitado | number: 2]]</td>
 				</tr>
 				<tr>
 					<td>Prestaciones Laborales</td>
-					<td class="align-right padding-right-6">0.00</td>
+					<td class="align-right padding-right-6">[[solicitudP.prestacionesLaborales | number: 2]]</td>
 					<td>Bce. Otros Prestamos</td>
-					<td class="align-right">0.00</td>
+					<td class="align-right">********</td>
 				</tr>
 				<tr>
 					<td>Garantizado por Garante</td>
-					<td class="align-right padding-right-6">0.00</td>
+					<td class="align-right padding-right-6">[[solicitudP.valorGarantizado | number: 2]]</td>
 					<td>Garantia Disponible</td>
-					<td class="align-right">10,233.45</td>
+					<td class="align-right">********</td>
 				</tr>
 				<tr>
 					<td>Menos Deudas Prestamos</td>
-					<td class="align-right padding-right-6">88,444.33</td>
+					<td class="align-right padding-right-6">[[solicitudP.deudasPrestamos | number: 2]]</td>
 					<td></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td>MONTO AL QUE APLICA</td>
-					<td class="align-right padding-right-6">0.00</td>
+					<td class="align-right padding-right-6">[[montoAplica | number: 2]]</td>
 					<td>NETO A DESEMBOLSAR</td>
-					<td class="align-right">12,333.22</td>
+					<td class="align-right">[[solicitudP.netoDesembolsar | number: 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="4"><h5>***[[12333.22 | NumLetra]]***</h5></td>
+					<td colspan="4"><h5>*** [[solicitudP.netoDesembolsar | NumLetra]] ***</h5></td>
 				</tr>
 				<tr>
 					<td colspan="4"> <hr/> </td>
@@ -123,26 +123,26 @@
 				</tr>
 				<tr>
 					<td>Cuota de Ahorros</td>
-					<td class="padding-right-6">200.00</td>
-					<td class="align-right">100.00</td>
-					<td>54,433.45</td>
+					<td class="padding-right-6">[[dataSolicitante.cuotaAhorroQ1 | number: 2]]</td>
+					<td class="align-right">[[dataSolicitante.cuotaAhorroQ2 | number: 2]]</td>
+					<td>[[dataSolicitante.salario | number: 2]]</td>
 				</tr>
 				<tr>
 					<td>Cuota de Prestamos</td>
-					<td class="padding-right-6">4,455.45</td>
-					<td class="align-right">4,544.43</td>
+					<td class="padding-right-6">[[varCuotaPrestamo | number: 2]]</td>
+					<td class="align-right">[[varCuotaPrestamo | number: 2]]</td>
 					<td></td>
 				</tr>
 				<tr>
 					<td>Total</td>
-					<td class="padding-right-6">5,544.45</td>
-					<td class="align-right">5,566.45</td>
+					<td class="padding-right-6">[[totalQ1 | number: 2]]</td>
+					<td class="align-right">[[totalQ2 | number: 2]]</td>
 					<td></td>
 				</tr>
 				<tr>
 					<td>% Endeudamiento</td>
-					<td class="padding-right-6">40%</td>
-					<td class="align-right">42%</td>
+					<td class="padding-right-6">[[porcentajeEndeuda1 | number: 0]]%</td>
+					<td class="align-right">[[porcentajeEndeuda2 | number: 0]]%</td>
 				</tr>
 			</table>
 		</div> 
@@ -150,7 +150,7 @@
 		<div class="datos-garante">
 			<span class="subtitulo-sp"><h4>DATOS DEL GARANTE</h4></span>
 			<div class="datos-garante-texto">
-				<span class="carnet">Carnet</span> <span class="nombre">Nombre y Apellidos</span>
+				<span class="carnet">[[dataSolicitante.codigo]]</span> <span class="nombre">Nombre y Apellidos</span>
 				<p>El(los) Garante(s) arriba firmante(s) garantiza(n) solidariamente con su(s) ahorros las sumas indicadas, en el entendido de que dichos ahorros quedan automaticamente congelados por monto garantizado. Hasta la liberacion de dicha garantia.</p>
 				<p>NOTA. De ser aprobada la presente solicitud acepto que hasta la cancelacion de la misma queden afectadas las cuotas mensuales de mi cheque de nomina regalia pascual, bonificacion y/o las prestaciones laborales que reciba o pudiera recibir de la empresa.</p>
 

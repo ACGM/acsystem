@@ -64,6 +64,14 @@ class SolicitudPrestamo(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	@property
+	def codigoCategoria(self):
+		return '{0:0>4}'.format(self.categoriaPrestamo.id)
+
+	@property
+	def codigoRepresentante(self):
+		return '{0:0>4}'.format(self.representante.id)
+
 	def __unicode__(self):
 		return '%s' % (self.noSolicitud)
 

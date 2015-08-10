@@ -27,7 +27,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
-                            relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView
+                            relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, rptPrestamos
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
@@ -68,7 +68,7 @@ from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominas
 
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
-                                SuplidorByNombreView, ProductoByDescrpView, DocumentoCuentasView
+                                SuplidorByNombreView, ProductoByDescrpView, DocumentoCuentasView, SocioByCodigoView
 
 from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getExistenciaByProductoView, \
                                 getExistenciaRPT, RPTMovimientoProductoAPIView
@@ -150,6 +150,8 @@ urlpatterns = patterns('',
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
     url(r'^api/documentoCuentas/(?P<doc>[\w]+)/$', DocumentoCuentasView.as_view(), name='documento_cuentas_by_codigo'),
+    url(r'^api/socio/(?P<codigo>[\d]+)/$', SocioByCodigoView.as_view(), name='socio_by_codigo'),
+
     url(r'^generarArchivoBanco/$', GenerarArchivoBancoView.as_view(), name='generar_archivo_banco'),
 
     #Fondos de Cajas (Desembolsos)
@@ -243,6 +245,7 @@ urlpatterns = patterns('',
 
     #Prestamos#Reportes
     url(r'^prestamos/reportes/solicitudesPrestamos/$', rptSolPrestamosEmitidas.as_view(), name='solicitudes_prestamos_emitidas'),
+    url(r'^prestamos/reportes/prestamos/$', rptPrestamos.as_view(), name='reporte_prestamos'),
 
     #Prestamos -- Solicitudes Prestamos
     url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),

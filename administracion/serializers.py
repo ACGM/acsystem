@@ -34,10 +34,13 @@ class SuplidorSerializer(serializers.ModelSerializer):
 
 class SocioSerializer(serializers.HyperlinkedModelSerializer):
 	departamento = serializers.StringRelatedField(read_only=False)
+	localidad = serializers.StringRelatedField(read_only=True)
 
 	class Meta:
 		model = Socio
-		fields = ('codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento', 'cedula', 'salario', 'cuotaAhorroQ1', 'cuotaAhorroQ2')
+		fields = ('id', 'codigo', 'nombres', 'apellidos', 'nombreCompleto', 'estatus', 'departamento', 'cedula', \
+					'salario', 'cuotaAhorroQ1', 'cuotaAhorroQ2', 'fechaIngresoEmpresa', 'fechaIngresoCoop', \
+					'localidad', 'telefono')
 
 
 class DepartamentoSerializer(serializers.HyperlinkedModelSerializer):

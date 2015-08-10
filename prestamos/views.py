@@ -82,6 +82,12 @@ class rptSolPrestamosEmitidas(LoginRequiredMixin, TemplateView):
 	template_name = 'rpt_solprestamos.html'
 
 
+#Reporte de Prestamos
+class rptPrestamos(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_prestamos.html'
+
+
 # Listado de Solicitudes de Prestamos
 class SolicitudesPrestamosAPIView(APIView):
 

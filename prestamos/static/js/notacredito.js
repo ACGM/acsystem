@@ -741,6 +741,16 @@
       }
     }
 
+    //Calcular sobre monto consumido.
+    $scope.calculaConsumido = function($event, montoConsumido) {
+      if($event.keyCode == 13) {
+        $scope.NCE.valorPendiente = $filter('number') ($scope.NCE.montoConsumido, 2);
+        $scope.NCE.valorAcreditar = $filter('number') (parseFloat($scope.NCE.montoOrden.replace(',','')) - parseFloat($scope.NCE.montoConsumido.replace(',','')), 2);
+
+      }
+
+    }
+
     //Guardar Nota de Credito Especial
     $scope.guardaNotaCreditoE = function($event) {
       $event.preventDefault();

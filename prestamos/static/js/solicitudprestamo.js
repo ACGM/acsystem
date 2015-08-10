@@ -251,6 +251,19 @@
         return deferred.promise;
       }
 
+      //Datos completivos para solicitante
+      function solicitanteDatos(codigo) {
+        var deferred = $q.defer();
+
+        url = "/api/socio/{codigo}/?format=json".replace('{codigo}', codigo);
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
 
       return {
         solicitudesprestamos          : solicitudesprestamos,
@@ -265,7 +278,8 @@
         getAutorizadores              : getAutorizadores,
         getRepresentantes             : getRepresentantes,
         ValidaAutorizador             : ValidaAutorizador,
-        solicitudesPrestamosEmitidas  : solicitudesPrestamosEmitidas
+        solicitudesPrestamosEmitidas  : solicitudesPrestamosEmitidas,
+        solicitanteDatos              : solicitanteDatos
       };
 
     }])
@@ -899,10 +913,86 @@
 
       //Imprimir solicitud de prestamo
       $scope.ImprimirSolicitud = function(solicitud) {
-        $window.sessionStorage['solicitud'] = JSON.stringify(solicitud);
+        $window.sessionStorage['solicitudP'] = JSON.stringify(solicitud);
         $window.open('/prestamos/print/solicitudP/', target='_blank'); 
       }
 
-    }]);
+    }])
+
+    //****************************************************
+    //CONTROLLERS Imprimir Solicitud Prestamo            *
+    //****************************************************
+    .controller('ImprimirSolicitudPCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'MaestraPrestamoService',
+                                        function ($scope, $filter, $window, SolicitudPrestamoService, MaestraPrestamoService) {
+      
+      //Objeto que contiene la informacion de la solicitud de Prestamo
+      $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
+      console.log($scope.solicitudP);
+
+      //Objeto que contiene la informacion del solicitante
+      SolicitudPrestamoService.solicitanteDatos($scope.solicitudP.codigoSocio).then(function (data) {
+        $scope.dataSolicitante = data[0];
+        console.log($scope.dataSolicitante);        
+
+        //Calculo para cuota quincenal de prestamo
+        var cuotaPrestamo;
+        cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
+        cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
+        $scope.varCuotaPrestamo = cuotaPrestamo / 2;
+
+        //Totales en Quincenas (ahorro y cuota Prestamo)
+        $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);
+        $scope.totalQ2 = parseFloat($scope.dataSolicitante.cuotaAhorroQ2) + parseFloat($scope.varCuotaPrestamo);
+
+        //Porcentajes Endeudamiento
+        $scope.porcentajeEndeuda1 = ($scope.totalQ1 / $scope.dataSolicitante.salario) * 100;
+        $scope.porcentajeEndeuda2 = ($scope.totalQ2 / $scope.dataSolicitante.salario) * 100;
+
+        //Monto al que aplica
+        var prestLab = $scope.solicitudP.prestacionesLaborales != undefined? $scope.solicitudP.prestacionesLaborales : 0;
+        var valorGaran = $scope.solicitudP.valorGarantizado != undefined? $scope.solicitudP.valorGarantizado : 0;
+        var deudasPrest = $scope.solicitudP.deudasPrestamos != undefined? $scope.solicitudP.deudasPrestamos : 0;
+
+        $scope.montoAplica = ($scope.solicitudP.ahorrosCapitalizados + 
+                              parseFloat(prestLab) +
+                              parseFloat(valorGaran)) - deudasPrest;
+      });
+
+
+      // SolicitudPrestamoService.SolicitudPById($scope.solicitudP.solicitudNo).then(function (data) {
+
+      //   if(data.length > 0) {
+      //     $scope.dataH.factura = $filter('numberFixedLen')($scope.factura.noFactura, 8);
+      //     $scope.dataH.fecha = $filter('date')(data[0]['fecha'], 'dd/MM/yyyy');
+      //     $scope.socioCodigo = data[0]['socioCodigo'];
+      //     $scope.socioNombre = data[0]['socioNombre'];
+      //     $scope.dataH.orden = $filter('numberFixedLen')(data[0]['orden'], 8);
+      //     $scope.dataH.terminos = data[0]['terminos'].replace('CR', 'CREDITO').replace('CO', 'DE CONTADO');
+      //     $scope.dataH.vendedor = data[0]['vendedor'];
+      //     $scope.dataH.impresa = data[0]['impresa'];
+
+      //     data[0]['productos'].forEach(function (item) {
+      //       item.subtotal = parseFloat(item.descuento) > 0? (item.precio * item.cantidad) - ((item.descuento / 100) * item.cantidad * item.precio) : (item.precio * item.cantidad);
+      //       $scope.dataD.push(item);
+      //     });
+
+      //     $scope.totalDescuento_ = $scope.totalDescuento();
+      //     $scope.totalValor_ = $scope.totalValor();
+      //   }
+      // });
+
+      $scope.imprimirSol = function() {
+
+        FacturacionService.impresionFact($scope.factura.noFactura).then(function (data) {
+          console.log("DATA: " + data);
+
+          document.getElementById('printBoton').style.display = "None";
+          window.print();
+          window.location.reload();
+          document.getElementById('printBoton').style.display = "";
+        });
+      }
+       
+     }]);
 
 })(_);
