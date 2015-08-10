@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %} Ahorro {% endblock title %}
+
+{% block content %}
+	
+	<main ng-controller="ProcesarIteresCtrl">
+		
+		<section id="datePanel">
+			<table>
+				<tr>
+					<td>
+						Fecha Inicial:
+					</td>
+					<td>
+						<input type="text" ng-model="registro.finicial" value="[[ | date: 'dd/MM/yyyy']]" datepicker>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Fecha Final:
+					</td>
+					<td>
+						<input type="text" ng-model="registro.ffinal" value"[[] |date: 'dd/MM/yyyy']" datepiker>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button class="Boton BusquedaBtn icon-file" ng-click="">Generar interes</button>
+					</td>
+					<td>
+						<button class="Boton BusquedaBtn danger icon-delete" ng-click="">Cancelar</button>
+					</td>
+				</tr>
+			</table>
+		</section>
+	</main>
+	s
+{% endblock content %}

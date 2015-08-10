@@ -49,7 +49,7 @@ from cuenta.views import DiarioViewSet, TipoDocViewSet
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
-from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, RetirosAhorroViewSet, InteresAhorroViewSet
+from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -77,9 +77,7 @@ from nominacoop.views import DetalleNominaGeneradaAPIView
 from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
-
 admin.site.site_header = 'COOPERATIVA'
-
 router=routers.DefaultRouter()
 
 #Cuentas
@@ -89,14 +87,11 @@ router.register(r'diario', DiarioViewSet)
 router.register(r'tipoDocDiario',TipoDocViewSet)
 
 #CXP
-
 router.register(r'ordenCompra',OrdenViewSet)
 router.register(r'detalleOrder',DetalleOrderViewSet)
 
-
 #ahorro
 router.register(r'ahorro',AhorroViewSet)
-router.register(r'retiroAhorro',RetirosAhorroViewSet)
 router.register(r'InteresAhorro',InteresAhorroViewSet)
 
 #administracion
@@ -140,7 +135,6 @@ router.register(r'notascredito', ListadoNCViewSet)
 router.register(r'notascreditoespecial', ListadoNCEViewSet)
 
 urlpatterns = patterns('',
-
     url(r'^$', 'acgm.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', 'acgm.views.login', name='login'),
@@ -156,16 +150,15 @@ urlpatterns = patterns('',
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),
     url(r'^api/documentoCuentas/(?P<doc>[\w]+)/$', DocumentoCuentasView.as_view(), name='documento_cuentas_by_codigo'),
-    
     url(r'^generarArchivoBanco/$', GenerarArchivoBancoView.as_view(), name='generar_archivo_banco'),
 
     #Fondos de Cajas (Desembolsos)
     url(r'^desembolso/$', DesembolsoView.as_view(), name='Desembolso'),
     url(r'^desembolsojson/$', DesembolsoByCheque.as_view(), name='Desembolso_json'),
+    
     #Fondos de Cajas (Desembolsos) # Imprimir
     url(r'^desembolso/print/(?P<desembolso>[\d]+)/$', ImprimirDesembolsoView.as_view(), name='desembolso_print'),
 
-    
     #Nomina
     url(r'^nomina/$', NominaView.as_view(), name='Nomina'),
     url(r'^nomina/descuentos/$', NominaDescuentosView.as_view(), name='Nomina_Descuentos'),
@@ -182,10 +175,8 @@ urlpatterns = patterns('',
     url(r'^nomina/archivos/prestamos/balance/$', GenerarArchivoPrestamosBalance.as_view(), name='nomina_archivo_ahorros_balance'),
     url(r'^nomina/archivos/ahorros/balance/$', GenerarArchivoAhorrosBalance.as_view(), name='nomina_archivo_prestamos_balance'),
     url(r'^nomina/archivo-banco/set/$', relacionArchivoBancoConNomina, name='nomina_archivo_banco'),
-
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
-
     url(r'^nomina/reporte/quincena/$', rptNominaQuincenal.as_view(), name='reporte_nomina_quincena'),
 
     #Inventario
@@ -209,7 +200,6 @@ urlpatterns = patterns('',
     url(r'^inventario/reportes/existenciaArticulo/$', RPTExistenciaArticuloView.as_view(), name='Inventario_reporte_existencia'),
     url(r'^inventario/reportes/conteoFisico/$', RPTConteoFisicoArticuloView.as_view(), name='Inventario_reporte_conteoFisico'),
     url(r'^inventario/reportes/histMovArt/$', RPTMovimientoArticuloView.as_view(), name='Inventario_reporte_historico'),
-    
     url(r'^inventario/reportes/ajuste/$', RPTAjusteInventarioView.as_view(), name='Inventario_reporte_ajuste'),
     url(r'^inventario/api/reportes/existencia/$', getExistenciaRPT.as_view(), name='existencia_api'),
     url(r'^inventario/api/reportes/existencia/conteoFisico/$', getExistenciaConteoFisicoRPT.as_view(), name='existencia_conteoFisico_api'),
@@ -231,7 +221,6 @@ urlpatterns = patterns('',
     #Prestamos
     url(r'^prestamosSearch/$', 'prestamos.views.prestamosSearch', name='prestamos_search'),
     url(r'^pagoCuotasSearch/$', 'prestamos.views.pagoCuotasSearch', name='pago_cuotas_search'),
-
     url(r'^prestamos/nd/$', NotaDeDebitoView.as_view(), name='Nota_de_Debito'),
     url(r'^prestamos/nc/$', NotaDeCreditoView.as_view(), name='Nota_de_Credito'),
     url(r'^prestamos/nce/$', NotaDeCreditoEspView.as_view(), name='Nota_de_Credito_Especial'),
@@ -248,7 +237,6 @@ urlpatterns = patterns('',
     url(r'^prestamos/pago-cuotas/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
     url(r'^prestamos/pago-cuotas/(?P<noPrestamo>[\d]+)/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
 
-    
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),
     url(r'^prestamos/print/recibidoconforme/$', ImprimirRecibidoConformeView.as_view(), name='Recibido_Conforme_print'),
@@ -268,7 +256,6 @@ urlpatterns = patterns('',
                                                                                                             name='solicitud_prestamos_api_ByRangoFecha'),
     url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
  
-
     #Prestamos -- Solicitudes Orden Despacho
     url(r'^prestamos/solicitudOD/AprobarRechazar/$', AprobarRechazarSolicitudesODView.as_view(), name='Solicitud_de_OD_accion'),
     url(r'^api/prestamos/solicitudes/od/codigo/(?P<codigo>[\d]+)/$', SolicitudesODAPIViewByCodigoNombre.as_view(), name='solicitud_prestamos_api_byCodigo'),
@@ -319,7 +306,6 @@ urlpatterns = patterns('',
     url(r'^cxpOrdenJson/$', CxpOrdenView.as_view(), name='Cxp_Ordenes_api'),
     url(r'^cxpSuperJson/$', CxpSuperCoop.as_view(), name='Cxp_SuperCoop_api'),
     url(r'^cxp/superOrden/$', cxpSuperView.as_view(), name='cxp_Super'),
-
 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

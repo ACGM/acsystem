@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import InteresesAhorro, MaestraAhorro, AhorroSocio, RetiroAhorro
+from .models import InteresesAhorro, MaestraAhorro, AhorroSocio
 
 
 class interesAhorroSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,7 +14,7 @@ class maestraAhorroSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MaestraAhorro
         many = True
-        fields = ('id', 'fecha', 'ahorro', 'retiro', 'monto', 'interes', 'balance', 'estatus', 'cuentas')
+        fields = ('id', 'fecha', 'ahorro',  'monto',  'estatus', 'cuentas')
 
 
 class AhorroSocioSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,10 +22,3 @@ class AhorroSocioSerializer(serializers.HyperlinkedModelSerializer):
         model = AhorroSocio
         many = True
         fields = ('id', 'socio', 'balance', 'disponible')
-
-
-class RetiroAhorroSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = RetiroAhorro
-        many = True
-        fields = ('id', 'socio', 'ahorro', 'tipoRetiro', 'monto')

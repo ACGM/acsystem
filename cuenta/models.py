@@ -65,7 +65,6 @@ class DiarioGeneral(models.Model):
     cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=True, blank=True)
     referencia = models.CharField("Ref", max_length=30, blank=False, null=False)
     auxiliar = models.ForeignKey(Auxiliares, verbose_name="Aux", null=True, blank=True)
-    tipoDoc = models.PositiveIntegerField()
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
     debito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Debito")
     credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")

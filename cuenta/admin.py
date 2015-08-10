@@ -17,7 +17,7 @@ class AuxiliarAdmin(admin.ModelAdmin):
 
 @admin.register(DiarioGeneral)
 class DiarioAdmin(admin.ModelAdmin):
-    list_display = ("id", "fecha", "cuenta", "referencia", "auxiliar", "tipoDoc", "estatus", "debito", "credito")
+    list_display = ("id", "fecha", "cuenta", "referencia", "auxiliar", "estatus", "debito", "credito")
 
 
 
