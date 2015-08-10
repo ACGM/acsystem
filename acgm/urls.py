@@ -27,7 +27,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
-                            relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView
+                            relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, rptPrestamos
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
                                         SolicitudesODAPIViewByCodigoNombre, SolicitudODById, SolicitudOrdenDespachoDetalleView, \
@@ -256,6 +256,7 @@ urlpatterns = patterns('',
 
     #Prestamos#Reportes
     url(r'^prestamos/reportes/solicitudesPrestamos/$', rptSolPrestamosEmitidas.as_view(), name='solicitudes_prestamos_emitidas'),
+    url(r'^prestamos/reportes/prestamos/$', rptPrestamos.as_view(), name='reporte_prestamos'),
 
     #Prestamos -- Solicitudes Prestamos
     url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),

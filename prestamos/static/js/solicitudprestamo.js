@@ -956,10 +956,6 @@
         $scope.montoAplica = ($scope.solicitudP.ahorrosCapitalizados + 
                               parseFloat(prestLab) +
                               parseFloat(valorGaran)) - deudasPrest;
-        console.log($scope.solicitudP.ahorrosCapitalizados)
-        console.log(prestLab)
-        console.log(valorGaran)
-        console.log(deudasPrest)
       });
 
 
