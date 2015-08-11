@@ -43,6 +43,8 @@ from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
 from cxp.views import CxpView, cxpSuperView
 
+from activofijo.views import ActivosView, DepresiacionView
+
 #ViewSets (API)
 
 from cuenta.views import DiarioViewSet, TipoDocViewSet
@@ -310,6 +312,9 @@ urlpatterns = patterns('',
     url(r'^cxpSuperJson/$', CxpSuperCoop.as_view(), name='Cxp_SuperCoop_api'),
     url(r'^cxp/superOrden/$', cxpSuperView.as_view(), name='cxp_Super'),
 
+    #ActivoFijo
+    url(r'^activos/$', ActivosView.as_view(), name='ActivoFijo'),
+    url(r'^depresiacion/$', DepresiacionView.as_view, name='Depresiacion'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

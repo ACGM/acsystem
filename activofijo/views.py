@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from .models import CategoriaActivo, Depresiacion, Activos
 from .serializers import CategoriaActivoSerializer, DepresiacionSerializer, ActivosSerializer
-from cuenta.models import DiarioGeneral
+from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
 from administracion.models import Suplidor, Localidad
 
 
@@ -40,7 +40,6 @@ class ActivosView(DetailView):
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
-        self.tipo = self.request.GET.get('tipo')
 
         if format == "json":
             return self.json_to_response()
@@ -102,39 +101,41 @@ class ActivosView(DetailView):
                             }
                             for Cuenta in DiarioGeneral.objects.filter(referencia='ACT-' + str(activo.id))]
             })
+            return JsonResponse(data, safe=False)
 
 
         # Metodo pos que registra el activo en cuestion.
 
-        def post(self, request, *args, **kwargs):
-            Data = json.loads(request.body)
+    def post(self, request, *args, **kwargs):
+        DataA = json.loads(request.body)
+        Data = DataA['regActivo']
 
-            categoria = CategoriaActivo.objects.get(Data['categoria'])
-            suplidor = Suplidor.objects.get(Data['suplidor'])
-            localidad = Localidad.objects.get(Data['localidad'])
+        categoria = CategoriaActivo.objects.get(Data['categoria'])
+        suplidor = Suplidor.objects.get(Data['suplidor'])
+        localidad = Localidad.objects.get(Data['localidad'])
 
-            regActivo = Activos()
-            regActivo.descripcion = Data['descripcion']
-            regActivo.categoria = categoria
-            regActivo.fechaAdd = Data['fechaA']
-            regActivo.fechaDep = Data['fechaD']
-            regActivo.agnosVu = Data['agnoVu']
-            regActivo.costo = Data['costo']
-            regActivo.porcentaje = Data['porc']
-            regActivo.suplidor = suplidor
-            regActivo.factura = Data['factura']
-            regActivo.localidad = localidad
-            regActivo.save()
+        regActivo = Activos()
+        regActivo.descripcion = Data['descripcion']
+        regActivo.categoria = categoria
+        regActivo.fechaAdd = Data['fechaA']
+        regActivo.fechaDep = Data['fechaD']
+        regActivo.agnosVu = Data['agnoVu']
+        regActivo.costo = Data['costo']
+        regActivo.porcentaje = Data['porc']
+        regActivo.suplidor = suplidor
+        regActivo.factura = Data['factura']
+        regActivo.localidad = localidad
+        regActivo.save()
 
-            despMensual = (Data['costo'] / 12) * (Data['porc'] / 100)
-            regDepresiacion = Depresiacion()
-            regDepresiacion.activoId = regActivo.id
-            regDepresiacion.fecha = date.today()
-            regDepresiacion.dMensual = despMensual
-            regDepresiacion.dAcumulada = 0
-            regDepresiacion.dAgno = 0
-            regDepresiacion.vLibro = 0
-            regDepresiacion.save()
+        despMensual = (Data['costo'] / 12) * (Data['porc'] / 100)
+        regDepresiacion = Depresiacion()
+        regDepresiacion.activoId = regActivo.id
+        regDepresiacion.fecha = date.today()
+        regDepresiacion.dMensual = despMensual
+        regDepresiacion.dAcumulada = 0
+        regDepresiacion.dAgno = 0
+        regDepresiacion.vLibro = 0
+        regDepresiacion.save()
 
 
 # Clase para correr la depresiacion mensual de los activos aun depreciables
@@ -149,27 +150,43 @@ class DepresiacionView(TemplateView):
         for act in activos:
             antDesp = Depresiacion.objects.raw('select * '
                                                'from activofijo_depresiacion '
-                                               'where activoId='+ act.id+'order by fecha desc'
-                                               'limit 1')
+                                               'where activoId=' + act.id + 'order by fecha desc'
+                                                                            'limit 1')
 
             regDesp = Depresiacion()
             regDesp.activoId = act.id
             regDesp.fecha = Data['fecha']
             regDesp.dMensual = antDesp.dMensual
             regDesp.dAcumulada = antDesp.dAcumulada
-            if antDesp.fecha.month==12:
+            if antDesp.fecha.month == 12:
                 regDesp.dAgno = antDesp.dMensual
             else:
-                regDesp.dAgno = antDesp.dAgno+antDesp.dMensual
-            regDesp.vLibro = antDesp.vLibro+antDesp.dMensual
+                regDesp.dAgno = antDesp.dAgno + antDesp.dMensual
+            regDesp.vLibro = antDesp.vLibro + antDesp.dMensual
             regDesp.save()
 
             for cta in Dcuentas:
                 diario = DiarioGeneral()
                 diario.fecha = Data['fecha']
-                cuenta = cuenta.objects.get(codigo=cta.codigo)
-                diario.cuenta=cuenta
-                
+                diario.referencia = 'DEP-' + regDesp.id
+                if cta['cuenta'] is not None:
+                    cuenta = cuenta.objects.get(codigo=cta['cuenta'])
+                    diario.cuenta = cuenta
+                if cta['aux'] is not None:
+                    aux = Auxiliares.objets.get(codigo=cta['aux'])
+                    diario.auxiliar = aux
+                diario.estatus = 'P'
+                diario.debito = cta['debito']
+                diario.credito = cta['credito']
+                diario.save()
 
+            contDep = Depresiacion.objects.raw('select count(*) '
+                                               'from activofijo_depresiacion '
+                                               'where activoId=' + act.id)
+            vidaUtil = act.agnosVu * 12
 
+            if vidaUtil == contDep:
+                act.estatus = 'D'
+                act.save()
 
+        return HttpResponse('1')
