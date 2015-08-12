@@ -45,6 +45,8 @@ from cxp.views import CxpView, cxpSuperView
 
 from activofijo.views import ActivosView, DepresiacionView
 
+from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView
+
 #ViewSets (API)
 
 from cuenta.views import DiarioViewSet, TipoDocViewSet
@@ -315,6 +317,12 @@ urlpatterns = patterns('',
     #ActivoFijo
     url(r'^activos/$', ActivosView.as_view(), name='ActivoFijo'),
     url(r'^depresiacion/$', DepresiacionView.as_view, name='Depresiacion'),
+
+    #Conciliacion Bancaria
+    url(r'^conciliacion/Solicitudcheque$', SolicitudView.as_view(), name='Solicitud_Cheques'),
+    url(r'^conciliacion/Cheques$', ChequesView.as_view(), name='Cheques_Conciliacion'),
+    url(r'^conciliacion/notas$', NotasConciliacionView.as_view(), name='Notas_Conciliacion'),
+    url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

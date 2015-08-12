@@ -221,6 +221,61 @@ class NotasConciliacionView(TemplateView):
         return HttpResponse('1')
 
 
+class ConBancoView(TemplateView):
+    template_name = "ConBanco.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        Data = list()
+
+        bancaria = ConBanco.objects.all()
+
+        for banc in bancaria:
+            Data.append({
+                'id': banc.id,
+                'fecha': banc.fecha,
+                'descripcion': banc.descripcion,
+                'tipo': banc.tipo,
+                'monto': banc.monto,
+                'estatus': banc.estatus
+            })
+
+        return JsonResponse(Data, safe=False)
+
+    def post(self, request):
+        DataT = json.loads(request.body)
+        Data = DataT['banco']
+
+        if Data['id'] is None:
+            banco = ConBanco()
+            banco.fecha = Data['fecha']
+            banco.descripcion = Data['descripcion']
+            banco.tipo = Data['tipo'],
+            banco.monto = Data['monto']
+            banco.estatus = Data['estatus']
+            banco.save()
+        else:
+            banco = ConBanco.objects.get(id=Data['id'])
+            banco.fecha = Data['fecha']
+            banco.descripcion = Data['descripcion']
+            banco.estatus = Data['estatus']
+            banco.monto = Data['monto']
+            banco.save(())
+
+
+
+
+
+
 
 
 
