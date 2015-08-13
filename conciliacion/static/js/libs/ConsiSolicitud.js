@@ -69,6 +69,7 @@
 	
 		return {
 			getSolicitudes : getSolicitudes,
+			setSolicitud : setSolicitud,
 			getSolicitudesById  :  getSolicitudesById,
 			getSolicitudByStatus : getSolicitudByStatus
 		};
@@ -106,7 +107,18 @@
 			SolicitudServices.getSolicitudesById(id).then(function (data){
 				$scope.solicitud = data;
 			});
-		}
+		};
+
+		$scope.setSolicitud = function($event){
+				try{
+					SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+						var resp = data;
+					});
+				}
+				catch(e){
+					$rootScope.mostrarError(e);
+				}
+		};
 
 		//Regustra una nueva solicitud.
 		$scope.CrSolicitud = function($event){
@@ -115,5 +127,5 @@
 			$scope.solicitudList();
 		};
 
-	}])
+	}]);
 })();

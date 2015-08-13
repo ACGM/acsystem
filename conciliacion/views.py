@@ -82,7 +82,7 @@ class SolicitudView(TemplateView):
         DataT = json.loads(request.body)
         Data = DataT['solicitud']
 
-        if Data['id'] is  None:
+        if Data['id'] is None:
             socio = Socio.objects.get(id=Data['socio'])
             if Data['beneficiario'] is not None:
                 bene = CoBeneficiario.objects.get(id=Data['beneficiario'])
@@ -127,7 +127,7 @@ class ChequesView(TemplateView):
         for chk in cheque:
             data.append({
                 'id': chk.id,
-                'solicitudId': chk.solicitud.id+'-'+chk.solicitud.fecha,
+                'solicitudId': chk.solicitud.id + '-' + chk.solicitud.fecha,
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
                 'estatus': chk.estatus
@@ -221,6 +221,38 @@ class NotasConciliacionView(TemplateView):
         return HttpResponse('1')
 
 
+class SSNotasView(DetailView):
+    queryset = NotaDCConciliacion.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        fechaI = request.GET.get('fechaI')
+        fechaF = request.GET.get('fechaF')
+
+        return self.json_to_response(fechaI, fechaF)
+
+    def json_to_response(self, fechaI, fechaF):
+        Data = list()
+
+        registros = ConBanco.objects.raw('select id, concepto, '
+                                         'fecha, tipo, '
+                                         'monto, estatus '
+                                         'from conciliacion_notadcconciliacion'
+                                         'WHERE fecha BETWEEN '+fechaI+' AND '+fechaF)
+
+        for detalle in registros:
+            Data.append({
+                'id': detalle.id,
+                'fecha': detalle.fecha,
+                'concepto': detalle.concepto,
+                'tipo': detalle.tipo,
+                'monto': detalle.monto,
+                'estatus': detalle.estatus,
+            })
+
+        return JsonResponse(Data, safe=False)
+
+
+
 class ConBancoView(TemplateView):
     template_name = "ConBanco.html"
 
@@ -272,17 +304,32 @@ class ConBancoView(TemplateView):
             banco.save(())
 
 
+class ConBancoLs(DetailView):
+    queryset = ConBanco.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        fechaI = request.GET.get('fechaI')
+        fechaF = request.GET.get('fechaF')
 
+        return self.json_to_response(fechaI, fechaF)
 
+    def json_to_response(self, fechaI, fechaF):
+        Data = list()
 
+        registros = ConBanco.objects.raw('select id, fecha, '
+                                         'descripcion, tipo, '
+                                         'monto, estatus '
+                                         'from conciliacion_conbanco '
+                                         'WHERE fecha BETWEEN ' + fechaI + ' AND ' + fechaF)
 
+        for detalle in registros:
+            Data.append({
+                'id': detalle.id,
+                'fecha': detalle.fecha,
+                'descripcion': detalle.descripcion,
+                'tipo': detalle.tipo,
+                'monto': detalle.monto,
+                'estatus': detalle.estatus,
+            })
 
-
-
-
-
-
-
-
-
+        return JsonResponse(Data, safe=False)

@@ -45,7 +45,7 @@ from cxp.views import CxpView, cxpSuperView
 
 from activofijo.views import ActivosView, DepresiacionView
 
-from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView
+from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView
 
 #ViewSets (API)
 
@@ -54,7 +54,7 @@ from cuenta.views import DiarioViewSet, TipoDocViewSet
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet
-from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet
+from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
@@ -322,7 +322,9 @@ urlpatterns = patterns('',
     url(r'^conciliacion/Solicitudcheque$', SolicitudView.as_view(), name='Solicitud_Cheques'),
     url(r'^conciliacion/Cheques$', ChequesView.as_view(), name='Cheques_Conciliacion'),
     url(r'^conciliacion/notas$', NotasConciliacionView.as_view(), name='Notas_Conciliacion'),
+    url(r'^conciliacion/notas/rg',SSNotasView.as_view(), name='Notas_Fechas' ),
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
+    url(r'^conciliacion/banco/rg', ConBancoLs.as_view(), name='Banco_Fechas'),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),
