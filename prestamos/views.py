@@ -11,7 +11,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer
+from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer, MaestraPrestamosListadoSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
@@ -143,6 +143,27 @@ class PagoCuotasPrestamoAPIViewByNoPrestamo(APIView):
 			pagos = PagoCuotasPrestamo.objects.filter(noPrestamo__noPrestamo=noPrestamo).order_by('-fechaPago')
 
 		response = self.serializer_class(pagos, many=True)
+		return Response(response.data)
+
+
+# Listado de Prestamos Por Rango de Fecha
+class PrestamosAPIViewByRangoFecha(APIView):
+
+	serializer_class = MaestraPrestamosListadoSerializer
+
+	def get(self, request, fechaI, fechaF, estatus=None, categoria=None, tipoPrestamo=None):
+
+		varTipoPrestamo = TipoPrestamo.objects.all().values('id') if tipoPrestamo == None else tipoPrestamo
+		varCategoria = CategoriaPrestamo.objects.all().values('id') if categoria == None else categoria
+
+		if estatus != None:
+			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), estatus=estatus, \
+						categoria__in=varCategoria, tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+		else:
+			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), categoria__in=varCategoria, \
+						tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+
+		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)
 
 
