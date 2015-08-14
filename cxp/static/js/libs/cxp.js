@@ -433,8 +433,8 @@
             };
 
           
-                                } ]
-                                )
+            }])
+
     .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout' 
         , function ($scope, $filter, $rootScope, cxpService, $timeout) {
 

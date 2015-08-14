@@ -114,12 +114,32 @@
 		function ($scope, $filter, $rootScope, ChequesServices, $timeout) {
 		$scope.LsSolicitud = [];
 		$scope.Solicitud = null;
+		$scope.LsCheques = [];
 		$scope.reCheque = null;
-		$scope.ToggleCh = true;
+		$scope.ToggleCh = false;
+		$scope.ToggleSl = false;
+		$scope.ToggleNCh = false;
+
+		$scope.listSolicitud = function($event){
+			$event.preventDefault();
+
+			$scope.ToggleSl = true;
+			$scope.ToggleNCh = false;
+			$scope.ToggleCh = false;
+		};
+
+		$scope.listCheques = function($event){
+			$event.preventDefault();
+
+			$scope.ToggleSl = false;
+			$scope.ToggleNCh = false;
+			$scope.ToggleCh = true;
+		};
 
 		$scope.getSolicitudes = function($event){
 			getSolicitudByStatus('P').then(function (data){
 				$scope.LsSolicitud = data;
+
 			});
 		};
 
@@ -160,6 +180,15 @@
 			 catch (e) {
 	          $rootScope.mostrarError(e);
 	        }
+		};
+
+		$scope.printChk = function($event){
+		};
+
+		$scope.cancelRegistro = function($event){
+			$scope.ToggleCh = false;
+			$scope.ToggleSl = true;
+			$scope.ToggleNCh = false;
 		};
 		
 	}]);

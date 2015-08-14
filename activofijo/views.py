@@ -145,6 +145,8 @@ class DepresiacionView(TemplateView):
     def post(self, request, *args, **kwargs):
         Data = json.loads(request.body)
         Dcuentas = Data['cuentas']
+        fechaF = request.GET.get('fechaF')
+
         activos = Activos.objets.filter(estatus='A')
 
         for act in activos:
@@ -155,7 +157,7 @@ class DepresiacionView(TemplateView):
 
             regDesp = Depresiacion()
             regDesp.activoId = act.id
-            regDesp.fecha = Data['fecha']
+            regDesp.fecha = fechaF
             regDesp.dMensual = antDesp.dMensual
             regDesp.dAcumulada = antDesp.dAcumulada
             if antDesp.fecha.month == 12:
@@ -167,7 +169,7 @@ class DepresiacionView(TemplateView):
 
             for cta in Dcuentas:
                 diario = DiarioGeneral()
-                diario.fecha = Data['fecha']
+                diario.fecha = fechaF
                 diario.referencia = 'DEP-' + regDesp.id
                 if cta['cuenta'] is not None:
                     cuenta = cuenta.objects.get(codigo=cta['cuenta'])

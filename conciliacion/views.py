@@ -58,8 +58,6 @@ class SolicitudView(TemplateView):
                 'fecha': sol.fecha,
                 'socioId': sol.socio.id,
                 'socio': sol.socio.nombreCompleto,
-                'beneficiarioId': sol.CoBeneficiario.id,
-                'beneficiario': sol.CoBeneficiario.nombre,
                 'concepto': sol.concepto,
                 'monto': sol.monto,
                 'cuenta': [{
@@ -83,16 +81,12 @@ class SolicitudView(TemplateView):
         Data = DataT['solicitud']
 
         if Data['id'] is None:
-            socio = Socio.objects.get(id=Data['socio'])
-            if Data['beneficiario'] is not None:
-                bene = CoBeneficiario.objects.get(id=Data['beneficiario'])
+            socio = Socio.objects.get(id=Data['socioId'])
 
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
             solicitud.socio = socio
             solicitud.concepto = Data['concepto']
-            if Data['Beneficiario'] is not None:
-                solicitud.beneficiario = bene
             solicitud.monto = Data['monto']
             solicitud.estatus = Data['estatus']
             solicitud.save()
@@ -250,7 +244,6 @@ class SSNotasView(DetailView):
             })
 
         return JsonResponse(Data, safe=False)
-
 
 
 class ConBancoView(TemplateView):

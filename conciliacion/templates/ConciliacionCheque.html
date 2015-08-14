@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %} Cheques {% endblock title %}
+
+{% block content %}
+	<div class="cheques" ng-controller="ChequeCtrl">
+		<div class="cheque-botons">
+			<button class="Boton BusquedaBtn icon-save" type="submit" ng-click="listSolicitud($event)">Solicitudes</button>
+			<button class="Boton BusquedaBtn icon-save" type="submit" ng-click="listCheques($event)">Cheques</button>
+
+		</div>
+		<div class="cheque-lista" ng-show="ToggleSl">
+			<table class="cheque-table">
+				<tr>
+					<td># Registro</td>
+					<td>Fecha</td>
+					<td>Socio</td>
+					<td>Concepto</td>
+					<td>Monto</td>
+					<td>Convertir a cheque</td>
+				</tr>
+				<tr ng-repeat="s in LsSolicitud">
+					<td>[[s.id]]</td>
+					<td>[[s.fecha]]</td>
+					<td>[[s.socio]]</td>
+					<td>[[s.concepto]]</td>
+					<td>[[s.monto]]</td>
+					<td> <a href="#" class="utils-noDecoration icon-banknote" ng-click="setAhorro()"></a></td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="cheque-lista-ch" ng-show="ToggleCh">
+			<table class="cheque-table">
+				<tr>
+					<td># Registro</td>
+					<td>Solicitud</td>
+					<td>No Cheque</td>
+					<td>Fecha</td>
+					<td>Estatus</td>
+					<td>Imprimir</td>
+				</tr>
+				<tr ng-repeat="ch in LsCheques">
+					<td>[[ch.id]]</td>
+					<td>[[ch.solicitud]]</td>
+					<td>[[ch.noCheque]]</td>
+					<td>[[ch.fecha]]</td>
+					<td>
+						<div ng-if="ch.estatus == 'P' ">
+							Posteada
+						</div>
+						<div ng-if="ch.estatus == 'R' ">
+							Registrado
+						</div>
+						<div ng-if="ch.estatus == 'N' ">
+							Nulo
+						</div>
+						<div ng-if="ch.estatus == 'T' ">
+							Transito
+						</div>
+					</td>
+					<td> <a href="#" class="utils-noDecoration icon-print" ng-click="printChk()"></a></td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="cheque-nw" ng-show="ToggleNCh">
+			<form action="" id="ChequeForm" ng-submit="setConCheque($event)" class="cheque-formulario">
+				<table>
+					<tr>
+						<td>
+							# Registro
+						</td>
+						<td>
+							<input type="text" ng-model="reCheque.id" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td>Solicitud</td>
+						<td><input type="text" ng-model="reCheque.solicitudId" disabled></td>
+					</tr>
+					<tr>
+						<td>No Cheque</td>
+						<td><input type="text" ng-model="reCheque.noCheque"></td>
+					</tr>
+					<tr>
+						<td>Fecha</td>
+						<td><input type="text" ng-model="reCheque.fecha" value="[[reCheque.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+					</tr>
+					<tr>
+						<div ng-if="reCheque.id !== null and  reCheque.id !== undefine">
+							<td>Estatus</td>
+							<td><input type="text" ng-model="reCheque.estatus"></td>
+						</div>
+					</tr>
+					<tr>
+						<td>
+							<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRetiro()">Limpiar</button>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+
+{% endblock content 

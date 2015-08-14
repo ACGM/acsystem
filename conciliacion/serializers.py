@@ -7,7 +7,7 @@ class solicitudSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SolicitudCheque
         many = True
-        fields = ('id', 'fecha', 'socio', 'beneficiario', 'concepto', 'monto', 'cuentas')
+        fields = ('id', 'fecha', 'socio', 'concepto', 'monto', 'cuentas')
 
 
 class chequesSerializer(serializers.HyperlinkedModelSerializer):

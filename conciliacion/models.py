@@ -2,15 +2,13 @@ from django.db import models
 
 from cuenta.models import DiarioGeneral
 
-from administracion.models import Socio, CoBeneficiario
-
+from administracion.models import Socio
 
 class SolicitudCheque(models.Model):
     estatus_choicer = (('p', 'Posteado'), ('R', 'Registrado'), ('C', 'Cancelado'))
 
     fecha = models.DateTimeField()
     socio = models.ForeignKey(Socio)
-    beneficiario = models.ForeignKey(CoBeneficiario, null=True, blank=True )
     concepto = models.CharField(max_length=150, null=False, blank=False)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=False, null=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')

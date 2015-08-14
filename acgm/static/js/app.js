@@ -16,7 +16,12 @@
     'cooperativa.solicitudod',
     'cooperativa.cxp',
     'cooperativa.desembolsoelectronico',
-    'cooperativa.contabilidad'
+    'cooperativa.contabilidad',
+    'cooperativa.chequeConc',
+    'cooperativa.conciliacionBanco',
+    'cooperativa.solicitudCheque',
+    'cooperativa.notaConc',
+    'cooperativa.activofijo'
     ]);
 
   app.factory('appService', ['$http', '$q', '$filter', function ($http, $q, $filter) {

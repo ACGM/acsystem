@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %} Solicitud Cheque {% endblock title %}
+
+{% block content %}
+<div class="SolicitudCon" ng-controller="SolicitudChCtrl">
+	
+	<section id="SearchData">
+		<div class="content-socios-table">
+			<table class="socios-table-search-panel" ng-show="tableSocio">
+				<tr>
+					<td colspan="3" class="cerrar-table">
+						<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+					</td>
+				</tr>
+				<tr class="socios-table-header">
+					<td>Codigo</td>
+					<td>Nombre</td>
+					<td>Departamento</td>
+				</tr>
+				<tr ng-repeat="s in socios" class="socios-table-detail-search">
+					<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+					<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+					<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+				</tr>
+			</table>
+		</div>
+
+	</section>
+
+	<div class="SolicitudCon-estatus"  ng-show="toggleLs">
+		<select name="status" ng-model="DEstatus" ng-disable="editer">
+							  <option value="R" ng-click="solicitudEstatus('R')">Registrado</option>
+							  <option value="C" ng-click="solicitudEstatus('C')">Cancelado</option>
+							  <option value="P" ng-click="solicitudEstatus('P')">Posteada</option>
+	</div>
+	<div class="SolicitudCon-lista"  ng-show="toggleLs">
+		<table class="SolicitudCon-table" ng-show="toggleLs">
+			<tr>
+				<td>Registro</td>
+				<td>Fecha</td>
+				<td>Socio</td>
+				<td>Concepto</td>
+				<td>Monto</td>
+				<td></td>
+			</tr>
+			<tr class="SolicitudCon-detalle" ng-repeat="s in lsSolicitud">
+				<td>s.id</td>
+				<td>s.fecha</td>
+				<td>s.socio</td>
+				<td>s.concepto</td>
+				<td>s.monto</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+	
+	<div class="SolicitudCon-Crear"  ng-show="toggleCr">
+		<form action="" id="SolicitudForm" ng-submit="setSolicitud($event)" class="SolicitudCon-formulario">
+			<table>
+				<tr>
+					<td>Socio</td>
+					<td><input type="text" ng-keyup="getSocio($event)" ng-model="solicitud.socio" ng-focus="tableSocio=false" placeholder="Código o nombre del Socio"  ng-click="tableSocio=false; errorShow=false;" required></td>
+				</tr>
+				<tr>
+					<td>Fecha</td>
+					<td><input type="text" ng-model="solicitud.fecha"  value="[[solicitud.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+				</tr>
+				<tr>
+					<td>Concepto</td>
+					<td>
+						<input type="text" ng-model="solicitud.concepto">
+					</td>
+				</tr>
+				<tr>
+					<td>Monto</td>
+					<td><input type="text" ng-model="solicitud.monto" value="[[solicitud.monto | number: 2 ]"></td>
+				</tr>
+				<tr>
+					<div ng-if="solicitud.estatus !== null or solicitud.estatus !==undefined"> 
+						 <td>Estatus</td>
+						 <td>
+						 	<select name="EstatusS" form="SolicitudForm" ng-model="solicitud.estatus">
+							  <option value="P">Solicitud Posteada</option>
+							  <option value="R">Solicitud Registrada</option>
+							  <option value="C">Solicitud Cancelada</option> 
+							</select>
+						 </td>
+					</div>
+				</tr>
+				<tr>
+					<td>
+						<button class="Boton BusquedaBtn icon-save" type="submit">Guardar</button>
+					</td>
+					<td>
+						<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="cancelarSolicitud()">Cancelar</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+</div>
+
+{% endblock content %}

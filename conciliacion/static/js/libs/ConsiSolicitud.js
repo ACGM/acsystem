@@ -66,21 +66,38 @@
 			});
 			return deferred.promise;
 		};
+
+		function socios() {
+                var deferred = $q.defer();
+
+                $http.get('/api/socio/?format=json')
+                  .success(function (data) {
+                    deferred.resolve(data.filter( function(socio) {
+                      return socio.estatus == "E" || socio.estatus == "S";
+
+                    }));
+                  });
+                  return deferred.promise;
+            }
 	
 		return {
 			getSolicitudes : getSolicitudes,
 			setSolicitud : setSolicitud,
 			getSolicitudesById  :  getSolicitudesById,
-			getSolicitudByStatus : getSolicitudByStatus
+			getSolicitudByStatus : getSolicitudByStatus,
+			socios		 : socios
 		};
 	}])
 	
 	.controller('SolicitudChCtrl', ['$scope','$filter', '$rootScope', 'SolicitudServices','$timeout',
 		function ($scope, $filter, $rootScope, SolicitudServices, $timeout) {
 		$scope.lsSolicitud = [];
+		$scope.socios = [];
 		$scope.solicitud = null;
+		$scope.tableSocio =false;
 		$scope.toggleCr = false;
-		$scope.SolEstatus = null;
+		$scope.toggleLs =true;
+
 
 		//Lista las solicitudes realizadas.
 		$scope.solicitudList = function(){
@@ -89,11 +106,21 @@
 			});
 		};
 
+		$scope.selSocio = function($event, s) {
+	   		$event.preventDefault();
+
+	        $scope.solicitud.socioId = s.codigo;
+	        $scope.solicitud.socio = s.nombreCompleto 
+
+	        $scope.tableSocio = false;
+	      };
+
+
 		//Lista las Solicitudes por estatus.
-		$scope.solicitudEstatus = function($event){
+		$scope.solicitudEstatus = function($event, estatus){
 			$event.preventDefault();
         	try {
-				SolicitudServices.getSolicitudByStatus($scope.SolEstatus).then(function (data){
+				SolicitudServices.getSolicitudByStatus(estatus).then(function (data){
 					$scope.lsSolicitud = data;
 				});
 			}
@@ -110,22 +137,78 @@
 		};
 
 		$scope.setSolicitud = function($event){
-				try{
-					SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
-						var resp = data;
-					});
-				}
-				catch(e){
-					$rootScope.mostrarError(e);
-				}
+			$event.preventDefault();
+			try{
+				SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+					var resp = data;
+				});
+			}
+			catch(e){
+				$rootScope.mostrarError(e);
+			}
 		};
 
-		//Regustra una nueva solicitud.
+		//Registra una nueva solicitud.
 		$scope.CrSolicitud = function($event){
-			var result = SolicitudServices.setSolicitud($scope.solicitud);
-			$scope.lsSolicitud = [];
-			$scope.solicitudList();
+			$event.preventDefault();
+			
+			try {
+				var result = SolicitudServices.setSolicitud($scope.solicitud);
+				$scope.lsSolicitud = [];
+				$scope.solicitudList();
+			}
+			 catch (e) {
+	          $rootScope.mostrarError(e);
+	        }
 		};
+
+		$scope.cancelarSolicitud = function($event){
+			$event.preventDefault();
+			
+			$scope.solicitud = null;
+			$scope.tableSocio =false;
+			$scope.toggleCr = false;
+			$scope.toggleLs =true;
+
+			$scope.solicitudList();
+
+		}
+
+		$scope.getSocio = function($event) {
+	            $event.preventDefault();
+
+	            $scope.tableSocio = true;
+
+	            if($scope.solicitud.socio !== undefined) {
+	              AhorroServices.socios().then(function (data) {
+	                $scope.socios = data.filter(function (registro) {
+	                  return $filter('lowercase')(registro.codigo.toString()
+	                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	                });
+
+	                if($scope.socios.length == 0){
+	                	$scope.socios = data.filter(function (registro) {
+	                  return $filter('lowercase')(registro.nombreCompleto
+	                  		.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	                });
+	                }
+
+	                if($scope.socios.length > 0){
+	                  $scope.tableSocio = true;
+	                  $scope.socioNoExiste = '';
+	                } else {
+	                  $scope.tableSocio = false;
+	                  $scope.socioNoExiste = 'No existe el socio';
+	                }
+
+	              });
+	            } else {
+	              AhorroServices.socios().then(function (data) {
+	                $scope.socios = data;
+	                $scope.socioCodigo = '';
+	              });
+	            }
+	          };
 
 	}]);
 })();
