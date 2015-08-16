@@ -37,7 +37,7 @@
 	<nav id="idmenu" class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
-			<li ng-disabled="true" class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#" a-disabled="{{prestamos}}">Prestamos</a> </li>
+			<li ng-disabled="true" class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#" >Prestamos</a> </li>
 			<li class="menu-item" id="menu3"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
 			<li ng-hide="{{contabilidad}}" class="menu-item" id="menu4"> <a class="menu-opcion" ng-click="ShowSubMenuCont(true)"
 			ng-mouseleave-"ShowSubMenuCont(false)" href="#">Contabilidad</a></li>
@@ -56,23 +56,25 @@
 
 	<!-- SUB MENU DE PRESTAMOS -->
 	<ul class="sub-menu-prestamos" ng-show="SubMPrestamo" ng-mouseover="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)">
-		<li><a href="/prestamos/solicitudP" a-disabled="{{prestamos1}}">Solicitud de Prestamo</a></li>
-		<li><a href="/prestamos/solicitudOD" a-disabled="{{prestamos2}}">Solicitud de Orden de Despacho</a></li>
-		<li><a href="/prestamos/maestra" a-disabled="{{prestamos3}}">Maestra de Prestamos</a></li>
-		<li><a href="/prestamos/desembolso" a-disabled="{{prestamos4}}">Desembolso Electronico</a></li>
-		<li><a href="/prestamos/nd" a-disabled="{{prestamos5}}">Nota de Debito</a></li>
-		<li><a href="/prestamos/nc" a-disabled="{{prestamos6}}">Nota de Credito</a></li>
-		<li><a href="/prestamos/nce" a-disabled="{{prestamos7}}">Nota de Credito Especial</a></li>
-		<li><a href="/prestamos/distribucion-intereses" a-disabled="{{prestamos17}}">Distribucion de Intereses</a></li>
+		<li><a href="/prestamos/solicitudP" a-disabled="{{SolicitudPrestamo}}">Solicitud de Prestamo</a></li>
+		<li><a href="/prestamos/solicitudOD" a-disabled="{{SolicitudOrdenDespacho}}">Solicitud de Orden de Despacho</a></li>
+		<li><a href="/prestamos/maestra" a-disabled="{{MaestraPrestamos}}">Maestra de Prestamos</a></li>
+		<li><a href="/prestamos/desembolso" a-disabled="{{DesembolsoElectronico}}">Desembolso Electronico</a></li>
+		<li><a href="/prestamos/nd" a-disabled="{{NotaDebito}}">Nota de Debito</a></li>
+		<li><a href="/prestamos/nc" a-disabled="{{NotaCredito}}">Nota de Credito</a></li>
+		<li><a href="/prestamos/nce" a-disabled="{{NotaCreditoEspecial}}">Nota de Credito Especial</a></li>
+		<li><a href="/prestamos/distribucion-intereses" a-disabled="{{DistribucionIntereses}}">Distribucion de Intereses</a></li>
 		<li><hr/></li>
-		<li><a href="/prestamos/reportes/solicitudesPrestamos/" a-disabled="{{prestamos8}}">Solicitudes de Prestamos Emitidas</a></li>
-		<li><a href="/prestamos/reportes/solicitudesOD/" a-disabled="{{prestamos9}}">Solicitudes Orden de Despacho</a></li>
-		<li><a href="/prestamos/reportes/prestamos" a-disabled="{{prestamos10}}">Consulta Prestamos</a></li>
-		<li><a href="/prestamos/reportes/prestamosClasif" a-disabled="{{prestamos11}}">Prestamos por Clasificacion (Resumido)</a></li>
-		<li><a href="/prestamos/reportes/nc" a-disabled="{{prestamos12}}">Reporte Notas de Credito</a></li>
-		<li><a href="/prestamos/reportes/nd" a-disabled="{{prestamos13}}">Reporte Notas de Debito</a></li>
-		<li><a href="/prestamos/reportes/cartera" a-disabled="{{prestamos14}}">Cartera General de Prestamos</a></li>
-		<li><a href="/prestamos/reportes/prestamosPosteados" a-disabled="{{prestamos15}}">Prestamos Posteados</a></li>
+
+		<li><a href="/prestamos/reportes/solicitudesPrestamos/" a-disabled="{{SolicitudPrestamosEmitidas}}">Solicitudes de Prestamos Emitidas</a></li>
+		<li><a href="/prestamos/reportes/solicitudesOD/" a-disabled="{{SolicitudOrdenDespacho}}">Solicitudes Orden de Despacho</a></li>
+		<li><a href="/prestamos/reportes/prestamos" a-disabled="{{ConsultaPrestamos}}">Consulta Prestamos</a></li>
+		<li><a href="/prestamos/reportes/prestamosClasif" a-disabled="{{PrestamosPorClasificacion}}">Prestamos por Clasificacion (Resumido)</a></li>
+		<li><a href="/prestamos/reportes/nc" a-disabled="{{ReporteNotaCredito}}">Reporte Notas de Credito</a></li>
+		<li><a href="/prestamos/reportes/nd" a-disabled="{{ReporteNotaDebito}}">Reporte Notas de Debito</a></li>
+		<li><a href="/prestamos/reportes/cartera" a-disabled="{{CarteraGeneralPrestamos}}">Cartera General de Prestamos</a></li>
+		<li><a href="/prestamos/reportes/prestamosPosteados" a-disabled="{{PrestamosPosteados}}">Prestamos Posteados</a></li>
+
 	</ul>
 
 	<!-- SUB MENU DE INVENTARIO -->
@@ -120,8 +122,6 @@
 		<li><a href="">Estado de Sutuación</a></li>
 	</ul>
 	</nav>
-
-	
 
 	{% block content %}
 

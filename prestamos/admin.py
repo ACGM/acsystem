@@ -52,7 +52,9 @@ class SolicitudOrdenDespachoDAdmin(admin.ModelAdmin):
 @admin.register(MaestraPrestamo)
 class MaestraPrestamoAdmin(admin.ModelAdmin):
 
-	list_display = ['noPrestamo', 'fechaDesembolso','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio']
+	list_display = ['noPrestamo', 'fechaDesembolso','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio', 'representante', \
+					'oficial', 'localidad', 'montoInicial', 'tasaInteresAnual', 'tasaInteresMensual', 'cantidadCuotas', 'montoCuotaQ1', 'montoCuotaQ2', \
+					'usuarioDesembolso', 'valorGarantizado', 'balance', 'quincenas', 'tipoPrestamoNomina', 'archivoBanco', 'estatus']
 	search_fields = ('noPrestamo',)
 
 
