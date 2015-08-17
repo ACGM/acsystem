@@ -478,6 +478,11 @@
         $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
         $scope.solicitud.tasaInteresMensual = $filter('number')(cp.interesAnualSocio / 12, 2);
         $scope.showCP = false;
+
+        //Calcular los intereses y la cuota capital+intereses.
+        var valorGarant = $scope.solicitud.valorGarantizado == undefined? $scope.solicitud.prestacionesLaborales : $scope.solicitud.valorGarantizado;
+        calculosCuotaIntereses(valorGarant, $scope.solicitud.ahorrosCapitalizados.replace(',',''), $scope.solicitud.tasaInteresMensual, 
+                                $scope.solicitud.valorCuotas);
       }
 
       //Cuando se le de click al checkbox del header.
@@ -774,6 +779,10 @@
 
               $scope.calculaTotales();
 
+              //Calcular los intereses y la cuota capital+intereses.
+              var valorGarant = data[0]['valorGarantizado'] == '0'? data[0]['prestacionesLaborales'] : data[0]['valorGarantizado'];
+              calculosCuotaIntereses(valorGarant, data[0]['ahorrosCapitalizados'], data[0]['tasaInteresMensual'], data[0]['valorCuotasCapital']);
+
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
                 $scope.disabledButtonBool = false;
@@ -796,6 +805,16 @@
         }
 
         $scope.toggleLSP();
+      }
+
+      function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
+        var IBA = (ahorroCap * 0.005);
+        var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
+
+        $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
+        $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
+
+        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
       }
 
       //Agregar Articulo de Orden Despacho

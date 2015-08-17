@@ -320,16 +320,26 @@
 										<td><input type="text" class="field-short" ng-model="solicitud.tasaInteresMensual" readonly>%</td>
 									</tr>
 									<tr>
-										<td>Cantidad de cuotas</td>
+										<td>Cantidad de cuotas quin.</td>
 										<td><input type="text" class="field-short" ng-model="solicitud.cantidadCuotas" readonly required></td>
 									</tr>
 									<tr>
-										<td>Valor de Cuotas s/interes</td>
+										<td>Valor de Cuotas capital Q.</td>
 										<td><input type="text" ng-model="solicitud.valorCuotas" readonly required></td>
 									</tr>
-									<tr ng-if="solicitud.solicitudNo > 0">
-										<td>Valor de Cuotas c/interes</td>
-										<td><input type="text" ng-model="solicitud.valorCuotasCI" readonly></td>
+
+									<tr>
+										<td>Interes (Ahorros)</td>
+										<td><input type="text" ng-model="solicitud.interesBaseAhorro" readonly></td>
+									</tr>
+									<tr>
+										<td>Interes (Garantizado)</td>
+										<td><input type="text" ng-model="solicitud.interesBaseGarantizado" readonly></td>
+									</tr>
+									
+									<tr>
+										<td>Cuota capital+intereses Q.</td>
+										<td><input type="text" class="resaltar-valor" ng-model="solicitud.cuotaCapitalIntereses" readonly></td>
 									</tr>
 
 									<tr>
