@@ -16,25 +16,25 @@ class CxpOrdenView(DetailView):
 
     def post(self, request):
 
-        dataConsolidate = json.loads(request.body)
+        dataT = json.loads(request.body)
 
         try:
-            data = dataConsolidate['Orden']
-            dataDet = dataConsolidate['Detalle']
+            data = dataT['Orden']
+            dataDet = dataT['Detalle']
 
-            if None == data['id']:
-
+            if data['id'] is None:
+            
                 regOrden = OrdenCompra()
-                regOrden.suplidor = Suplidor.objects.get(id=data['suplidor'])
-                regOrden.socio = Socio.objects.get(codigo=data['socio'])
+                regOrden.suplidor = Suplidor.objects.get(id=data['suplidorId'])
+                regOrden.socio = Socio.objects.get(codigo=data['socioId'])
                 regOrden.orden = int(data['orden'])
                 regOrden.fecha = data['fecha']
                 regOrden.monto = decimal.Decimal(data['monto'])
                 regOrden.cuotas = int(data['cuotas'])
                 regOrden.montocuotas = decimal.Decimal(data['montoCuotas'])
-                regOrden.estatus = False
+                regOrden.estatus = data['estatus']
                 regOrden.save()
-
+            
                 for det in dataDet:
                     regDetalle = DetalleOrden()
                     regDetalle.articulo = det['articulo']
@@ -45,19 +45,23 @@ class CxpOrdenView(DetailView):
 
             else:
 
+                OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
+                OrdenCompra.objects.filter(id=data['id']).update(cuotas = decimal.Decimal(data['cuotas']))
+                OrdenCompra.objects.filter(id=data['id']).update(montocuotas = decimal.Decimal(data['montoCuotas']))
                 regOrden = OrdenCompra.objects.filter(id=data['id'])
-                regOrden.monto = decimal.Decimal(data['monto'])
-                regOrden.cuotas = int(data['cuotas'])
-                regOrden.montocuotas = decimal.Decimal(data['montoCuotas'])
-                regOrden.save()
-
                 for det in dataDet:
-                    regDetalle = DetalleOrden.objects.filter(id=det.id)
-                    regDetalle.articulo = det['articulo']
-                    regDetalle.monto = decimal.Decimal(det['monto'])
-                    regDetalle.save()
-
-            return HttpResponse('1')
+                    if det['id'] is None:
+                        regDetalle = DetalleOrden()
+                        regDetalle.articulo = det['articulo']
+                        regDetalle.monto = decimal.Decimal(det['monto'])
+                        regDetalle.orden = regOrden.id
+                        regDetalle.save()
+                        regOrden.detalleOrden.add(regDetalle)
+                    else:
+                        DetalleOrden.objects.filter(id=det.id).update(articulo = det['articulo'])
+                        DetalleOrden.objects.filter(id=det.id).update(monto = decimal.Decimal(det['monto']))
+            
+            return HttpResponse('Ok')
         except Exception as ex:
             return HttpResponse(ex)
 

@@ -13,7 +13,7 @@
 						Fecha Inicial:
 					</td>
 					<td>
-						<input type="text" ng-model="registro.finicial" value="[[ | date: 'dd/MM/yyyy']]" datepicker>
+						<input type="text" ng-model="registro.finicial" value="[[ registro.finicial | date: 'dd/MM/yyyy']]" datepicker>
 					</td>
 				</tr>
 				<tr>
@@ -21,7 +21,7 @@
 						Fecha Final:
 					</td>
 					<td>
-						<input type="text" ng-model="registro.ffinal" value"[[] |date: 'dd/MM/yyyy']" datepiker>
+						<input type="text" ng-model="registro.ffinal" value"[[registro.ffinal |date: 'dd/MM/yyyy']]" datepiker>
 					</td>
 				</tr>
 				<tr>

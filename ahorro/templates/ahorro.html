@@ -51,6 +51,7 @@
 									<th>Socio</th>
 									<th>Balance</th>
 									<th>Disponible</th>
+									<th>Estatus</th>
 									<th>Imprimir</th>
 								</tr>
 								<tr ng-repeat="ahorro in Ahorros" class="listado-ar-detail">
@@ -58,6 +59,10 @@
 									<td>[[ahorro.socio]] </td>
 									<td class="utils-alingTRight"> [[ahorro.balance |number:2]]</td>
 									<td class="utils-alingTRight"> [[ahorro.disponible |number:2]] </td>
+									<td>
+										<div ng-if="ahorro.estatus=='A'">Activo</div>
+										<div ng-if="ahorro.estatus=='I'">Inactivo</div>
+									</td>
 									<td> <a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-printer" ng-click="setAhorro()"></a></td>
 								</tr>
 								

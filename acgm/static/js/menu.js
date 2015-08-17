@@ -27,5 +27,14 @@
 		    	$scope.SubCont = valor;
 		    }
 
+		    $scope.ShowSubMenuActivo = function(valor){
+		    	$scope.SubActivo = valor;
+		    	
+		    }
+
+		    $scope.ShowSubMenuAhorro = function(valor){
+		    	$scope.SubMAhorro = valor;
+		    }
+
 		}]);
 })();

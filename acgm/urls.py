@@ -41,7 +41,7 @@ from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, g
 from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito, NotaDeDebitoById
 from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guardarNotaCredito, NotaDeCreditoById
 
-from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro
+from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
 from cxp.views import CxpView, cxpSuperView
 
@@ -55,7 +55,7 @@ from cuenta.views import DiarioViewSet, TipoDocViewSet
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
-from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet
+from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet, generarAhorro
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
@@ -306,6 +306,8 @@ urlpatterns = patterns('',
     url(r'^ahorro/$', AhorroView.as_view(), name='Ahorro'),
     url(r'^ahorrojson/$', MaestraAhorroView.as_view(), name='Maestra_Ahorro'),
     url(r'^impAhorro/$', impRetiroAHorro.as_view(), name='Imprimir_ahorro'),
+    url(r'^generarAhorro/$',generarAhorro.as_view(), name='generar_ahorro'),
+    url(r'^generarInteres/$', generarInteres.as_view(), name='generar_interes'),
 
     #Cuentas
     url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
@@ -321,7 +323,7 @@ urlpatterns = patterns('',
 
     #ActivoFijo
     url(r'^activos/$', ActivosView.as_view(), name='ActivoFijo'),
-    url(r'^depresiacion/$', DepresiacionView.as_view, name='Depresiacion'),
+    url(r'^depresiacion/$', DepresiacionView.as_view(), name='Depresiacion'),
 
     #Conciliacion Bancaria
     url(r'^conciliacion/Solicitudcheque$', SolicitudView.as_view(), name='Solicitud_Cheques'),

@@ -17,7 +17,7 @@
 				});
 			 return deferred.promise;
 			};
-		};
+		
 
 		function setBanco(banco){
 				var deferred = $q.defer();

@@ -28,14 +28,9 @@ class ActivosSerializer(viewsets.ModelViewSet):
     queryset = Activos.objects.all()
     serializer_class = ActivosSerializer
 
-
-class ActivosTemplate(TemplateView):
-    template_name = 'Activos.html'
-
-
 # Clase busqueda y creacion basica
-class ActivosView(DetailView):
-    queryset = Activos.objects.all()
+class ActivosView(TemplateView):
+    template_name = 'Activos.html'
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -50,7 +45,7 @@ class ActivosView(DetailView):
     # Devuelve la estructura de los activos
     def json_to_JsonResponse(self):
         data = list()
-        for activo in self.object_list:
+        for activo in Activos.objects.all():
             data.append({
                 'id': activo.id,
                 'descripcion': activo.descripcion,

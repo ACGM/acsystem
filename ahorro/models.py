@@ -17,11 +17,14 @@ class InteresesAhorro(models.Model):
 
 # Almacena el ahorro y disponible de cada Socio
 class AhorroSocio(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivo'))
+
     socio = models.ForeignKey(Socio, unique=True)
     balance = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False,
                                   verbose_name="Balance Socio")
     disponible = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False,
                                      verbose_name="Disponible")
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
 
     def __unicode__(self):
         return '%s-%s' % (str(self.pk), self.socio.nombreCompleto)

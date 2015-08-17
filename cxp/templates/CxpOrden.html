@@ -17,7 +17,8 @@
 		<div ng-show="OrdenList">
 			<table class="listado-table-f" id="table-lf-listado" ng-init="getAllData()">
 						<tr class="listado-table-header-f">
-							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td>
+							<!-- <td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td> -->
+							<td># Registro</td>
 							<td>Estatus</td>
 							<td>Fecha</td>
 							<td>Orden</td>
@@ -30,10 +31,11 @@
 						</tr>
 
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
-							<td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td>
+							<!-- <td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td> -->
+							<td><a href="#" class="sp-field" ng-click="selOrdenById(Orden.id)">[[Orden.id]]</a></td>
 							<td class="icon-folder estatus-[[Orden.estatus]]"></td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
-							<td><a href="#" class="sp-field" ng-click="selOrden(Orden.orden)"> [[Orden.orden | numberFixedLen: 8]] </a></td>
+							<td>[[Orden.orden | numberFixedLen: 8]]</td>
 							<td>[[Orden.socio ]]</td>
 							<td>[[Orden.suplidor]]</td>
 							<td>[[Orden.monto | number: 2]]</td>

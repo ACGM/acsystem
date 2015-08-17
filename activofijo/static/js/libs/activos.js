@@ -163,7 +163,7 @@
 						ActivoServices.setDepresiacion($scope.cuentas, $scope.fechaDesp);
 					}
 					else{
-						$rootScope.mostrarError("No hay cuentas definidas.");.
+						$rootScope.mostrarError("No hay cuentas definidas.");
 					}
 
 				}
@@ -172,8 +172,8 @@
 				}
 
 				
-					}
 			};
+			
 
 		}]);
 
