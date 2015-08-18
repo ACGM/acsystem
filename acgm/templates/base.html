@@ -36,11 +36,24 @@
 	
 	<nav id="idmenu" class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
-			<li class="menu-item" id="menu1"> <a class="menu-opcion" href="/ahorro">Ahorros</a> </li>
-			<li ng-disabled="true" class="menu-item" id="menu2"> <a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#" >Prestamos</a> </li>
-			<li class="menu-item" id="menu3"> <a class="menu-opcion" href="#">Activos Fijos</a> </li>
-			<li ng-hide="{{contabilidad}}" class="menu-item" id="menu4"> <a class="menu-opcion" ng-click="ShowSubMenuCont(true)"
-			ng-mouseleave-"ShowSubMenuCont(false)" href="#">Contabilidad</a></li>
+			<li class="menu-item" id="menu1" ng-hide="{{Ahorro}}"> 
+				<a class="menu-opcion" href="#" ng-click="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(true)">Ahorros</a> 
+			</li>
+
+			<li ng-disabled="true" class="menu-item" id="menu2"> 
+
+				<a class="menu-opcion" ng-click="ShowSubMenuP(true)" ng-mouseleave="ShowSubMenuP(false)" href="#" >Prestamos</a> </li>
+
+			<li class="menu-item" id="menu3"> 
+				<a class="menu-opcion" ng-click="ShowSubMenuActivo(true)" 
+				ng-mouseleave="ShowSubMenuActivo(false)" href="#">Activos Fijos</a>
+			 </li>
+
+			<li ng-hide="{{contabilidad}}" class="menu-item" id="menu4">
+				 <a class="menu-opcion" ng-click="ShowSubMenuCont(true)"
+							ng-mouseleave-"ShowSubMenuCont(false)" href="#">Contabilidad</a>
+			</li>
+
 			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
 			<li class="menu-item" id="menu6"> <a class="menu-opcion" href="/desembolso">Desembolsos</a></li>
 			
@@ -65,6 +78,7 @@
 		<li><a href="/prestamos/nce" a-disabled="{{NotaCreditoEspecial}}">Nota de Credito Especial</a></li>
 		<li><a href="/prestamos/distribucion-intereses" a-disabled="{{DistribucionIntereses}}">Distribucion de Intereses</a></li>
 		<li><hr/></li>
+
 		<li><a href="/prestamos/reportes/solicitudesPrestamos/" a-disabled="{{SolicitudPrestamosEmitidas}}">Solicitudes de Prestamos Emitidas</a></li>
 		<li><a href="/prestamos/reportes/solicitudesOD/" a-disabled="{{SolicitudesOrdenDespacho}}">Solicitudes Orden de Despacho</a></li>
 		<li><a href="/prestamos/reportes/prestamos" a-disabled="{{ConsultaPrestamos}}">Consulta Prestamos</a></li>
@@ -73,8 +87,15 @@
 		<li><a href="/prestamos/reportes/nd" a-disabled="{{ReporteNotasDebito}}">Reporte Notas de Debito</a></li>
 		<li><a href="/prestamos/reportes/cartera" a-disabled="{{CarteraGeneralPrestamos}}">Cartera General de Prestamos</a></li>
 		<li><a href="/prestamos/reportes/prestamosPosteados" a-disabled="{{PrestamosPosteados}}">Prestamos Posteados</a></li>
-	</ul>
 
+	</ul>
+	<!-- Sub Menu AHorro -->
+	<ul class="sub-menu-ahorro" ng-show="SubMAhorro" ng-mouseover="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(false)">
+		<li><a href="/ahorro">Retiro AHorro</a></li>
+		<li><a href="/generarAhorro">Generar Ahorro</a></li>
+		<li><a href="/generarInteres">Generar Interes</a></li>
+		<li><hr></li>
+	</ul>
 	<!-- SUB MENU DE INVENTARIO -->
 	<ul class="sub-menu-inventario" ng-show="SubMInventario" ng-mouseover="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)">
 		<li><a href="/inventario">Entrada de Inventario</a></li>
@@ -115,10 +136,19 @@
 	<ul class="sub-menu-contabilidad" ng-show="SubCont" ng-mouseover="ShowSubMenuCont(true)" ng-mouseleave="ShowSubMenuCont(false)">
 		<li><a href="/contabilidad/DiarioGeneral">Diario General</a></li>
 		<li><a href="/contabilidad/MayorGeneral">Mayor General</a></li>
-		<li><a href="">Balance General</a></li>
-		<li><a href="">Estado de Resultado</a></li>
-		<li><a href="">Estado de Sutuación</a></li>
+		<li><a href="#">Balance General</a></li>
+		<li><a href="#">Estado de Resultado</a></li>
+		<li><a href="#">Estado de Sutuación</a></li>
 	</ul>
+
+	<ul class="sub-menu-activo" ng-show="SubActivo " ng-mouseover="ShowSubMenuActivo(true)" ng-mouseleave="ShowSubMenuActivo(false)">
+		<li> <a href="/activos">Activos</a></li>
+		<li><a href="/depresiacion">Generar Depresiación</a></li>
+		<li><a href="#">Reporte de Activo</a></li>
+		<li><a href="#">Reporte Activos Depreciados</a></li>
+		
+	</ul>
+		
 	</nav>
 
 	{% block content %}
@@ -163,6 +193,11 @@
 	<script type="text/javascript" src={% static "js/libs/ahorro.js" %}></script>
 	<script type="text/javascript" src={% static "js/libs/cxp.js" %}></script>
 	<script type="text/javascript" src={% static "js/libs/contabilidad.js" %}></script>
+	<script type="text/javascript" src={% static "js/libs/activos.js"%}></script>
+	<script type="text/javascript" src={% static "js/libs/cheques.js"%}></script>
+	<script type="text/javascript" src={% static "js/libs/conciliacionBanco.js"%}></script>
+	<script type="text/javascript" src={% static "js/libs/consiSolicitud.js"%}></script>
+	<script type="text/javascript" src={% static "js/libs/notasConciliacion.js"%}></script>
 
 
 

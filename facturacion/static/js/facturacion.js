@@ -7,7 +7,8 @@
       //Guardar Factura
       function guardarFact(dataH, dataD) {
         var deferred = $q.defer();
-
+    
+        console.log(dataD);
         $http.post('/facturacion/', JSON.stringify({'cabecera': dataH, 'detalle': dataD})).
           success(function (data) {
             deferred.resolve(data);

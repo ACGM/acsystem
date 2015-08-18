@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} Generar Interes Ahorro {% endblock title%}
+
+{% block content %}
+
+<div class="Ahorro-generar" ng-controller="GenerarInteresCtrl" >
+	<section class="DiarioSearch" >
+		<div class="DiarioHidenTable">
+				<table>
+					<tr>
+						<td>Fecha Inicio</td>
+						<td><input type="text" ng-model="GrInteres.fechaI" value="[[GrInteres.fechaI | date: 'dd/MM/yyyy']]" datepicker></td>
+					</tr>
+					<tr>
+						<td>Fecha Fin</td>
+						<td><input type="text" ng-model="GrInteres.fechaF" value="[[GrInteres.fechaF | date: 'dd/MM/yyyy']]" datepicker></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button class="Boton BusquedaBtn icon-file" ng-click="generarInteres()">Generar Interes</button></td>
+					</tr>
+				</table>
+		</div>
+	</section>
+</div>
+
+{% endblock content%}

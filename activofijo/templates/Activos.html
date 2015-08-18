@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %} Activo Fijo {% endblock title %}
+
+{% block content %}
+
+<div class="Activos" ng-controller="ActivoCtrl">
+	<mensajeerror> </mensajeerror>
+	<mensajeinfo> </mensajeinfo>
+
+	<div class="Activo-Lista">
+		<table class="Activo-table" ng-show="actVs">
+			<tr class="Activo-table-header">
+				<td>Descripción</td>
+				<td>Categoria</td>
+				<td>Fecha Adquisición</td>
+				<td>Costo</td>
+				<td>Depresiación</td>
+			</tr>
+			<tr class="Activo-detalle" ng-repeat="a in lsActivos">
+				<td>[[a.descripcion]]</td>
+				<td>[[a.categoria]]</td>
+				<td>[[a.fecha]]</td>
+				<td>[[a.costo]]</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="Activo-Depresiacion-Lista">
+		<div class="Activo-Nombre">[[actData.descripcion]]</div>
+		<table class="Activo-table" ng-show="depVs">
+			<tr class="Activo-header">
+				<td>Fecha</td>
+				<td>Depresiación Mensual</td>
+				<td>Depresiación Acumulada</td>
+				<td>Depresiación en el Año</td>
+				<td>Balance segun Libro</td>
+			</tr>
+			<tr class="Activo-detalleDepresiacion" ng-repeat="d in depList">
+				<td>[[d.fecha]]</td>
+				<td>[[d.dMensual]]</td>
+				<td>[[d.dAcumulada]]</td>
+				<td>[[d.dAgno]]</td>
+				<td>[[d.vLibro]]</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="Activo-crear">
+		<form action="" id="activoForm" ng-submit="setActivo($event)" class="Activo-formulario">
+			<table>
+				<tr>
+					<td># Registro</td>
+					<td><input type="text" ng-model="actData.id" ng-disable="true" class="disable" readonly="">
+				</tr>
+				<tr>
+					<td>Descripción</td>
+					<td><input type="text" ng-model="actData.descripcion"></td>
+				</tr>
+				<tr>
+					<td>Categoria</td>
+					<td><input type="text" ng-model="actData.categoria"></td>
+				</tr>
+				<tr>
+					<td>Suplidor</td>
+					<td><input type="text" ng-model="actData.suplidor"></td>
+					<td>Factura</td>
+					<td><input type="text" ng-model="actData.factura"></td>
+				</tr>
+				<tr>
+					<td>Fecha Adquisición</td>
+					<td><input type="text" ng-model="actData.fechaAdq"></td>
+					<td>Fecha Depresiación</td>
+					<td><input type="text" ng-model="actData.fechaDep"></td>
+				</tr>
+				<tr>
+					<td>Años de Vida Util</td>
+					<td><input type="text" ng-model="actData.agnosVu"></td>
+					<td>Costo</td>
+					<td><input type="text" ng-model="actData.costo"></td>
+				</tr>
+				<tr>
+					<td>Localidad</td>
+					<td><input type="text" ng-model="actData.localidad"></td>
+				</tr>
+				<tr>
+					<td>
+						<button class="Boton BusquedaBtn icon-save" type="submit">Guardar</button>
+					</td>
+					<td>
+						<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="cancelarActivo()">Cancelar</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+
+
+{% endblock content %}

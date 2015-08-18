@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} Generar Ahorro {% endblock title%}
+
+{% block content %}
+
+<div class="Ahorro-generar" ng-controller="GenerarAhorroCtrl" >
+	<section class="DiarioSearch" >
+		<div class="DiarioHidenTable">
+				<table>
+					<tr>
+						<td>Fecha</td>
+						<td><input type="text" ng-model="GrAhorro.fecha" value="[[GrAhorro.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+					</tr>
+					<tr>
+						<td>Quincena</td>
+						<td>
+							<select ng-model="GrAhorro.Qui" >
+								<option value="1">Primera Quincena </option>
+								<option value="2">Segunda Quincena</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button class="Boton BusquedaBtn icon-file" ng-click="generarAhorro()">Generar Ahorro</button></td>
+					</tr>
+				</table>
+		</div>
+	</section>
+</div>
+
+{% endblock content%}

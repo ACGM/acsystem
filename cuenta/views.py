@@ -144,7 +144,6 @@ class CuentasView(DetailView):
                     'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
-                    'tipoDoc': item.tipoDoc.tipoDoc,
                     'estatus': item.estatus,
                     'debito': item.debito,
                     'credito': item.credito
@@ -159,7 +158,6 @@ class CuentasView(DetailView):
                     'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
-                    'tipoDoc': item.tipoDoc.tipoDoc,
                     'estatus': item.estatus,
                     'debito': item.debito,
                     'credito': item.credito
