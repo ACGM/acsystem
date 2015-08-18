@@ -93,7 +93,7 @@
 				 return deferred.promise;
 			}
 
-			function setAhorroReg(retiro){
+			function setAhorroRegS(retiro){
 				var deferred = $q.defer();
 				
 				$http.post('/ahorro/', JSON.stringify({'retiro':retiro}))
@@ -106,10 +106,10 @@
 				return deferred.promise;
 			}
 			
-			function setInteres(interes){
+			function setIntereses(fechaI, fechaF){
 				var deferred = $q.defer();
 				
-				$http.post('/generarInteres/', JSON.stringify({'interes':interes}))
+				$http.post('/generarInteres/', JSON.stringify({'fechaI':fechaI, 'fechaF': fechaF}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -120,10 +120,10 @@
 			}
 
 
-			function generarAh(datos){
+			function generarAh(fecha, quincena){
 				var deferred = $q.defer();
 
-				$http.post('/generarAhorro/', JSON.stringify({'registro':datos}))
+				$http.post('/generarAhorro/', JSON.stringify({'fecha':fecha, 'quincena': quincena}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -151,12 +151,12 @@
 				getRetiroSocio : getRetiroSocio,
 				getAhorroSocio : getAhorroSocio,
 				getAhorroById : getAhorroById,
-				setAhorroReg : setAhorroReg,
+				setAhorroRegS : setAhorroRegS,
 				getAllRetiros : getAllRetiros,
 				getRetiroById : getRetiroById,
 				socios : socios,
 				generarAh : generarAh,
-				setInteres : setInteres
+				setIntereses : setIntereses
 			};
 		}])
 		
@@ -220,8 +220,8 @@
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           			$scope.retiro.fecha = FechaFormat;
 					
-					AhorroServices.setAhorroReg($scope.retiro).then(function (data){
-						
+					var result = AhorroServices.setAhorroRegS($scope.retiro).then(function (data){
+					console.log(result);
 					});
 					 $window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
 
@@ -427,8 +427,7 @@
           		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           	    $scope.GrAhorro.fecha = FechaFormat;
 
-          	    console.log($scope.GrAhorro);
-				var result = AhorroServices.generarAh($scope.GrAhorro);
+				var result = AhorroServices.generarAh($scope.GrAhorro.fecha, $scope.GrAhorro.Qui);
 				console.log(result);
 			};
 }])
@@ -447,7 +446,9 @@
           		var FechaFormat2 = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           	    $scope.GrInteres.fechaF = FechaFormat2;
 
-				AhorroServices.setInteres($scope.GrInteres);
+				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF);
+				console.log(result)
+
 				
 			};
 }]); 

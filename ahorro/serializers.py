@@ -11,10 +11,11 @@ class interesAhorroSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class maestraAhorroSerializer(serializers.HyperlinkedModelSerializer):
+    cuenta = serializers.StringRelatedField(read_only = True)
     class Meta:
         model = MaestraAhorro
         many = True
-        fields = ('id', 'fecha', 'ahorro',  'monto',  'estatus', 'cuentas')
+        fields = ('id', 'fecha', 'ahorro',  'monto',  'estatus', 'cuenta')
 
 
 class AhorroSocioSerializer(serializers.HyperlinkedModelSerializer):

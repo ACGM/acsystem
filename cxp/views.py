@@ -169,7 +169,6 @@ class CxpSuperCoop(DetailView):
                         'cuenta': cuentas.cuenta,
                         'referencia': cuentas.referencia,
                         'auxiliar': cuentas.auxiliar,
-                        'tipoDoc': cuentas.tipoDoc.tipoDoc,
                         'estatus': cuentas.estatus,
                         'debito': cuentas.debito,
                         'credito': cuentas.credito,

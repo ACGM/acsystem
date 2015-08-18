@@ -113,7 +113,6 @@
 									<th>Registro</th>
 									<th>Fecha</th>
 									<th>Monto</th>
-									<th>Balance</th>
 									<th>Estatus</th>
 								</tr>
 								<tr ng-repeat="registro in AhorrosPorSocio[0].maestra" class="listado-ardt-detail">
@@ -131,24 +130,23 @@
 								</td>
 								<td>
 									<div ng-if="registro.estatus == 'A'">
-										<a href="#" ng-click="getRegRetiro(registro.retiro)" class='utils-gr utils-noDecoration icon-pencil'> </a>
+										<a href="#" ng-click="getRegRetiro(registro.retiro)" class='utils-gr utils-noDecoration icon-pencil'></a>
 									</div>
 									<div ng-if="registro.estatus != 'A'">
-										<span class='utils-gr utils-noDecoration icon-pencil'> </span>
+										<span class='utils-gr utils-noDecoration icon-pencil'></span>
 									</div>
 								</td>
 								<td>[[registro.fecha |date: DD/mm/yyyy]]</td>
-								<td>[[registro.monto |number:2]]</td>
-								<td>[[registro.balance |number:2]]</td>
+								<td>[[registro.monto |number:2]]</td>	
 							    <td>
 							    	<div ng-if="registro.estatus == 'A'"> 
-							    		<span class="icon-credit" ="Activa" ></span>
+							    		<span class="icon-credit" tooltip="Activa">Activa</span>
 							    	</div> 
 									<div ng-if="registro.estatus == 'I'"> 
-										<span class="icon-delete icon-eliminar disabled" tooltip="Nulas"></span>
+										<span class="icon-delete icon-eliminar disabled" tooltip="Nulas">Nuka</span>
 									</div>
-									<div ng-if="registro.estatus == 'O'"> 
-										<span class="icon-archivo  disabled" tooltip="Posteadas"></span>
+									<div ng-if="registro.estatus == 'P'"> 
+										<span class="icon-archivo  disabled" tooltip="Posteadas">Posteada</span>
 									</div>  
 							    </td> 
 									

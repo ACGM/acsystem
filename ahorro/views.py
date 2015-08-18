@@ -81,10 +81,9 @@ class MaestraAhorroView(DetailView):
                             {
                                 'id': cuentas.id,
                                 'fecha': cuentas.fecha,
-                                'cuenta': cuentas.cuenta,
+                                'cuenta': cuentas.cuenta.codigo,
                                 'referencia': cuentas.referencia,
                                 'auxiliar': cuentas.auxiliar,
-                                'tipoDoc': cuentas.tipoDoc.tipoDoc,
                                 'estatus': cuentas.estatus,
                                 'debito': cuentas.debito,
                                 'credito': cuentas.credito,
@@ -117,29 +116,83 @@ class generarAhorro(TemplateView):
     template_name = "generarAhorro.html"
 
     def post(self, request, *args, **kwargs):
-        dataT = json.loads(request.body)
-        data = dataT["registro"]
-
+        data = json.loads(request.body)
+        fecha = data['fecha']
+        Qui = data['quincena']
+        
         regtipo = TipoDocumento.objects.get(codigo="AH")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
         for ah in AhorroSocio.objects.filter(estatus="A"):
             socio = Socio.objects.get(codigo=ah.socio.codigo)
-            if data["Qui"] == 1:
+            if Qui == 1:
                 monto = socio.cuotaAhorroQ1
             else:
                 monto = socio.cuotaAhorroQ2
 
             regMaestra = MaestraAhorro()
             regMaestra.ahorro = ah
-            regMaestra.fecha = data["fecha"]
+            regMaestra.fecha = fecha
             regMaestra.monto = monto
             regMaestra.estatus = "P"
             regMaestra.save()
 
+            ah.balance = ah.balance + monto
+            ah.disponible = ah.disponible + monto
+            ah.save()
+
+            # for cta in regDocumentos:         
+            #     cuenta = DiarioGeneral()
+            #     cuenta.fecha = fecha
+            #     cuenta.cuenta = cta.cuenta
+            #     if cta.accion == "D":
+            #         cuenta.debito = monto
+            #         cuenta.credito = 0
+            #     else:
+            #         cuenta.credito = monto
+            #         cuenta.debito = 0
+            #     cuenta.referencia = "AH-" + str(regMaestra.id)
+            #     cuenta.estatus = "P"
+            #     cuenta.save()
+            #     regMaestra.cuentas = cuenta
+            #     cuenta.close()
+
+        return HttpResponse("Ok")
+
+
+class generarInteres(TemplateView):
+    template_name = "interesAhorro.html"
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+
+        fechaI = data["fechaI"]
+        fechaF = data["fechaF"]
+        regtipo = TipoDocumento.objects.get(codigo="AHIN")
+        regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
+
+        for ah in AhorroSocio.objects.all():
+            inter = InteresesAhorro.objects.get(id=1)
+            mensual = MaestraAhorro.objects.raw('select '
+                                                'x.ahorro_id'
+                                                ',sum(x.monto)'
+                                                'from ahorro_maestraahorro x'
+                                                'where x.fecha between '+ fechaI +' and '+fechaF+'and x.ahorro_id =1 Group by ahorro_id')
+
+            reInt = decimal.Decimal(inter.porcentaje/100)
+            monto = mensual[1] * reInt
+
+            regMaestra = MaestraAhorro()
+            regMaestra.ahorro = ah
+            regMaestra.fecha = fechaF
+            regMaestra.monto = monto
+            regMaestra.estatus = "p"
+            regMaestra.save()
+
+            
             for cta in regDocumentos:
                 cuenta = DiarioGeneral()
-                cuenta.fecha = data["fecha"]
+                cuenta.fecha = fechaF
                 cuenta.cuenta = cta.cuenta
                 if cta.accion == "D":
                     cuenta.debito = monto
@@ -147,54 +200,14 @@ class generarAhorro(TemplateView):
                 else:
                     cuenta.credito = monto
                     cuenta.debito = 0
-                cuenta.referencia = "AH-" + regMaestra.id
+                cuenta.referencia = "AH-" + str(regMaestra.id)
                 cuenta.estatus = "P"
                 cuenta.save()
                 regMaestra.cuentas = cuenta
+            
+            ah.balance = ah.balance + monto
 
-        return HttpResponse('Ok')
-
-
-class generarInteres(TemplateView):
-    template_name = "interesAhorro.html"
-
-    def post(self, request, *args, **kwargs):
-        dataT = json.loads(request.body)
-
-        data = dataT["interes"]
-        regtipo = TipoDocumento.objects.get(codigo="AH")
-        regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
-
-        for ah in AhorroSocio.objects.all():
-            inter = InteresesAhorro.objects.get(id=data["interes"])
-            mensual = MaestraAhorro.objects.raw('select  '
-                                                'sum(x.monto)'
-                                                'from ahorro_maestraahorro x'
-                                                'where x.fecha between '+data['fechaI']+' and '+data['fechaF'])
-
-            regMaestra = MaestraAhorro()
-            regMaestra.ahorro = ah
-            regMaestra.fecha = data['fechaF']
-            regMaestra.monto = mensual * (inter/100)
-            regMaestra.estatus = "p"
-            regMaestra.save()
-
-            for cta in regDocumentos:
-                cuenta = DiarioGeneral()
-                cuenta.fecha = data["fecha"]
-                cuenta.cuenta = cta.cuenta
-                if cta.accion == "D":
-                    cuenta.debito = mensual * (inter/100)
-                    cuenta.credito = 0
-                else:
-                    cuenta.credito = mensual * (inter/100)
-                    cuenta.debito = 0
-                cuenta.referencia = "AH-" + regMaestra.id
-                cuenta.estatus = "P"
-                cuenta.save()
-                regMaestra.cuentas = cuenta
-
-
+        return HttpResponse("Ok")
 
 
 class impRetiroAHorro(TemplateView):
@@ -209,30 +222,36 @@ class AhorroView(TemplateView):
                                                 'SUM(p.balance) balance '
                                                 'FROM prestamos_maestraprestamo p '
                                                 'INNER JOIN administracion_socio s ON s.id = p.socio_id '
-                                                'HAVING p.estatus = \'P\' and s.codigo =' + socio \
+                                                'HAVING p.estatus = "P" and s.codigo =' + int(socio) \
                                                 )
         return prestamos
 
     def post(self, request, *args, **kwargs):
         dataT = json.loads(request.body)
-
+        da = None
         data = dataT['retiro']
-
-        regSocio = Socio.objects.get(codigo=data['socio'])
+        
+        regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
 
-        prestamos = self.BalanceSocioP(self, data['socio'])
+        # prestamos = self.BalanceSocioP(dataT['retiro']['socio'])
 
+        balance = regAhorro.balance 
         try:
-            disponible = regAhorro.balance - prestamos
+            disponible = balance
 
-            if data['id'] is None:
+            if dataT['retiro']['id'] is None:
+                balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
                 regMaestra = MaestraAhorro()
                 regMaestra.ahorro = regAhorro
-                regMaestra.fecha = data['fecha']
-                regMaestra.monto = decimal.Decimal(data['monto']) * (-1)
-                regMaestra.estatus = 'A'
+                regMaestra.fecha = dataT['retiro']['fecha']
+                regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
+                regMaestra.estatus = dataT['retiro']['estatus']
                 regMaestra.save()
+                
+                regAhorro.balance = balance
+                regAhorro.disponible = disponible
+                regAhorro.save()
 
             return HttpResponse('ok')
 
