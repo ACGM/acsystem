@@ -33,7 +33,6 @@ class ActivosView(TemplateView):
     template_name = 'Activos.html'
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":

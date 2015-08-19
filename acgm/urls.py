@@ -41,7 +41,7 @@ from prestamos.viewMaestraPrestamos import MaestraPrestamosView, PrestamoById, g
 from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito, NotaDeDebitoById
 from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guardarNotaCredito, NotaDeCreditoById
 
-from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres
+from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres, DocumentosAhorro,historicoAHView
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
 from cxp.views import CxpView, cxpSuperView
 
@@ -308,6 +308,8 @@ urlpatterns = patterns('',
     url(r'^impAhorro/$', impRetiroAHorro.as_view(), name='Imprimir_ahorro'),
     url(r'^generarAhorro/$',generarAhorro.as_view(), name='generar_ahorro'),
     url(r'^generarInteres/$', generarInteres.as_view(), name='generar_interes'),
+    url(r'^documentoCuenta/$', DocumentosAhorro.as_view(), name='documentoCuenta'),
+    url(r'^impHyAhorro/$', historicoAHView.as_view(), name='historico_ahorro'),
 
     #Cuentas
     url(r'^cuentasJson/$', CuentasView.as_view(), name='cuentas_diario'),
