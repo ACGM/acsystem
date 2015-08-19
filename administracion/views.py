@@ -121,6 +121,7 @@ class DocumentoCuentasView(APIView):
 		response = self.serializer_class(docCuentas, many=True)
 		return Response(response.data)
 
+
 # Categoria de Prestamo por Descripcion
 class CategoriaPrestamoByDescrpView(APIView):
 

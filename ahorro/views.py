@@ -6,9 +6,9 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
 from .models import InteresesAhorro, MaestraAhorro, AhorroSocio
-from cuenta.models import DiarioGeneral
+from cuenta.models import DiarioGeneral, Cuentas
 from prestamos.models import MaestraPrestamo
-from administracion.models import Socio, DocumentoCuentas,TipoDocumento
+from administracion.models import Socio, DocumentoCuentas, TipoDocumento
 
 from .serializers import interesAhorroSerializer, maestraAhorroSerializer, AhorroSocioSerializer
 
@@ -28,7 +28,6 @@ def insMaestra(self, CodSocio, Fecha, Monto):
 
 
 def insAhorro(self, socioId):
-
     regSocio = Socio.objects.get(codigo=socioId)
 
     regAhorro = AhorroSocio()
@@ -36,6 +35,7 @@ def insAhorro(self, socioId):
     regAhorro.balance = 0
     regAhorro.disponible = 0
     regAhorro.save()
+
 
 def getSocioAhorro(self, codSocio):
     regSocio = AhorroSocio.objects.raw('select id, socio_id'
@@ -98,6 +98,33 @@ class MaestraAhorroView(DetailView):
         return JsonResponse(data, safe=False)
 
 
+class DocumentosAhorro(DetailView):
+    queryset = DocumentoCuentas.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        for documento in DocumentoCuentas.objects.all():
+            data.append({
+                'id': documento.id,
+                'codigo': documento.documento.codigo,
+                'cuenta': documento.cuenta.codigo,
+                'accion': documento.accion
+            })
+        return JsonResponse(data, safe=False)
+
+
 class InteresAhorroViewSet(viewsets.ModelViewSet):
     queryset = InteresesAhorro.objects.all()
     serializer_class = interesAhorroSerializer
@@ -112,6 +139,7 @@ class AhorroViewSet(viewsets.ModelViewSet):
     queryset = AhorroSocio.objects.all()
     serializer_class = AhorroSocioSerializer
 
+
 class generarAhorro(TemplateView):
     template_name = "generarAhorro.html"
 
@@ -119,7 +147,7 @@ class generarAhorro(TemplateView):
         data = json.loads(request.body)
         fecha = data['fecha']
         Qui = data['quincena']
-        
+
         regtipo = TipoDocumento.objects.get(codigo="AH")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
@@ -177,9 +205,9 @@ class generarInteres(TemplateView):
                                                 'x.ahorro_id'
                                                 ',sum(x.monto)'
                                                 'from ahorro_maestraahorro x'
-                                                'where x.fecha between '+ fechaI +' and '+fechaF+'and x.ahorro_id =1 Group by ahorro_id')
+                                                'where x.fecha between ' + fechaI + ' and ' + fechaF + 'and x.ahorro_id =1 Group by ahorro_id')
 
-            reInt = decimal.Decimal(inter.porcentaje/100)
+            reInt = decimal.Decimal(inter.porcentaje / 100)
             monto = mensual[1] * reInt
 
             regMaestra = MaestraAhorro()
@@ -189,7 +217,6 @@ class generarInteres(TemplateView):
             regMaestra.estatus = "p"
             regMaestra.save()
 
-            
             for cta in regDocumentos:
                 cuenta = DiarioGeneral()
                 cuenta.fecha = fechaF
@@ -204,7 +231,7 @@ class generarInteres(TemplateView):
                 cuenta.estatus = "P"
                 cuenta.save()
                 regMaestra.cuentas = cuenta
-            
+
             ah.balance = ah.balance + monto
 
         return HttpResponse("Ok")
@@ -213,6 +240,8 @@ class generarInteres(TemplateView):
 class impRetiroAHorro(TemplateView):
     template_name = "AhorroPrint.html"
 
+class historicoAHView(TemplateView):
+    template_name = "impHyAhorro.html"
 
 class AhorroView(TemplateView):
     template_name = 'ahorro.html'
@@ -228,18 +257,15 @@ class AhorroView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         dataT = json.loads(request.body)
-        da = None
         data = dataT['retiro']
-        
+
         regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
 
-        # prestamos = self.BalanceSocioP(dataT['retiro']['socio'])
+        balance = regAhorro.balance
 
-        balance = regAhorro.balance 
         try:
             disponible = balance
-
             if dataT['retiro']['id'] is None:
                 balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
                 regMaestra = MaestraAhorro()
@@ -248,12 +274,26 @@ class AhorroView(TemplateView):
                 regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
                 regMaestra.estatus = dataT['retiro']['estatus']
                 regMaestra.save()
-                
+
+                # for cta in dataT['retiro']['cuentas']:
+                #     cuent = Cuentas.objects.get(codigo=cta['cuenta'])
+                #     diario = DiarioGeneral()
+                #     diario.fecha = dataT['retiro']['fecha']
+                #     diario.cuenta = cuent
+                #     diario.referencia = 'RAH-'+str(regMaestra.id)
+                #     diario.estatus = 'P'
+                #     if cta['accion'] == 'C':
+                #         diario.credito = decimal.Decimal(dataT['retiro']['monto'])
+                #         diario.decimal = 0
+                #     else:
+                #         diario.credito = 0
+                #         diario.decimal = decimal.Decimal(dataT['retiro']['monto'])
+                #     diario.save()
                 regAhorro.balance = balance
                 regAhorro.disponible = disponible
                 regAhorro.save()
 
-            return HttpResponse('ok')
+            return HttpResponse(dataT['retiro']['cuentas'])
 
         except Exception as ex:
             return HttpResponse(ex)
