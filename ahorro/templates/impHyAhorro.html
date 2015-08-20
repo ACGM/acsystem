@@ -1,0 +1,50 @@
+<div class="ahorroPrint">
+	{% extends "base.html" %}
+	{% block title %} Historico Ahorro{% endblock title %}
+
+	{% block content %}
+</div>
+<div ng-controller="ImpHistorico" ng-init="registro()">
+	<div class="header-ahorro">
+		<span class="printAHorroFecha">Fecha: [[fecha]]</span>
+		<table class="header-table">
+			<tr>
+				<td><strong>Código socio:</strong> </td>
+				<td>[[AhorroDataRegistro[0].socioId]]</td>
+			</tr>
+			<tr>
+				<td><strong>Nombre:</strong> </td>
+				<td>[[AhorroDataRegistro[0].socio]]</td>
+			</tr>
+			<tr>
+				<td><strong>Balance: </strong></td>
+				<td>[[AhorroDataRegistro[0].balance |number: 2]]</td>
+			</tr>
+			<tr>
+				<td><strong>Disponible: </strong></td>
+				<td>[[AhorroDataRegistro[0].disponible |number: 2]]</td>
+			</tr>
+		</table>
+	</div>
+	<div class="body-ahorro">
+		<table>
+			<tr>
+				<td style="padding-right: 4.3em;">Registro</td>
+				<td style="padding-right: 10.3em;">Fecha</td>
+				<td style="padding-right: 6.3em;">Monto</td>
+			</tr>
+			<tr ng-repeat="detalle in ahorroDt" class="listado-ardt-detail">
+				<td style="padding-right: 4.3em;">
+					[[detalle.id]]
+				</td>
+				<td style="padding-right: 10.3em;">
+					[[detalle.fecha]]
+				</td>
+				<td style="padding-right: 6.3em;">
+					[[detalle.monto]]
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+{% endblock content %}
