@@ -2,6 +2,7 @@ import json
 import decimal
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
@@ -77,20 +78,6 @@ class MaestraAhorroView(DetailView):
                         'fecha': maestra.fecha,
                         'monto': maestra.monto,
                         'estatus': maestra.estatus,
-                        'cuentas': [
-                            {
-                                'id': cuentas.id,
-                                'fecha': cuentas.fecha,
-                                'cuenta': cuentas.cuenta.codigo,
-                                'referencia': cuentas.referencia,
-                                'auxiliar': cuentas.auxiliar,
-                                'estatus': cuentas.estatus,
-                                'debito': cuentas.debito,
-                                'credito': cuentas.credito,
-
-                            }
-                            for cuentas in DiarioGeneral.objects.filter(referencia=('AH-' + str(maestra.id)))]
-
                     }
                     for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
             })
@@ -217,6 +204,30 @@ class impRetiroAHorro(TemplateView):
 class AhorroView(TemplateView):
     template_name = 'ahorro.html'
 
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        for doc in DocumentoCuentas.objects.all():
+            data.append({
+                'id': doc.id,
+                'documentoId' : doc.documento.codigo,
+                'documento' : doc.documento.descripcion,
+                'cuenta' : doc.cuenta.codigo,
+                'accion' : doc.accion
+                })
+
+        return JsonResponse(data, safe=False)
+
+
     def BalanceSocioP(self, socio):
         prestamos = MaestraPrestamo.objects.raw('SELECT '
                                                 'SUM(p.balance) balance '
@@ -228,8 +239,8 @@ class AhorroView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         dataT = json.loads(request.body)
-        da = None
         data = dataT['retiro']
+        cuenta = dataT['cuenta']
         
         regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
@@ -238,10 +249,11 @@ class AhorroView(TemplateView):
 
         balance = regAhorro.balance 
         try:
-            disponible = balance
-
+          
+            idMaestra = dataT['retiro']['id']
             if dataT['retiro']['id'] is None:
                 balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
+                disponible = balance
                 regMaestra = MaestraAhorro()
                 regMaestra.ahorro = regAhorro
                 regMaestra.fecha = dataT['retiro']['fecha']
@@ -252,8 +264,14 @@ class AhorroView(TemplateView):
                 regAhorro.balance = balance
                 regAhorro.disponible = disponible
                 regAhorro.save()
+            else:
+                regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
+                regDiario = get_object_or_404(DiarioGeneral, pk=cuenta)
+                
+                regMaestra.cuentas.add(regDiario)
+                regMaestra.save()
 
-            return HttpResponse('ok')
+            return HttpResponse(str(regMaestra.id))
 
         except Exception as ex:
             return HttpResponse(ex)

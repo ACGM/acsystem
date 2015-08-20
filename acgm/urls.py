@@ -314,6 +314,7 @@ urlpatterns = patterns('',
     url(r'^contabilidad/Maestro_json/$', MaestroView.as_view(), name='maestro_json'),
     url(r'^contabilidad/DiarioGeneral/$', diarioView.as_view(), name='diario_general'),
     url(r'^contabilidad/MayorGeneral/$', mayorView.as_view(), name='mayor_general'),
+    url(r'^contabilidad/RegDiario/$', CuentasView.as_view(), name='reg_diario'),
 
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),
