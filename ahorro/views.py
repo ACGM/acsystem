@@ -278,40 +278,26 @@ class AhorroView(TemplateView):
 
         try:          
             idMaestra = dataT['retiro']['id']
+            if dataT['retiro']['tipo'] == 'R':
+                if dataT['retiro']['id'] is None:
+                    balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
+                    disponible = balance
+                    regMaestra = MaestraAhorro()
+                    regMaestra.ahorro = regAhorro
+                    regMaestra.fecha = dataT['retiro']['fecha']
+                    regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
+                    regMaestra.estatus = dataT['retiro']['estatus']
+                    regMaestra.save()
 
-            if dataT['retiro']['id'] is None:
-                balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
-                disponible = balance
-                regMaestra = MaestraAhorro()
-                regMaestra.ahorro = regAhorro
-                regMaestra.fecha = dataT['retiro']['fecha']
-                regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
-                regMaestra.estatus = dataT['retiro']['estatus']
-                regMaestra.save()
-
-                # for cta in dataT['retiro']['cuentas']:
-                #     cuent = Cuentas.objects.get(codigo=cta['cuenta'])
-                #     diario = DiarioGeneral()
-                #     diario.fecha = dataT['retiro']['fecha']
-                #     diario.cuenta = cuent
-                #     diario.referencia = 'RAH-'+str(regMaestra.id)
-                #     diario.estatus = 'P'
-                #     if cta['accion'] == 'C':
-                #         diario.credito = decimal.Decimal(dataT['retiro']['monto'])
-                #         diario.decimal = 0
-                #     else:
-                #         diario.credito = 0
-                #         diario.decimal = decimal.Decimal(dataT['retiro']['monto'])
-                #     diario.save()
-                regAhorro.balance = balance
-                regAhorro.disponible = disponible
-                regAhorro.save()
-            else:
-                regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
-                regDiario = get_object_or_404(DiarioGeneral, pk=cuenta)
-                
-                regMaestra.cuentas.add(regDiario)
-                regMaestra.save()
+                    regAhorro.balance = balance
+                    regAhorro.disponible = disponible
+                    regAhorro.save()
+                else:
+                    regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
+                    regDiario = get_object_or_404(DiarioGeneral, pk=cuenta)
+                    
+                    regMaestra.cuentas.add(regDiario)
+                    regMaestra.save()
             return HttpResponse(str(regMaestra.id))
 
 
