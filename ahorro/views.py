@@ -2,6 +2,7 @@ import json
 import decimal
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
@@ -77,20 +78,6 @@ class MaestraAhorroView(DetailView):
                         'fecha': maestra.fecha,
                         'monto': maestra.monto,
                         'estatus': maestra.estatus,
-                        'cuentas': [
-                            {
-                                'id': cuentas.id,
-                                'fecha': cuentas.fecha,
-                                'cuenta': cuentas.cuenta.codigo,
-                                'referencia': cuentas.referencia,
-                                'auxiliar': cuentas.auxiliar,
-                                'estatus': cuentas.estatus,
-                                'debito': cuentas.debito,
-                                'credito': cuentas.credito,
-
-                            }
-                            for cuentas in DiarioGeneral.objects.filter(referencia=('AH-' + str(maestra.id)))]
-
                     }
                     for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
             })
@@ -147,6 +134,7 @@ class generarAhorro(TemplateView):
         data = json.loads(request.body)
         fecha = data['fecha']
         Qui = data['quincena']
+        cuenta = data['cuentas']
 
         regtipo = TipoDocumento.objects.get(codigo="AH")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
@@ -168,24 +156,29 @@ class generarAhorro(TemplateView):
             ah.balance = ah.balance + monto
             ah.disponible = ah.disponible + monto
             ah.save()
-
-            # for cta in regDocumentos:         
-            #     cuenta = DiarioGeneral()
-            #     cuenta.fecha = fecha
-            #     cuenta.cuenta = cta.cuenta
-            #     if cta.accion == "D":
-            #         cuenta.debito = monto
-            #         cuenta.credito = 0
-            #     else:
-            #         cuenta.credito = monto
-            #         cuenta.debito = 0
-            #     cuenta.referencia = "AH-" + str(regMaestra.id)
-            #     cuenta.estatus = "P"
-            #     cuenta.save()
-            #     regMaestra.cuentas = cuenta
-            #     cuenta.close()
+            for x in cuenta:
+                self.setCtasAhorro(x['cuenta'],x['accion'],regMaestra.id,fecha,monto,socio)
 
         return HttpResponse("Ok")
+
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+        regCuenta = Cuentas.objects.get(codigo=cuenta)
+        regMaestra = MaestraAhorro.objects.get(id=maestra)
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = fecha
+        regDiario.referencia = 'AH-'+str(socio)
+        regDiario.estatus = 'P'
+        if accion == 'D':
+            regDiario.debito = monto
+            regDiario.credito = 0
+        else:
+            regDiario.debito = 0
+            regDiario.credito = monto
+        regDiario.save()
+
+        regMaestra.cuentas.add(regDiario)
 
 
 class generarInteres(TemplateView):
@@ -196,6 +189,8 @@ class generarInteres(TemplateView):
 
         fechaI = data["fechaI"]
         fechaF = data["fechaF"]
+        cuenta = data["cuentas"]
+
         regtipo = TipoDocumento.objects.get(codigo="AHIN")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
@@ -203,12 +198,19 @@ class generarInteres(TemplateView):
             inter = InteresesAhorro.objects.get(id=1)
             mensual = MaestraAhorro.objects.raw('select '
                                                 'x.ahorro_id'
-                                                ',sum(x.monto)'
+                                                ',sum(x.monto) as monto'
                                                 'from ahorro_maestraahorro x'
-                                                'where x.fecha between ' + fechaI + ' and ' + fechaF + 'and x.ahorro_id =1 Group by ahorro_id')
+                                                'WHERE x.fecha BETWEEN ' + fechaI + ' and ' + fechaF + ' and x.ahorro_id = 1')
+
+            data = list()
+            for mes in mensual:
+                data.append({
+                    'id': mes.ahorro_id,
+                    'monto': mes.monto
+                    })
 
             reInt = decimal.Decimal(inter.porcentaje / 100)
-            monto = mensual[1] * reInt
+            monto = data[0].monto * reInt
 
             regMaestra = MaestraAhorro()
             regMaestra.ahorro = ah
@@ -217,24 +219,30 @@ class generarInteres(TemplateView):
             regMaestra.estatus = "p"
             regMaestra.save()
 
-            for cta in regDocumentos:
-                cuenta = DiarioGeneral()
-                cuenta.fecha = fechaF
-                cuenta.cuenta = cta.cuenta
-                if cta.accion == "D":
-                    cuenta.debito = monto
-                    cuenta.credito = 0
-                else:
-                    cuenta.credito = monto
-                    cuenta.debito = 0
-                cuenta.referencia = "AH-" + str(regMaestra.id)
-                cuenta.estatus = "P"
-                cuenta.save()
-                regMaestra.cuentas = cuenta
-
             ah.balance = ah.balance + monto
+            ah.save()
 
         return HttpResponse("Ok")
+
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+        regCuenta = Cuentas.objects.get(codigo=cuenta)
+        regMaestra = MaestraAhorro.objects.get(id=maestra)
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = fecha
+        regDiario.referencia = 'AH-'+str(socio)
+        regDiario.estatus = 'P'
+        if accion == 'D':
+            regDiario.debito = monto
+            regDiario.credito = 0
+        else:
+            regDiario.debito = 0
+            regDiario.credito = monto
+        regDiario.save()
+
+        regMaestra.cuentas.add(regDiario)
+
 
 
 class impRetiroAHorro(TemplateView):
@@ -245,6 +253,30 @@ class historicoAHView(TemplateView):
 
 class AhorroView(TemplateView):
     template_name = 'ahorro.html'
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        for doc in DocumentoCuentas.objects.all():
+            data.append({
+                'id': doc.id,
+                'documentoId' : doc.documento.codigo,
+                'documento' : doc.documento.descripcion,
+                'cuenta' : doc.cuenta.codigo,
+                'accion' : doc.accion
+                })
+
+        return JsonResponse(data, safe=False)
+
 
     def BalanceSocioP(self, socio):
         prestamos = MaestraPrestamo.objects.raw('SELECT '
@@ -258,42 +290,37 @@ class AhorroView(TemplateView):
     def post(self, request, *args, **kwargs):
         dataT = json.loads(request.body)
         data = dataT['retiro']
+        cuenta = dataT['cuenta']
 
         regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
 
         balance = regAhorro.balance
 
-        try:
-            disponible = balance
-            if dataT['retiro']['id'] is None:
-                balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
-                regMaestra = MaestraAhorro()
-                regMaestra.ahorro = regAhorro
-                regMaestra.fecha = dataT['retiro']['fecha']
-                regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
-                regMaestra.estatus = dataT['retiro']['estatus']
-                regMaestra.save()
+        try:          
+            idMaestra = dataT['retiro']['id']
+            if dataT['retiro']['tipo'] == 'R':
+                if dataT['retiro']['id'] is None:
+                    balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
+                    disponible = balance
+                    regMaestra = MaestraAhorro()
+                    regMaestra.ahorro = regAhorro
+                    regMaestra.fecha = dataT['retiro']['fecha']
+                    regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
+                    regMaestra.estatus = dataT['retiro']['estatus']
+                    regMaestra.save()
 
-                # for cta in dataT['retiro']['cuentas']:
-                #     cuent = Cuentas.objects.get(codigo=cta['cuenta'])
-                #     diario = DiarioGeneral()
-                #     diario.fecha = dataT['retiro']['fecha']
-                #     diario.cuenta = cuent
-                #     diario.referencia = 'RAH-'+str(regMaestra.id)
-                #     diario.estatus = 'P'
-                #     if cta['accion'] == 'C':
-                #         diario.credito = decimal.Decimal(dataT['retiro']['monto'])
-                #         diario.decimal = 0
-                #     else:
-                #         diario.credito = 0
-                #         diario.decimal = decimal.Decimal(dataT['retiro']['monto'])
-                #     diario.save()
-                regAhorro.balance = balance
-                regAhorro.disponible = disponible
-                regAhorro.save()
+                    regAhorro.balance = balance
+                    regAhorro.disponible = disponible
+                    regAhorro.save()
+                else:
+                    regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
+                    regDiario = get_object_or_404(DiarioGeneral, pk=cuenta)
+                    
+                    regMaestra.cuentas.add(regDiario)
+                    regMaestra.save()
+            return HttpResponse(str(regMaestra.id))
 
-            return HttpResponse(dataT['retiro']['cuentas'])
 
         except Exception as ex:
             return HttpResponse(ex)

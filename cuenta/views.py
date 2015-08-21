@@ -76,42 +76,21 @@ class CuentasView(DetailView):
     queryset = Cuentas.objects.all()
 
     def post(self, request):
-        try:
-            data = json.loads(request.body)
-            regId = data['id']
+        DataT = json.loads(request.body)
+        Data = DataT['cuenta']
 
-            if regId == None:
-                regDiario = DiarioGeneral()
-                regDiario.fecha = data['fecha']
-                if data['cuenta'] != None:
-                    regDiario.cuenta = data['cuenta']
+        try:    
+            cta = Cuentas.objects.get(codigo=Data['codCuenta'])
+            diario = DiarioGeneral()
+            diario.cuenta = cta
+            diario.fecha = Data['fecha']
+            diario.referencia = Data['ref']
+            diario.estatus = Data['estatus']
+            diario.debito = Data['debito']
+            diario.credito = Data['credito']
+            diario.save()
 
-                regDiario.referencia = data['ref']
-
-                if data['auxiliar'] != None:
-                    regDiario.auxiliar = data['auxiliar']
-
-                regDiario.tipoDoc = TipoDocumento.objects.filter(tipoDoc=data['tipoDoc'])
-                regDiario.estatus = data['estatus']
-                regDiario.debito = data['debito']
-                regDiario.credito = data['credito']
-                regDiario.save()
-
-            else:
-                regDiario = DiarioGeneral.objects.filter(referencia=regId)
-                if data['cuenta'] != None:
-                    regDiario.cuenta = data['cuenta']
-
-                if data['auxiliar'] != None:
-                    regDiario.auxiliar = data['auxiliar']
-
-                regDiario.tipoDoc = TipoDocumento.objects.filter(tipoDoc=data['tipoDoc'])
-                regDiario.estatus = data['estatus']
-                regDiario.debito = data['debito']
-                regDiario.credito = data['credito']
-                regDiario.save()
-
-            return HttpResponse('1')
+            return HttpResponse(str(diario.id))
         except Exception as ex:
             return HttpResponse(ex)
 
