@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DistribucionExcedente, \
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, NotaDeCreditoEspecial, \
-					NotaDeDebitoPrestamo
+					NotaDeDebitoPrestamo, InteresPrestamosBaseAhorros
 
 
 @admin.register(PagoCuotasPrestamo)
@@ -54,7 +54,7 @@ class MaestraPrestamoAdmin(admin.ModelAdmin):
 
 	list_display = ['noPrestamo', 'fechaDesembolso','noSolicitudPrestamo', 'noSolicitudOD', 'factura', 'categoriaPrestamo', 'socio', 'representante', \
 					'oficial', 'localidad', 'montoInicial', 'tasaInteresAnual', 'tasaInteresMensual', 'cantidadCuotas', 'montoCuotaQ1', 'montoCuotaQ2', \
-					'usuarioDesembolso', 'valorGarantizado', 'balance', 'quincenas', 'tipoPrestamoNomina', 'archivoBanco', 'estatus']
+					'usuarioDesembolso', 'valorGarantizado', 'balance', 'quincenas', 'tipoPrestamoNomina', 'archivoBanco', 'estatus', 'valorAhorro']
 	search_fields = ('noPrestamo',)
 
 
@@ -62,3 +62,9 @@ class MaestraPrestamoAdmin(admin.ModelAdmin):
 class PrestamoUnificadoAdmin(admin.ModelAdmin):
 
 	list_display = ['id', 'solicitudPrestamo', 'prestamoUnificado', 'capitalUnificado', 'estatus']
+
+
+@admin.register(InteresPrestamosBaseAhorros)
+class InteresPrestamosBaseAhorrosAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'porcentajeAnual', 'estatus']

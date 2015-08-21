@@ -5,7 +5,7 @@ from rest_framework import serializers
 from administracion.models import Socio, CategoriaPrestamo
 from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDespachoD, DistribucionExcedente, \
 					MaestraPrestamo, PrestamoUnificado, PagoCuotasPrestamo, NotaDeCreditoPrestamo, \
-					NotaDeCreditoEspecial, NotaDeDebitoPrestamo
+					NotaDeCreditoEspecial, NotaDeDebitoPrestamo, InteresPrestamosBaseAhorros
 
 
 # Listado de Solicitudes de Prestamos
@@ -111,6 +111,14 @@ class NotasDebitoListado(serializers.HyperlinkedModelSerializer):
 		model = NotaDeDebitoPrestamo
 		fields = ('id', 'fecha', 'noPrestamo', 'valorCapital', 'valorInteres', 'concepto', 'estatus', 'posteado')
 		ordering = ('-fecha',)
+
+
+# Interes de Prestamo en Base Ahorros
+class InteresPrestamoBaseAhorroSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = InteresPrestamosBaseAhorros
+		fields = ('id', 'porcentajeAnual', 'estatus')
 
 
 # Distribucion de Excedentes (proceso de calculos de interes - Anual)
