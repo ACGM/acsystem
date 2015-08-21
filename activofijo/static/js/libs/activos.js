@@ -2,7 +2,7 @@
 	angular.module('cooperativa.activofijo', ['ngAnimate'])
 
 	.factory('ActivoServices', ['$http','$q','$filter',function ($http, $q, $filter) {
-		var apiUrl='/activo/';
+		var apiUrl='/activoJson/';
 		var apiUrlD = '/depresiacion/';
 		
 		function getActivos(){

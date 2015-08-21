@@ -170,7 +170,6 @@
 				return deferred.promise;
 			}
 
-
 			function generarAh(fecha, quincena, cuentas){
 				var deferred = $q.defer();
 
@@ -245,18 +244,16 @@
 			 	try{
 					AhorroServices.getAllAhorro().then(function (data) {
 						$scope.Ahorros=data;
-						console.log(data);
 					});
 
 					if ($scope.documentos == null ){
-					$scope.documentos = AhorroServices.getDocCuentas()
-						.then(function (data){
-							$scope.documentos = data.filter(function (res){
-								return res.documentoId == "RAH";
-							});
-					});
-
-					
+						$scope.documentos = AhorroServices.getDocCuentas()
+							.then(function (data){
+								$scope.documentos = data.filter(function (res){
+									return res.documentoId == "RAH";
+								});
+						});
+					}
 				}catch(ex){    
 					$rootScope.mostrarError(ex.message);
 				}
@@ -288,7 +285,6 @@
 					
 					AhorroServices.setAhorroRegS($scope.retiro, 0).then(function (data){
 						$scope.retiro.id = data
-						console.log("Dentro",$scope.retiro.id, data);
 						return data;
 					});
 
@@ -326,7 +322,6 @@
 						cuenta.estatus = "A"
 
 					AhorroServices.setDiarioReg(cuenta).then(function (data){
-						console.log("Dentro Dentro", data);
 						var salida = AhorroServices.setAhorroRegS($scope.retiro, data);
 						return data;
 					});
@@ -369,8 +364,7 @@
 			      $scope.errorMsg = error;
 			      $scope.errorShow = true;
 			      $timeout(function(){$scope.errorShow = false;}, 3000);   
-
-		      };
+		    };
 
 	       	$scope.getSocio = function($event) {
 	            $event.preventDefault();
@@ -462,7 +456,6 @@
 	       		var historicoSocio= $scope.Ahorros.filter(function (data){
 	       			return data.socioId == socio;
 	       		});
-	       		console.log(historicoSocio);
 
 	       		$window.sessionStorage['historico'] = JSON.stringify(historicoSocio);
 
@@ -540,12 +533,7 @@
           		
 				$scope.ahorroDT = maestra.filter(function (data){
 					return data.fecha >= fechai && data.fecha <= fechaf
-				});
-				for (var x in $scope.ahorroDT ){
-					console.log($scope.ahorroDT[x])
-				}
-				
-				
+				});		
 			}
 
 
@@ -554,25 +542,52 @@
 								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){
 			$scope.GrAhorro = [];
 			$scope.quinc = [{id : 1, desc : "Quincena 1" },{id : 2, desc : "Quincena 2" }];
-			$scope.cuenta = [];
+			$scope.documentos =  null;
+
+
+			$scope.cargarData = function(){
+				
+					if ($scope.documentos == null ){
+						$scope.documentos = AhorroServices.getDocCuentas()
+							.then(function (data){
+								$scope.documentos = data.filter(function (res){
+									return res.documentoId == "IAH";
+								});
+								console.log($scope.documentos);
+						});
+					}
+			};
 
 			$scope.generarAhorro = function(){
-
+				
 				var RegFecha = $scope.GrAhorro.fecha.split('/');
           		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           	    $scope.GrAhorro.fecha = FechaFormat;
 
-          	    $scope.cuenta = getAhorroSocio.getCuentaDoc('AH');
 
-				var result = AhorroServices.generarAh($scope.GrAhorro.fecha, $scope.GrAhorro.Qui, $scope.cuenta  );
-				console.log(result);
+				var result = AhorroServices.generarAh($scope.GrAhorro.fecha, $scope.GrAhorro.Qui, $scope.documentos  );
 			};
 }])
 
 .controller('GenerarInteresCtrl', ['$scope', '$filter','$window', '$rootScope', 'AhorroServices','$timeout',
 								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){
 			$scope.GrInteres = [];
-			$scope.cuenta = [];
+			$scope.documentos =  null;
+
+
+			$scope.cargarData = function(){
+				
+					if ($scope.documentos == null ){
+						$scope.documentos = AhorroServices.getDocCuentas()
+							.then(function (data){
+								$scope.documentos = data.filter(function (res){
+									return res.documentoId == "RAH";
+								});
+								console.log($scope.documentos);
+						});
+					}
+			};
+
 
 			$scope.generarInteres = function(){
 
@@ -586,10 +601,7 @@
 
           	    $scope.cuenta = getAhorroSocio.getCuentaDoc('IAH');
 
-				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF, $scope.cuenta);
-				console.log(result)
-
-				
+				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF, $scope.documentos);				
 			};
 }]); 
 })(_);

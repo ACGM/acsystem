@@ -134,6 +134,7 @@ class generarAhorro(TemplateView):
         data = json.loads(request.body)
         fecha = data['fecha']
         Qui = data['quincena']
+        cuenta = data['cuentas']
 
         regtipo = TipoDocumento.objects.get(codigo="AH")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
@@ -155,24 +156,29 @@ class generarAhorro(TemplateView):
             ah.balance = ah.balance + monto
             ah.disponible = ah.disponible + monto
             ah.save()
-
-            # for cta in regDocumentos:         
-            #     cuenta = DiarioGeneral()
-            #     cuenta.fecha = fecha
-            #     cuenta.cuenta = cta.cuenta
-            #     if cta.accion == "D":
-            #         cuenta.debito = monto
-            #         cuenta.credito = 0
-            #     else:
-            #         cuenta.credito = monto
-            #         cuenta.debito = 0
-            #     cuenta.referencia = "AH-" + str(regMaestra.id)
-            #     cuenta.estatus = "P"
-            #     cuenta.save()
-            #     regMaestra.cuentas = cuenta
-            #     cuenta.close()
+            for x in cuenta:
+                self.setCtasAhorro(x['cuenta'],x['accion'],regMaestra.id,fecha,monto,socio)
 
         return HttpResponse("Ok")
+
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+        regCuenta = Cuentas.objects.get(codigo=cuenta)
+        regMaestra = MaestraAhorro.objects.get(id=maestra)
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = fecha
+        regDiario.referencia = 'AH-'+str(socio)
+        regDiario.estatus = 'P'
+        if accion == 'D':
+            regDiario.debito = monto
+            regDiario.credito = 0
+        else:
+            regDiario.debito = 0
+            regDiario.credito = monto
+        regDiario.save()
+
+        regMaestra.cuentas.add(regDiario)
 
 
 class generarInteres(TemplateView):
@@ -183,6 +189,8 @@ class generarInteres(TemplateView):
 
         fechaI = data["fechaI"]
         fechaF = data["fechaF"]
+        cuenta = data["cuentas"]
+
         regtipo = TipoDocumento.objects.get(codigo="AHIN")
         regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
@@ -190,12 +198,19 @@ class generarInteres(TemplateView):
             inter = InteresesAhorro.objects.get(id=1)
             mensual = MaestraAhorro.objects.raw('select '
                                                 'x.ahorro_id'
-                                                ',sum(x.monto)'
+                                                ',sum(x.monto) as monto'
                                                 'from ahorro_maestraahorro x'
-                                                'where x.fecha between ' + fechaI + ' and ' + fechaF + 'and x.ahorro_id =1 Group by ahorro_id')
+                                                'WHERE x.fecha BETWEEN ' + fechaI + ' and ' + fechaF + ' and x.ahorro_id = 1')
+
+            data = list()
+            for mes in mensual:
+                data.append({
+                    'id': mes.ahorro_id,
+                    'monto': mes.monto
+                    })
 
             reInt = decimal.Decimal(inter.porcentaje / 100)
-            monto = mensual[1] * reInt
+            monto = data[0].monto * reInt
 
             regMaestra = MaestraAhorro()
             regMaestra.ahorro = ah
@@ -204,24 +219,30 @@ class generarInteres(TemplateView):
             regMaestra.estatus = "p"
             regMaestra.save()
 
-            for cta in regDocumentos:
-                cuenta = DiarioGeneral()
-                cuenta.fecha = fechaF
-                cuenta.cuenta = cta.cuenta
-                if cta.accion == "D":
-                    cuenta.debito = monto
-                    cuenta.credito = 0
-                else:
-                    cuenta.credito = monto
-                    cuenta.debito = 0
-                cuenta.referencia = "AH-" + str(regMaestra.id)
-                cuenta.estatus = "P"
-                cuenta.save()
-                regMaestra.cuentas = cuenta
-
             ah.balance = ah.balance + monto
+            ah.save()
 
         return HttpResponse("Ok")
+
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+        regCuenta = Cuentas.objects.get(codigo=cuenta)
+        regMaestra = MaestraAhorro.objects.get(id=maestra)
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = fecha
+        regDiario.referencia = 'AH-'+str(socio)
+        regDiario.estatus = 'P'
+        if accion == 'D':
+            regDiario.debito = monto
+            regDiario.credito = 0
+        else:
+            regDiario.debito = 0
+            regDiario.credito = monto
+        regDiario.save()
+
+        regMaestra.cuentas.add(regDiario)
+
 
 
 class impRetiroAHorro(TemplateView):
