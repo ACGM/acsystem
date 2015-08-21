@@ -1,9 +1,10 @@
 node_modules
 *.log
+*.bat
+*.csv
 **/*.pyc
 prestamos/*.pyc
 **/migrations
-*.bat
 .idea/
 db.sqlite3
 ./acgm/static/media/archivosBanco/

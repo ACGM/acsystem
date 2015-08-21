@@ -8,7 +8,7 @@ from administracion.models import Socio, Representante, Cobrador, CategoriaPrest
 from facturacion.models import Factura
 
 import datetime
-
+import decimal
 
 # Cheques
 class Cheque(models.Model):
@@ -49,6 +49,7 @@ class SolicitudPrestamo(models.Model):
 	unificarPrestamos = models.BooleanField(default=False)
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
+	interesBaseAhorro = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 	cantidadCuotas = models.IntegerField()
 	valorCuotasCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	fechaAprobacion = models.DateField(null=True, blank=True)
@@ -169,6 +170,7 @@ class MaestraPrestamo(models.Model):
 	fechaEntrega = models.DateField(null=True, blank=True)
 	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	valorAhorro = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 	fechaAprobacion = models.DateField(auto_now_add=True, null=True)
 	quincenas = models.PositiveIntegerField(default=2)
@@ -192,7 +194,13 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaInteresQ1(self):
 		if self.montoCuotaQ1 != None:
-			valor = self.balance * (self.tasaInteresMensual/self.quincenas/100)
+			interesAhorro = decimal.Decimal(1/self.quincenas/100) #InteresPrestamosBaseAhorros.object.get(estatus='ACTIVO').porcentajeAnual/self.quincenas/100
+			interesGarant = self.tasaInteresMensual/self.quincenas/100
+
+			InteresAhorro = decimal.Decimal(self.valorAhorro * (0.005)) if self.valorAhorro != None else 0
+			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
+			raise Exception(interesAhorro)
+			valor = interesAhorro + InteresGarantizado
 		else:
 			valor = 0
 		return valor
@@ -200,7 +208,13 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaInteresQ2(self):
 		if self.montoCuotaQ2 != None:
-			valor = self.balance * (self.tasaInteresMensual/self.quincenas/100)
+			interesAhorro = decimal.Decimal(1/self.quincenas/100) #InteresPrestamosBaseAhorros.object.get(estatus='ACTIVO').porcentajeAnual/self.quincenas/100
+			interesGarant = self.tasaInteresMensual/self.quincenas/100
+
+			InteresAhorro = 1000 if self.valorAhorro != None else 0
+			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
+
+			valor = interesAhorro + InteresGarantizado
 		else:
 			valor = 0
 		return valor
@@ -348,3 +362,17 @@ class DistribucionExcedente(models.Model):
 
 	userLog = models.ForeignKey(User, editable=False)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
+
+
+#Tabla para guardar el porcentaje de interes sobre beneficio de ahorro para prestamos
+class InteresPrestamosBaseAhorros(models.Model):
+
+	porcentajeAnual = models.DecimalField("Porcentaje Anual", max_digits=4, decimal_places=2)
+	estatus = models.CharField(max_length=6, default='ACTIVO')
+
+	def __unicode__(self):
+		return '%s' % self.porcentajeAnual
+
+	class Meta:
+		verbose_name = 'Interes en Base Ahorro'
+		verbose_name_plural = "Interes en Base Ahorro"

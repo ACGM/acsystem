@@ -269,14 +269,14 @@ class CategoriaPrestamo(models.Model):
 	tipo_choices = (('OD','Orden de Despacho'),('PR','Prestamo'),('SC','SuperCoop'),)
 
 	descripcion = models.CharField(max_length=70)
-	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True)
-	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True)
+	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True, null=True)
+	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True, null=True)
 	tipo = models.CharField(max_length=2, choices=tipo_choices)
 	interesAnualSocio = models.DecimalField("Intereses Anual Socio %", max_digits=6, decimal_places=2, null=True, blank=True)
 	# interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado %", max_digits=6, decimal_places=2, null=True, blank=True)
 	# interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo %", max_digits=6, decimal_places=2, null=True, blank=True)
 
-	userLog = models.ForeignKey(User, editable=False)
+	userLog = models.ForeignKey(User, editable=False, null=True, blank=True)
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):

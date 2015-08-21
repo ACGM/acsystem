@@ -13,7 +13,7 @@
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<h3>COOPERATIVA GERDAUMETALDOM </h3>
 			<p class="titulo-utilidad"> Reporte de Prestamos </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
@@ -23,7 +23,15 @@
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
 			<span>Fecha Fin</span>
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
-			<button class="Boton" ng-click="solprestamosEmitidas()">Buscar</button>
+			<input type="checkbox" ng-model="clasificacion">
+			<span>Por clasificacion</span>
+			
+			<p>
+				<button class="Boton" ng-click="solprestamosEmitidas()">Buscar</button>
+
+			</p>
+
+
 		</div>
 
 		<section class="detalle-utilidad">
