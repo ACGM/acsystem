@@ -9,7 +9,7 @@ from django.shortcuts import render
 from .models import Cuentas, Auxiliares, DiarioGeneral, CuentasControl
 from administracion.models import TipoDocumento
 
-from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer, TipoDocSerializer, \
+from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer,  \
     CuentasControlSerializer
 
 import json
@@ -178,11 +178,6 @@ class AuxiliarViewSet(viewsets.ModelViewSet):
 class DiarioViewSet(viewsets.ModelViewSet):
     queryset = DiarioGeneral.objects.all()
     serializer_class = DiarioSerializer
-
-
-class TipoDocViewSet(viewsets.ModelViewSet):
-    queryset = TipoDocumento.objects.all()
-    serializer_class = TipoDocSerializer
 
 
 class CuentaControlViewSet(viewsets.ModelViewSet):

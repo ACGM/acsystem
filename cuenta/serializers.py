@@ -15,7 +15,7 @@ class CuentasSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Cuentas
-        fields = ('codigo', 'descripcion', 'origen', 'control', 'cuentaControl')
+        fields = ('codigo', 'descripcion', 'origen', 'control', 'tipo' ,'cuentaControl')
 
 
 class AuxiliarSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,9 +32,3 @@ class DiarioSerializer(serializers.HyperlinkedModelSerializer):
         many = True
         fields = ('id', 'fecha', 'cuenta', 'auxiliar', 'referencia', 'tipoDoc', 'debito', 'credito', 'estatus')
 
-
-class TipoDocSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = TipoDocumento
-        many = False
-        field = ("tipoDoc", "descripcion")

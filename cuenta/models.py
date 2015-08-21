@@ -20,11 +20,13 @@ class Cuentas(models.Model):
 
     # Origenes de cuentas
     origen_choices = (('D', 'Debito'), ('C', 'Credito'),)
+    tipo_choicer = (('G', 'General'), ('D', 'Detalle'))
 
     # Campos Base
     codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
     origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
+    tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name="Tipo Cuenta")
     #Para Identificar si es una cuenta Control
     control = models.BooleanField(default=False)
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)

@@ -51,7 +51,7 @@ from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView
 
 #ViewSets (API)
 
-from cuenta.views import DiarioViewSet, TipoDocViewSet
+from cuenta.views import DiarioViewSet
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
@@ -90,7 +90,6 @@ router=routers.DefaultRouter()
 router.register(r'cuentas', CuentasViewSet)
 router.register(r'auxiliar', AuxiliarViewSet)
 router.register(r'diario', DiarioViewSet)
-router.register(r'tipoDocDiario',TipoDocViewSet)
 
 #CXP
 router.register(r'ordenCompra',OrdenViewSet)
