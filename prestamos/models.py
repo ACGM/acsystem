@@ -366,13 +366,14 @@ class DistribucionExcedente(models.Model):
 
 #Tabla para guardar el porcentaje de interes sobre beneficio de ahorro para prestamos
 class InteresPrestamosBaseAhorros(models.Model):
+    estatus_choices = (('A', 'Activo'), ('I', 'Inactivo'))
 
-	porcentajeAnual = models.DecimalField("Porcentaje Anual", max_digits=4, decimal_places=2)
-	estatus = models.CharField(max_length=6, default='ACTIVO')
+    porcentajeAnual = models.DecimalField("Porcentaje Anual", max_digits=4, decimal_places=2)
+    estatus = models.CharField(max_length=6, choices=estatus_choices, default='A')
 
-	def __unicode__(self):
-		return '%s' % self.porcentajeAnual
+    def __unicode__(self):
+    	return '%s' % self.porcentajeAnual
 
-	class Meta:
-		verbose_name = 'Interes en Base Ahorro'
-		verbose_name_plural = "Interes en Base Ahorro"
+    class Meta:
+    	verbose_name = 'Interes en Base Ahorro'
+    	verbose_name_plural = 'Interes en Base Ahorro'

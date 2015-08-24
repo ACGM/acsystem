@@ -30,7 +30,7 @@ class Departamento(models.Model):
         return '%s: %s' % (self.centroCosto, self.descripcion)
 
     def save(self, *args, **kwargs):
-        self.descripcion = self.descripcion.title()
+        self.descripcion = self.descripcion.upper()
 
         super(Departamento, self).save(*args, **kwargs)
 
@@ -137,10 +137,10 @@ class Suplidor(models.Model):
     sexo_choices = (('M', 'Masculino'), ('F', 'Femenino'),)
 
     tipoIdentificacion = models.CharField("Tipo de Identificacion", max_length=2, choices=tipoIdentificacion_choices,
-                                          default='C')
-    cedulaRNC = models.CharField("Cedula o RNC", unique=True, max_length=25)
+                                          default='C', blank=True, null=True)
+    cedulaRNC = models.CharField("Cedula o RNC", unique=True, max_length=25, blank=True, null=True)
     nombre = models.CharField(max_length=60)
-    sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
+    sexo = models.CharField(max_length=1, choices=sexo_choices, default='M', null=True, blank=True)
     direccion = models.TextField(blank=True)
     sector = models.CharField(max_length=40, blank=True, null=True)
     ciudad = models.CharField(max_length=40, blank=True, null=True)
@@ -149,9 +149,9 @@ class Suplidor(models.Model):
     correo = models.CharField(max_length=40, blank=True, null=True)
     fax = models.CharField(max_length=50, blank=True, null=True)
     intereses = models.DecimalField("Intereses %", max_digits=5, decimal_places=2, blank=True, null=True, default=0)
-    tipoSuplidor = models.ForeignKey(TipoSuplidor)
+    tipoSuplidor = models.ForeignKey(TipoSuplidor, null=True, blank=True)
     clase = models.CharField(max_length=1, choices=clase_choices, default='N')
-    auxiliar = models.ForeignKey(Auxiliares, null=True)
+    auxiliar = models.ForeignKey(Auxiliares, null=True, blank=True)
     tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=2, null=True, blank=True)
     cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
@@ -193,7 +193,7 @@ class Socio(models.Model):
     fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
     fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
     correo = models.EmailField(blank=True)
-    departamento = models.ForeignKey(Departamento)
+    departamento = models.ForeignKey(Departamento, null=True, blank=True)
     localidad = models.ForeignKey(Localidad)
     estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
     salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
@@ -255,18 +255,18 @@ class CoBeneficiario(models.Model):
 
 # Categorias de Prestamos
 class CategoriaPrestamo(models.Model):
-    tipo_choices = (('OD', 'Orden de Despacho'), ('PR', 'Prestamo'), ('SC', 'SuperCoop'),)
+    tipo_choices = (('OD', 'Orden de Despacho'), ('PR', 'Prestamo'), ('SC', 'SuperCoop'))
 
-	descripcion = models.CharField(max_length=70)
-	montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True, null=True)
-	montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True, null=True)
-	tipo = models.CharField(max_length=2, choices=tipo_choices)
-	interesAnualSocio = models.DecimalField("Intereses Anual Socio %", max_digits=6, decimal_places=2, null=True, blank=True)
+    descripcion = models.CharField(max_length=70)
+    montoDesde = models.DecimalField("Monto Desde", max_digits=18, decimal_places=2, blank=True, null=True)
+    montoHasta = models.DecimalField("Monto Hasta", max_digits=18, decimal_places=2, blank=True, null=True)
+    tipo = models.CharField(max_length=2, choices=tipo_choices)
+    interesAnualSocio = models.DecimalField("Intereses Anual Socio %", max_digits=6, decimal_places=2, null=True, blank=True)
 	# interesAnualEmpleado = models.DecimalField("Intereses Anual Empleado %", max_digits=6, decimal_places=2, null=True, blank=True)
 	# interesAnualDirectivo = models.DecimalField("Intereses Anual Directivo %", max_digits=6, decimal_places=2, null=True, blank=True)
 
-	userLog = models.ForeignKey(User, editable=False, null=True, blank=True)
-	datetimeServer = models.DateTimeField(auto_now_add=True)
+    userLog = models.ForeignKey(User, editable=False)
+    datetimeServer = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return '%s' % (self.descripcion)

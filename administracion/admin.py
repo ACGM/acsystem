@@ -61,7 +61,7 @@ class UnidadAdmin(admin.ModelAdmin):
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-	list_display = ['id','codigo','descripcion','unidad','precio','costo']
+	list_display = ['id','codigo','descripcion', 'categoria', 'unidad','precio','costo']
 	list_editable = ('descripcion','unidad','precio','costo')
 	search_fields = ('codigo','descripcion')
 
@@ -82,9 +82,10 @@ class TipoSuplidorAdmin(admin.ModelAdmin):
 
 @admin.register(Suplidor)
 class SuplidorAdmin(admin.ModelAdmin):
-	list_display = ['id','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor','auxiliar','clase']
+	list_display = ['id','clase','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor','auxiliar']
 	list_editable = ('nombre','telefono','intereses','tipoSuplidor','auxiliar','clase')
 	search_fields = ('cedulaRNC','nombre')
+	list_filter = ('clase',)
 
 	def save_model(self, request, obj, form, change):
 		obj.userLog = request.user
