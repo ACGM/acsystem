@@ -8,36 +8,80 @@
 	<mensajeerror> </mensajeerror>
 	<mensajeinfo> </mensajeinfo>
 
-	<div class="Activo-Lista">
-		<table class="Activo-table" ng-show="actVs">
-			<tr class="Activo-table-header">
+	<div class="content-suplidor-table">
+					<table class="suplidor-table-search" ng-show="tableSuplidor">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>Nombre</td>
+						</tr>
+						<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+							
+						</tr>
+					</table>
+				</div>
+
+	<div class="content-suplidor-table">
+					<table class="suplidor-table-search" ng-show="tableCat">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableCat=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>Descripción</td>
+						</tr>
+						<tr ng-repeat="s in categoria" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selCat($event,s)"> [[s.id]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selCat($event,s)"> [[s.descripcion]] </a></td>
+							
+						</tr>
+					</table>
+				</div>
+
+	<div class="Activo-Lista" ng-show="actVs">
+		<div class="activo-main-panel">
+			<a href="#" ng-click="addAct()" class="icon-file ActivoNew"></a>
+		</div>
+		<div class="registrosPanel--grande">
+		<table class="listado-table noTop" ng-show="actVs">
+			<tr class="listado-table-nc-header">
 				<td>Descripción</td>
 				<td>Categoria</td>
 				<td>Fecha Adquisición</td>
 				<td>Costo</td>
 				<td>Depresiación</td>
 			</tr>
-			<tr class="Activo-detalle" ng-repeat="a in lsActivos">
-				<td>[[a.descripcion]]</td>
+			<tr class="listado-act-detail" ng-repeat="a in lsActivos">
+				<td><a href="#" ng-click="viewActivo(a.id)" class="utils-noDecoration">[[a.descripcion]]</a></td>
 				<td>[[a.categoria]]</td>
-				<td>[[a.fecha]]</td>
-				<td>[[a.costo]]</td>
-				<td></td>
+				<td>[[a.fechaAdq |date: DD/mm/yyyy]]</td>
+				<td>[[a.costo |number:2]]</td>
+				<td><a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-list2"></a></td>
 			</tr>
 		</table>
+		</div>
 	</div>
 
-	<div class="Activo-Depresiacion-Lista">
-		<div class="Activo-Nombre">[[actData.descripcion]]</div>
-		<table class="Activo-table" ng-show="depVs">
-			<tr class="Activo-header">
+	<div class="Activo-Lista" ng-show="depVs">
+		<div class="registrosPanel--grande">
+		<div class="Activo-Detalle">[[actData.descripcion]]</div>
+		<table class="listado-table noTop" ng-show="depVs">
+			<tr class="listado-table-nc-header">
 				<td>Fecha</td>
 				<td>Depresiación Mensual</td>
 				<td>Depresiación Acumulada</td>
 				<td>Depresiación en el Año</td>
 				<td>Balance segun Libro</td>
 			</tr>
-			<tr class="Activo-detalleDepresiacion" ng-repeat="d in depList">
+			<tr class="listado-ar-detail" ng-repeat="d in depList">
 				<td>[[d.fecha]]</td>
 				<td>[[d.dMensual]]</td>
 				<td>[[d.dAcumulada]]</td>
@@ -45,11 +89,12 @@
 				<td>[[d.vLibro]]</td>
 			</tr>
 		</table>
+		</div>
 	</div>
 
-	<div class="Activo-crear">
+	<div class="Activo-crear" ng-show="actRg">
 		<form action="" id="activoForm" ng-submit="setActivo($event)" class="Activo-formulario">
-			<table>
+			<table class="regActivo">
 				<tr>
 					<td># Registro</td>
 					<td><input type="text" ng-model="actData.id" ng-disable="true" class="disable" readonly="">
@@ -60,19 +105,25 @@
 				</tr>
 				<tr>
 					<td>Categoria</td>
-					<td><input type="text" ng-model="actData.categoria"></td>
+					<td>
+					<input type="text" ng-model="actData.categoria" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+					<input type="text" ng-model="CategoriaDesc" ng-keyup="getCategoria($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getCategoria($event)" class="producto-field-ei" required>
+				</td>
 				</tr>
 				<tr>
 					<td>Suplidor</td>
-					<td><input type="text" ng-model="actData.suplidor"></td>
+					<td>
+						<input type="text" ng-model="actData.suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getSuplidor($event)" class="producto-field-ei" required>
+					</td>
 					<td>Factura</td>
 					<td><input type="text" ng-model="actData.factura"></td>
 				</tr>
 				<tr>
 					<td>Fecha Adquisición</td>
-					<td><input type="text" ng-model="actData.fechaAdq"></td>
+					<td><input type="text" ng-model="actData.fechaAdq" datepicker></td>
 					<td>Fecha Depresiación</td>
-					<td><input type="text" ng-model="actData.fechaDep"></td>
+					<td><input type="text" ng-model="actData.fechaDep " datepicker></td>
 				</tr>
 				<tr>
 					<td>Años de Vida Util</td>

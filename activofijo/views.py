@@ -32,6 +32,49 @@ class ActivosSerializer(viewsets.ModelViewSet):
 class ActivosView(TemplateView):
     template_name = 'Activos.html'
 
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    # Devuelve la estructura de los activos
+    def json_to_response(self):
+        data = list()
+        for activo in Activos.objects.all():
+            data.append({
+                'id': activo.id,
+                'descripcion': activo.descripcion,
+                'categoriaId': activo.categoria.id,
+                'categoria': activo.categoria.descripcion,
+                'fechaAdq': activo.fechaAdd,
+                'fechaDep': activo.fechaDep,
+                'agnosVu': activo.agnosVu,
+                'costo': activo.costo,
+                'porcentaje': activo.porcentaje,
+                'suplidorId': activo.suplidor.id,
+                'suplidor': activo.suplidor.nombre,
+                'factura': activo.factura,
+                'localidadId': activo.localidad.id,
+                'depresiacion': [{
+                                     'id': depr.id,
+                                     'activoId': depr.activoId,
+                                     'fecha': depr.fecha,
+                                     'dMensual': depr.dMensual,
+                                     'dAcumulada': depr.dAcumulada,
+                                     'dAgno': depr.dAgno,
+                                     'vLibro': depr.vLibro,
+                                 }
+                                 for depr in Depresiacion.objects.filter(activoId=activo.id)]
+            })
+            return JsonResponse(data, safe=False)
+
+
+        # Metodo pos que registra el activo en cuestion.
+
     def post(self, request, *args, **kwargs):
         DataA = json.loads(request.body)
         Data = DataA['regActivo']
@@ -63,52 +106,27 @@ class ActivosView(TemplateView):
         regDepresiacion.vLibro = 0
         regDepresiacion.save()
 
-class ActivoRegView(DetailView):
-    queryset = Activos.objects.all()
+class CategoriaActivoView(DetailView):
+    queryset = CategoriaActivo.objects.all()
 
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
 
         if format == "json":
             return self.json_to_response()
-
         context = self.get_context_data()
         return self.render_to_response(context)
 
-    # Devuelve la estructura de los activos
-    def json_to_JsonResponse(self):
+    def json_to_response(self):
         data = list()
-        for activo in elf.object_list:
+
+        for cat in CategoriaActivo.objects.all():
             data.append({
-                'id': activo.id,
-                'descripcion': activo.descripcion,
-                'categoriaId': activo.categoria.id,
-                'categoria': activo.categoria.descripcion,
-                'fechaAdq': activo.fechaAdq,
-                'fechaDep': activo.fechaDep,
-                'agnosVu': activo.agnosVu,
-                'costo': activo.costo,
-                'porcentaje': activo.porcentaje,
-                'suplidorId': activo.suplidor.id,
-                'suplidor': activo.suplidor.nombre,
-                'factura': activo.factura,
-                'localidadId': activo.localidad.id,
-                'depresiacion': [{
-                                     'id': depr.id,
-                                     'activoId': depr.activoId,
-                                     'fecha': depr.fecha,
-                                     'dMensual': depr.dMensual,
-                                     'dAcumulada': depr.dAcumulada,
-                                     'dAgno': depr.dAgno,
-                                     'vLibro': depr.vLibro,
-                                 }
-                                 for depr in Depresiacion.objects.filter(activoId=activo.id)]
-            })
-            return JsonResponse(data, safe=False)
+                'id': cat.id,
+                'descripcion' : cat.descripcion
+                })
 
-
-        # Metodo pos que registra el activo en cuestion.
-
+        return JsonResponse(data, safe=False)
 
 # Clase para correr la depresiacion mensual de los activos aun depreciables
 class DepresiacionView(TemplateView):
