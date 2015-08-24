@@ -193,7 +193,7 @@ class Socio(models.Model):
     fechaIngresoCoop = models.DateField("Fecha de Ingreso Coop.")
     fechaIngresoEmpresa = models.DateField("Fecha de Ingreso Empresa")
     correo = models.EmailField(blank=True)
-    departamento = models.ForeignKey(Departamento, null=True, blank=True)
+    departamento = models.ForeignKey(Departamento)
     localidad = models.ForeignKey(Localidad)
     estatus = models.CharField(max_length=2, choices=estatus_choices, default='S')
     salario = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)

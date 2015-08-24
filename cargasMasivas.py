@@ -121,8 +121,7 @@ f = open('Socios.csv', 'r')
 for line in f:
 	line = line.split(',')
 	socio = Socio()
-	try: depto = Departamento.objects.get(centroCosto=line[7].decode('latin-1').strip()) 
-	except: depto = None
+	depto = Departamento.objects.get(centroCosto=line[7].strip()) 
 	socio.codigo = line[0].decode('latin-1')
 	socio.nombres = line[1].decode('latin-1')
 	socio.apellidos = line[2].decode('latin-1')
@@ -130,7 +129,7 @@ for line in f:
 	socio.estadoCivil = 'S' if line[4] == 'Soltero' else 'Casado'
 	socio.fechaIngresoCoop = line[5].decode('latin-1').replace('.','-')
 	socio.fechaIngresoEmpresa = line[6].decode('latin-1').replace('.','-')
-	socio.Departamento = depto
+	socio.departamento = depto
 	socio.localidad = Localidad.objects.get(descripcion=line[8].strip())
 	socio.estatus = 'S' if line[9] == 'Socio' else 'E'
 	socio.cuotaAhorroQ1 = line[10]
