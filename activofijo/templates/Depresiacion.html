@@ -3,5 +3,35 @@
 {% block title %} Depreciacion Activos {% endblock title %}
 
 {% block content %}
-
+	<div  ng-controller="DepresiacionCtrl" ng-init="cargarData()">
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
+		<form id="depreForm" ng-submit="setDepresiacion($event)" class="Activo-formulario">
+			<div class="Depresiacion">
+				<table>
+					<tr>
+						<td>
+							Fecha Inicio:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaDesp.fechaI" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Fecha Fin:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaDesp.fechaF" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button class="Boton BusquedaBtn icon-save" type="submit">Generar</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</form>
+	</div>	
 {% endblock content %}

@@ -44,10 +44,9 @@
             return deferred.promise;
 		};
 
-		function setDepresiacion(cuentas, fechaF){
+		function setDepresiacion(cuentas, fechas){
 			var deferred = $q.defer();
-
-			$http.post(apiUrlD, JSON.stringify({'cuentas':cuentas,'fechaF': fechaF}))
+			$http.post(apiUrlD, JSON.stringify({'cuentas':cuentas,'fechas': fechas}))
                 .success(function (data){
                     deferred.resolve(data);
                 })
@@ -59,10 +58,9 @@
 
 		function getActivosById(id){
 			var deferred = $q.defer();
-
-			getActivos.then(function (data){
+			getActivos().then(function (data){
 				var result = data.filter(function (reg){
-					return reg.id = id;
+					return reg.id == id;
 					});
 
 				if (result.length > 0){
@@ -89,13 +87,29 @@
                 return deferred.promise;
         };
 
+        function getDocCuentas(){
+				deferred = $q.defer();
+
+				$http.get('/ahorro/?format=json')
+					.success(function (data){
+						deferred.resolve(data);
+					})
+					.error(function (error){
+						deferred.resolve(error);
+					})
+
+					return deferred.promise;
+			}
+
+
 		return {
 			getActivos 	    : getActivos,
 			setActivo       : setActivo,
 			getActivosById  : getActivosById,
 			getSuplidor     : getSuplidor,
 			setDepresiacion : setDepresiacion,
-			getCategoria    : getCategoria
+			getCategoria    : getCategoria,
+			getDocCuentas	: getDocCuentas
 		};
 	}])
 	
@@ -204,7 +218,7 @@
 			$scope.lstActivos = function($event){
 				ActivoServices.getActivos().then(function (data){
 					$scope.lsActivos = data;
-					console.log($scope.lsActivos);
+
 				})
 				};
 
@@ -224,8 +238,7 @@
           			var FechaFormatD = RgFechaD[2] + '-' + RgFechaD[1] + '-' + RgFechaD[0];
           			$scope.actData.fechaDep = FechaFormatD;
 
-					ActivoServices.setActivo($scope.actData).then(function (data){
-					});
+					ActivoServices.setActivo($scope.actData);
 					//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
 					$scope.lstActivos();
 					$scope.cancelarActivo();
@@ -244,10 +257,21 @@
 			      $timeout(function(){$scope.errorShow = false;}, 3000);   };
 
 
+			$scope.volver =function($event){
+				$event.preventDefault();
+
+				$scope.actVs = true;
+				$scope.actRg = false;
+				$scope.depVs = false;
+			}      
+
             $scope.getDepresiacion = function(id){
 				ActivoServices.getActivosById(id).then(function (data){
-					$scope.depList = data.depresiacion;
+					$scope.depList = data[0].depresiacion;
 				});
+				$scope.actVs = false;
+				$scope.actRg = false;
+				$scope.depVs = true;
 				};
 
 
@@ -265,30 +289,65 @@
 	}])
 	
 	.controller('DepresiacionCtrl', ['$scope','$filter', '$rootScope', 'ActivoServices','$timeout',
-		function($scope, $filter, $rootScope, $ActivoServices, $timeout){
+		function($scope, $filter, $rootScope, ActivoServices, $timeout){
 
-			$scope.depList= [];
-			$scope.cuentas = [];
-			$scope.fechaDesp = null;
+		$scope.depList= [];
+		$scope.cuentas = [];
+		$scope.fechaDesp = {};
+		$scope.documentos =  null;
 
-			$scope.setDepresiacion = function (){
-				try{
-					if ($scope.cuentas.length > 0){
-						ActivoServices.setDepresiacion($scope.cuentas, $scope.fechaDesp);
-					}
-					else{
-						$rootScope.mostrarError("No hay cuentas definidas.");
-					}
+		$rootScope.mostrarError = function(error) {
+		      $scope.errorMsg = error;
+		      $scope.errorShow = true;
+		      $timeout(function(){$scope.errorShow = false;}, 3000);   };
 
+		$scope.cargarData = function(){
+			try{
+				$scope.fechaDesp = {};
+				if ($scope.documentos == null ){
+					$scope.documentos = [];
+
+					$scope.documentos = ActivoServices.getDocCuentas()
+						.then(function (data){
+							$scope.documentos = data.filter(function (res){
+								return res.documentoId == "DEP";
+									});
+							console.log($scope.documentos);
+					});
 				}
-				catch(ex){
-					$rootScope.mostrarError(ex.message);
+			}
+			catch(ex){
+				$rootScope.mostrarError(ex.message);
+			}
+
+		};
+
+		$scope.setDepresiacion = function (){
+			try{
+				if ($scope.documentos.length > 0){
+					var RgFechaA = $scope.fechaDesp.fechaI.split('/');
+          			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
+          			$scope.fechaDesp.fechaI = FechaFormat;
+
+          			var RgFechaB = $scope.fechaDesp.fechaF.split('/');
+          			var FechaFormat = RgFechaB[2] + '-' + RgFechaB[1] + '-' + RgFechaB[0];
+          			$scope.fechaDesp.fechaF = FechaFormat;
+          			console.log($scope.documentos)
+					ActivoServices.setDepresiacion($scope.documentos, $scope.fechaDesp);
+				}
+				else{
+					$rootScope.mostrarError("No hay cuentas definidas.");
 				}
 
-				
-			};
+			}
+			catch(ex){
+				$rootScope.mostrarError(ex.message);
+			}
+
 			
+		};
+		
 
-		}]);
+	}]);
 
 })();
