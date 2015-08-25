@@ -70,7 +70,7 @@ from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoView
 
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
-
+from prestamos.views import InteresPrestamosBaseAhorroView
 
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
@@ -138,6 +138,8 @@ router.register(r'tiposnomina', ListadoTiposNominasViewSet)
 router.register(r'notasdebito', ListadoNDViewSet)
 router.register(r'notascredito', ListadoNCViewSet)
 router.register(r'notascreditoespecial', ListadoNCEViewSet)
+router.register(r'interesPrestamosBaseAhorro', InteresPrestamosBaseAhorroView)
+
 
 urlpatterns = patterns('',
     url(r'^$', 'acgm.views.home', name='home'),
