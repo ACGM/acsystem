@@ -9,7 +9,7 @@
 	<mensajeinfo> </mensajeinfo>
 
 	<div class="content-suplidor-table">
-					<table class="suplidor-table-search" ng-show="tableSuplidor">
+					<table class="Activo-suplidor-table-search" ng-show="tableSuplidor">
 						<tr>
 							<td colspan="3" class="cerrar-table">
 								<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
@@ -28,7 +28,7 @@
 				</div>
 
 	<div class="content-suplidor-table">
-					<table class="suplidor-table-search" ng-show="tableCat">
+					<table class="activo-table-search" ng-show="tableCat">
 						<tr>
 							<td colspan="3" class="cerrar-table">
 								<a href="#" class="icon-delete" ng-click="tableCat=false"></a>
@@ -45,11 +45,10 @@
 						</tr>
 					</table>
 				</div>
-
-	<div class="Activo-Lista" ng-show="actVs">
-		<div class="activo-main-panel">
+<div class="activo-main-panel">
 			<a href="#" ng-click="addAct()" class="icon-file ActivoNew"></a>
 		</div>
+	<div class="Activo-Lista" ng-show="actVs">
 		<div class="registrosPanel--grande">
 		<table class="listado-table noTop" ng-show="actVs">
 			<tr class="listado-table-nc-header">
@@ -93,6 +92,7 @@
 	</div>
 
 	<div class="Activo-crear" ng-show="actRg">
+		
 		<form action="" id="activoForm" ng-submit="setActivo($event)" class="Activo-formulario">
 			<table class="regActivo">
 				<tr>
@@ -113,7 +113,7 @@
 				<tr>
 					<td>Suplidor</td>
 					<td>
-						<input type="text" ng-model="actData.suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+						<input type="text" ng-model="actData.suplidor" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
 						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getSuplidor($event)" class="producto-field-ei" required>
 					</td>
 					<td>Factura</td>

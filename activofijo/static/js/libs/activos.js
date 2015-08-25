@@ -121,18 +121,25 @@
 				$scope.actVs = false;
 				$scope.actRg = true;
 
+				$scope.actData = {};
+				$scope.actData.categoria = 0;
+				debugger;
+
 			};
 
 			$scope.getCategoria = function($event){
 				$event.preventDefault();
 				$scope.tableCat = true;
+				$scope.tableSuplidor = false;
 
-				if($scope.CategoriaDesc !== undefined ){
+				if($scope.CategoriaDesc !== null ){
 					ActivoServices.getCategoria().then(function (data){
+						
 						$scope.categoria = data.filter(function (registro){
-							return $filter('lowercase')(registro.descripcion
-														.substring(0,$scope.CategoriaDesc.length)) == $filter('lowercase')($scope.CategoriaDesc);
+							return $filter('lowercase')(registro
+										.descripcion.substring(0,$scope.CategoriaDesc.length)) == $filter('lowercase')($scope.CategoriaDesc);
 						});
+
 						if($scope.categoria.length > 0){
 							$scope.tableCat = true;
 							$scope.categoriaNoExite = '';
@@ -142,7 +149,6 @@
 						}
 					});
 					
-
 				}
 
 				else {
@@ -151,21 +157,23 @@
 					})
 				}
 			
-			}
+			};
 
-			 $scope.selCat = function($event, s) {
+			$scope.selCat = function($event, s) {
                 $event.preventDefault();
                 $scope.CategoriaDesc = s.descripcion;
                 $scope.actData.categoria = s.id;
-                console.log($scope.actData);
-                $scope.tableSuplidor= false;
+                $scope.tableCat= false;
               };
+
 
 			$scope.getSuplidor = function($event){
                     $event.preventDefault();
                     $scope.tableSuplidor = true;
-                    if($scope.suplidorNombre !== undefined) {
+                    $scope.tableCat = false;
+                    if($scope.suplidorNombre !== null) {
                       ActivoServices.getSuplidor().then(function (data) {
+                        console.log(data);
                         $scope.suplidor = data.filter(function (registro) {
                            return $filter('lowercase')(registro.nombre
                                               .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
@@ -243,6 +251,7 @@
 	       		$scope.depList = null;
 	       		$scope.actVs = true;
 	       		$scope.actRg = false;
+	       		$scope.getCategoria();
 	       	};
 
 			
