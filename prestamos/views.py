@@ -11,9 +11,10 @@ from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer, MaestraPrestamosListadoSerializer
+from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer, MaestraPrestamosListadoSerializer, \
+							InteresPrestamoBaseAhorroSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -86,6 +87,13 @@ class rptSolPrestamosEmitidas(LoginRequiredMixin, TemplateView):
 class rptPrestamos(LoginRequiredMixin, TemplateView):
 
 	template_name = 'rpt_prestamos.html'
+
+
+# Listado de Ajustes de inventario
+class InteresPrestamosBaseAhorroView(viewsets.ModelViewSet):
+
+	queryset = InteresPrestamosBaseAhorros.objects.all()
+	serializer_class = InteresPrestamoBaseAhorroSerializer
 
 
 # Listado de Solicitudes de Prestamos
@@ -222,7 +230,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
 			SolPrestamo.cantidadCuotas = solicitud['cantidadCuotas']
 			SolPrestamo.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
-			SolPrestamo.interesBaseAhorro = decimal.Decimal(solicitud['interesBaseAhorro'])
+			SolPrestamo.interesBaseAhorro = decimal.Decimal(solicitud['tasaInteresBaseAhorro'])
 
 			SolPrestamo.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
 

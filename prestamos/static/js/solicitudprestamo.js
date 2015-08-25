@@ -264,6 +264,19 @@
         return deferred.promise;
       }
 
+      //Interes de Prestamo Base Ahorro  -- Este es el beneficio de poner un % de interes menor por el ahorro capitalizado del socio.
+      function getInteresPrestBaseAhorro() {
+        var deferred = $q.defer();
+
+        $http.get('/api/interesPrestamosBaseAhorro/?format=json')
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+
 
       return {
         solicitudesprestamos          : solicitudesprestamos,
@@ -279,7 +292,8 @@
         getRepresentantes             : getRepresentantes,
         ValidaAutorizador             : ValidaAutorizador,
         solicitudesPrestamosEmitidas  : solicitudesPrestamosEmitidas,
-        solicitanteDatos              : solicitanteDatos
+        solicitanteDatos              : solicitanteDatos,
+        getInteresPrestBaseAhorro     : getInteresPrestBaseAhorro
       };
 
     }])
@@ -313,6 +327,10 @@
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
+
+      SolicitudPrestamoService.getInteresPrestBaseAhorro().then(function (data) {
+        $scope.InteresPrestBaseAhorroAnual = data[0]['porcentajeAnual'];
+      })
 
       window.onresize = function(event) {
         panelesSize();
@@ -882,9 +900,11 @@
       }
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
-        var IBA = (ahorroCap * 0.005);
+        var interesBaseAhorroMensual = parseFloat($scope.InteresPrestBaseAhorroAnual/12/2/100);
+        var IBA = (ahorroCap * interesBaseAhorroMensual);
         var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
-
+console.log(IBG)
+        $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
         $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
         $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
         $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
