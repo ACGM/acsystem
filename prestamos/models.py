@@ -49,7 +49,7 @@ class SolicitudPrestamo(models.Model):
 	unificarPrestamos = models.BooleanField(default=False)
 	tasaInteresAnual = models.DecimalField(max_digits=6, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=6, decimal_places=2)
-	interesBaseAhorro = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+	interesBaseAhorroMensual = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 	cantidadCuotas = models.IntegerField()
 	valorCuotasCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	fechaAprobacion = models.DateField(null=True, blank=True)
@@ -194,30 +194,32 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaInteresQ1(self):
 		if self.montoCuotaQ1 != None:
-			interesAhorro = decimal.Decimal(1/self.quincenas/100) #InteresPrestamosBaseAhorros.object.get(estatus='ACTIVO').porcentajeAnual/self.quincenas/100
+			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='ACTIVO').porcentajeAnual/12
+			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100)
 			interesGarant = self.tasaInteresMensual/self.quincenas/100
 
-			InteresAhorro = decimal.Decimal(self.valorAhorro * (0.005)) if self.valorAhorro != None else 0
+			InteresAhorro = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
 			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
-			raise Exception(interesAhorro)
+
 			valor = interesAhorro + InteresGarantizado
 		else:
 			valor = 0
-		return valor
+		return 11111#valor
 
 	@property
 	def cuotaInteresQ2(self):
 		if self.montoCuotaQ2 != None:
-			interesAhorro = decimal.Decimal(1/self.quincenas/100) #InteresPrestamosBaseAhorros.object.get(estatus='ACTIVO').porcentajeAnual/self.quincenas/100
+			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='ACTIVO').porcentajeAnual/12
+			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100) 
 			interesGarant = self.tasaInteresMensual/self.quincenas/100
 
-			InteresAhorro = 1000 if self.valorAhorro != None else 0
+			InteresAhorro = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
 			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
 
 			valor = interesAhorro + InteresGarantizado
 		else:
 			valor = 0
-		return valor
+		return 1122#valor
 
 	@property
 	def cuotaMasInteresQ1(self):
