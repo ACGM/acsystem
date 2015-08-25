@@ -32,40 +32,6 @@ class ActivosSerializer(viewsets.ModelViewSet):
 class ActivosView(TemplateView):
     template_name = 'Activos.html'
 
-    def post(self, request, *args, **kwargs):
-        DataA = json.loads(request.body)
-        Data = DataA['regActivo']
-
-        categoria = CategoriaActivo.objects.get(Data['categoria'])
-        suplidor = Suplidor.objects.get(Data['suplidor'])
-        localidad = Localidad.objects.get(Data['localidad'])
-
-        regActivo = Activos()
-        regActivo.descripcion = Data['descripcion']
-        regActivo.categoria = categoria
-        regActivo.fechaAdd = Data['fechaA']
-        regActivo.fechaDep = Data['fechaD']
-        regActivo.agnosVu = Data['agnoVu']
-        regActivo.costo = Data['costo']
-        regActivo.porcentaje = Data['porc']
-        regActivo.suplidor = suplidor
-        regActivo.factura = Data['factura']
-        regActivo.localidad = localidad
-        regActivo.save()
-
-        despMensual = (Data['costo'] / 12) * (Data['porc'] / 100)
-        regDepresiacion = Depresiacion()
-        regDepresiacion.activoId = regActivo.id
-        regDepresiacion.fecha = date.today()
-        regDepresiacion.dMensual = despMensual
-        regDepresiacion.dAcumulada = 0
-        regDepresiacion.dAgno = 0
-        regDepresiacion.vLibro = 0
-        regDepresiacion.save()
-
-class ActivoRegView(DetailView):
-    queryset = Activos.objects.all()
-
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
 
@@ -76,15 +42,15 @@ class ActivoRegView(DetailView):
         return self.render_to_response(context)
 
     # Devuelve la estructura de los activos
-    def json_to_JsonResponse(self):
+    def json_to_response(self):
         data = list()
-        for activo in elf.object_list:
+        for activo in Activos.objects.all():
             data.append({
                 'id': activo.id,
                 'descripcion': activo.descripcion,
                 'categoriaId': activo.categoria.id,
                 'categoria': activo.categoria.descripcion,
-                'fechaAdq': activo.fechaAdq,
+                'fechaAdq': activo.fechaAdd,
                 'fechaDep': activo.fechaDep,
                 'agnosVu': activo.agnosVu,
                 'costo': activo.costo,
@@ -109,6 +75,64 @@ class ActivoRegView(DetailView):
 
         # Metodo pos que registra el activo en cuestion.
 
+    def post(self, request, *args, **kwargs):
+        DataA = json.loads(request.body)
+        Data = DataA['activo']
+        #try:
+        categoria = CategoriaActivo.objects.get(id=Data['categoria'])
+        suplidor = Suplidor.objects.get(id=Data['suplidor'])
+        localidad = Localidad.objects.get(id=Data['localidad'])
+
+        regActivo = Activos()
+        regActivo.descripcion = Data['descripcion']
+        regActivo.categoria = categoria
+        regActivo.fechaAdd = Data['fechaAdq']
+        regActivo.fechaDep = Data['fechaDep']
+        regActivo.agnosVu = Data['agnosVu']
+        regActivo.costo = Data['costo']
+        regActivo.porcentaje = Data['porc']
+        regActivo.suplidor = suplidor
+        regActivo.factura = Data['factura']
+        regActivo.localidad = localidad
+        regActivo.save()
+
+        despMensual = (decimal.Decimal(Data['costo']) / 12) * (decimal.Decimal(Data['porc'] )/ 100)
+        regDepresiacion = Depresiacion()
+        regDepresiacion.activoId = regActivo.id
+        regDepresiacion.fecha = date.today()
+        regDepresiacion.dMensual = despMensual
+        regDepresiacion.dAcumulada = 0
+        regDepresiacion.dAgno = 0
+        regDepresiacion.vLibro = 0
+        regDepresiacion.save()
+
+        regActivo.depresiacion.add(regDepresiacion)
+
+        return HttpResponse(regActivo.id)
+        # except Exception, e:
+        #     return HttpResponse(e)
+
+class CategoriaActivoView(DetailView):
+    queryset = CategoriaActivo.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        for cat in CategoriaActivo.objects.all():
+            data.append({
+                'id': cat.id,
+                'descripcion' : cat.descripcion
+                })
+
+        return JsonResponse(data, safe=False)
 
 # Clase para correr la depresiacion mensual de los activos aun depreciables
 class DepresiacionView(TemplateView):

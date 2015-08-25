@@ -45,7 +45,7 @@ from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generar
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
 from cxp.views import CxpView, cxpSuperView
 
-from activofijo.views import ActivosView, DepresiacionView, ActivoRegView
+from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView
 
 from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView
 
@@ -326,7 +326,7 @@ urlpatterns = patterns('',
     #ActivoFijo
     url(r'^activos/$', ActivosView.as_view(), name='ActivoFijo'),
     url(r'^depresiacion/$', DepresiacionView.as_view(), name='Depresiacion'),
-    url(r'^activoJson/$', ActivoRegView.as_view(), name='activo_json'),
+    url(r'^categoriaActivo/$', CategoriaActivoView.as_view(), name='Categiria_activo'),
 
     #Conciliacion Bancaria
     url(r'^conciliacion/Solicitudcheque$', SolicitudView.as_view(), name='Solicitud_Cheques'),
