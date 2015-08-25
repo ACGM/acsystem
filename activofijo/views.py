@@ -77,18 +77,18 @@ class ActivosView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         DataA = json.loads(request.body)
-        Data = DataA['regActivo']
-
-        categoria = CategoriaActivo.objects.get(Data['categoria'])
-        suplidor = Suplidor.objects.get(Data['suplidor'])
-        localidad = Localidad.objects.get(Data['localidad'])
+        Data = DataA['activo']
+        #try:
+        categoria = CategoriaActivo.objects.get(id=Data['categoria'])
+        suplidor = Suplidor.objects.get(id=Data['suplidor'])
+        localidad = Localidad.objects.get(id=Data['localidad'])
 
         regActivo = Activos()
         regActivo.descripcion = Data['descripcion']
         regActivo.categoria = categoria
-        regActivo.fechaAdd = Data['fechaA']
-        regActivo.fechaDep = Data['fechaD']
-        regActivo.agnosVu = Data['agnoVu']
+        regActivo.fechaAdd = Data['fechaAdq']
+        regActivo.fechaDep = Data['fechaDep']
+        regActivo.agnosVu = Data['agnosVu']
         regActivo.costo = Data['costo']
         regActivo.porcentaje = Data['porc']
         regActivo.suplidor = suplidor
@@ -96,7 +96,7 @@ class ActivosView(TemplateView):
         regActivo.localidad = localidad
         regActivo.save()
 
-        despMensual = (Data['costo'] / 12) * (Data['porc'] / 100)
+        despMensual = (decimal.Decimal(Data['costo']) / 12) * (decimal.Decimal(Data['porc'] )/ 100)
         regDepresiacion = Depresiacion()
         regDepresiacion.activoId = regActivo.id
         regDepresiacion.fecha = date.today()
@@ -105,6 +105,12 @@ class ActivosView(TemplateView):
         regDepresiacion.dAgno = 0
         regDepresiacion.vLibro = 0
         regDepresiacion.save()
+
+        regActivo.depresiacion.add(regDepresiacion)
+
+        return HttpResponse(regActivo.id)
+        # except Exception, e:
+        #     return HttpResponse(e)
 
 class CategoriaActivoView(DetailView):
     queryset = CategoriaActivo.objects.all()

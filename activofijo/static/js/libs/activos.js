@@ -34,8 +34,7 @@
 
 		function setActivo(regActivo){
 			var deferred = $q.defer();
-
-            $http.post(apiUrl, JSON.stringify({'activo':regActivo}))
+            $http.post(apiUrl+'?format=json', JSON.stringify({'activo':regActivo}))
                 .success(function (data){
                     deferred.resolve(data);
                 })
@@ -122,10 +121,8 @@
 				$scope.actRg = true;
 
 				$scope.actData = {};
-				$scope.actData.categoria = 0;
-				debugger;
+				};
 
-			};
 
 			$scope.getCategoria = function($event){
 				$event.preventDefault();
@@ -156,8 +153,8 @@
 						$scope.categoria = data;
 					})
 				}
-			
-			};
+				};
+
 
 			$scope.selCat = function($event, s) {
                 $event.preventDefault();
@@ -173,12 +170,10 @@
                     $scope.tableCat = false;
                     if($scope.suplidorNombre !== null) {
                       ActivoServices.getSuplidor().then(function (data) {
-                        console.log(data);
                         $scope.suplidor = data.filter(function (registro) {
                            return $filter('lowercase')(registro.nombre
                                               .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
                         });
-                        console.log(data);
 
                         if($scope.suplidor.length > 0){
                           $scope.tableSuplidor = true;
@@ -202,7 +197,6 @@
                 $event.preventDefault();
                 $scope.suplidorNombre = s.nombre;
                 $scope.actData.suplidor = s.id;
-                console.log($scope.actData);
                 $scope.tableSuplidor= false;
               };
 
@@ -210,8 +204,10 @@
 			$scope.lstActivos = function($event){
 				ActivoServices.getActivos().then(function (data){
 					$scope.lsActivos = data;
+					console.log($scope.lsActivos);
 				})
-			};
+				};
+
 
 			$scope.guardarActivo = function($event){
 				$event.preventDefault();
@@ -222,13 +218,14 @@
 
 					var RgFechaA = $scope.actData.fechaAdq.split('/');
           			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
-          			$scope.fechaAdq.fechaAdq = FechaFormat;
+          			$scope.actData.fechaAdq = FechaFormat;
 
-          			var RgFechaD = $scope.actData.fechaAdq.split('/');
+          			var RgFechaD = $scope.actData.fechaDep.split('/');
           			var FechaFormatD = RgFechaD[2] + '-' + RgFechaD[1] + '-' + RgFechaD[0];
-          			$scope.fechaAdq.fechaDep = FechaFormatD;
+          			$scope.actData.fechaDep = FechaFormatD;
 
-					var result = ActivoServices.setActivo($scope.actData);
+					ActivoServices.setActivo($scope.actData).then(function (data){
+					});
 					//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
 					$scope.lstActivos();
 					$scope.cancelarActivo();
@@ -238,21 +235,31 @@
 				catch(ex){
 					$rootScope.mostrarError(ex.message);
 				}
-            };
+            	};
+
+
+            $rootScope.mostrarError = function(error) {
+			      $scope.errorMsg = error;
+			      $scope.errorShow = true;
+			      $timeout(function(){$scope.errorShow = false;}, 3000);   };
+
 
             $scope.getDepresiacion = function(id){
 				ActivoServices.getActivosById(id).then(function (data){
 					$scope.depList = data.depresiacion;
 				});
-			};
+				};
+
 
             $scope.cancelarActivo = function(){
 	       		$scope.actData = null;
 	       		$scope.depList = null;
 	       		$scope.actVs = true;
 	       		$scope.actRg = false;
+	       		$scope.suplidorNombre = null;
+				$scope.CategoriaDesc = null;
 	       		$scope.getCategoria();
-	       	};
+	       		};
 
 			
 	}])
