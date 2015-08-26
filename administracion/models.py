@@ -7,6 +7,9 @@ from cuenta.models import Cuentas, Auxiliares
 
 import datetime
 
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 # Localidades
 class Localidad(models.Model):

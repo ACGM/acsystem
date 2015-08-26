@@ -161,6 +161,7 @@ class MaestraPrestamo(models.Model):
 	montoInicial = models.DecimalField(max_digits=12, decimal_places=2)
 	tasaInteresAnual = models.DecimalField(max_digits=12, decimal_places=2)
 	tasaInteresMensual = models.DecimalField(max_digits=12, decimal_places=2)
+	tasaInteresPrestBaseAhorro = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	pagoPrestamoAnterior = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	cantidadCuotas = models.PositiveIntegerField()
 	montoCuotaQ1 = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)

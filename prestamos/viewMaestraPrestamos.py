@@ -131,6 +131,7 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 				'montoInicial': prestamo.montoInicial,
 				'tasaInteresAnual': prestamo.tasaInteresAnual if prestamo.tasaInteresAnual != None else '',
 				'tasaInteresMensual': prestamo.tasaInteresMensual if prestamo.tasaInteresMensual != None else '',
+				'tasaInteresPrestBaseAhorro': prestamo.tasaInteresPrestBaseAhorro if prestamo.tasaInteresPrestBaseAhorro != None else '',
 				'pagoPrestamoAnterior': prestamo.pagoPrestamoAnterior,
 				'cantidadCuotas': prestamo.cantidadCuotas,
 				'montoCuotaQ1': prestamo.montoCuotaQ1 if prestamo.montoCuotaQ1 != None else '',
@@ -139,10 +140,12 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 				'fechaEntrega': prestamo.fechaEntrega,
 				'chequeNo': prestamo.chequeNo.chequeNo if prestamo.chequeNo != None else '',
 				'valorGarantizado': prestamo.valorGarantizado,
+				'valorAhorro': prestamo.valorAhorro,
 				'balance': prestamo.balance,
 				'estatus': prestamo.estatus,
 				'posteadoFecha': prestamo.posteadoFecha,
 				'tipoPrestamoNomina': prestamo.tipoPrestamoNomina,
+				'quincenas': prestamo.quincenas,
 				})
 
 		return JsonResponse(data, safe=False)

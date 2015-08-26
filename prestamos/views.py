@@ -230,7 +230,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])
 			SolPrestamo.cantidadCuotas = solicitud['cantidadCuotas']
 			SolPrestamo.valorCuotasCapital = decimal.Decimal(solicitud['valorCuotas'].replace(',',''))
-			SolPrestamo.interesBaseAhorro = decimal.Decimal(solicitud['tasaInteresBaseAhorro'])
+			SolPrestamo.interesBaseAhorroMensual = decimal.Decimal(solicitud['tasaInteresBaseAhorro'])
 
 			SolPrestamo.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
 
@@ -385,6 +385,7 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						maestra.montoInicial = oSolicitud.netoDesembolsar
 						maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
 						maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
+						maestra.tasaInteresPrestBaseAhorro = oSolicitud.interesBaseAhorroMensual
 						maestra.pagoPrestamoAnterior = 0
 						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
 						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital

@@ -371,6 +371,7 @@
             if(data.length > 0) {
               $scope.errorMsg = '';
               $scope.errorShow = false;
+              console.log(data);
 
               //completar los campos
               // $scope.nuevaEntrada();
@@ -395,7 +396,8 @@
               $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
               $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
               $scope.prestamo.tasaInteresAnual = data[0]['tasaInteresAnual'];
-              $scope.prestamo.tasaInteresMensual = data[0]['tasaInteresMensual'];
+              $scope.prestamo.tasaInteresMensual = data[0]['tasaInteresMensual']/2;
+              $scope.prestamo.tasaInteresPrestBaseAhorro = data[0]['tasaInteresPrestBaseAhorro']/2;
               $scope.prestamo.pagoPrestamoAnterior = data[0]['pagoPrestamoAnterior'];
               $scope.prestamo.cantidadCuotas = data[0]['cantidadCuotas'];
               $scope.prestamo.montoCuotaQ1 = $filter('number')(data[0]['montoCuotaQ1'], 2);
@@ -404,7 +406,11 @@
               $scope.prestamo.fechaEntrega = data[0]['fechaEntrega'];
               $scope.prestamo.chequeNo = data[0]['chequeNo'];
               $scope.prestamo.valorGarantizado = $filter('number')(data[0]['valorGarantizado'], 2);
+              $scope.prestamo.valorAhorro = $filter('number')(data[0]['valorAhorro'], 2);
               $scope.prestamo.balance = $filter('number')(data[0]['balance'], 2);
+
+              $scope.prestamo.valorInteresGarantizado = $filter('number')(data[0]['valorGarantizado'] * (data[0]['tasaInteresMensual']/data[0]['quincenas']/100), 2);
+              $scope.prestamo.valorInteresAhorro = $filter('number')(data[0]['valorAhorro'] * (data[0]['tasaInteresPrestBaseAhorro']/data[0]['quincenas']/100), 2)
 
               var fechaP = $filter('date')(Date.now(), 'dd/MM/yyyy').split('/');
               var fechaF = new Date(fechaP[2] + '/' + fechaP[1] + '/' + fechaP[0]);

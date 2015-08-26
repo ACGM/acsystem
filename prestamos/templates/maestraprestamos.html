@@ -162,11 +162,23 @@
 						</tr>
 						<tr>
 							<td>Tasa de Interes Anual</td>
-							<td><input type="text" ng-model="prestamo.tasaInteresAnual" class="align-right" readonly></td>
+							<td>
+								<input type="text" ng-model="prestamo.tasaInteresAnual" class="prestamo-representanteCod-field-t align-right" readonly>
+							</td>
 						</tr>
 						<tr>
-							<td>Tasa de Interes Mensual</td>
-							<td><input type="text" ng-model="prestamo.tasaInteresMensual" class="align-right" readonly></td>
+							<td>Tasa de Interes Quincenal</td>
+							<td>
+								<input type="text" ng-model="prestamo.tasaInteresMensual" class="prestamo-representanteCod-field-t align-right" readonly>
+								=<input type="text" ng-model="prestamo.valorInteresGarantizado" class="prestamo-prestamo-field-t align-right" readonly>
+							</td>
+						</tr>
+						<tr>
+							<td>Tasa de Interes Base Ahorro Quin.</td>
+							<td>
+								<input type="text" ng-model="prestamo.tasaInteresPrestBaseAhorro" class="prestamo-representanteCod-field-t align-right" readonly>
+								=<input type="text" ng-model="prestamo.valorInteresAhorro" class="prestamo-prestamo-field-t align-right" readonly>
+							</td>
 						</tr>
 						<tr>
 							<td>Pago Prestamo Anterior</td>
@@ -216,7 +228,11 @@
 						</tr>
 						<tr>
 							<td>Valor de la Garantia</td>
-							<td><input type="text" ng-model="prestamo.valorGarantizado" class="align-right" readonly></td>
+							<td><input type="text" ng-model="prestamo.valorGarantizado" class="align-right resaltar-valor verde" readonly></td>
+						</tr>
+						<tr>
+							<td>Valor de Ahorro</td>
+							<td><input type="text" ng-model="prestamo.valorAhorro" class="align-right resaltar-valor verde" readonly></td>
 						</tr>
 						<tr>
 							<td>Balance a la fecha</td>
