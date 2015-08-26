@@ -10,7 +10,7 @@ from django.shortcuts import render
 from .models import CategoriaActivo, Depresiacion, Activos
 from .serializers import CategoriaActivoSerializer, DepresiacionSerializer, ActivosSerializer
 from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
-from administracion.models import Suplidor, Localidad
+from administracion.models import Suplidor, Localidad, DocumentoCuentas, TipoDocumento
 
 
 # Viewsets Para activos
@@ -28,9 +28,84 @@ class ActivosSerializer(viewsets.ModelViewSet):
     queryset = Activos.objects.all()
     serializer_class = ActivosSerializer
 
+
+class impActivoView(TemplateView):
+    template_name = 'impActivos.html'
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+        for loc in Localidad.objects.all():
+            data.append({
+                'id': loc.id,
+                'descripcion' : loc.descripcion,
+                'descripcionLarga' : loc.descripcionLarga
+                })
+        return JsonResponse(data, safe=False)
+
+    
+
+
 # Clase busqueda y creacion basica
 class ActivosView(TemplateView):
     template_name = 'Activos.html'
+
+    def setCuentaActivo(self, idActivo, fecha , cta, monto):
+        try:
+            diario = DiarioGeneral()
+            diario.fecha = fecha
+            diario.referencia = 'ACT-' + str(idActivo)
+            # if cta['cuenta'] is not None:
+            cuenta = Cuentas.objects.get(codigo=cta.cuenta.codigo)
+            diario.cuenta = cuenta
+            # if cta['aux'] is not None:
+            #     aux = Auxiliares.objets.get(codigo=cta['aux'])
+            #     diario.auxiliar = aux
+            diario.estatus = 'P'
+            if cta.accion == 'D':
+                diario.debito = monto
+                diario.credito = 0
+            else:
+                diario.debito = 0
+                diario.credito = monto
+            diario.save()
+
+            regActivo = Activos.objects.get(id=idActivo)
+            regActivo.cuentas.add(diario)
+            return diario.id
+        except Exception, e:
+            return e.message    
+
+    def setCuentaDepresiacion(self, idActivo, fecha , cta, monto):
+        diario = DiarioGeneral()
+        diario.fecha = fecha
+        diario.referencia = 'DEP-' + str(idActivo)
+        # if cta['cuenta'] is not None:
+        cuenta = Cuentas.objects.get(codigo=cta.cuenta.codigo)
+        diario.cuenta = cuenta
+        # if cta['aux'] is not None:
+        #     aux = Auxiliares.objets.get(codigo=cta['aux'])
+        #     diario.auxiliar = aux
+        diario.estatus = 'P'
+        if cta['accion'] == 'D':
+            diario.debito = monto
+            diario.credito = 0
+        else:
+            diario.debito = 0
+            diario.credito = monto
+        diario.save()
+
+        regDesp = Depresiacion.objects.get(id=idActivo)
+        regDesp.cuentas.add(diario)
+        return diario.id
 
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
@@ -58,7 +133,9 @@ class ActivosView(TemplateView):
                 'suplidorId': activo.suplidor.id,
                 'suplidor': activo.suplidor.nombre,
                 'factura': activo.factura,
+                'localidad' : activo.localidad.descripcion,
                 'localidadId': activo.localidad.id,
+                'estatus' : activo.estatus,
                 'depresiacion': [{
                                      'id': depr.id,
                                      'activoId': depr.activoId,
@@ -70,7 +147,8 @@ class ActivosView(TemplateView):
                                  }
                                  for depr in Depresiacion.objects.filter(activoId=activo.id)]
             })
-            return JsonResponse(data, safe=False)
+        
+        return JsonResponse(data, safe=False)
 
 
         # Metodo pos que registra el activo en cuestion.
@@ -78,40 +156,54 @@ class ActivosView(TemplateView):
     def post(self, request, *args, **kwargs):
         DataA = json.loads(request.body)
         Data = DataA['activo']
-        #try:
-        categoria = CategoriaActivo.objects.get(id=Data['categoria'])
-        suplidor = Suplidor.objects.get(id=Data['suplidor'])
-        localidad = Localidad.objects.get(id=Data['localidad'])
+        try:
+            categoria = CategoriaActivo.objects.get(id=Data['categoria'])
+            suplidor = Suplidor.objects.get(id=Data['suplidor'])
+            localidad = Localidad.objects.get(id=Data['localidad'])
 
-        regActivo = Activos()
-        regActivo.descripcion = Data['descripcion']
-        regActivo.categoria = categoria
-        regActivo.fechaAdd = Data['fechaAdq']
-        regActivo.fechaDep = Data['fechaDep']
-        regActivo.agnosVu = Data['agnosVu']
-        regActivo.costo = Data['costo']
-        regActivo.porcentaje = Data['porc']
-        regActivo.suplidor = suplidor
-        regActivo.factura = Data['factura']
-        regActivo.localidad = localidad
-        regActivo.save()
+            regActivo = Activos()
+            regActivo.descripcion = Data['descripcion']
+            regActivo.categoria = categoria
+            regActivo.fechaAdd = Data['fechaAdq']
+            regActivo.fechaDep = Data['fechaDep']
+            regActivo.agnosVu = Data['agnosVu']
+            regActivo.costo = Data['costo']
+            regActivo.porcentaje = Data['porc']
+            regActivo.suplidor = suplidor
+            regActivo.factura = Data['factura']
+            regActivo.localidad = localidad
+            regActivo.estatus = 'A'
+            regActivo.save()
 
-        despMensual = (decimal.Decimal(Data['costo']) / 12) * (decimal.Decimal(Data['porc'] )/ 100)
-        regDepresiacion = Depresiacion()
-        regDepresiacion.activoId = regActivo.id
-        regDepresiacion.fecha = date.today()
-        regDepresiacion.dMensual = despMensual
-        regDepresiacion.dAcumulada = 0
-        regDepresiacion.dAgno = 0
-        regDepresiacion.vLibro = 0
-        regDepresiacion.save()
+            tipo = TipoDocumento.objects.get(codigo='ACT')
+            doc = DocumentoCuentas.objects.filter(documento = tipo)
 
-        regActivo.depresiacion.add(regDepresiacion)
+            for docu in doc:
+                self.setCuentaActivo(regActivo.id, Data['fechaAdq'] , documento, Data['costo'])
 
-        return HttpResponse(regActivo.id)
-        # except Exception, e:
-        #     return HttpResponse(e)
+            despMensual = (decimal.Decimal(Data['costo']) / 12) * (decimal.Decimal(Data['porc'] )/ 100)
+            regDepresiacion = Depresiacion()
+            regDepresiacion.activoId = regActivo.id
+            regDepresiacion.fecha = date.today()
+            regDepresiacion.dMensual = despMensual
+            regDepresiacion.dAcumulada = 0
+            regDepresiacion.dAgno = 0
+            regDepresiacion.vLibro = Data['costo']
+            regDepresiacion.save()
+            regActivo.depresiacion.add(regDepresiacion)
 
+            tipoDo = TipoDocumento.objects.get(codigo='DEP')
+            docDep = DocumentoCuentas.objects.filter(documento = tipo)
+
+            for document in docDep:
+                self.setCuentaDepresiacion(regDepresiacion.id, date.today(), document, Data['costo'])
+
+
+            # return HttpResponse(tipo.codigo)
+        except Exception, e:
+            return HttpResponse(e)
+
+#clase para facilitar la categoria de los activos
 class CategoriaActivoView(DetailView):
     queryset = CategoriaActivo.objects.all()
 
@@ -138,53 +230,58 @@ class CategoriaActivoView(DetailView):
 class DepresiacionView(TemplateView):
     template_name = 'Depresiacion.html'
 
+    def setCuenta(self, idActivo, fecha , cta, monto):
+        diario = DiarioGeneral()
+        diario.fecha = fecha
+        diario.referencia = 'DEP-' + str(idActivo)
+        # if cta['cuenta'] is not None:
+        cuenta = Cuentas.objects.get(codigo=cta['cuenta'])
+        diario.cuenta = cuenta
+        # if cta['aux'] is not None:
+        #     aux = Auxiliares.objets.get(codigo=cta['aux'])
+        #     diario.auxiliar = aux
+        diario.estatus = 'P'
+        if cta['accion'] == 'D':
+            diario.debito = monto
+            diario.credito = 0
+        else:
+            diario.debito = 0
+            diario.credito = monto
+        diario.save()
+
+        regDesp = Depresiacion.objects.get(id=idActivo)
+        regDesp.cuentas.add(diario)
+        return diario.id
+
     def post(self, request, *args, **kwargs):
         Data = json.loads(request.body)
         Dcuentas = Data['cuentas']
-        fechaF = request.GET.get('fechaF')
+        fechas =   Data['fechas']
 
-        activos = Activos.objets.filter(estatus='A')
-
+        
+        activos = Activos.objects.filter(estatus='A')
+    
         for act in activos:
-            antDesp = Depresiacion.objects.raw('select * '
-                                               'from activofijo_depresiacion '
-                                               'where activoId=' + act.id + 'order by fecha desc'
-                                                                            'limit 1')
-
+            antDesp = Depresiacion.objects.filter(activoId=act.id).order_by('-fecha').first() 
             regDesp = Depresiacion()
             regDesp.activoId = act.id
-            regDesp.fecha = fechaF
+            regDesp.fecha = fechas['fechaF']
             regDesp.dMensual = antDesp.dMensual
-            regDesp.dAcumulada = antDesp.dAcumulada
+            regDesp.dAcumulada = antDesp.dAcumulada + antDesp.dMensual
             if antDesp.fecha.month == 12:
                 regDesp.dAgno = antDesp.dMensual
             else:
                 regDesp.dAgno = antDesp.dAgno + antDesp.dMensual
-            regDesp.vLibro = antDesp.vLibro + antDesp.dMensual
+            regDesp.vLibro = antDesp.vLibro - antDesp.dMensual
             regDesp.save()
 
             for cta in Dcuentas:
-                diario = DiarioGeneral()
-                diario.fecha = fechaF
-                diario.referencia = 'DEP-' + regDesp.id
-                if cta['cuenta'] is not None:
-                    cuenta = cuenta.objects.get(codigo=cta['cuenta'])
-                    diario.cuenta = cuenta
-                if cta['aux'] is not None:
-                    aux = Auxiliares.objets.get(codigo=cta['aux'])
-                    diario.auxiliar = aux
-                diario.estatus = 'P'
-                diario.debito = cta['debito']
-                diario.credito = cta['credito']
-                diario.save()
+                self.setCuenta(regDesp.id,fechas['fechaF'] ,cta, antDesp.dMensual)
 
-            contDep = Depresiacion.objects.raw('select count(*) '
-                                               'from activofijo_depresiacion '
-                                               'where activoId=' + act.id)
-            vidaUtil = act.agnosVu * 12
-
-            if vidaUtil == contDep:
+            if regDesp.vLibro == 0:
                 act.estatus = 'D'
                 act.save()
+        return HttpResponse('ok')
 
-        return HttpResponse('1')
+         
+       

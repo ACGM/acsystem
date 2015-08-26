@@ -1,0 +1,55 @@
+<div class="ahorroPrint">
+	{% extends "base.html" %}
+	{% block title %} Activos Fijos{% endblock title %}
+
+	{% block content %}
+</div>
+	
+<div ng-controller="ImpActivosCtrl" ng-init="initial()">
+	<div class="Activo-imp-Header">
+		<h3 style="text-align : center">Reporte de Activos</h3>
+		<span class="printAHorroFecha">Fecha: [[fecha]]</span>
+		<table>
+			<tr class="Activo-item">
+				<td>
+					Descripción:
+				</td>
+				<td>
+					[[Activo.descripcion]]
+				</td>
+			</tr>
+			<tr class="Activo-item">
+				<td>Categoria:</td>
+				<td>[[Activo.categoria]]</td>
+			</tr>
+			<tr class="Activo-item">
+				<td>Fecha Adquisición:</td>
+				<td>[[Activo.fechaAdq |date: DD/mm/yyyy]]</td>
+			</tr>
+			<tr class="Activo-item">
+				<td>Costo:</td>
+				<td>[[Activo.costo |number:2]]</td>
+			</tr>
+		</table>
+	</div>
+	<div class="Activo-imp-body">
+		<table class="listado-table-activo noTop" >
+			<tr class="listado-table-acIm-header">
+				<td>Fecha</td>
+				<td>Depresiación Mensual</td>
+				<td>Depresiación Acumulada</td>
+				<td>Depresiación en el Año</td>
+				<td>Balance segun Libro</td>
+			</tr>
+			<tr class="listado-acd-detail" ng-repeat="d in Dep">
+				<td>[[d.fecha |date: DD/mm/yyyy]]</td>
+				<td>[[d.dMensual |number:2]]</td>
+				<td>[[d.dAcumulada |number:2]]</td>
+				<td>[[d.dAgno |number:2]]</td>
+				<td>[[d.vLibro |number:2]]</td>
+			</tr>
+		</table>
+	</div>	
+</div>
+
+{% endblock content %}

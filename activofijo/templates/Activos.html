@@ -56,16 +56,22 @@
 				<td>Categoria</td>
 				<td>Fecha Adquisición</td>
 				<td>Costo</td>
+				<td>Estatus</td>
 				<td>Depresiación</td>
 			</tr>
 			<tr class="listado-act-detail" ng-repeat="a in lsActivos">
-				<td><a href="#" ng-click="viewActivo(a.id)" class="utils-noDecoration">[[a.descripcion]]</a></td>
+				<td><a href="#"  class="utils-noDecoration" ng-click="impActivos($event,a.id)">[[a.descripcion]]</a></td>
 				<td>[[a.categoria]]</td>
 				<td>[[a.fechaAdq |date: DD/mm/yyyy]]</td>
 				<td>[[a.costo |number:2]]</td>
-				<td><a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-list2"></a></td>
+				<td>
+					<div ng-if="a.estatus=='A'">En Uso</div>
+					<div ng-if="a.estatus=='D'">Depresiado</div>
+				</td>
+				<td><a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-list2" ng-click="getDepresiacion(a.id)"></a></td>
 			</tr>
 		</table>
+
 		</div>
 	</div>
 
@@ -73,22 +79,26 @@
 		<div class="registrosPanel--grande">
 		<div class="Activo-Detalle">[[actData.descripcion]]</div>
 		<table class="listado-table noTop" ng-show="depVs">
-			<tr class="listado-table-nc-header">
+			<tr class="listado-table-ac-header">
 				<td>Fecha</td>
 				<td>Depresiación Mensual</td>
 				<td>Depresiación Acumulada</td>
 				<td>Depresiación en el Año</td>
 				<td>Balance segun Libro</td>
 			</tr>
-			<tr class="listado-ar-detail" ng-repeat="d in depList">
-				<td>[[d.fecha]]</td>
-				<td>[[d.dMensual]]</td>
-				<td>[[d.dAcumulada]]</td>
-				<td>[[d.dAgno]]</td>
-				<td>[[d.vLibro]]</td>
+			<tr class="listado-acd-detail" ng-repeat="d in depList">
+				<td>[[d.fecha |date: DD/mm/yyyy]]</td>
+				<td>[[d.dMensual |number:2]]</td>
+				<td>[[d.dAcumulada |number:2]]</td>
+				<td>[[d.dAgno |number:2]]</td>
+				<td>[[d.vLibro |number:2]]</td>
 			</tr>
 		</table>
 		</div>
+		<p>
+			<button class="Boton BusquedaBtn icon-close" ng-click="volver($event)">Volver</button>	
+		</p>
+		
 	</div>
 
 	<div class="Activo-crear" ng-show="actRg">
