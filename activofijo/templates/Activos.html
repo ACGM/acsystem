@@ -59,7 +59,7 @@
 				<td>Depresiación</td>
 			</tr>
 			<tr class="listado-act-detail" ng-repeat="a in lsActivos">
-				<td><a href="#" ng-click="viewActivo(a.id)" class="utils-noDecoration">[[a.descripcion]]</a></td>
+				<td><a href="#"  class="utils-noDecoration" ng-click="impActivos($event,a.id)">[[a.descripcion]]</a></td>
 				<td>[[a.categoria]]</td>
 				<td>[[a.fechaAdq |date: DD/mm/yyyy]]</td>
 				<td>[[a.costo |number:2]]</td>

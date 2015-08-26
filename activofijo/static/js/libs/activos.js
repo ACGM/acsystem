@@ -113,8 +113,8 @@
 		};
 	}])
 	
-	.controller('ActivoCtrl', ['$scope','$filter', '$rootScope', 'ActivoServices','$timeout', 
-			function ($scope, $filter, $rootScope, ActivoServices, $timeout ){
+	.controller('ActivoCtrl', ['$scope','$filter', '$rootScope', 'ActivoServices','$timeout','$window', 
+			function ($scope, $filter, $rootScope, ActivoServices, $timeout, $window ){
 
 			$scope.actData = {};
 			$scope.lsActivos = [];
@@ -128,6 +128,7 @@
 			$scope.suplidor = null;
 			$scope.categoria = null;
 			$scope.CategoriaDesc = null;
+			$scope.activoTmp = {};
 
 			$scope.addAct = function($event){
 				$scope.actData = null;
@@ -136,6 +137,14 @@
 
 				$scope.actData = {};
 				};
+
+			$scope.impActivos = function($event, id){
+				$event.preventDefault();
+				ActivoServices.getActivosById(id).then(function (data){
+					$window.sessionStorage['activo'] = JSON.stringify(data[0]);
+					$window.open('/impActivo/', target='_blank'); 
+				});
+			}
 
 
 			$scope.getCategoria = function($event){
@@ -225,29 +234,25 @@
 
 			$scope.guardarActivo = function($event){
 				$event.preventDefault();
-				try{
-					if($scope.actData.id === undefined){
-						$scope.actData.id = null;
-					}
-
-					var RgFechaA = $scope.actData.fechaAdq.split('/');
-          			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
-          			$scope.actData.fechaAdq = FechaFormat;
-
-          			var RgFechaD = $scope.actData.fechaDep.split('/');
-          			var FechaFormatD = RgFechaD[2] + '-' + RgFechaD[1] + '-' + RgFechaD[0];
-          			$scope.actData.fechaDep = FechaFormatD;
-
-					ActivoServices.setActivo($scope.actData);
-					//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
-					$scope.lstActivos();
-					$scope.cancelarActivo();
-					//$window.open('/impActivo/', target='_blank'); 
-
+				if($scope.actData.id === undefined){
+					$scope.actData.id = null;
 				}
-				catch(ex){
-					$rootScope.mostrarError(ex.message);
-				}
+
+				var RgFechaA = $scope.actData.fechaAdq.split('/');
+      			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
+      			$scope.actData.fechaAdq = FechaFormat;
+
+      			var RgFechaD = $scope.actData.fechaDep.split('/');
+      			var FechaFormatD = RgFechaD[2] + '-' + RgFechaD[1] + '-' + RgFechaD[0];
+      			$scope.actData.fechaDep = FechaFormatD;
+
+				ActivoServices.setActivo($scope.actData);
+				//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
+				$scope.lstActivos();
+				$scope.cancelarActivo();
+				//$window.open('/impActivo/', target='_blank'); 
+
+				
             	};
 
 
@@ -347,6 +352,25 @@
 			
 		};
 		
+
+	}])
+	
+	.controller('ImpActivosCtrl', ['$scope', '$filter', '$rootScope', 'ActivoServices','$window',
+					function($scope, $filter, $rootScope, ActivoServices,$window){
+
+		$scope.Activo = JSON.parse($window.sessionStorage['activo']);
+		$scope.Dep = [];
+		$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+		$scope.initial = function(){
+			ActivoServices.getActivosById($scope.Activo.id).then(function (data){
+					var x = data[0].depresiacion;
+					$scope.Dep = x;
+					console.log($scope.Dep);
+				});
+		};
+
+
 
 	}]);
 
