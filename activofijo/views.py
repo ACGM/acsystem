@@ -135,6 +135,7 @@ class ActivosView(TemplateView):
                 'factura': activo.factura,
                 'localidad' : activo.localidad.descripcion,
                 'localidadId': activo.localidad.id,
+                'estatus' : activo.estatus,
                 'depresiacion': [{
                                      'id': depr.id,
                                      'activoId': depr.activoId,

@@ -56,6 +56,7 @@
 				<td>Categoria</td>
 				<td>Fecha Adquisición</td>
 				<td>Costo</td>
+				<td>Estatus</td>
 				<td>Depresiación</td>
 			</tr>
 			<tr class="listado-act-detail" ng-repeat="a in lsActivos">
@@ -63,6 +64,10 @@
 				<td>[[a.categoria]]</td>
 				<td>[[a.fechaAdq |date: DD/mm/yyyy]]</td>
 				<td>[[a.costo |number:2]]</td>
+				<td>
+					<div ng-if="a.estatus=='A'">En Uso</div>
+					<div ng-if="a.estatus=='D'">Depresiado</div>
+				</td>
 				<td><a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-list2" ng-click="getDepresiacion(a.id)"></a></td>
 			</tr>
 		</table>
