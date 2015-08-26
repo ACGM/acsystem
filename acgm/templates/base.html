@@ -37,7 +37,7 @@
 	<nav id="idmenu" class="nav-menu" ng-controller="MenuController">
 		<ul class="ul-menu">
 			<li class="menu-item" id="menu1" ng-hide="{{Ahorro}}"> 
-				<a class="menu-opcion" href="#" ng-click="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(true)">Ahorros</a> 
+				<a class="menu-opcion" href="#" ng-click="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(false)">Ahorros</a> 
 			</li>
 
 			<li ng-disabled="true" class="menu-item" id="menu2"> 
@@ -90,7 +90,7 @@
 
 	</ul>
 	<!-- Sub Menu AHorro -->
-	<ul class="sub-menu-ahorro" ng-show="SubMAhorro" ng-mouseover="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(false)">
+	<ul class="sub-menu-ahorro" ng-show="SubMAhorro">
 		<li><a href="/ahorro">Retiro AHorro</a></li>
 		<li><a href="/generarAhorro">Generar Ahorro</a></li>
 		<li><a href="/generarInteres">Generar Interes</a></li>
