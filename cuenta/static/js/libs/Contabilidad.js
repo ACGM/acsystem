@@ -165,6 +165,27 @@
 
             }
 
+		        //Guardar Registros en Diario General.
+			      function guardarEnDiario(fecha, cuenta, ref, debito, credito) {
+			        var deferred = $q.defer();
+
+			        var doc = new Object();
+			        doc.fecha = fecha;
+			        doc.ref = ref;
+			        doc.estatus = 'P';
+			        doc.debito = debito;
+			        doc.credito = credito;
+
+			        $http.post('/contabilidad/regDiario/', JSON.stringify({'cuenta': doc})).
+			          success(function (data) {
+			            deferred.resolve(data);
+			          }).
+			          error(function (data) {
+			            deferred.resolve(data);
+			          });
+			        return deferred.promise;
+			      }
+
             return {
             	getDiario : getDiario,
             	getDiarioByFecha : getDiarioByFecha,
@@ -174,7 +195,8 @@
             	getAuxiliar : getAuxiliar,
             	getMayor : getMayor,
             	getMayorByDate : getMayorByDate,
-            	getMayorByCuenta : getMayorByCuenta
+            	getMayorByCuenta : getMayorByCuenta,
+            	guardarEnDiario : guardarEnDiario
 
 				};
             }])
