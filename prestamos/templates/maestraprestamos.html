@@ -14,7 +14,7 @@
 			<!-- <a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a> -->
 		</div>
 
-		<div id="listado" class="listado-maestra-prestamo cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
+		<div id="listado" class=" cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
 			
 			<section class="listado-reg-prestamos">
 				<div class="busqueda-by-field">
@@ -158,7 +158,7 @@
 					<table class="datos-prestamo-table">
 						<tr>
 							<td>Monto Prestamo</td>
-							<td><input type="text" ng-model="prestamo.monto" class="align-right" readonly></td>
+							<td><input type="text" ng-model="prestamo.monto" class="align-right resaltar-valor verde" readonly></td>
 						</tr>
 						<tr>
 							<td>Tasa de Interes Anual</td>
@@ -181,20 +181,22 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Pago Prestamo Anterior</td>
-							<td><input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right" readonly></td>
-						</tr>
-						<tr>
 							<td>Cantidad Cuotas</td>
 							<td><input type="text" ng-model="prestamo.cantidadCuotas" class="align-right" readonly></td>
 						</tr>
 						<tr>
-							<td>Monto de Cuota Q1</td>
+							<td class="resaltar-valor">Monto de Cuota Q1</td>
 							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ1" class="align-right"></td>
 						</tr>
 						<tr>
-							<td>Monto de Cuota Q2</td>
+							<td class="resaltar-valor">Monto de Cuota Q2</td>
 							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ2" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Pago Prestamo Anterior</td>
+							<td>
+								<input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right resaltar-valor verde" readonly>
+							</td>
 						</tr>
 					</table>
 				</div>

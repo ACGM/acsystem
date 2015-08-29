@@ -968,6 +968,15 @@ console.log(IBG)
       $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
       console.log($scope.solicitudP);
 
+      //Calculo de intereses para sumar al capital
+      var intG = ($scope.solicitudP.tasaInteresMensual / 2 / 100) * ($scope.solicitudP.prestacionesLaborales);
+      var intA = ($scope.solicitudP.interesBaseAhorroMensual / 2 / 100) * ($scope.solicitudP.ahorrosCapitalizados);
+      var intereses = intG + intA;
+
+      $scope.solicitudP.capitalMasIntereses = intereses + parseFloat($scope.solicitudP.valorCuotasCapital);
+      $scope.solicitudP.interesesValor = intereses;
+      console.log($scope.solicitudP.capitalMasIntereses)
+
       //Objeto que contiene la informacion del solicitante
       SolicitudPrestamoService.solicitanteDatos($scope.solicitudP.codigoSocio).then(function (data) {
         $scope.dataSolicitante = data[0];
@@ -977,7 +986,7 @@ console.log(IBG)
         var cuotaPrestamo;
         cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
         cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
-        $scope.varCuotaPrestamo = cuotaPrestamo / 2;
+        $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
 
         //Totales en Quincenas (ahorro y cuota Prestamo)
         $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);

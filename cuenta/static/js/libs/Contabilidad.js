@@ -170,13 +170,14 @@
 			        var deferred = $q.defer();
 
 			        var doc = new Object();
-			        doc.fecha = fecha;
+			        doc.fecha = $filter('date')(fecha, 'yyyy-MM-dd');
+			        doc.codCuenta = cuenta;
 			        doc.ref = ref;
 			        doc.estatus = 'P';
-			        doc.debito = debito;
-			        doc.credito = credito;
-
-			        $http.post('/contabilidad/regDiario/', JSON.stringify({'cuenta': doc})).
+			        doc.debito = debito.replace(',','');
+			        doc.credito = credito.replace(',','');
+console.log(doc)
+			        $http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': doc})).
 			          success(function (data) {
 			            deferred.resolve(data);
 			          }).

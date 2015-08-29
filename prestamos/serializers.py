@@ -19,7 +19,7 @@ class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar',  \
 					'categoriaPrestamo', 'estatus', 'representante', 'tasaInteresMensual', 'cantidadCuotas', 'valorCuotasCapital', \
 					'ahorrosCapitalizados', 'prestacionesLaborales', 'valorGarantizado', 'deudasPrestamos', 'codigoRepresentante', \
-					'codigoCategoria')
+					'codigoCategoria', 'interesBaseAhorroMensual')
 		ordering = ('-noSolicitud',)
 
 

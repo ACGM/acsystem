@@ -10,7 +10,7 @@
 <section class="PrintSolicitudP" ng-controller="ImprimirSolicitudPCtrl">
 
 	<div class="cabecera-sp">
-		<span><h3>COOPERATIVA INDUSTRIAS NACIONALES</h3></span>
+		<span><h3>COOPERATIVA GERDAUMETALDOM</h3></span>
 		<span class="sol-prest">SOLICITUD DE PRESTAMO</span>
 		<span class="sol-estatus">EN PROCESO</span>
 	</div>
@@ -62,13 +62,19 @@
 				<tr>
 					<td>Representante</td>
 					<td>[[solicitudP.codigoRepresentante]] [[solicitudP.representante]]</td>
-					<td>Cantidad Cuotas</td>
-					<td class="align-right">[[solicitudP.cantidadCuotas]]</td>
+					<td>Interes Base Ahorro Mens.</td>
+					<td class="align-right">[[solicitudP.interesBaseAhorroMensual]]</td>
 				</tr>
 				<tr>
 					<td>Auxiliar</td>
 					<td>**** ***************************</td>
-					<td>Valor de las Cuotas</td>
+					<td>Cantidad Cuotas</td>
+					<td class="align-right">[[solicitudP.cantidadCuotas]]</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td>Valor de las Cuotas Quin.</td>
 					<td class="align-right">[[solicitudP.valorCuotasCapital | number: 2]]</td>
 				</tr>
 				<tr>
@@ -131,6 +137,12 @@
 					<td>Cuota de Prestamos</td>
 					<td class="padding-right-6">[[varCuotaPrestamo | number: 2]]</td>
 					<td class="align-right">[[varCuotaPrestamo | number: 2]]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Intereses</td>
+					<td class="padding-right-6">[[solicitudP.interesesValor | number: 2]]</td>
+					<td class="align-right">[[solicitudP.interesesValor | number: 2]]</td>
 					<td></td>
 				</tr>
 				<tr>
