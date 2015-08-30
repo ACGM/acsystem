@@ -377,8 +377,8 @@
     //****************************************************
     //CONTROLLERS    ENTRADA DE INVENTARIO               *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 
-                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 'ContabilidadService',
+                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -963,6 +963,15 @@
             idoc += 1;
           });
           $scope.iDocumentos = idoc;
+        });
+      }
+
+      $scope.postearContabilidad = function() {
+        $scope.desgloseCuentas.forEach(function (item) {
+          ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+            console.log(data);
+          });
+
         });
       }
 
