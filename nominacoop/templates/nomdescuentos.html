@@ -58,7 +58,8 @@
 							<td>Nombre</td>
 							<td>Prestamo</td>
 							<td class="align-right">Capital</td>
-							<td class="align-right">Interes</td>
+							<td class="align-right">Interes Garant.</td>
+							<td class="align-right">Interes Ahorro</td>
 							<td class="align-right">Total</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
@@ -68,12 +69,14 @@
 							<td title="[[prestamo.balance]]">[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
 							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaInteresAhQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail">
 							<td colspan="4"><strong>TOTALES</strong></td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalMontoCuota | number : 2]]</td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteres | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteresAh | number : 2]]</td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaMasInteres | number : 2]]</td>
 						</tr>
 							

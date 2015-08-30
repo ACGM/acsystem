@@ -457,6 +457,7 @@ class GenerarArchivoPrestamos(View):
                 p.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
                 p.valorCapital = prestamo['montoCuotaQ']
                 p.valorInteres = prestamo['cuotaInteresQ']
+                p.valorInteresAh = prestamo['cuotaInteresAhQ']
                 p.nomina = nomina
                 p.infoTipoPrestamo = InfoTipo
                 p.userLog = request.user
@@ -571,7 +572,9 @@ class AplicarPrestamos(View):
 
             for cuota in cuotas:
                 prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
-                prestamoMaestra.balance -= cuota.valorCapital + cuota.valorInteres
+                prestamoMaestra.balance -= cuota.valorCapital
+                prestamoMaestra.valorAhorro -= cuota.valorInteresAh if prestamoMaestra.valorAhorro > 0 and prestamoMaestra.valorAhorro - cuota.valorInteresAh >= 0 else 0
+                prestamoMaestra.valorGarantizado -= cuota.valorInteres if prestamoMaestra.valorGarantizado > 0 and prestamoMaestra.valorGarantizado - cuota.valorInteres >= 0 else 0
                 prestamoMaestra.save()
 
             # Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.

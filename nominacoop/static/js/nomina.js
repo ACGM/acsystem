@@ -666,6 +666,7 @@
               prestamo.noPrestamo = item.noPrestamo;
               prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
               prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
+              prestamo.cuotaInteresAhQ = fecha[0] > 15? item.cuotaInteresAhQ2 : item.cuotaInteresAhQ1;
               prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
               prestamo.balance = $filter('number')(item.balance, 2);
 

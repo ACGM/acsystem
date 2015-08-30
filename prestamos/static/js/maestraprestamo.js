@@ -142,6 +142,7 @@
         var deferred = $q.defer();
         all().then(function (data) {
           var result = data.filter(function (documento) {
+            console.log(documento)
             return documento.estatus == 'P';
           });
 
@@ -463,11 +464,16 @@
       }
 
       //Postear Prestamos/OD
-      $scope.Postear = function($event) {
+      $scope.Postear = function($event, prestamoOD) {
         $event.preventDefault();
 
         try {
-          MaestraPrestamoService.PostearPrestamosOD($scope.prestamosSeleccionados).then(function (data) {
+          console.log(prestamoOD)
+
+          var p = [];
+          p.push (prestamoOD);
+
+          MaestraPrestamoService.PostearPrestamosOD(p).then(function (data) {
             if(data == 1) {
               $scope.listadoPrestamos();
             } else {

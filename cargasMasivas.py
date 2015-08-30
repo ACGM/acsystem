@@ -3,6 +3,30 @@
 
 import sys, os, csv
 
+#CARGA DE CUOTAS DE ORDENES
+f = open('CuotasOrdenes.csv', 'r')
+for line in f:
+	line = line.split(',')
+	c = CuotaOrdenes()
+	c.montoDesde = line[0]
+	c.montoHasta = line[1]
+	c.cantidadQuincenas = line[2]
+	c.userLog = User.objects.get(username='coop')
+	c.save()
+f.close()
+
+#CARGA DE CUOTAS DE PRESTAMOS
+f = open('CuotasPrestamos.csv', 'r')
+for line in f:
+	line = line.split(',')
+	c = CuotaPrestamo()
+	c.montoDesde = line[0]
+	c.montoHasta = line[1]
+	c.cantidadQuincenas = line[2]
+	c.userLog = User.objects.get(username='coop')
+	c.save()
+f.close()
+
 #CARGA DE CATEGORIAS DE PRODUCTOS
 f = open('CategoriaProductos.csv', 'r')
 for line in f:

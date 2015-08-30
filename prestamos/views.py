@@ -390,7 +390,7 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
 						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
 						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
-						maestra.valorGarantizado = oSolicitud.valorGarantizado if oSolicitud.prestacionesLaborales == 0 else oSolicitud.prestacionesLaborales
+						maestra.valorGarantizado = oSolicitud.prestacionesLaborales if oSolicitud.prestacionesLaborales > 0 else oSolicitud.valorGarantizado
 						maestra.valorAhorro = oSolicitud.ahorrosCapitalizados
 						maestra.balance = oSolicitud.netoDesembolsar
 						maestra.userLog = request.user
