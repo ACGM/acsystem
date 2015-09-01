@@ -16,10 +16,10 @@ from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
                                 ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
                                 InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT, \
-                                ProcesarAjusteInvView, EntradasInvBySuplidorRangoFecha
+                                ProcesarAjusteInvView, EntradasInvBySuplidorRangoFecha, PostearDocumentosINV
 
 from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView, RPTVentasDiariasView, \
-                                RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView
+                                RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView, PostearDocumentosFACT
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
@@ -202,6 +202,8 @@ urlpatterns = patterns('',
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     url(r'^api/inventario/entradas/(?P<suplidor>[\d]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', EntradasInvBySuplidorRangoFecha.as_view(), \
                                                                                                             name='Entradas_por_suplidor_y_rangoFecha'),
+    url(r'^inventario/postear-registros/$', PostearDocumentosINV.as_view(), name='Inventario_postear_registros'),
+
     
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
@@ -218,6 +220,8 @@ urlpatterns = patterns('',
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^facturacion/eliminar/$', FacturaEliminarView.as_view(), name='Facturacion_eliminar'),
+    url(r'^facturacion/postear-registros/$', PostearDocumentosFACT.as_view(), name='Facturacion_postear_registros'),
+    
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     #Facturacion#Reportes

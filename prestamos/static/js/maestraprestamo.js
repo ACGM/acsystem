@@ -274,8 +274,7 @@
 
         MaestraPrestamoService.all().then(function (data) {
           $scope.prestamos = data;
-          $scope.regAll = false;
-
+          
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
 

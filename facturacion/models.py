@@ -16,6 +16,7 @@ class Factura(models.Model):
 	posteo_choices = (('N','NO'),('S','SI'))
 
 	posteo = models.CharField(max_length=1, choices=posteo_choices, default='N')
+	posteoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 	
 	noFactura = models.PositiveIntegerField("No. Factura", unique=True)
 	fecha = models.DateTimeField(auto_now_add=True)

@@ -889,7 +889,7 @@
       }
 
       //Traer suplidores
-      $scope.getSuplidor = function($event) {
+      $scope.getSuplidorRPT = function($event) {
         $event.preventDefault();
         var suplidor = '';
 

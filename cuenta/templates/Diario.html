@@ -88,8 +88,8 @@
 					<td>Cuenta</td>
 					<td>Aux</td>
 					<td>Ref</td>
-					<td>Debito</td>
-					<td>Credito</td>
+					<td class="align-right">Debito</td>
+					<td class="align-right">Credito</td>
 				</tr>
 				<tr ng-repeat="reg in diario" class"listado-Dr-detail" >
 					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
@@ -101,8 +101,8 @@
 				</tr>
 				<tr class="[[panelTotal]]">
 					<td colspan="4"></td>
-					<td>[[totalDebito | number:2]]</td>
-					<td>[[totalCredito | number:2 ]]</td>
+					<td class="verde">[[totalDebito | number:2]]</td>
+					<td class="verde">[[totalCredito | number:2 ]]</td>
 				</tr>
 			</table>
 		</div>
