@@ -112,13 +112,28 @@
         return deferred.promise;
       }
 
+      //Postear Nota de Debito.
+      function postearNotaDebito(regND) {
+        var deferred = $q.defer();
+console.log(regND)
+        $http.post('/prestamos/nota-de-debito/postear/', JSON.stringify({'nd': regND})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
 
       return {
         all: all,
         byPosteo: byPosteo,
         byNoND: byNoND,
         guardarND: guardarND,
-        DocumentoById: DocumentoById
+        DocumentoById: DocumentoById,
+        postearNotaDebito : postearNotaDebito
         // impresionND: impresionND,
         // eliminarND : eliminarND
       };
@@ -129,8 +144,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService', 'MaestraPrestamoService',
-                                        function ($scope, $filter, $window, appService, NotaDebitoService, MaestraPrestamoService) {
+    .controller('NotaDebitoCtrl', ['$scope', '$filter', '$window', 'appService', 'NotaDebitoService', 'MaestraPrestamoService', 'appService', 'ContabilidadService',
+                                        function ($scope, $filter, $window, appService, NotaDebitoService, MaestraPrestamoService, appService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -457,39 +472,81 @@
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postear = function(){
-        var idoc = 0;
-        $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
+      $scope.postearND = function($event, ND){
+        $scope.NDSel = ND;
 
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
 
-        appService.getDocumentoCuentas('FACT').then(function (data) {
-          $scope.documentoCuentas = data;
-  
-          //Prepara cada linea de posteo
-          $scope.facturasSeleccionadas.forEach(function (item) {
+        try {
+
+          appService.getDocumentoCuentas('NDBT').then(function (data) {
+            $scope.documentoCuentas = data;
+
+            //Prepara cada linea de posteo
             $scope.documentoCuentas.forEach(function (documento) {
               var desgloseCuenta = new Object();
-              if (documento.accion == 'D') {
-                $scope.totalDebito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              } else {
-                $scope.totalCredito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              }
 
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + item.id;
-              desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.ref = documento.getCodigo + ND.id;
+              desgloseCuenta.debito = documento.accion == 'D'? ND.valorCapital.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? ND.valorCapital.toString().replace('$','') : $filter('number')(0.00, 2);
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });
-            idoc += 1;
+            $scope.totalDebitoCredito();
+
           });
-          $scope.iDocumentos = idoc;
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Nota de Debito.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var NotaDebitoArray = [];
+          NotaDebitoArray.push($scope.NDSel);
+
+          NotaDebitoService.postearNotaDebito(NotaDebitoArray).then(function (data) {
+            console.log(data);
+            $scope.listadoND();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });
       }
 

@@ -625,8 +625,8 @@
         $scope.solicitud = {};
         $scope.prestamosSocioUnif = [];
 
-        $scope.solicitante.representanteCodigo = '';
-        $scope.solicitante.representanteNombre = undefined;
+        // $scope.solicitante.representanteCodigo = '';
+        // $scope.solicitante.representanteNombre = undefined;
         $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
         $scope.solicitante.autorizadoPor = usuario;

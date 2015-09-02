@@ -14,7 +14,8 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer, MaestraPrestamosListadoSerializer, \
 							InteresPrestamoBaseAhorroSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros, \
+					NotaDeDebitoPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -516,10 +517,58 @@ class PostearPrestamosODView(LoginRequiredMixin, View):
 			for prestamo in prestamos:
 				p = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
 				p.estatus = 'P'
+				p.posteoUsr = request.user
+				p.posteadoFecha = datetime.datetime.now()
 				p.save()
 
 			return HttpResponse(1)
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+# Marcar como posteada la Nota de Debito y aplicarla al prestamo
+class PostearNotaDebitoView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			notaDebito = data['nd']
+			
+			# Marcar nota de debito con posteado
+			for nd in notaDebito:
+				notaD = NotaDeDebitoPrestamo.objects.get(id=nd['id'])
+				notaD.estatus = 'A'
+				notaD.posteado = 'S'
+				notaD.posteoUsr = request.user
+				notaD.fechaPosteo = datetime.datetime.now()
+				notaD.save()
+
+				# Aplicar la nota de debito
+				guardarPagoCuotaPrestamo(self, nd['noPrestamo'], nd['valorCapital'], nd['valorInteres'], 0,'{0}{1}'.format('NDBT', nd['id']) , 'ND', 'A')
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Metodo para guardar cuota en pago de cuota a prestamo
+# Esto incluye Nota de Debito, Nota de Credito, Recibo de Ingreso, pago desde Ahorros
+# Todo lo concerniente a cuotas de prestamos
+# Los parametros se decriben como sigue:
+# 	1-noPrestamo: es el numero del prestamo en formato integer 
+def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc, estatus = 'A'):
+
+	cuota = PagoCuotasPrestamo()
+	cuota.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+	cuota.valorCapital = valorCapital
+	cuota.valorInteres = valorInteres
+	cuota.valorInteresAh = valorInteresAh
+	cuota.fecha = datetime.datetime.now()
+	cuota.docRef = docReferencia
+	cuota.tipoPago = tipoDoc
+	cuota.save()
 

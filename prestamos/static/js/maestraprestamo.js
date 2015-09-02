@@ -142,7 +142,6 @@
         var deferred = $q.defer();
         all().then(function (data) {
           var result = data.filter(function (documento) {
-            console.log(documento)
             return documento.estatus == 'P';
           });
 
@@ -220,8 +219,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('MaestraPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 
-                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService) {
+    .controller('MaestraPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'ContabilidadService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -258,6 +257,11 @@
         } else {
           $scope.ArrowLP = 'DownArrow';
         }
+      }
+
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
       }
 
       // Funcion para mostrar error por pantalla
@@ -393,6 +397,7 @@
               $scope.dataH.posteadoFecha = data[0]['posteadoFecha'];
               $scope.dataH.tipoPrestamoNomina = data[0]['tipoPrestamoNomina'];
 
+              $scope.prestamo.documentoDescrp = data[0]['documentoDescrp'];
               $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
               $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
               $scope.prestamo.tasaInteresAnual = data[0]['tasaInteresAnual'];
@@ -462,60 +467,131 @@
         })
       }
 
-      //Postear Prestamos/OD
-      $scope.Postear = function($event, prestamoOD) {
-        $event.preventDefault();
+      
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postear = function($event, prestamo){
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        $scope.posteoG = false;
 
         try {
-          console.log(prestamoOD)
+
+          //Verificar si es un Prestamo o una Orden de Despacho.
+          if(prestamo.documentoDescrp == 'Prestamo') {
+            docCuentas = 'PRES';
+          } else {
+            docCuentas = 'ORD1';
+          }
+
+          $scope.prestamoOD_SEL = prestamo; //Asigno el prestamo para cuando se vaya a "Llevar a Contabilidad"
+
+          appService.getDocumentoCuentas(docCuentas).then(function (data) {
+            $scope.documentoCuentas = data;
+    
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + prestamo.noPrestamo;
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();     
+
+          });
+        } catch (e) {
+          alert(e);
+        }
+      }
+
+            //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Inventario - Salida.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
 
           var p = [];
-          p.push (prestamoOD);
+          p.push ($scope.prestamoOD_SEL);
 
           MaestraPrestamoService.PostearPrestamosOD(p).then(function (data) {
             if(data == 1) {
               $scope.listadoPrestamos();
             } else {
-              $scope.mostrarError(data);
+              alert(data);
             }
-
           });
+
+          alert('Los registros fueron posteados con exito!');
+
         } catch (e) {
-          $scope.mostrarError(e);
+          alert(e);
         }
-      }
+      } //Linea FIN de posteo Contabilidad.
 
-      //Cuando se le de click al checkbox del header.
-      $scope.seleccionAll = function() {
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
 
-        $scope.prestamos.forEach(function (data) {
-          if (data.estatus == 'E') {
-
-            if ($scope.regAll === true){
-              $scope.valoresChk[data.noPrestamo] = true;
-              $scope.prestamosSeleccionados.push(data);
-            }
-            else{
-              $scope.valoresChk[data.noPrestamo] = false;
-              $scope.prestamosSeleccionados.splice(data);
-            }
-          }
-
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });
       }
 
+
+      //Cuando se le de click al checkbox del header.
+      // $scope.seleccionAll = function() {
+
+      //   $scope.prestamos.forEach(function (data) {
+      //     if (data.estatus == 'E') {
+
+      //       if ($scope.regAll === true){
+      //         $scope.valoresChk[data.noPrestamo] = true;
+      //         $scope.prestamosSeleccionados.push(data);
+      //       }
+      //       else{
+      //         $scope.valoresChk[data.noPrestamo] = false;
+      //         $scope.prestamosSeleccionados.splice(data);
+      //       }
+      //     }
+
+      //   });
+      // }
+
       //Cuando se le de click a un checkbox de la lista
-      $scope.selectedReg = function(iReg) {
-        index = $scope.prestamos.indexOf(iReg);
+      // $scope.selectedReg = function(iReg) {
+      //   index = $scope.prestamos.indexOf(iReg);
 
-        if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
-          $scope.prestamosSeleccionados.push($scope.prestamos[index]);
-        }
-        else{
-          $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
-        }
+      //   if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
+      //     $scope.prestamosSeleccionados.push($scope.prestamos[index]);
+      //   }
+      //   else{
+      //     $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
+      //   }
 
-      }
+      // }
 
     }]);  
 

@@ -129,7 +129,7 @@
 						<td>Representante</td>
 						<td>
 							<select class="descrp-repr" ng-model="solicitante.representanteCodigo" ng-init="getRepresentantes()" required>
-								<option ng-repeat="representante in representantes" value="[[representante.id]]"> [[representante.nombre]] </option>
+								<option ng-repeat="representante in representantes" value="[[representante.id]]" selected="selected"> [[representante.nombre]] </option>
 							</select>
 						</td>
 					</tr>

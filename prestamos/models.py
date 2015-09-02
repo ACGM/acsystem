@@ -181,12 +181,17 @@ class MaestraPrestamo(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
 	posteadoFecha = models.DateField(null=True)
+	posteoUsr = models.ForeignKey(User, related_name='+', null=True, blank=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return '{0:0>9}'.format(self.noPrestamo)
+
+	@property
+	def documentoDescrp(self):
+		return 'Orden de Despacho' if self.noSolicitudOD != None else 'Prestamo'
 
 	@property
 	def codigoSocio(self):
@@ -275,6 +280,7 @@ class PagoCuotasPrestamo(models.Model):
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+	valorInteresAh = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	fechaPago = models.DateField(auto_now_add=True)
 	docRef = models.CharField(max_length=15, null=True, blank=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
@@ -355,6 +361,7 @@ class NotaDeDebitoPrestamo(models.Model):
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
+	posteoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 

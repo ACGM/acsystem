@@ -71,8 +71,10 @@
 							<td class="align-center">
 								<a ng-if="prestamo.estatus == 'E' && prestamo.noSolicitudPrestamo > 0" href="#" class="icon-coin icon-imprimir toolTip" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque Prestamo No. [[prestamo.noPrestamo | numberFixedLen : 9]]"></a> 
 							</td>
+
 							<td class="align-center">
-								<a ng-if="prestamo.estatus == 'C' || prestamo.estatus == 'D' || (prestamo.estatus == 'E' && prestamo.noSolicitudOD > 0)" href="#" class="icon-cog icon-imprimir" ng-click="Postear($event, prestamo)"></a>
+								<a ng-if="prestamo.estatus == 'C' || prestamo.estatus == 'D' || (prestamo.estatus == 'E' && prestamo.noSolicitudOD > 0)" href="#" class="icon-cog icon-imprimir" ng-click="postear($event, prestamo)" title="Postear [[prestamo.documentoDescrp]]"></a>
+
 								<a ng-if="prestamo.estatus == 'P' || prestamo.estatus == 'S'" href="#" class="icon-checkmark icon-imprimir"></a>
 							</td>
 						</tr>
