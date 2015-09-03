@@ -65,7 +65,7 @@ class PagoCuotasPrestamoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = PagoCuotasPrestamo
-		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago')
+		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'tipoPago')
 		ordering = ('-id',)
 
 

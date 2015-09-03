@@ -274,7 +274,7 @@ class PrestamoUnificado(models.Model):
 # Cuotas de Pago de Prestamos
 class PagoCuotasPrestamo(models.Model):
 
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	# estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
 	tipo_pago_choices = (('NC','Nota de Credito'),('ND','Nota de Debito'), ('NM', 'Nomina'), ('RI', 'Recibo Ingreso'), ('AH', 'Ahorros'))
 
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
@@ -283,8 +283,8 @@ class PagoCuotasPrestamo(models.Model):
 	valorInteresAh = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	fechaPago = models.DateField(auto_now_add=True)
 	docRef = models.CharField(max_length=15, null=True, blank=True)
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	tipoPago = models.CharField(max_length=2, choices=tipo_pago_choices, default='N')
+	# estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 	def __unicode__(self):
 		return '%i' % self.id
@@ -300,10 +300,12 @@ class NotaDeCreditoPrestamo(models.Model):
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
+	posteadoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
@@ -358,6 +360,7 @@ class NotaDeDebitoPrestamo(models.Model):
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 

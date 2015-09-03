@@ -8,7 +8,7 @@ from .models import SolicitudPrestamo, SolicitudOrdenDespachoH, SolicitudOrdenDe
 @admin.register(PagoCuotasPrestamo)
 class PagoCuotasPrestamoAdmin(admin.ModelAdmin):
 
-	list_display = ['id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago']
+	list_display = ['id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'tipoPago']
 
 
 @admin.register(NotaDeDebitoPrestamo)

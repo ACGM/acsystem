@@ -115,7 +115,7 @@
       //Postear Nota de Debito.
       function postearNotaDebito(regND) {
         var deferred = $q.defer();
-console.log(regND)
+
         $http.post('/prestamos/nota-de-debito/postear/', JSON.stringify({'nd': regND})).
           success(function (data) {
             deferred.resolve(data);

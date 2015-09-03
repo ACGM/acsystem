@@ -57,7 +57,10 @@
 
 						<tr ng-repeat="nc in notascredito" class="listado-nc-detail" ng-init="total=0">
 							<td class="[[nc.posteado | posteoFolderIcon]] posteo-[[nc.posteado]] align-center"></td>
-							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
+							<td class="align-center">
+								<a ng-if="nc.posteado == 'N'" class="icon-cog icon-imprimir" href="#" ng-click="postearNC($event, nc)"></a>
+								<a ng-if="nc.posteado == 'S'" class="icon-cog disabled icon-imprimir" href="#"></a>
+							</td>
 							<td> <a class="nc-field" title="Ver detalle..." href="#" ng-click="NCFullById(nc.id)">[[nc.id | numberFixedLen: 8]]</a> </td>
 							<td>[[nc.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[nc.aplicadoACuota | numberFixedLen: 9]]</td>

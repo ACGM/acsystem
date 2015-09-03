@@ -15,7 +15,7 @@ from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSeria
 							InteresPrestamoBaseAhorroSerializer
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros, \
-					NotaDeDebitoPrestamo
+					NotaDeDebitoPrestamo, NotaDeCreditoPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -547,7 +547,35 @@ class PostearNotaDebitoView(LoginRequiredMixin, View):
 				notaD.save()
 
 				# Aplicar la nota de debito
-				guardarPagoCuotaPrestamo(self, nd['noPrestamo'], nd['valorCapital'], nd['valorInteres'], 0,'{0}{1}'.format('NDBT', nd['id']) , 'ND', 'A')
+				guardarPagoCuotaPrestamo(self, nd['noPrestamo'], nd['valorCapital'], nd['valorInteres'], 0,'{0}{1}'.format('NDBT', nd['id']) , 'ND')
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Marcar como posteada la Nota de Credito y aplicarla al prestamo
+class PostearNotaCreditoView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			notaCredito = data['nc']
+			
+			# Marcar nota de credito con posteado
+			for nc in notaCredito:
+				notaC = NotaDeCreditoPrestamo.objects.get(id=nc['id'])
+				notaC.estatus = 'A'
+				notaC.posteado = 'S'
+				notaC.posteoUsr = request.user
+				notaC.fechaPosteo = datetime.datetime.now()
+				notaC.save()
+
+				# Aplicar la nota de debito
+				guardarPagoCuotaPrestamo(self, nc['noPrestamo'], nc['valorCapital'], nc['valorInteres'], 0,'{0}{1}'.format('NDCT', nc['id']) , 'NC')
 
 			return HttpResponse(1)
 
@@ -560,7 +588,13 @@ class PostearNotaDebitoView(LoginRequiredMixin, View):
 # Todo lo concerniente a cuotas de prestamos
 # Los parametros se decriben como sigue:
 # 	1-noPrestamo: es el numero del prestamo en formato integer 
-def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc, estatus = 'A'):
+#	2-valorCapital: es el monto del capital en formato string, pero sin coma
+#	3-valorInteres: es el monto del interes garantizado en formato string, pero sin coma
+#	4-valorInteresAh: es el monto del interes en base ahorrado en formato string, pero sin coma
+#	5-docReferencia: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
+#														ND - Nota de Debito,
+#														NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
+def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
 	cuota = PagoCuotasPrestamo()
 	cuota.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
