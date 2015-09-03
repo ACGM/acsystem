@@ -527,6 +527,90 @@
         }
       }
 
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postearNominaCoop = function($event, nomina){
+        $scope.NominaSel = nomina;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
+
+        try {
+          console.log(nomina)
+          appService.getDocumentoCuentas('NOMC').then(function (data) {
+            $scope.documentoCuentas = data;
+
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + nomina.id;
+              desgloseCuenta.debito = documento.accion == 'D'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();
+
+          });
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Nota de Debito.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var NominaArray = [];
+          NominaArray.push($scope.NominaSel);
+
+          NominaService.postearNnomina(NominaArray).then(function (data) {
+            console.log(data);
+            $scope.getNominasGeneradas();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+        });
+      }
+
     }])
 
     //****************************************************
@@ -1064,43 +1148,6 @@
         $window.sessionStorage['tipoPrestamo'] = $scope.tipoPrestamo;
 
         $window.open('/nomina/descuentos/prestamos/reporte/', target='_blank'); 
-      }
-
-      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postearPrestamos = function() {
-        var idoc = 0;
-        $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
-
-        $scope.showPostear = true;
-        $scope.desgloseCuentas = [];
-
-        appService.getDocumentoCuentas('NOMP').then(function (data) {
-          $scope.documentoCuentas = data;
-  
-          //Prepara cada linea de posteo
-          $scope.documentoCuentas.forEach(function (documento) {
-            var desgloseCuenta = new Object();
-
-            if (documento.accion == 'D') {
-              if (documento.accion == 'D') {
-
-              }
-              $scope.totalDebito += parseFloat($scope.prestamoTotalMontoCuota.toString().replace('$','').replace(',',''));
-            } else {
-              $scope.totalCredito += parseFloat($scope.prestamoTotalCuotaMasInteres.toString().replace('$','').replace(',',''));
-            }
-
-            desgloseCuenta.cuenta = documento.getCuentaCodigo;
-            desgloseCuenta.descripcion = documento.getCuentaDescrp;
-            desgloseCuenta.ref = documento.getCodigo + $scope.fechaNomina.replace('/','');
-            desgloseCuenta.debito = documento.accion == 'D'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
-            desgloseCuenta.credito = documento.accion == 'C'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
-
-            $scope.desgloseCuentas.push(desgloseCuenta);
-          });
-        });
       }
 
     }])

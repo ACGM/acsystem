@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Nomina {% endblock title %}
+{% block title %} Nomina de Empleados Cooperativa {% endblock title %}
 
 {% block content %}
 
@@ -97,7 +97,8 @@
 							<td class="align-center">[[item.quincena]]</td>
 							<!-- <td>[[item.tipoPago]]</td> -->
 							<td class="align-center">
-								<a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina"></a>
+								<a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina" ng-click="postearNominaCoop($event, item)"></a>
+								
 								<a href="#" class="icon-document icon-buscar verde" title="Reporte de Nomina" ng-click="reporteNominaQ($event, item.fechaNomina, item.tipoNomina)"></a>
 							</td>
 							<td class="align-center"><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
