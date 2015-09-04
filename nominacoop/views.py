@@ -592,6 +592,25 @@ class AplicarPrestamos(View):
 
 # Postear Nomina Cooperativa
 class PostearNominaCoopView(View):
-    pass
+    
+    def post(self, request, *args, **kwargs):
 
+        try:
+            data = json.loads(request.body)
+
+            NominaCoop = data['nomina']
+            
+            # Marcar nomina de los empleados de la cooperativa con posteada
+            for nm in NominaCoop:
+                nmcoop = NominaCoopH.objects.get(id=nm['id'])
+                nmcoop.estatus = 'P'
+                nmcoop.posteada = 'S'
+                nmcoop.posteoUsr = request.user
+                nmcoop.fechaPosteo = datetime.datetime.now()
+                nmcoop.save()
+
+            return HttpResponse(1)
+
+        except Exception as e:
+            return HttpResponse(e)
 	

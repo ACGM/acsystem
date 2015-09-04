@@ -229,6 +229,20 @@
         return deferred.promise;
       }
 
+      //Postear Nomina de Empleados de la Cooperativa.
+      function posteoNnominaCoop(nomina) {
+        var deferred = $q.defer();
+console.log(nomina)
+        $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas        : nominasGeneradas,
         generaNomina            : generaNomina,
@@ -244,7 +258,8 @@
         AplicarAhorros          : AplicarAhorros,
         generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
         generarArchivoAhorrosBalance : generarArchivoAhorrosBalance,
-        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco
+        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco,
+        posteoNnominaCoop : posteoNnominaCoop
       };
 
     }])
@@ -543,7 +558,7 @@
 
         try {
           console.log(nomina)
-          appService.getDocumentoCuentas('NOMC').then(function (data) {
+          appService.getDocumentoCuentas('NMCO').then(function (data) {
             $scope.documentoCuentas = data;
 
             //Prepara cada linea de posteo
@@ -588,7 +603,7 @@
           var NominaArray = [];
           NominaArray.push($scope.NominaSel);
 
-          NominaService.postearNnomina(NominaArray).then(function (data) {
+          NominaService.posteoNominaCoop(NominaArray).then(function (data) {
             console.log(data);
             $scope.getNominasGeneradas();
           });

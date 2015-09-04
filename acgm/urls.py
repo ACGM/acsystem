@@ -9,7 +9,7 @@ from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesemb
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
                                 AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal, relacionArchivoBancoConNomina, \
-                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos
+                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos, PostearNominaCoopView
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -187,6 +187,7 @@ urlpatterns = patterns('',
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
     url(r'^nomina/reporte/quincena/$', rptNominaQuincenal.as_view(), name='reporte_nomina_quincena'),
+    url(r'^nomina/coop/postear/$', PostearNominaCoopView.as_view(), name='nomina_cooperativa_postear'),
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
