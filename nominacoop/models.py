@@ -113,7 +113,7 @@ class NominaCoopH(models.Model):
 	archivoBanco = models.CharField(max_length=25, null=True, blank=True)
 
 	posteada = models.CharField(max_length=1, default='N') # N = No, S = Si
-	fechaPosteo = models.DateField(auto_now=True, null=True)
+	fechaPosteo = models.DateField(null=True, blank=True)
 	posteoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 
 	userLog = models.ForeignKey(User)

@@ -37,12 +37,14 @@ class MaestroView(View):
         Mayor = DiarioGeneral.objects.raw('select s.id \
                                              ,s.fecha\
                                              ,s.codigo \
+                                             ,s.descripcion\
                                              ,sum(s.debito) as debito \
                                              ,sum(s.credito) as credito\
                                              from (\
                                                  select di.id\
                                                  ,di.fecha\
                                                  ,c.codigo\
+                                                 ,c.descripcion\
                                                  ,sum(di.debito) as debito\
                                                  ,sum(di.credito) as credito \
                                                  from cuenta_diariogeneral as di \
@@ -52,6 +54,7 @@ class MaestroView(View):
                                                  select di.id\
                                                  ,di.fecha\
                                                  ,c.codigo\
+                                                 ,c.descripcion\
                                                  ,sum(di.debito) as debito\
                                                  ,sum(di.credito) as credito\
                                                     from cuenta_diariogeneral as di\
@@ -65,6 +68,7 @@ class MaestroView(View):
             data.append({
                 'fecha': maestro.fecha,
                 'cuenta': maestro.codigo,
+                'descripcion': maestro.descripcion,
                 'debito': maestro.debito,
                 'credito': maestro.credito
             })
@@ -120,7 +124,9 @@ class CuentasView(DetailView):
                 data.append({
                     'id': item.id,
                     'cuenta': item.cuenta.codigo if item.cuenta != None else '',
+                    'cDescripcion': item.cuenta.descripcion if item.cuenta != None else '',
                     'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
+                    'aDescripcion': item.auxiliar.descripcion if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
                     'estatus': item.estatus,
@@ -134,7 +140,9 @@ class CuentasView(DetailView):
                 data.append({
                     'id': item.id,
                     'cuenta': item.cuenta.codigo if item.cuenta != None else '',
+                    'cDescripcion': item.cuenta.descripcion if item.cuenta != None else '',
                     'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
+                    'aDescripcion': item.auxiliar.descripcion if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
                     'estatus': item.estatus,

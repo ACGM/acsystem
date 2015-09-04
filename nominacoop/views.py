@@ -606,7 +606,7 @@ class PostearNominaCoopView(View):
                 nmcoop.estatus = 'P'
                 nmcoop.posteada = 'S'
                 nmcoop.posteoUsr = request.user
-                nmcoop.fechaPosteo = datetime.datetime.now()
+                nmcoop.fechaPosteo = datetime.now()
                 nmcoop.save()
 
             return HttpResponse(1)

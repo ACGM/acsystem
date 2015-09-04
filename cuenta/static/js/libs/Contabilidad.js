@@ -229,6 +229,7 @@ console.log(doc)
 
 						        		  ContabilidadService.getDiarioByFecha($scope.SFechaI, $scope.SFechaF).then(function (data){
 						                    if(data.length > 0){
+						                    	console.log(data)
 						                        $scope.diario = data;
 						                        $scope.calTotales();
 						                    }else{

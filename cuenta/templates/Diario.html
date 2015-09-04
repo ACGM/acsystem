@@ -86,21 +86,23 @@
 				<tr class="listado-table-header-f">
 					<td>Fecha</td>
 					<td>Cuenta</td>
+					<td>Cuenta Descripcion</td>
 					<td>Aux</td>
 					<td>Ref</td>
 					<td class="align-right">Debito</td>
 					<td class="align-right">Credito</td>
 				</tr>
-				<tr ng-repeat="reg in diario" class"listado-Dr-detail" >
+				<tr ng-repeat="reg in diario" class="listado-prestamos-detail" > <!-- listado-Dr-detail  -->
 					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
 					<td style="padding-left:.5em;">[[reg.cuenta ]]</td>
+					<td style="padding-left:.5em;">[[reg.cDescripcion ]]</td>
 					<td style="padding-left:.5em;">[[reg.auxiliar ]]</td>
 					<td style="padding-left:.5em;">[[reg.ref]]</td>
 					<td style="text-align:right; padding-right:.5em;">[[reg.debito | number: 2 ]]</td>
 					<td style="text-align:right; padding-right:.5em;">[[reg.credito | number: 2]]</td>
 				</tr>
 				<tr class="[[panelTotal]]">
-					<td colspan="4"></td>
+					<td colspan="5"></td>
 					<td class="amarillo">[[totalDebito | number:2]]</td>
 					<td class="amarillo">[[totalCredito | number:2 ]]</td>
 				</tr>

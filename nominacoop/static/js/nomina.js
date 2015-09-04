@@ -230,7 +230,7 @@
       }
 
       //Postear Nomina de Empleados de la Cooperativa.
-      function posteoNnominaCoop(nomina) {
+      function posteoNominaCoop(nomina) {
         var deferred = $q.defer();
 console.log(nomina)
         $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
@@ -259,7 +259,7 @@ console.log(nomina)
         generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
         generarArchivoAhorrosBalance : generarArchivoAhorrosBalance,
         relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco,
-        posteoNnominaCoop : posteoNnominaCoop
+        posteoNominaCoop : posteoNominaCoop
       };
 
     }])
@@ -269,7 +269,8 @@ console.log(nomina)
     //CONTROLLERS                                        *
     //                                                   *
     //****************************************************
-    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', function ($scope, $filter, $window, appService, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', 'ContabilidadService',
+                 function ($scope, $filter, $window, appService, NominaService, ContabilidadService) {
       $scope.showGN = true;
       $scope.showCN = true;
 
