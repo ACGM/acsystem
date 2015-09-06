@@ -282,6 +282,7 @@ class SolicitudODById(LoginRequiredMixin, DetailView):
 				'socioCodigo': solicitud.socio.codigo,
 				'socioNombre': solicitud.socio.nombreCompleto,
 				'socioCedula': solicitud.socio.cedula,
+				'socioDepto': solicitud.socio.departamento.descripcion,
 				'socioSalario': solicitud.salarioSocio if solicitud.salarioSocio != None else 0,
 				'representanteCodigo': solicitud.representante.id,
 				'representanteNombre': solicitud.representante.nombre,
@@ -309,6 +310,7 @@ class SolicitudODById(LoginRequiredMixin, DetailView):
 				'prestamo': solicitud.prestamo,
 				'userLog': solicitud.userLog.username,
 				'datetimeServer': solicitud.datetimeServer,
+				'impresa': solicitud.impresa,
 				'articulos': [ 
 					{	'articulo': detalle.articulo,
 						'cantidad': detalle.cantidad,

@@ -5,6 +5,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 #Vistas 
+from acgm.views import InformacionGeneral
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
@@ -147,6 +148,7 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'acgm.views.login', name='login'),
     url(r'^mensajeError/$', 'acgm.views.mensajeError', name='error'),
     url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
+    url(r'^informacionGeneral/$', InformacionGeneral.as_view(), name='informacion_general'),
     
     #Administracion
     url(r'^productosSearch/$', 'administracion.views.productosSearch', name='productos_search'),

@@ -431,6 +431,7 @@ class Empresa(models.Model):
     bancoAsign = models.CharField(max_length=5, blank=True, null=True)
     correoHeader = models.CharField(max_length=40, blank=True, null=True)
     estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
+    telefono = models.CharField(max_length=20, null=True, blank=True)
 
     def __unicode__(self):
         return '%s' % (self.nombre)

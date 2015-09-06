@@ -11,63 +11,71 @@
 	
 	<div class="FacturaVenta" id="FacturaDocumento">
 		<div class="header-f">
-			<span class="titulo-f"> COOPERATIVA </span>
-			<span class="localidad-f"> ZONA IND. LA ISABELA </span>
-			<span class="numeracion-f"> 239-7299 </span>
-			<span class="rnc-f">RNC 300444554</span>
+			<span class="titulo-f"> [[empresa]] </span>
+			<span class="localidad-f"> [[localidad]] </span>
+			<span class="numeracion-f"> [[telefono]] </span>
+			<span class="rnc-f">RNC [[rnc]]</span>
 		</div>
 
-		<div class="ORDEN-COMPRA">====================================== O R D E N   D E   C O  M P R A  =====================</div>
+		<div class="ORDEN-COMPRA">====================================== O R D E N &nbsp;&nbsp;D E&nbsp;&nbsp; C O  M P R A  =====================</div>
 
-		<section class="cabecera-factura">
-			<span class="vendido-f"> SEÑORES: </span>
-			<span class="socio-f"> <strong> REPRESENTANTE1 </strong> </span>
-			<span class="vendedor-f">ZONA INDUSTRIAL LA ISABELA</span>
-		</section>
+		<table class="cabecera-orden-despacho">
+			<tr>
+				<td>SEÑORES:</td>
+				<td>SOCIO: [[datos.socioCodigo]]</td>
+			</tr>
+			<tr>
+				<td><strong> [[datos.representanteNombre]] </strong></td>
+				<td><strong> [[datos.socioNombre]] </strong></td>
+			</tr>
+			<tr>
+				<td>[[localidad]]</td>
+				<td>[[datos.socioDepto]]</td>
+			</tr>
+			
+		</table>
+		<br/>
 
-		<section class="cabecera-od-socio">
-			<span> SOCIO: 242424 </span>
-			<span> <strong> RAFAEL MERCEDES SANTANA </strong> </span>
-			<span> Tecnologia de la Informacion</span>
-		</section>
+		<p class="align-center"><strong>AUTORIZAMOS DESPACHAR POR NUESTRA CUENTA, ESTOS EFECTOS A LOS PRECIOS CONVENIDOS</strong></p>
 
 		<section class="cabecera-factura-2">
 			<table>
 				<tr>
-					<td>ORDEN:</td>
-					<td>[[dataH.fecha]]</td>
+					<td class="align-right">ORDEN:</td>
+					<td>[[datos.noSolicitud | numberFixedLen : 10]]</td>
 				</tr>
 				<tr>
-					<td>FECHA:</td>
-					<td>[[dataH.factura]]</td>
+					<td class="align-right">FECHA:</td>
+					<td>[[datos.fechaAprobacion | date : 'dd/MM/yyyy']]</td>
 				</tr>
 			</table>
 
 		</section>
 		<section class="detalle-factura">
-			<span ng-if="dataH.impresa > 0" class="reimpresa">REIMPRESA</span>
+			<span ng-if="datos.impresa > 0" class="reimpresa">REIMPRESA</span>
 			
 			<table class="table-producto-factura">
 				<tr>
-					<td>Descripcion de los Articulos</td>
-					<td>Cantidad</td>
-					<td>Precio/u</td>
-					<td>Total</td>
+					<td class="align-right">CANT.</td>
+					<td>DESCRIPCION DE LOS ARTICULOS</td>
+					<td class="align-right">PRECIO/U</td>
+					<td class="align-right">TOTAL</td>
 				</tr>
-				<tr ng-repeat="producto in dataD">
-					<td>[[producto.descripcion]]</td>
-					<td>[[producto.cantidad | number : 2]]</td>
-					<td>[[producto.precio | number : 2]]</td>
-					<td>[[producto.subtotal | number : 2]]</td>
+				<tr ng-repeat="articulo in datos.articulos">
+					<td class="align-right">[[articulo.cantidad | number : 2]]</td>
+					<td>[[articulo.articulo]]</td>
+					<td class="align-right">[[articulo.precio | number : 2]]</td>
+					<td class="align-right">[[articulo.cantidad * articulo.precio | number : 2]]</td>
 				</tr>
+				<tr><td colspan="4">==================================================== ULTIMA LINEA ======================</td></tr>
 				<tr>
-					<td>TOTALES:</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
-					<td>[[totalValor_ | number : 2]]</td>
+					<td colspan="3">TOTAL DE LA ORDEN</td>
+					<td class="align-right">[[totalValor_ | number : 2]]</td>
 				</tr>
 			</table>
 		</section>
-
+		<p><strong>Esta orden sera Cargada con un [[datos.tasaInteresAnual]]% de interes</strong></p>
+		
 		<section class="firmas-f">
 			<div class="firma1-f">
 				<span>____________________________</span>
@@ -79,37 +87,11 @@
 				<span>Firma Autorizada</span>
 			</div>
 		</section>
-		<section class="totales-f">
-			<table>
-				<tr>
-					<td>SubTotal</td>
-					<td>[[totalValor_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td>Descuento</td>
-					<td>[[totalDescuento_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
-				<tr>
-					<td>Total RD$</td>
-					<td>[[totalValor_ - totalDescuento_ | number : 2]]</td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
-				<tr>
-					<td colspan="2"> <hr></td>
-				</tr>
-
-			</table>
-		</section>
 
 	</div>
 	
 	<div class="imprimir">
-		<button class="icon-printer Boton boton-imprimir-doc" ng-click="imprimirFactura()">IMPRIMIR</button>
+		<button id="printBoton" class="icon-printer Boton boton-imprimir-doc" ng-click="imprimirSol()">IMPRIMIR</button>
 		
 	</div>
 </section>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Solicitud de Prestamo {% endblock title %}
+{% block title %} Solicitud de Orden de Despacho {% endblock title %}
 
 {% block content %}
 
@@ -129,7 +129,7 @@
 						<td>Representante</td>
 						<td>
 							<select class="descrp-repr" ng-model="solicitante.representanteCodigo" ng-init="getRepresentantes()" required>
-								<option ng-repeat="representante in representantes" value="[[representante.id]]" selected="selected"> [[representante.nombre]] </option>
+								<option ng-repeat="representante in representantes" value="[[representante.id]]"> [[representante.nombre]] </option>
 							</select>
 						</td>
 					</tr>
@@ -265,13 +265,13 @@
 								</tr>
 								<tr class="suplidores-table-header">
 									<td>Id</td>
-									<td>Cedula o RNC</td>
 									<td>Nombre</td>
+									<td>Cedula o RNC</td>
 								</tr>
 								<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
 									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.id]] </a></td>
-									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
 									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
+									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
 								</tr>
 							</table>
 						</div>

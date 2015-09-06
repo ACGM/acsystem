@@ -606,3 +606,25 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	cuota.tipoPago = tipoDoc
 	cuota.save()
 
+	# Nota de Credito
+	if tipoDoc == 'NC':
+		pass
+
+	# Nota de Debito
+	if tipoDoc == 'ND':
+		pass
+
+	# Nomina de descuentos
+	if tipoDoc == 'NM':
+		pass
+
+	# Recibo de Ingreso
+	if tipoDoc == 'RI':
+		pass
+
+	# Descontar desde ahorro para pagar capital a prestamo.
+	if tipoDoc == 'AH':
+		pass
+
+
+

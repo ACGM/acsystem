@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-
-from administracion.models import UserExtra
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.generic import DetailView, View
+from administracion.models import UserExtra, Empresa
 
 #Mixin for login_required
 class LoginRequiredMixin(object):
@@ -38,3 +38,31 @@ def mensajeError(request):
 # Mensaje de Informacion (GENERICO)
 def mensajeInfo(request):
 	return render(request, 'mensajeInfo.html')
+
+
+# View para traer toda la informacion general de la Empresa
+class InformacionGeneral(LoginRequiredMixin, DetailView):
+
+	queryset = Empresa.objects.all()
+
+	def get(self, request, *args, **kwargs):
+
+		self.object_list = self.get_queryset()
+
+		return self.json_to_response()
+
+	def json_to_response(self):
+		data = list()
+
+		for infoG in self.object_list:
+			usr = UserExtra.objects.get(usuario=self.request.user)
+
+			data.append({
+				'nombre': infoG.nombre,
+				'rnc': infoG.rnc,
+				'telefono': infoG.telefono,
+				'localidadS': usr.localidad.descripcion,
+				'localidadL': usr.localidad.descripcionLarga,
+				})
+
+		return JsonResponse(data, safe=False)
