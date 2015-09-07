@@ -328,6 +328,11 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
 
+      //Traer todos los socios a javascript
+      FacturacionService.socios().then(function (data) {
+        $scope.todosLosSocios = data;
+      });
+
       SolicitudPrestamoService.getInteresPrestBaseAhorro().then(function (data) {
         $scope.InteresPrestBaseAhorroAnual = data[0]['porcentajeAnual'];
       })
@@ -502,33 +507,25 @@
       //Traer Socios
       $scope.getSocio = function($event) {
         $event.preventDefault();
-
-        // if(($event.type == 'keyup' && $event.keyCode == 13) || $event.type == 'click') {
-
         $scope.tableSocio = true;
 
         if($scope.solicitante.codigoEmpleado != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-            });
-
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
-
+          
+          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+            return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
           });
+          
+          if($scope.socios.length > 0){
+            $scope.tableSocio = true;
+            $scope.socioNoExiste = '';
+          } else {
+            $scope.tableSocio = false;
+            $scope.socioNoExiste = 'No existe el socio';
+          }
         } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
+          $scope.socios = $scope.todosLosSocios;
+          $scope.socioCodigo = '';
         }
-        // }
       }
 
        //Seleccionar Socio

@@ -251,7 +251,11 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLF = 'UpArrow';
 
-      
+      //Traer todos los socios a javascript
+      FacturacionService.socios().then(function (data) {
+        $scope.todosLosSocios = data;
+      });
+
       // Mostrar/Ocultar panel de Listado de Facturas
       $scope.toggleLF = function() {
         $scope.showLF = !$scope.showLF;
@@ -613,26 +617,21 @@
         $scope.tableSocio = true;
 
         if($scope.socioNombre != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return $filter('lowercase')(registro.nombreCompleto
-                                  .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-            });
-
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
-
+          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+            return $filter('lowercase')(registro.nombreCompleto
+                                .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
           });
+
+          if($scope.socios.length > 0){
+            $scope.tableSocio = true;
+            $scope.socioNoExiste = '';
+          } else {
+            $scope.tableSocio = false;
+            $scope.socioNoExiste = 'No existe el socio';
+          }
         } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
+          $scope.socios = $scope.todosLosSocios;
+          $scope.socioCodigo = '';
         }
       }
 
