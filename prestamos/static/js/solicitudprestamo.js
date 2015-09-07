@@ -918,6 +918,7 @@ console.log(IBG)
         try {
           SolicitudPrestamoService.solicitudesPrestamosEmitidas($scope.fechaInicio, $scope.fechaFin).then(function (data) {
             $scope.registros = data;
+            console.log(data);
 
             if(data.length > 0) {
               data.forEach(function (item) {

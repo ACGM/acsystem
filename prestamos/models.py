@@ -359,8 +359,8 @@ class NotaDeDebitoPrestamo(models.Model):
 	fecha = models.DateField(auto_now=True)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
-	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 

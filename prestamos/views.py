@@ -574,7 +574,7 @@ class PostearNotaCreditoView(LoginRequiredMixin, View):
 				notaC.fechaPosteo = datetime.datetime.now()
 				notaC.save()
 
-				# Aplicar la nota de debito
+				# Aplicar la nota de credito
 				guardarPagoCuotaPrestamo(self, nc['noPrestamo'], nc['valorCapital'], nc['valorInteres'], 0,'{0}{1}'.format('NDCT', nc['id']) , 'NC')
 
 			return HttpResponse(1)
@@ -596,8 +596,11 @@ class PostearNotaCreditoView(LoginRequiredMixin, View):
 #														NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
 def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
+	#Obtener el prestamo como tal
+	prestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+
 	cuota = PagoCuotasPrestamo()
-	cuota.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+	cuota.noPrestamo = prestamo
 	cuota.valorCapital = valorCapital
 	cuota.valorInteres = valorInteres
 	cuota.valorInteresAh = valorInteresAh
@@ -606,25 +609,20 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	cuota.tipoPago = tipoDoc
 	cuota.save()
 
-	# Nota de Credito
-	if tipoDoc == 'NC':
-		pass
+	# NC = Nota de Credito   ---- RI = Recibo Ingreso
+	# AH = Descontar desde ahorro para pagar capital a prestamo.
+	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
+		prestamo.balance = prestamo.balance - decimal.Decimal(cuota.valorCapital)
+		prestamo.save()
 
 	# Nota de Debito
 	if tipoDoc == 'ND':
-		pass
+		prestamo.balance = prestamo.balance + decimal.Decimal(cuota.valorCapital)
+		prestamo.save()
 
 	# Nomina de descuentos
 	if tipoDoc == 'NM':
-		pass
-
-	# Recibo de Ingreso
-	if tipoDoc == 'RI':
-		pass
-
-	# Descontar desde ahorro para pagar capital a prestamo.
-	if tipoDoc == 'AH':
-		pass
-
-
-
+		prestamo.balance = prestamo.balance - cuota.valorCapital
+        prestamo.valorAhorro = prestamo.valorAhorro - cuota.valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - cuota.valorInteresAh >= 0 else 0
+        prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
+        prestamo.save()

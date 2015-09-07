@@ -572,11 +572,9 @@ class AplicarPrestamos(View):
 
             for cuota in cuotas:
                 prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
-                prestamoMaestra.balance -= cuota.valorCapital
-                prestamoMaestra.valorAhorro -= cuota.valorInteresAh if prestamoMaestra.valorAhorro > 0 and prestamoMaestra.valorAhorro - cuota.valorInteresAh >= 0 else 0
-                prestamoMaestra.valorGarantizado -= cuota.valorInteres if prestamoMaestra.valorGarantizado > 0 and prestamoMaestra.valorGarantizado - cuota.valorInteres >= 0 else 0
-                prestamoMaestra.save()
-
+                guardarPagoCuotaPrestamo(self, cuota.noPrestamo.noPrestamo, cuota.valorCapital, cuota.valorInteres,  \
+                                            cuota.valorInteresAh, '{0}{1}'.format('NDCT', cuota.id), 'NM')
+                
             # Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
             cuotas.update(estatus='A')
             NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PE').update(
