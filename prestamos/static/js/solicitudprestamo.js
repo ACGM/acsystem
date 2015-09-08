@@ -938,7 +938,9 @@ console.log(IBG)
 
             if(data.length > 0) {
               $scope.prestamosSocioUnif = [];
-              $scope.prestamosSocio = data;
+              $scope.prestamosSocio = data.filter(function (item) {
+                return item.balance > 0;
+              });
             } else {
               throw data;
             }
