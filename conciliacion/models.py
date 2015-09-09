@@ -12,10 +12,10 @@ class SolicitudCheque(models.Model):
     concepto = models.CharField(max_length=150, null=False, blank=False)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=False, null=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Solicitud_rel', verbose_name='Cuentas')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Solicitud_rel', verbose_name='Cuentas', null=True, blank=True)
 
     def __unicode__(self):
-        return '%i - %s' % self.id, str(self.fecha)
+        return '%i - %s' % (self.id, str(self.fecha))
 
 
 class ConcCheques(models.Model):
@@ -28,7 +28,7 @@ class ConcCheques(models.Model):
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
 
     def __unicode__(self):
-        return '%i-%s' % self.chequeNo, self.id
+        return '%i-%s' % (self.chequeNo, self.id)
 
 
 class NotaDCConciliacion(models.Model):
@@ -40,10 +40,10 @@ class NotaDCConciliacion(models.Model):
     tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name='Tipo Nota')
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='NConci_rel', verbose_name='Cuentas')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='NConci_rel', verbose_name='Cuentas', null=True, blank=True)
 
     def __unicode__(self):
-        return '%i-%s' % self.id, self.tipo
+        return '%i-%s' % (self.id, self.concepto)
 
 
 class ConBanco(models.Model):

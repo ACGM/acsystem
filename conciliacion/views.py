@@ -155,7 +155,6 @@ class NotasConciliacionView(TemplateView):
     template_name = 'NotasConciliacion.html'
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -197,22 +196,25 @@ class NotasConciliacionView(TemplateView):
         DataT = json.loads(request.body)
 
         Data = DataT['Notas']
+        try:
+            if Data[0]['id'] is None:
+                nota = NotaDCConciliacion()
+                nota.fecha = Data[0]['fecha']
+                nota.concepto = Data[0]['concepto']
+                nota.monto = Data[0]['estatus']
+                nota.tipo = Data[0]['tipo']
+                nota.estatus = Data[0]['estatus']
+                nota.save()
+            else:
+                nota = NotaDCConciliacion.objects.get(id=Data[0]['id'])
+                nota.concepto = Data[0]['concepto']
+                nota.estatus = Data[0]['estatus']
+                nota.save()
 
-        if Data['id'] is None:
-            nota = NotaDCConciliacion()
-            nota.fecha = Data['fecha']
-            nota.concepto = Data['concepto']
-            nota.monto = Data['estatus']
-            nota.tipo = Data['tipo']
-            nota.estatus = Data['estatus']
-            nota.save()
-        else:
-            nota = NotaDCConciliacion.objects.get(id=Data['id'])
-            nota.concepto = Data['concepto']
-            nota.estatus = Data['estatus']
-            nota.save()
-
-        return HttpResponse('1')
+            return HttpResponse('Ok')   
+        except Exception, e:
+            return HttpResponse(e)
+        
 
 
 class SSNotasView(DetailView):

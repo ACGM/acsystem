@@ -36,5 +36,11 @@
 		    	$scope.SubMAhorro = valor;
 		    }
 
+		    $scope.ShowSubMenuConc = function(valor){
+		    	$scope.SubConc = valor;
+		    }
+
+
+
 		}]);
 })();
