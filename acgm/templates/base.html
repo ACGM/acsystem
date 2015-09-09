@@ -60,7 +60,10 @@
 			<li ng-hide="{{inventario}}" class="menu-item" id="menu7"> <a class="menu-opcion" ng-click="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)" href="#">Inventario</a> </li>
 			<li ng-hide="{{facturacion}}" class="menu-item" id="menu8"> <a class="menu-opcion" ng-click="ShowSubMenuFact(true)" ng-mouseleave="ShowSubMenuFact(false)" href="#">Facturacion</a> </li>
 
-			<li class="menu-item" id="menu9"> <a class="menu-opcion" href="#">Conciliacion</a></li>
+			<li class="menu-item" id="menu9"> 
+				<a class="menu-opcion" ng-click="ShowSubMenuConc(true)" 
+					ng-mouseleave="ShowSubMenuConc(false)" href="#">Conciliacion</a></li>
+
 			<li ng-hide="{{nomina}}" class="menu-item" id="menu10"> <a class="menu-opcion" ng-click="ShowSubMenuNomina(true)" ng-mouseleave="ShowSubMenuNomina(false)" href="#">Nomina</a> </li>
 
 			<li ng-hide="{{cxp}}" class="menu-item" id="menu11"> <a class="menu-opcion" ng-click="ShowSubMenuCxp(true)" ng-mouseleave="ShowSubMenuCxp(false)" href="#">CxP</a></li>
@@ -147,6 +150,13 @@
 		<li><a href="#">Reporte de Activo</a></li>
 		<li><a href="#">Reporte Activos Depreciados</a></li>
 		
+	</ul>
+
+	<ul class="sub-menu-conciliacion" ng-show="SubConc" ng-mouseover="ShowSubMenuConc(true)" ng-mouseleave="ShowSubMenuConc(false)">
+		<li><a href="/conciliacion/notas">Notas Conciliación</a></li>
+		<li><a href="/conciliacion/banco">Banco</a></li>
+		<li><a href="/conciliacion/Solicitudcheque">Solicitud de Cheques</a></li>
+		<li><a href="/conciliacion/Cheques">Cheques</a></li>
 	</ul>
 		
 	</nav>

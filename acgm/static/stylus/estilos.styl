@@ -3313,6 +3313,43 @@ footer
 			color white
 
 
+
+
+.sub-menu-conciliacion
+	background verde
+	border 3px solid colorBordeSubMenu
+	list-style none
+	margin 1.7em 0 0 49em
+	padding 0
+	position absolute
+	z-index 800
+	
+	&:before
+		border solid
+		border-color transparent transparent colorBordeSubMenu transparent
+		border-width 0 9px 9px 9px
+		content ''
+		left 32%
+		position relative
+		top -2em
+	
+	& li
+			
+		&:last-child
+			padding-bottom .8em
+	
+	& a 
+		text-decoration none
+		padding .35em 1em
+		display block
+		color verdeSuave
+		
+		&:hover
+			background verdeClarito
+			color white
+
+
+
 .generic-table //CLASE para darle formato a las tablas 
 	margin 1em 0 1em 0
 	border 1px solid black
@@ -3458,6 +3495,30 @@ footer
 
 .estatus-I
 	color gray
+
+.listado-ntc-detail
+	& td
+		padding .17em 0
+		border 1px solid black
+		&:nth-child(1)
+			text-align center
+		&:nth-child(2) 
+			text-align center
+			width 4em
+		&:nth-child(3)
+			width 30em
+			padding-left .2em
+		&:nth-child(4)
+			width 5.1em
+			text-align right
+			padding 0 .6em
+		&:nth-child(5) 
+			color mamey
+			font-style bold
+			padding 0 .3em
+			text-align left
+			width 15em
+		
 
 .listado-Or-detail
 	& td
@@ -3832,10 +3893,41 @@ footer
 		border 1px solid black
 		padding .16em .4em
 
+.notasList
+	margin-left .5em 
+
+.PanelNotas
+	margin 1em 0 0 .5em
+	background amarillo
+	width 20em
+	padding 1.5em
+	border-radius 4px
+
+.notasNW
+	float right
+	margin-top -1.5em
+	
+.item-notas
+	margin .5em 0 0 .5em
+	
+
 .activo-main-panel
 	background verdeSuave
 	margin-bottom .5em
 	padding .2em
+
+.input-fecha-s
+	border-radius 0 5px 5px 0
+	margin-left .5em
+
+.item-notas
+	margin 0
+
+.panelFecha
+	border-radius 2px
+	margin .5em .5em 1em .5em
+	padding 1em
+	background verdeSuave
 
 .ActivoNew
 	color white

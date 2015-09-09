@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %} Notas Conciliación {% endblock title %}
+
+{% block content %}
+
+<div ng-controller="NotasConcCtrl" ng-init="getConcNotas($event)">
+	<div ng-show="lsView">
+		<div class="panelFecha">
+			Desde: <input type="text" class="input-fecha-s" ng-model="fechai" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaf" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getConNotasF($event)"></a>
+			<div >
+				<button class="nuevo notasNW icon-file" ng-click="nueva()" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
+			</div>
+		</div>
+		<div class="notasList">
+			<table class="listado-table-f" id="table-lf-listado" ng-init="">
+				<tr class="listado-table-header-f">
+					<td>Registro</td>
+					<td>Tipo</td>
+					<td>Concepto</td>
+					<td>Fecha</td>
+					<td>Monto</td>
+				</tr>
+				<tr class="listado-ntc-detail" ng-repeat="n in LsNotas">
+					<td><a href="#" ng-click="">[[n.id]]</a></td>
+					<td>
+						<div ng-if="n.tipo == 'D'">Debito</div>
+						<div ng-if="n.tipo == 'C'">Credito</div>
+					</td>
+					<td>[[n.concepto]]</td>
+					<td>[[n.fecha]]</td>
+					<td>[[n.monto |number:2]]</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div ng-show="CrNota" class="PanelNotas">
+		<form action="" id="notasForm" ng-submit="setConNotas($event)">
+			<table>
+				<tr>
+					<td>
+						Tipo:
+					</td>
+					<td>
+						<select name="status" form="retiroForm" ng-model="rgNota.estatus" ng-disable="editer">
+					  	<option value="D">Debito</option>
+					  	<option value="C">Credito</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Concepto:
+					</td>
+					<td>
+						<input type="text" ng-model="rgNota.concepto">
+					</td>
+				</tr>
+				<tr>
+					<td>Fecha:</td>
+					<td><input type="text" ng-model="rgNote.fecha" datepicker></td>
+				</tr>
+				<tr>
+					<td>Monto:</td>
+					<td><input type="text" ng-model="rgNote.monto" | number:2></td>
+				</tr>
+				<tr>
+					<td style="padding:1.2em 1.4em 1em .7em; width:5em; ">
+						<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar Postear</button>
+					</td>
+					<td>
+						<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRetiro()">Limpiar</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+		
+	</div>
+</div>
+
+{% endblock content %}
