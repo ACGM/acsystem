@@ -81,7 +81,7 @@ from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getEx
                                 getExistenciaRPT, RPTMovimientoProductoAPIView
 
 from nominacoop.views import DetalleNominaGeneradaAPIView
-from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo
+from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo, PrestamosAPIViewByCategoria
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
 admin.site.site_header = 'COOPERATIVA'
@@ -262,7 +262,10 @@ urlpatterns = patterns('',
     url(r'^prestamos/reportes/prestamos/$', rptPrestamos.as_view(), name='reporte_prestamos'),
     url(r'^prestamos/reportes/prestamos/(?P<fechaI>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), \
                                                                                 name='solicitud_prestamos_api_byCodigo'),
-
+    url(r'^prestamos/reportes/consultaPrestamos/(?P<fechaI>[\w\-]+)/(?P<fechaF>[\w\-]+)/(?P<estatus>[\w]+)/$', PrestamosAPIViewByRangoFecha.as_view(), 
+                                                                                name='consultar_prestamos'),
+    url(r'^prestamos/reportes/consultaPrestamos/agrupadosPorCategoria/$', PrestamosAPIViewByCategoria.as_view(), \
+                                                                        name='consultar_prestamos_agrupados_por_categoria'),
 
     #Prestamos -- Solicitudes Prestamos
     url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),

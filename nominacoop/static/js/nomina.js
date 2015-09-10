@@ -1052,6 +1052,87 @@ console.log(nomina)
         }
       }
 
+      //Funcion para postear la nomina. (Postear es llevar al Diario)
+      $scope.postearNomina = function(nomina){
+        var idoc = 0;
+        $scope.nominaSel = nomina;
+        $scope.iDocumentos = 0;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
+
+        try {
+
+          appService.getDocumentoCuentas('NOMD').then(function (data) {
+            $scope.documentoCuentas = data;
+
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + salidaItem.id;
+              desgloseCuenta.debito = documento.accion == 'D'? nomina.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? nomina.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();
+
+          });
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Inventario - Salida.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var nominaArray = [];
+          nominaArray.push($scope.nominaSel);
+
+          // InventarioService.postearINV(salidaArray, 'SINV').then(function (data) {
+          //   console.log(data);
+          //   $scope.listadoSalidas();
+          // });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+        });
+      }
+
       //Funcion para aplicar prestamos (realizar descuentos del monto de balance de la mestra de Prestamos)
       $scope.aplicarPrestamos = function() {
         try {

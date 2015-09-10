@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Banco, Localidad
 from facturacion.models import Factura
 
+from datetime import timedelta
+
 import datetime
 import decimal
 
@@ -197,6 +199,18 @@ class MaestraPrestamo(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+
+	@property
+	def fechaVencimiento(self):
+		dias = self.cantidadCuotas * 15
+		f = self.fechaAprobacion + timedelta(days=dias)
+
+		return f
+
+	@property
+	def getDescrpCatPrestamo(self):
+		return self.categoriaPrestamo.descripcion
+		
 	@property
 	def cuotaInteresQ1(self):
 		if self.montoCuotaQ1 > 0:

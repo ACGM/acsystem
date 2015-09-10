@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView, View
 from django.http import HttpResponse, JsonResponse
 from django.db import transaction
+from django.db.models import Sum, Count
 
 from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
@@ -160,20 +161,49 @@ class PrestamosAPIViewByRangoFecha(APIView):
 
 	serializer_class = MaestraPrestamosListadoSerializer
 
-	def get(self, request, fechaI, fechaF, estatus=None, categoria=None, tipoPrestamo=None):
+	def get(self, request, fechaI, fechaF, estatus=None):
 
-		varTipoPrestamo = TipoPrestamo.objects.all().values('id') if tipoPrestamo == None else tipoPrestamo
-		varCategoria = CategoriaPrestamo.objects.all().values('id') if categoria == None else categoria
-
-		if estatus != None:
-			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), estatus=estatus, \
-						categoria__in=varCategoria, tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+		if estatus == None:
+			prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF)).order_by('socio')
 		else:
-			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), categoria__in=varCategoria, \
-						tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+			prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF), estatus=estatus).order_by('socio')
+
+			# prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF)).values('noPrestamo','categoriaPrestamo__descripcion').annotate(total=Sum('montoInicial'))
 
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)
+
+
+# Listado de Prestamos Por Rango de Fecha Agrupados por Categoria
+class PrestamosAPIViewByCategoria(LoginRequiredMixin, DetailView):
+
+	def get(self, request, *args, **kwargs):
+		fechaI = self.request.GET.get('fechaI')
+		fechaF = self.request.GET.get('fechaF')
+		estatus = self.request.GET.get('estatus')
+
+		# self.object_list = self.get_queryset().filter(fechaAprobacion__range=(fechaI, fechaF), estatus=estatus). \
+		# 					annotate(totalMonto=Sum('montoInicial'), totalCantidad=Count('categoriaPrestamo'))
+
+		return self.json_to_response(fechaI, fechaF, estatus)
+
+	def json_to_response(self, fechaI, fechaF, estatus):
+		data = list()
+
+		for registro in MaestraPrestamo.objects.raw('SELECT c.id, c.descripcion, SUM(p.montoInicial) totalMonto, COUNT(0) totalCantidad \
+													FROM prestamos_maestraprestamo p \
+													LEFT JOIN administracion_categoriaPrestamo c ON c.id = p.categoriaPrestamo_id \
+													GROUP BY c.descripcion \
+													HAVING p.fechaAprobacion BETWEEN \'' + fechaI + '\' \
+													AND \'' + fechaF + '\' AND p.estatus = \'' + estatus + '\' '):
+			data.append({
+				'id': registro.id,
+				'categoriaPrestamo': registro.descripcion,
+				'totalMonto': registro.totalMonto,
+				'totalCantidad': registro.totalCantidad,
+				})
+
+		return JsonResponse(data, safe=False)
 
 
 #Vista para Solicitud de Prestamo  -- El POST guarda la Solicitud de Prestamo

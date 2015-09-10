@@ -19,8 +19,6 @@ def home(request):
 		localidad = UserExtra.objects.filter(usuario__username=request.user.username).values('localidad__descripcion')
 		request.session['localidad'] = localidad[0]['localidad__descripcion']
 
-		request.session['XX'] = 'RRRAAAAA!!!!!'
-		
 	except Exception as e:
 		return render(request, '404.html', {'mensaje': 'No tiene una localidad asignada.'})
 
