@@ -11,7 +11,7 @@
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA GERDAUMETALDOM</h3>
+			<h3>[[empresa]]</h3>
 			<p class="titulo-utilidad"> Reporte de Prestamos </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
@@ -81,7 +81,7 @@
 					<td class="align-right">Monto</td>
 					<td class="align-right">% Prestamo</td>
 				</tr>
-				<tr ng-repeat="grupo in registros">
+				<tr ng-repeat="grupo in registrosAgrupados">
 					<td>[[grupo.id]]</td>
 					<td>[[grupo.categoriaPrestamo]]</td>
 					<td class="align-right">[[grupo.totalCantidad | number : 0]]</td>

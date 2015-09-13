@@ -203,7 +203,7 @@
       function ReportePrestamos(fechaI, fechaF, estatus, agrupar) {
         var deferred = $q.defer();
 
-        if(agrupar == undefined) {
+        if(agrupar == false) {
           url = '/prestamos/reportes/consultaPrestamos/{fechaI}/{fechaF}/{estatus}/?format=json'.replace('{fechaI}', fechaI)
                                                                                                 .replace('{fechaF}', fechaF)
                                                                                                 .replace('{estatus}', estatus);
@@ -591,6 +591,10 @@
     .controller('ConsultarPrestamoCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
                                         function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
       //Inicializacion de variables
       $scope.agrupar = false;
 
@@ -629,7 +633,7 @@
           registro.totalMonto = item.totalMonto;
           registro.porcentaje = (item.totalMonto / $scope.totalMontoAgrupado) * 100;
 
-          $scope.registros.push(registro);
+          $scope.registrosAgrupados.push(registro);
           $scope.totalPorcentaje += registro.porcentaje;
 
         });

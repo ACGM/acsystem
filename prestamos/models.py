@@ -199,6 +199,13 @@ class MaestraPrestamo(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	@property
+	def departamentoSocio(self):
+		return self.socio.departamento.descripcion
+
+	@property
+	def centrocostoSocio(self):
+		return self.socio.departamento.centroCosto
 
 	@property
 	def fechaVencimiento(self):

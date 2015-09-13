@@ -245,7 +245,7 @@
 								</tr>
 								<tr>
 									<td>ID</td>
-									<td>Categoria de Prestamo</td>
+									<td>Categoria de Orden</td>
 								</tr>
 								<tr ng-repeat="categoria in categoriasP">
 									<td><a class="select-item" href="#" ng-click="selCP($event, categoria)">[[categoria.id]]</a></td>
@@ -278,7 +278,7 @@
 
 						<table class="datos-prestamo-2-table">
 							<tr>
-								<td>Categoria Prestamo</td>
+								<td>Categoria Orden</td>
 								<td>
 									<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
 									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
