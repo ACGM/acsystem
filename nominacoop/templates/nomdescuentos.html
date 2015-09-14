@@ -47,7 +47,7 @@
 					<button id="vBPS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesPrestamosStatus]]" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Prestamos" ng-click="reporteDescPrestamos(tipoPrestamoNomina)"></a>
-					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Prestamos" ng-click="postearNomina(undefined)"></a>
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina)"></a>
 
 				</section>
 
@@ -105,7 +105,7 @@
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Ahorros" ng-click="reporteDescAhorros($event)"></a>	
 
-					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Ahorros" ng-click=""></a>
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Ahorros" ng-click="postearNominaAh(fechaNomina)"></a>
 				</section>
 
 				<div class="registrosPanel--grande" id="panelAhorros">

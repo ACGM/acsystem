@@ -232,7 +232,7 @@
       //Postear Nomina de Empleados de la Cooperativa.
       function posteoNominaCoop(nomina) {
         var deferred = $q.defer();
-console.log(nomina)
+
         $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
           success(function (data) {
             deferred.resolve(data);
@@ -706,8 +706,8 @@ console.log(nomina)
     //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
     //                                                   *
     //****************************************************
-    .controller('NominaDescuentosCtrl', ['$scope', '$filter', '$window', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
-                                          function ($scope, $filter, $window, appService, MaestraPrestamoService, FacturacionService, NominaService) {
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', '$window', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 'ContabilidadService',
+                                          function ($scope, $filter, $window, appService, MaestraPrestamoService, FacturacionService, NominaService, ContabilidadService) {
       $scope.showAHORROS = true;
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
@@ -849,10 +849,11 @@ console.log(nomina)
             var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
             var ahorro;
-            
+
             data.forEach(function (item) {
               ahorro = {};
               ahorro.codigo = item.codigo;
+              ahorro.departamento = item.departamento;
               ahorro.nombreCompleto = item.nombreCompleto;
               ahorro.cuotaAhorro = fecha[0] > 15? item.cuotaAhorroQ2 : item.cuotaAhorroQ1;
 
@@ -865,6 +866,17 @@ console.log(nomina)
               $scope.ocultarPrestamos($event);
               $scope.totalAhorros();
               $scope.errorShow = false;
+            });
+
+            $scope.ahorros.sort(function(a,b) {
+              if(a.departamento > b.departamento) {
+                return 1;
+              }
+              if(a.departamento < b.departamento) {
+                return -1
+              }
+
+              return 0;
             });
           });
         } catch (e) {
@@ -1103,6 +1115,9 @@ console.log(nomina)
 
       //Funcion para postear la nomina. (Postear es llevar al Diario)
       $scope.postearNomina = function(nomina){
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+
         var idoc = 0;
         $scope.nominaSel = nomina;
         $scope.iDocumentos = 0;
@@ -1114,7 +1129,7 @@ console.log(nomina)
 
         try {
 
-          appService.getDocumentoCuentas('NOMD').then(function (data) {
+          appService.getDocumentoCuentas('NOMP').then(function (data) {
             $scope.documentoCuentas = data;
 
             //Prepara cada linea de posteo
@@ -1123,9 +1138,9 @@ console.log(nomina)
 
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + salidaItem.id;
-              desgloseCuenta.debito = documento.accion == 'D'? nomina.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? nomina.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.ref = documento.getCodigo + fechaFormatted;
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });
@@ -1283,7 +1298,11 @@ console.log(nomina)
 
       // Visualizar Reporte de Descuentos de Ahorros
       $scope.reporteDescAhorros = function() {
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
         $window.sessionStorage['descAhorros'] = JSON.stringify($scope.ahorros);
+        $window.sessionStorage['nominaAh'] = fechaFormatted;
 
         $window.open('/nomina/descuentos/ahorros/reporte/', target='_blank'); 
       }
@@ -1309,6 +1328,34 @@ console.log(nomina)
       $scope.totalAhorros = 0;
 
       $scope.ahorros = JSON.parse($window.sessionStorage['descAhorros']);
+      $scope.fNomina = $window.sessionStorage['nominaAh'];
+
+      var dia = $scope.fNomina.substring(8,10);
+      var mes = $scope.fNomina.substring(5,7);
+      var agno = $scope.fNomina.substring(0,4)
+
+      if(parseInt(dia) > 15) {
+        $scope.quincena = '2da.';
+      } else {
+        $scope.quincena = '1ra.';
+      }
+
+      switch(mes) {
+        case '01': $scope.mes = 'Enero'; break;
+        case '02': $scope.mes = 'Febrero'; break;
+        case '03': $scope.mes = 'Marzo'; break;
+        case '04': $scope.mes = 'Abril'; break;
+        case '05': $scope.mes = 'Mayo'; break;
+        case '06': $scope.mes = 'Junio'; break;
+        case '07': $scope.mes = 'Julio'; break;
+        case '08': $scope.mes = 'Agosto'; break;
+        case '09': $scope.mes = 'Septiembre'; break;
+        case '10': $scope.mes = 'Octubre'; break;
+        case '11': $scope.mes = 'Noviembre'; break;
+        case '12': $scope.mes = 'Diciembre'; break;
+      }
+
+      $scope.agno = agno;
 
       $scope.ahorros.forEach(function (item) {
         $scope.totalAhorros += parseFloat(item.cuotaAhorro);
@@ -1329,6 +1376,7 @@ console.log(nomina)
 
       // Inicializar variables
       $scope.totalInteres = 0;
+      $scope.totalInteresAh = 0;
       $scope.totalCapital = 0;
       $scope.totalDesc = 0;
 
@@ -1345,8 +1393,6 @@ console.log(nomina)
       } else {
         $scope.quincena = '1ra.';
       }
-
-console.log($scope.prestamos);
 
       switch(mes) {
         case '01': $scope.mes = 'Enero'; break;
@@ -1375,6 +1421,7 @@ console.log($scope.prestamos);
 
       $scope.prestamos.forEach(function (item) {
         $scope.totalInteres += parseFloat(item.cuotaInteresQ);
+        $scope.totalInteresAh += parseFloat(item.cuotaInteresAhQ);
         $scope.totalCapital += parseFloat(item.montoCuotaQ);
         $scope.totalDesc += parseFloat(item.cuotaMasInteresQ)
 

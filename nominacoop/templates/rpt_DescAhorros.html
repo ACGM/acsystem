@@ -7,13 +7,13 @@
 
 </div>
 
-<section class="Factura" ng-controller="NominaReporteDescAhorrosCtrl">
+<section class="descAhorros" ng-controller="NominaReporteDescAhorrosCtrl">
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<h3>[[empresa]]</h3>
 			<span class="titulo-utilidad"> Validacion de Datos Nominas Descuentos </span> <br/>
-			<span class="fecha-utilidad"> Para la 1ra. Quincena del mes de Mayo </span>
+			<span class="fecha-utilidad"> Para la [[quincena]] Quincena del mes de [[mes]] del [[agno]] </span>
 			<h2>AHORROS</h2>
 		</div>
 
@@ -27,17 +27,19 @@
 			<table class="table-producto-factura">
 				<tr>
 					<td>Codigo</td>
+					<td>Departamento</td>
 					<td>Nombre del Empleado</td>
 					<td class="align-right">Ahorro</td>
 
 				</tr>
 				<tr ng-repeat="ahorro in ahorros">
 					<td>[[ahorro.codigo]]</td>
+					<td>[[ahorro.departamento]]</td>
 					<td>[[ahorro.nombreCompleto]]</td>
 					<td class="align-right">[[ahorro.cuotaAhorro | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="2">TOTALES:</td>
+					<td colspan="3">TOTALES:</td>
 					<td class="align-right">[[totalAhorros | number : 2]]</td>
 				</tr>
 			</table>
