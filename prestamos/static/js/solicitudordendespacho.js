@@ -223,6 +223,10 @@
                                     'InventarioService', 'MaestraPrestamoService', '$rootScope',
                                 function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService, $rootScope) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
       $scope.tableSocio = false; //Mostrar tabla que contiene los socios

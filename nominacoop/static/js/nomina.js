@@ -1113,8 +1113,8 @@
         }
       }
 
-      //Funcion para postear la nomina. (Postear es llevar al Diario)
-      $scope.postearNomina = function(nomina){
+      //Funcion para postear la nomina. (Postear es llevar al Diario)  //* tipo = 1-prestamo o 2-ahorro.
+      $scope.postearNomina = function(nomina, tipo){
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
@@ -1139,8 +1139,14 @@
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
               desgloseCuenta.ref = documento.getCodigo + fechaFormatted;
-              desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+              
+              if(tipo == 'NOMP') { //Cuentas para cuando es nomina de Descuentos de Prestamos
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+              } else { //Cuentas para cuando es nomina de Descuentos de Ahorros
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+              }
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });

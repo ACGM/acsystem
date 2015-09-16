@@ -4,7 +4,7 @@
 {% block title %} Facturacion {% endblock title %}
 
 {% block content %}
-	<div class="distribucion-intereses" ng-controller="OrdenSuperCoopCtrl" ng-submit="guardarOrden($event)">
+	<div class="distribucion-intereses" ng-controller="DistribucionInteresesPrestamosCtrl">
 		<h1>DISTRIBUCION DE INTERESES</h1>
 
 		<form name="OrdenForm" novalidate>
@@ -15,29 +15,29 @@
 					</tr>
 					<tr>
 						<td>Para el año</td>
-						<td><input type="text" ng-model="OC.solicitud"></td>
+						<td><input type="text" ng-model="di.agno"></td>
 					</tr>
 					<tr>
 						<td>Al</td>
-						<td><input type="text" ng-model="OC.categoriaDescrp" datepicker readonly></td>
+						<td><input type="text" ng-model="di.fecha" datepicker readonly></td>
 					</tr>
 					<tr>
 						<td>% Prestamos</td>
-						<td><input type="text" ng-model="OC.autorizador"></td>
+						<td><input type="text" ng-model="di.porcentaje"></td>
 						
 					</tr>
 					<tr>
 						<td>Fecha Posteo</td>
 						<td>
-							<input type="text" ng-model="OC.representante" datepicker readonly>
+							<input type="text" ng-model="di.fechaPosteo" datepicker readonly>
 						</td>
 					</tr>
 				</table>
 			</div>
 
 			<div class="botones-acciones-distribucion-intereses">
-				<button class="icon-uniE601 Boton boton-aprobar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'A', undefined)">Visualizar</button>
-				<button class="icon-cog Boton boton-rechazar-sp" ng-click="AprobarRechazarSolicitudesOD($event,'R', undefined)">Procesar</button>
+				<button class="icon-uniE601 Boton boton-aprobar-sp" ng-click="VisualizarDistribucion($event)">Visualizar</button>
+				<button class="icon-cog Boton boton-rechazar-sp" ng-click="ProcesarDistribucion($event)">Procesar</button>
 			</div>
 			
 		</form>

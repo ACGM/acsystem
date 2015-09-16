@@ -1034,6 +1034,12 @@ console.log($scope.desgloseCuentas.length)
   .controller('ImprimirInventarioCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
     $scope.entrada = JSON.parse($window.sessionStorage['entrada']);
 
+    //Variables de Informacion General (EMPRESA)
+    $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+    $scope.localidad = $window.sessionStorage['localidadL'].toUpperCase();
+    $scope.telefono = $window.sessionStorage['telefono'];
+    //Fin variables de Informacion General.
+
     InventarioService.DocumentoById($scope.entrada.id).then(function (data) {
       $scope.hoy = Date.now();
       $scope.entrada = data[0];

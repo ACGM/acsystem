@@ -13,7 +13,7 @@
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<h3>[[empresa]]</h3>
 			<p class="titulo-utilidad"> Reporte de Solicitudes de Ordenes de Despacho </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
@@ -40,13 +40,13 @@
 					</tr>
 					<tr class="suplidores-table-header">
 						<td>Id</td>
-						<td>Cedula o RNC</td>
 						<td>Nombre</td>
+						<td>Cedula o RNC</td>
 					</tr>
 					<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
 						<td><a href="#" class="select-item" ng-click="selSuplidorRPT($event,supl)"> [[supl.id]] </a></td>
-						<td><a href="#" class="select-item" ng-click="selSuplidorRPT($event,supl)"> [[supl.cedulaRNC]] </a></td>
 						<td><a href="#" class="select-item" ng-click="selSuplidorRPT($event,supl)"> [[supl.nombre]] </a></td>
+						<td><a href="#" class="select-item" ng-click="selSuplidorRPT($event,supl)"> [[supl.cedulaRNC]] </a></td>
 					</tr>
 				</table>
 			</div>

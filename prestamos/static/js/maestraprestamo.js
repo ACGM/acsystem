@@ -623,6 +623,7 @@
       $scope.porcentajesPrestamo = function() {
         var registros = $scope.registros;
         $scope.registros = [];
+        $scope.registrosAgrupados = [];
         $scope.totalPorcentaje = 0;
 
         registros.forEach(function (item) {
@@ -637,6 +638,69 @@
           $scope.totalPorcentaje += registro.porcentaje;
 
         });
+      }
+
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
+
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
+
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
+    }])
+
+    //****************************************************
+    //DISTRIBUCION DE INTERESES DE PRESTAMOS             *
+    //****************************************************
+    .controller('DistribucionInteresesPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
+      //Inicializacion de variables
+      $scope.agrupar = false;
+
+      //Funcion para buscar consulta de prestamos.
+      $scope.buscarPrestamos = function($event) {
+        try {
+          var fechaInicio = $scope.fechaInicio.split('/');
+          var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+          var fechaFin = $scope.fechaFin.split('/');
+          var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+          MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
+            console.log(data);
+            $scope.registros = data;
+
+            $scope.totales();
+          });
+
+        } catch (e) {
+          alert(e);
+        }
+      }
+
+      $scope.VisualizarDistribucion = function() {
+        alert('HOLA')
       }
 
       $scope.totales = function() {

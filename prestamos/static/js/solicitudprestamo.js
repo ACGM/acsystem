@@ -305,6 +305,10 @@
     .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService', 'MaestraPrestamoService',
                                         function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService, MaestraPrestamoService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
