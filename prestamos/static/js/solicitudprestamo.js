@@ -968,6 +968,10 @@ console.log(IBG)
     .controller('ImprimirSolicitudPCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'MaestraPrestamoService',
                                         function ($scope, $filter, $window, SolicitudPrestamoService, MaestraPrestamoService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+
       //Objeto que contiene la informacion de la solicitud de Prestamo
       $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
       console.log($scope.solicitudP);

@@ -83,6 +83,10 @@
     .controller('DesembolsoPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'DesembolsoElectronicoService', 'MaestraPrestamoService', 'appService',
                                         function ($scope, $filter, $timeout, $window, DesembolsoElectronicoService, MaestraPrestamoService, appService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
       $scope.disabledButtonBool = true;
@@ -364,7 +368,12 @@
   //****************************************************
   .controller('ImprimirDesembolsoElectronicoCtrl', ['$scope', '$filter', '$window', 'DesembolsoElectronicoService', 
                                           function ($scope, $filter, $window, DesembolsoElectronicoService) {
-    // $scope.factura = JSON.parse($window.sessionStorage['des']);
+    
+
+    //Variables de Informacion General (EMPRESA)
+    $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+    //Fin variables de Informacion General.
+    
     $scope.dataH = {};
     $scope.dataD = [];
 

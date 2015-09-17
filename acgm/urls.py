@@ -152,6 +152,7 @@ urlpatterns = patterns('',
     
     #Administracion
     url(r'^productosSearch/$', 'administracion.views.productosSearch', name='productos_search'),
+    url(r'^productosSearch2/$', 'administracion.views.productosSearch2', name='productos_search2'),
     url(r'^cuentasSearch/$', 'cuenta.views.cuentasSearch', name='cuentas_search'),
 
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),

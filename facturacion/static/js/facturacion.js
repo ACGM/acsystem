@@ -585,29 +585,24 @@
       $scope.getProducto = function($event) {
         $event.preventDefault();
 
-        $scope.tableProducto = true;
+        var descrp = '';
 
-        if($scope.producto != undefined) {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data.filter(function (registro) {
-              return $filter('lowercase')(registro.descripcion
-                                  .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
-            });
-
-            if($scope.productos.length > 0){
-              $scope.tableProducto = true;
-              $scope.productoNoExiste = '';
-            } else {
-              $scope.tableProducto = false;
-              $scope.productoNoExiste = 'No existe el producto'
-            }
-
-          });
-        } else {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data;
-          });
+        if($event.type != 'click') {
+          descrp = $scope.producto;
         }
+
+        InventarioService.productos(descrp).then(function (data) {
+
+          if(data.length > 0){
+            $scope.productos = data;
+
+            $scope.tableProducto = true;
+            $scope.productoNoExiste = '';
+          } else {
+            $scope.tableProducto = false;
+            $scope.productoNoExiste = 'No existe el producto'
+          }
+        });
       }
 
       //Traer Socios

@@ -213,6 +213,14 @@
     }
   });
 
+  // Directiva para tabla de productos en caso de presentar el precio y no el costo.
+  app.directive('productossearch2', function () {
+    return {
+      restrict: 'E',
+      templateUrl: '/productosSearch2'
+    }
+  });
+
   // Directiva para tabla de prestamos.
   app.directive('prestamossearch', function () {
     return {
