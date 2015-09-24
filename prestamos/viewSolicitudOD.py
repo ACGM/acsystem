@@ -187,15 +187,15 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 					maestra.representante = oSolicitud.representante
 					maestra.oficial = User.objects.get(username=oSolicitud.cobrador.userLog.username)
 					maestra.localidad = oSolicitud.localidad
-					maestra.montoInicial = oSolicitud.netoDesembolsar
+					maestra.montoInicial = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
 					maestra.tasaInteresAnual = oSolicitud.tasaInteresAnual
 					maestra.tasaInteresMensual = oSolicitud.tasaInteresMensual
 					maestra.pagoPrestamoAnterior = 0
 					maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-					maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-					maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+					maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital + (oSolicitud.valorCuotasCapital * (oSolicitud.tasaInteresMensual/100))
+					maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital + (oSolicitud.valorCuotasCapital * (oSolicitud.tasaInteresMensual/100))
 					maestra.valorGarantizado = oSolicitud.valorGarantizado
-					maestra.balance = oSolicitud.netoDesembolsar
+					maestra.balance = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
 					maestra.userLog = request.user
 
 					maestra.save()

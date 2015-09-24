@@ -904,7 +904,7 @@
         var interesBaseAhorroMensual = parseFloat($scope.InteresPrestBaseAhorroAnual/12/2/100);
         var IBA = (ahorroCap * interesBaseAhorroMensual);
         var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
-console.log(IBG)
+
         $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
         $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
         $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);

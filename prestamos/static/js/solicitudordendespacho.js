@@ -827,13 +827,14 @@
       }
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
-        var IBA = (ahorroCap * 0.005);
-        var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
+        // var IBA = (ahorroCap * 0.005);
+        var INTERES = $scope.solicitud.montoSolicitado * ((InteresMensual * 12) /100);
 
-        $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
-        $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
-
-        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
+        $scope.solicitud.interesBaseAhorro = 0; //$filter('number')(IBA, 2);
+        $scope.solicitud.interesBaseGarantizado = $filter('number')(INTERES, 2);
+console.log($scope.solicitud.montoSolicitado)
+console.log(INTERES)
+        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
       }
 
       //Agregar Articulo de Orden Despacho
