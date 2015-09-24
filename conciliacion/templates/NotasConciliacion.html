@@ -5,6 +5,8 @@
 {% block content %}
 
 <div ng-controller="NotasConcCtrl" ng-init="getConcNotas($event)">
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 	<div ng-show="lsView">
 		<div class="panelFecha">
 			Desde: <input type="text" class="input-fecha-s" ng-model="fechai" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaf" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getConNotasF($event)"></a>
@@ -28,7 +30,7 @@
 						<div ng-if="n.tipo == 'C'">Credito</div>
 					</td>
 					<td>[[n.concepto]]</td>
-					<td>[[n.fecha]]</td>
+					<td>[[n.fecha |date: 'dd/MM/yyyy' ]]</td>
 					<td>[[n.monto |number:2]]</td>
 				</tr>
 			</table>
@@ -43,7 +45,7 @@
 						Tipo:
 					</td>
 					<td>
-						<select name="status" form="retiroForm" ng-model="rgNota.estatus" ng-disable="editer">
+						<select name="tipo" form="retiroForm" ng-model="rgNote.tipo" ng-disable="editer">
 					  	<option value="D">Debito</option>
 					  	<option value="C">Credito</option>
 						</select>
@@ -54,7 +56,7 @@
 						Concepto:
 					</td>
 					<td>
-						<input type="text" ng-model="rgNota.concepto">
+						<input type="text" ng-model="rgNote.concepto">
 					</td>
 				</tr>
 				<tr>
@@ -67,7 +69,7 @@
 				</tr>
 				<tr>
 					<td style="padding:1.2em 1.4em 1em .7em; width:5em; ">
-						<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar Postear</button>
+						<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
 					</td>
 					<td>
 						<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRetiro()">Limpiar</button>

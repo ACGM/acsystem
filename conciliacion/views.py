@@ -197,25 +197,24 @@ class NotasConciliacionView(TemplateView):
 
         Data = DataT['Notas']
         try:
-            if Data[0]['id'] is None:
+            if Data['id'] is None:
                 nota = NotaDCConciliacion()
-                nota.fecha = Data[0]['fecha']
-                nota.concepto = Data[0]['concepto']
-                nota.monto = Data[0]['estatus']
-                nota.tipo = Data[0]['tipo']
-                nota.estatus = Data[0]['estatus']
+                nota.fecha = Data['fecha']
+                nota.concepto = Data['concepto']
+                nota.monto = decimal.Decimal(Data['monto'])
+                nota.tipo = Data['tipo']
+                nota.estatus = Data['estatus']
                 nota.save()
             else:
-                nota = NotaDCConciliacion.objects.get(id=Data[0]['id'])
-                nota.concepto = Data[0]['concepto']
-                nota.estatus = Data[0]['estatus']
+                nota = NotaDCConciliacion.objects.get(id=1)
+                nota.concepto = Data['concepto']
+                nota.estatus = Data['estatus']
                 nota.save()
 
             return HttpResponse('Ok')   
         except Exception, e:
-            return HttpResponse(e)
+            return HttpResponse(e.message)
         
-
 
 class SSNotasView(DetailView):
     queryset = NotaDCConciliacion.objects.all()
@@ -247,6 +246,23 @@ class SSNotasView(DetailView):
 
         return JsonResponse(Data, safe=False)
 
+    def post(self, request):
+        DataT = json.loads(request.body)
+        Data = DataT['cuenta']
+
+        regCuenta = Cuentas.objects.get(codigo=Data['cuenta'])
+        regNota = NotaDCConciliacion.objects.get(id=Data['nota'])
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = Data[fecha]
+        regDiario.referencia = Data['ref']
+        regDiario.estatus = 'P'
+        regDiario.debito = data['debito']
+        regDiario.credito = data['credito']
+        regDiario.save()
+
+        regNota.cuentas.add(regDiario)
 
 class ConBancoView(TemplateView):
     template_name = "ConBanco.html"

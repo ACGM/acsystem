@@ -100,7 +100,9 @@
 				<table class="data-entry-header-table">
 					<tr>
 						<td>Orden</td>
-						<td> <input type="text" ng-model="cxpDataReg.orden"> </td>
+						<td> <input type="text" ng-model="cxpDataReg.orden">
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="findOrden($event)"></a> </td> 
+
 					</tr>
 					<tr>
 						<td>Fecha</td>
@@ -133,7 +135,7 @@
 						<td> 
 							<input type="text" ng-model="cxpDataReg.monto" class="input-no-editable"  ng-disabled="true">
 						</td>
-					</tr>
+					<!-- </tr>
 						<tr>
 						<td>Cant Cuotas</td>
 						<td> <input type="text" ng-model="cxpDataReg.cuotas" readonly class="input-no-editable"  ng-disabled="true"> </td>
@@ -141,7 +143,7 @@
 					<tr>
 						<td>Cuotas</td>
 						<td> <input type="text" ng-model="cxpDataReg.montoCuotas" readonly class="input-no-editable"  ng-disabled="true"> </td>
-					</tr>
+					</tr> -->
 				</table>
 			
 				<button class="smallMargin icon-save Boton"  ng-click="guardarOrden($event)" >Guardar</button>
@@ -149,7 +151,7 @@
 				
 			</section>
 		
-			<div class="producto-find-ei" ng-show="panelDetalleArt">
+			<!-- <div class="producto-find-ei" ng-show="panelDetalleArt">
 				<div class="sub-menu">
 					Detalle de Ordenes
 					<a href="#" class="[[DetArrow]]" ng-click="toggleDt()"></a>
@@ -177,7 +179,7 @@
 						</tr>
 					</table>
 				</div>
-
+ -->
 			</div>
 		</form>
 

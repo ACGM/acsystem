@@ -188,7 +188,7 @@
             };
 
         }])
-        .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout',
+        .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout', 'SolicitudOrdenDespachoService',
             function($scope, $filter, $rootScope, cxpService, $timeout){
                 $scope.cxpData = [];
                 $scope.cxpDataDetalle = [];
@@ -324,29 +324,29 @@
 
             }
 
-            $scope.calcMonto = function(){
-                var total=0;
+            // $scope.calcMonto = function(){
+            //     var total=0;
 
-                 var detalle ={};
-                    detalle.articulo = $scope.detallesOrd.articulo;
-                    detalle.monto = $scope.detallesOrd.monto;
+            //      var detalle ={};
+            //         detalle.articulo = $scope.detallesOrd.articulo;
+            //         detalle.monto = $scope.detallesOrd.monto;
 
-                $scope.cxpDataDetalle.push(detalle);
+            //     $scope.cxpDataDetalle.push(detalle);
 
-                if($scope.cxpDataDetalle != undefined){
+            //     if($scope.cxpDataDetalle != undefined){
                     
-                    for (i = 0; i < $scope.cxpDataDetalle.length; i++){
-                        total = total + parseInt($scope.cxpDataDetalle[i].monto);
-                    }
-                    $scope.cxpDataReg.monto=total;
-                    $scope.cxpDataReg.montoCuotas=total/36;
-                    $scope.cxpDataReg.cuotas = 36;
+            //         for (i = 0; i < $scope.cxpDataDetalle.length; i++){
+            //             total = total + parseInt($scope.cxpDataDetalle[i].monto);
+            //         }
+            //         $scope.cxpDataReg.monto=total;
+            //         $scope.cxpDataReg.montoCuotas=total/36;
+            //         $scope.cxpDataReg.cuotas = 36;
 
-                    $scope.detallesOrd.articulo = "";
-                    $scope.detallesOrd.monto = 0;
+            //         $scope.detallesOrd.articulo = "";
+            //         $scope.detallesOrd.monto = 0;
 
-            }
-            }   
+            //     }
+            // }   
 
             $scope.getSuplidor = function($event){
                     $event.preventDefault();
@@ -473,6 +473,7 @@
     .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout' 
         , function ($scope, $filter, $rootScope, cxpService, $timeout) {
 
+      $scope.lstCxpOrden = []
 
         
     }]);
