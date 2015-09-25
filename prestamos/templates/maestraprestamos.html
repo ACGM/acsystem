@@ -14,7 +14,7 @@
 			<!-- <a class="[[ArrowLP]]" href="#" ng-click="toggleLP()"></a> -->
 		</div>
 
-		<div id="listado" class="listado-maestra-prestamo cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
+		<div id="listado" class=" cssSlideUp--Maestra" ng-show="showLP" ng-init="listadoPrestamos()">
 			
 			<section class="listado-reg-prestamos">
 				<div class="busqueda-by-field">
@@ -35,23 +35,24 @@
 				<section id="prestamosContainer" class="registrosPanel--grande">
 					<table class="listado-table-maestraprestamo">
 						<tr class="listado-table-header">
-							<td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td>
-							<td>Estatus</td>
+							<!-- <td class="align-center"><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td> -->
+							<td class="align-center">Estatus</td>
 							<td>Prestamo</td>
 							<td>Sol.</td>
 							<td>Factura</td>
 							<td>Codigo</td>
 							<td>Socio</td>
-							<td>Monto Inicial</td>
-							<td>Balance</td>
+							<td class="align-right">Monto Inicial</td>
+							<td class="align-right">Balance</td>
 							<td>Tipo Prestamo</td>
 							<td>Cheque</td>
+							<td class="align-center">Postear</td>
 						</tr>
 
 						<tr class="listado-prestamos-detail" ng-repeat="prestamo in prestamos">
-							<td class="align-center">
+							<!-- <td class="align-center">
 								<input type="checkbox" name="c[[prestamo.noPrestamo]]" ng-disabled="[[prestamo.estatus | posteoMP]]" ng-checked="valoresChk[prestamo.noPrestamo]" ng-model="reg[prestamo.noPrestamo]" ng-click="selectedReg(prestamo)">
-							</td>
+							</td> -->
 							
 							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]] align-center"></td>
 							<td>
@@ -70,12 +71,18 @@
 							<td class="align-center">
 								<a ng-if="prestamo.estatus == 'E' && prestamo.noSolicitudPrestamo > 0" href="#" class="icon-coin icon-imprimir toolTip" ng-click="marcarPrestamoDC(prestamo, 'C')" data-info="Generar como cheque Prestamo No. [[prestamo.noPrestamo | numberFixedLen : 9]]"></a> 
 							</td>
+
+							<td class="align-center">
+								<a ng-if="prestamo.estatus == 'C' || prestamo.estatus == 'D' || (prestamo.estatus == 'E' && prestamo.noSolicitudOD > 0)" href="#" class="icon-cog icon-imprimir" ng-click="postear($event, prestamo)" title="Postear [[prestamo.documentoDescrp]]"></a>
+
+								<a ng-if="prestamo.estatus == 'P' || prestamo.estatus == 'S'" href="#" class="icon-checkmark icon-imprimir"></a>
+							</td>
 						</tr>
 					</table>
 				</section>
 			</section>
 			
-			<button class="Boton boton-postear-prestamos" ng-click="Postear($event)"> Postear Prestamos</button>
+			<!-- <button class="Boton boton-postear-prestamos" ng-click="Postear($event)"> Postear Prestamos</button> -->
 		</div>
 		
 
@@ -158,7 +165,7 @@
 					<table class="datos-prestamo-table">
 						<tr>
 							<td>Monto Prestamo</td>
-							<td><input type="text" ng-model="prestamo.monto" class="align-right" readonly></td>
+							<td><input type="text" ng-model="prestamo.monto" class="align-right resaltar-valor verde" readonly></td>
 						</tr>
 						<tr>
 							<td>Tasa de Interes Anual</td>
@@ -181,20 +188,22 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Pago Prestamo Anterior</td>
-							<td><input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right" readonly></td>
-						</tr>
-						<tr>
 							<td>Cantidad Cuotas</td>
 							<td><input type="text" ng-model="prestamo.cantidadCuotas" class="align-right" readonly></td>
 						</tr>
 						<tr>
-							<td>Monto de Cuota Q1</td>
+							<td class="resaltar-valor">Monto de Cuota Q1</td>
 							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ1" class="align-right"></td>
 						</tr>
 						<tr>
-							<td>Monto de Cuota Q2</td>
+							<td class="resaltar-valor">Monto de Cuota Q2</td>
 							<td><input type="text" class="resaltar-valor align-right" ng-model="prestamo.montoCuotaQ2" class="align-right"></td>
+						</tr>
+						<tr>
+							<td>Pago Prestamo Anterior</td>
+							<td>
+								<input type="text" ng-model="prestsamo.pagoPrestamoAnterior" class="align-right resaltar-valor verde" readonly>
+							</td>
 						</tr>
 					</table>
 				</div>

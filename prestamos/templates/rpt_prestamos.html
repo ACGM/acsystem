@@ -7,13 +7,11 @@
 
 </div>
 
-<mensajeerror> </mensajeerror>
-
-<section class="Factura" ng-controller="SolicitudPrestamoCtrl">
+<section class="Prestamos" ng-controller="ConsultarPrestamoCtrl">
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA GERDAUMETALDOM </h3>
+			<h3>[[empresa]]</h3>
 			<p class="titulo-utilidad"> Reporte de Prestamos </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
@@ -23,39 +21,78 @@
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaInicio" datepicker>
 			<span>Fecha Fin</span>
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
-			<input type="checkbox" ng-model="clasificacion">
-			<span>Por clasificacion</span>
 			
 			<p>
-				<button class="Boton" ng-click="solprestamosEmitidas()">Buscar</button>
+				<span>Estatus</span>
+				<select class="field-choices" name="posteo" id="posteo" ng-model="estatus">
+					<option value="P" selected="selected">Posteados</option>
+					<option value="E">En proceso</option>
+					<option value="S">Saldados</option>
+				</select>
+			</p>
+
+			<input type="checkbox" ng-model="agrupar">
+			<span>Agrupados por clasificacion</span>
+			
+			<p>
+				<button class="Boton boton-postear-inventario" ng-click="buscarPrestamos($event)">Buscar</button>
 
 			</p>
 
-
 		</div>
 
-		<section class="detalle-utilidad">
-			<table class="table-producto-factura">
+		<section ng-if="agrupar == false" class="detalle-utilidad">
+			<table class="table-prestamo-listado">
 				<tr>
-					<td>Fecha</td>
-					<td>Solicitud No.</td>
+					<td>Prestamo</td>
+					<td>Nombre Socio</td>
+					<td class="align-right">Monto Original</td>
+					<td>Fecha Prestamo</td>
+					<td>Fecha Vencimiento</td>
+					<td class="align-right">Balance Actual</td>
+					<td class="align-right">Tasa de Interes Anual</td>
+				</tr>
+				<tr ng-repeat="prestamo in registros">
+					<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+					<td>[[prestamo.socio]]</td>
+					<td class="align-right">[[prestamo.montoInicial | number: 2]]</td>
+					<td>[[prestamo.fechaAprobacion | date : 'dd/MM/yyyy']]</td>
+					<td>[[prestamo.fechaVencimiento | date : 'dd/MM/yyyy']]</td>
+					<td class="align-right">[[prestamo.balance | number : 2]]</td>
+					<td class="align-right">[[prestamo.tasaInteresMensual * 12 | number : 0]]</td>
+				</tr>
+				<tr>
+					<td colspan="2">TOTALES:</td>
+					<td class="align-right">[[totalMontoOriginal | number : 2]]</td>
+					<td colspan="2"></td>
+					<td class="align-right">[[totalBalance | number : 2]]</td>
+					<td></td>
+				</tr>
+			</table>
+		</section>
+
+		<!-- PRESENTAR PRESTAMOS AGRUPADOS POR CATEGORIA -->
+		<section ng-if="agrupar == true" class="detalle-utilidad">
+			<table class="table-prestamo-listado-agrupados">
+				<tr>
+					<td>Codigo Concepto</td>
 					<td>Categoria</td>
-					<td>Socio</td>
-					<td class="align-right">Monto Solicitado</td>
-					<td class="align-right">Neto Desembolsar</td>
+					<td class="align-right">Cantidad</td>
+					<td class="align-right">Monto</td>
+					<td class="align-right">% Prestamo</td>
 				</tr>
-				<tr ng-repeat="registro in registros">
-					<td>[[registro.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
-					<td>[[registro.noSolicitud | numberFixedLen : 8]]</td>
-					<td>[[registro.categoriaPrestamo]]</td>
-					<td>[[registro.socio]]</td>
-					<td class="align-right">[[registro.montoSolicitado | number : 2]]</td>
-					<td class="align-right">[[registro.netoDesembolsar | number : 2]]</td>
+				<tr ng-repeat="grupo in registrosAgrupados">
+					<td>[[grupo.id]]</td>
+					<td>[[grupo.categoriaPrestamo]]</td>
+					<td class="align-right">[[grupo.totalCantidad | number : 0]]</td>
+					<td class="align-right">[[grupo.totalMonto | number : 2]]</td>
+					<td class="align-right">[[grupo.porcentaje | number : 2]] %</td>
 				</tr>
 				<tr>
-					<td colspan="4">TOTALES:</td>
-					<td class="align-right">[[totalMontoSolicitado | number : 2]]</td>
-					<td class="align-right">[[totalNetoDesembolsar | number : 2]]</td>
+					<td colspan="2">TOTALES:</td>
+					<td class="align-right">[[totalCantidadAgrupado | number : 0]]</td>
+					<td class="align-right">[[totalMontoAgrupado | number : 2]]</td>
+					<td class="align-right">[[totalPorcentaje | number : 0]]</td>
 				</tr>
 			</table>
 		</section>

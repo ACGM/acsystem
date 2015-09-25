@@ -109,13 +109,15 @@
 							</tr>
 							<tr class="suplidores-table-header">
 								<td>Id</td>
-								<td>Cedula o RNC</td>
 								<td>Nombre</td>
+								<td>Cedula o RNC</td>
+
 							</tr>
 							<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
 								<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.id]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
 								<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
+								
 							</tr>
 						</table>
 					</div>

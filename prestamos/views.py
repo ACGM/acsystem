@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView, View
 from django.http import HttpResponse, JsonResponse
 from django.db import transaction
+from django.db.models import Sum, Count
 
 from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
@@ -14,7 +15,8 @@ from rest_framework.response import Response
 from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSerializer, MaestraPrestamosListadoSerializer, \
 							InteresPrestamoBaseAhorroSerializer
 
-from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros
+from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros, \
+					NotaDeDebitoPrestamo, NotaDeCreditoPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
 
 from acgm.views import LoginRequiredMixin
@@ -159,20 +161,49 @@ class PrestamosAPIViewByRangoFecha(APIView):
 
 	serializer_class = MaestraPrestamosListadoSerializer
 
-	def get(self, request, fechaI, fechaF, estatus=None, categoria=None, tipoPrestamo=None):
+	def get(self, request, fechaI, fechaF, estatus=None):
 
-		varTipoPrestamo = TipoPrestamo.objects.all().values('id') if tipoPrestamo == None else tipoPrestamo
-		varCategoria = CategoriaPrestamo.objects.all().values('id') if categoria == None else categoria
-
-		if estatus != None:
-			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), estatus=estatus, \
-						categoria__in=varCategoria, tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+		if estatus == None:
+			prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF)).order_by('socio')
 		else:
-			prestamos = MaestraPrestamo.objects.filter(fechaSolicitud__range=(fechaI, fechaF), categoria__in=varCategoria, \
-						tipoPrestamo__in=varTipoPrestamo).order_by('-fechaSolicitud')
+			prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF), estatus=estatus).order_by('socio')
+
+			# prestamos = MaestraPrestamo.objects.filter(fechaAprobacion__range=(fechaI, fechaF)).values('noPrestamo','categoriaPrestamo__descripcion').annotate(total=Sum('montoInicial'))
 
 		response = self.serializer_class(prestamos, many=True)
 		return Response(response.data)
+
+
+# Listado de Prestamos Por Rango de Fecha Agrupados por Categoria
+class PrestamosAPIViewByCategoria(LoginRequiredMixin, DetailView):
+
+	def get(self, request, *args, **kwargs):
+		fechaI = self.request.GET.get('fechaI')
+		fechaF = self.request.GET.get('fechaF')
+		estatus = self.request.GET.get('estatus')
+
+		# self.object_list = self.get_queryset().filter(fechaAprobacion__range=(fechaI, fechaF), estatus=estatus). \
+		# 					annotate(totalMonto=Sum('montoInicial'), totalCantidad=Count('categoriaPrestamo'))
+
+		return self.json_to_response(fechaI, fechaF, estatus)
+
+	def json_to_response(self, fechaI, fechaF, estatus):
+		data = list()
+
+		for registro in MaestraPrestamo.objects.raw('SELECT c.id, c.descripcion, SUM(p.montoInicial) totalMonto, COUNT(0) totalCantidad \
+													FROM prestamos_maestraprestamo p \
+													LEFT JOIN administracion_categoriaPrestamo c ON c.id = p.categoriaPrestamo_id \
+													GROUP BY c.descripcion \
+													HAVING p.fechaAprobacion BETWEEN \'' + fechaI + '\' \
+													AND \'' + fechaF + '\' AND p.estatus = \'' + estatus + '\' '):
+			data.append({
+				'id': registro.id,
+				'categoriaPrestamo': registro.descripcion,
+				'totalMonto': registro.totalMonto,
+				'totalCantidad': registro.totalCantidad,
+				})
+
+		return JsonResponse(data, safe=False)
 
 
 #Vista para Solicitud de Prestamo  -- El POST guarda la Solicitud de Prestamo
@@ -390,7 +421,7 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
 						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
 						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
-						maestra.valorGarantizado = oSolicitud.valorGarantizado if oSolicitud.prestacionesLaborales == 0 else oSolicitud.prestacionesLaborales
+						maestra.valorGarantizado = oSolicitud.prestacionesLaborales if oSolicitud.prestacionesLaborales > 0 else oSolicitud.valorGarantizado
 						maestra.valorAhorro = oSolicitud.ahorrosCapitalizados
 						maestra.balance = oSolicitud.netoDesembolsar
 						maestra.userLog = request.user
@@ -516,6 +547,8 @@ class PostearPrestamosODView(LoginRequiredMixin, View):
 			for prestamo in prestamos:
 				p = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
 				p.estatus = 'P'
+				p.posteoUsr = request.user
+				p.posteadoFecha = datetime.datetime.now()
 				p.save()
 
 			return HttpResponse(1)
@@ -523,3 +556,103 @@ class PostearPrestamosODView(LoginRequiredMixin, View):
 		except Exception as e:
 			return HttpResponse(e)
 
+
+# Marcar como posteada la Nota de Debito y aplicarla al prestamo
+class PostearNotaDebitoView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			notaDebito = data['nd']
+			
+			# Marcar nota de debito con posteado
+			for nd in notaDebito:
+				notaD = NotaDeDebitoPrestamo.objects.get(id=nd['id'])
+				notaD.estatus = 'A'
+				notaD.posteado = 'S'
+				notaD.posteoUsr = request.user
+				notaD.fechaPosteo = datetime.datetime.now()
+				notaD.save()
+
+				# Aplicar la nota de debito
+				guardarPagoCuotaPrestamo(self, nd['noPrestamo'], nd['valorCapital'], nd['valorInteres'], 0,'{0}{1}'.format('NDBT', nd['id']) , 'ND')
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Marcar como posteada la Nota de Credito y aplicarla al prestamo
+class PostearNotaCreditoView(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			notaCredito = data['nc']
+			
+			# Marcar nota de credito con posteado
+			for nc in notaCredito:
+				notaC = NotaDeCreditoPrestamo.objects.get(id=nc['id'])
+				notaC.estatus = 'A'
+				notaC.posteado = 'S'
+				notaC.posteoUsr = request.user
+				notaC.fechaPosteo = datetime.datetime.now()
+				notaC.save()
+
+				# Aplicar la nota de credito
+				guardarPagoCuotaPrestamo(self, nc['noPrestamo'], nc['valorCapital'], nc['valorInteres'], 0,'{0}{1}'.format('NDCT', nc['id']) , 'NC')
+
+			return HttpResponse(1)
+
+		except Exception as e:
+			return HttpResponse(e)
+
+
+# Metodo para guardar cuota en pago de cuota a prestamo
+# Esto incluye Nota de Debito, Nota de Credito, Recibo de Ingreso, pago desde Ahorros
+# Todo lo concerniente a cuotas de prestamos
+# Los parametros se decriben como sigue:
+# 	1-noPrestamo: es el numero del prestamo en formato integer 
+#	2-valorCapital: es el monto del capital en formato string, pero sin coma
+#	3-valorInteres: es el monto del interes garantizado en formato string, pero sin coma
+#	4-valorInteresAh: es el monto del interes en base ahorrado en formato string, pero sin coma
+#	5-docReferencia: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
+#														ND - Nota de Debito,
+#														NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
+def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
+
+	#Obtener el prestamo como tal
+	prestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+
+	cuota = PagoCuotasPrestamo()
+	cuota.noPrestamo = prestamo
+	cuota.valorCapital = valorCapital
+	cuota.valorInteres = valorInteres
+	cuota.valorInteresAh = valorInteresAh
+	cuota.fecha = datetime.datetime.now()
+	cuota.docRef = docReferencia
+	cuota.tipoPago = tipoDoc
+	cuota.save()
+
+	# NC = Nota de Credito   ---- RI = Recibo Ingreso
+	# AH = Descontar desde ahorro para pagar capital a prestamo.
+	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
+		prestamo.balance = prestamo.balance - decimal.Decimal(cuota.valorCapital)
+		prestamo.save()
+
+	# Nota de Debito
+	if tipoDoc == 'ND':
+		prestamo.balance = prestamo.balance + decimal.Decimal(cuota.valorCapital)
+		prestamo.save()
+
+	# Nomina de descuentos
+	if tipoDoc == 'NM':
+		prestamo.balance = prestamo.balance - cuota.valorCapital
+        prestamo.valorAhorro = prestamo.valorAhorro - cuota.valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - cuota.valorInteresAh >= 0 else 0
+        prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
+        prestamo.save()

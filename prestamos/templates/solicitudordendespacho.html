@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Solicitud de Prestamo {% endblock title %}
+{% block title %} Solicitud de Orden de Despacho {% endblock title %}
 
 {% block content %}
 
@@ -245,7 +245,7 @@
 								</tr>
 								<tr>
 									<td>ID</td>
-									<td>Categoria de Prestamo</td>
+									<td>Categoria de Orden</td>
 								</tr>
 								<tr ng-repeat="categoria in categoriasP">
 									<td><a class="select-item" href="#" ng-click="selCP($event, categoria)">[[categoria.id]]</a></td>
@@ -265,20 +265,20 @@
 								</tr>
 								<tr class="suplidores-table-header">
 									<td>Id</td>
-									<td>Cedula o RNC</td>
 									<td>Nombre</td>
+									<td>Cedula o RNC</td>
 								</tr>
 								<tr ng-repeat="supl in suplidores" class="suplidores-table-detail-search">
 									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.id]] </a></td>
-									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
 									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.nombre]] </a></td>
+									<td><a href="#" class="select-item" ng-click="selSuplidor($event,supl)"> [[supl.cedulaRNC]] </a></td>
 								</tr>
 							</table>
 						</div>
 
 						<table class="datos-prestamo-2-table">
 							<tr>
-								<td>Categoria Prestamo</td>
+								<td>Categoria Orden</td>
 								<td>
 									<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
 									<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
@@ -328,12 +328,12 @@
 										<td><input type="text" ng-model="solicitud.valorCuotas" readonly required></td>
 									</tr>
 
-									<tr>
+									<!-- <tr>
 										<td>Interes (Ahorros)</td>
 										<td><input type="text" ng-model="solicitud.interesBaseAhorro" readonly></td>
-									</tr>
+									</tr> -->
 									<tr>
-										<td>Interes (Garantizado)</td>
+										<td>Interes </td>
 										<td><input type="text" ng-model="solicitud.interesBaseGarantizado" readonly></td>
 									</tr>
 									

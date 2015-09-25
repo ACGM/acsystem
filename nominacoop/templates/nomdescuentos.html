@@ -46,7 +46,8 @@
 
 					<button id="vBPS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesPrestamosStatus]]" title="Generar archivo para nomina." ng-click="verBalancesPrestamos($event)">ver Balances</button>
 
-					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Prestamos" ng-click="reporteDescPrestamos($event)"></a>
+					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Prestamos" ng-click="reporteDescPrestamos(tipoPrestamoNomina)"></a>
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP')"></a>
 
 				</section>
 
@@ -58,7 +59,8 @@
 							<td>Nombre</td>
 							<td>Prestamo</td>
 							<td class="align-right">Capital</td>
-							<td class="align-right">Interes</td>
+							<td class="align-right">Interes Garant.</td>
+							<td class="align-right">Interes Ahorro</td>
 							<td class="align-right">Total</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail" ng-repeat="prestamo in prestamos">
@@ -68,12 +70,14 @@
 							<td title="[[prestamo.balance]]">[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
 							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
+							<td class="align-right">[[prestamo.cuotaInteresAhQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
 						</tr>
 						<tr class="listado-entrada-inventario-detail">
 							<td colspan="4"><strong>TOTALES</strong></td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalMontoCuota | number : 2]]</td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteres | number : 2]]</td>
+							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaInteresAh | number : 2]]</td>
 							<td class="align-right resaltar-valor verde">[[prestamoTotalCuotaMasInteres | number : 2]]</td>
 						</tr>
 							
@@ -101,6 +105,7 @@
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Ahorros" ng-click="reporteDescAhorros($event)"></a>	
 
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Ahorros" ng-click="postearNomina(fechaNomina, 'NOMH')"></a>
 				</section>
 
 				<div class="registrosPanel--grande" id="panelAhorros">

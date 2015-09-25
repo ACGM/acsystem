@@ -351,3 +351,29 @@ class RPTVentasResumidoView(LoginRequiredMixin, TemplateView):
 class RPTVentasDiariasView(LoginRequiredMixin, TemplateView):
 
 	template_name = 'rpt_ventasDiarias.html'
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
+# Cambiar estatus de posteo de los registros
+# de Facturacion
+# # # # # # # # # # # # # # # # # # # # # # #
+class PostearDocumentosFACT(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			registros = data['registros']
+
+			#Postear documentos de Entrada de Inventario
+			for item in registros:
+				fact = Factura.objects.get(id=item['id'])
+				fact.posteo = 'S'
+				fact.posteoUsr = request.user
+				fact.save()
+			
+			return HttpResponse('1')
+
+		except Exception as e:
+			return HttpResponse(e)

@@ -199,18 +199,41 @@
         return deferred.promise;
       }
 
+      //Reporte de Prestamos
+      function ReportePrestamos(fechaI, fechaF, estatus, agrupar) {
+        var deferred = $q.defer();
+
+        if(agrupar == false) {
+          url = '/prestamos/reportes/consultaPrestamos/{fechaI}/{fechaF}/{estatus}/?format=json'.replace('{fechaI}', fechaI)
+                                                                                                .replace('{fechaF}', fechaF)
+                                                                                                .replace('{estatus}', estatus);
+        } else {
+          url = '/prestamos/reportes/consultaPrestamos/agrupadosPorCategoria/?fechaI={fechaI}&fechaF={fechaF}&estatus={estatus}'
+                                                                                              .replace('{fechaI}', fechaI)
+                                                                                              .replace('{fechaF}', fechaF)
+                                                                                              .replace('{estatus}', estatus);
+        }
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
-        byNoPrestamo : byNoPrestamo,
-        PrestamosbySocio : PrestamosbySocio,
-        PrestamoById : PrestamoById,
-        MarcarPrestamoDC : MarcarPrestamoDC,
-        PostearPrestamosOD : PostearPrestamosOD,
-        PrestamosPosteados : PrestamosPosteados,
-        guardarCambios : guardarCambios,
-        prestamosDetalleByCodigoSocio : prestamosDetalleByCodigoSocio,
-        prestamosBalanceByCodigoSocio : prestamosBalanceByCodigoSocio,
-        PagoCuotasPrestamosByNoPrestamo : PagoCuotasPrestamosByNoPrestamo
+        byNoPrestamo                    : byNoPrestamo,
+        PrestamosbySocio                : PrestamosbySocio,
+        PrestamoById                    : PrestamoById,
+        MarcarPrestamoDC                : MarcarPrestamoDC,
+        PostearPrestamosOD              : PostearPrestamosOD,
+        PrestamosPosteados              : PrestamosPosteados,
+        guardarCambios                  : guardarCambios,
+        prestamosDetalleByCodigoSocio   : prestamosDetalleByCodigoSocio,
+        prestamosBalanceByCodigoSocio   : prestamosBalanceByCodigoSocio,
+        PagoCuotasPrestamosByNoPrestamo : PagoCuotasPrestamosByNoPrestamo,
+        ReportePrestamos                : ReportePrestamos
       };
 
     }])
@@ -219,8 +242,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('MaestraPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 
-                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService) {
+    .controller('MaestraPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'ContabilidadService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.disabledButton = 'Boton-disabled';
@@ -259,6 +282,11 @@
         }
       }
 
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
+
       // Funcion para mostrar error por pantalla
       $scope.mostrarError = function(error) {
         $scope.errorMsg = error;
@@ -273,8 +301,7 @@
 
         MaestraPrestamoService.all().then(function (data) {
           $scope.prestamos = data;
-          $scope.regAll = false;
-
+          
           if(data.length > 0) {
             $scope.verTodos = 'ver-todos-ei';
 
@@ -393,6 +420,7 @@
               $scope.dataH.posteadoFecha = data[0]['posteadoFecha'];
               $scope.dataH.tipoPrestamoNomina = data[0]['tipoPrestamoNomina'];
 
+              $scope.prestamo.documentoDescrp = data[0]['documentoDescrp'];
               $scope.prestamo.noSolicitud = $filter('numberFixedLen')(solicitudNo, 8);
               $scope.prestamo.monto = $filter('number')(data[0]['montoInicial'], 2);
               $scope.prestamo.tasaInteresAnual = data[0]['tasaInteresAnual'];
@@ -462,56 +490,243 @@
         })
       }
 
-      //Postear Prestamos/OD
-      $scope.Postear = function($event) {
-        $event.preventDefault();
+      
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postear = function($event, prestamo){
+        var idoc = 0;
+        $scope.iDocumentos = 0;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+
+        $scope.posteoG = false;
 
         try {
-          MaestraPrestamoService.PostearPrestamosOD($scope.prestamosSeleccionados).then(function (data) {
-            if(data == 1) {
-              $scope.listadoPrestamos();
-            } else {
-              $scope.mostrarError(data);
-            }
+
+          //Verificar si es un Prestamo o una Orden de Despacho.
+          if(prestamo.documentoDescrp == 'Prestamo') {
+            docCuentas = 'PRES';
+          } else {
+            docCuentas = 'ORD1';
+          }
+
+          $scope.prestamoOD_SEL = prestamo; //Asigno el prestamo para cuando se vaya a "Llevar a Contabilidad"
+
+          appService.getDocumentoCuentas(docCuentas).then(function (data) {
+            $scope.documentoCuentas = data;
+    
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + prestamo.noPrestamo;
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();     
 
           });
         } catch (e) {
-          $scope.mostrarError(e);
+          alert(e);
         }
       }
 
-      //Cuando se le de click al checkbox del header.
-      $scope.seleccionAll = function() {
+            //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Inventario - Salida.
+      $scope.postearContabilidad = function() {
 
-        $scope.prestamos.forEach(function (data) {
-          if (data.estatus == 'E') {
+        try {
 
-            if ($scope.regAll === true){
-              $scope.valoresChk[data.noPrestamo] = true;
-              $scope.prestamosSeleccionados.push(data);
-            }
-            else{
-              $scope.valoresChk[data.noPrestamo] = false;
-              $scope.prestamosSeleccionados.splice(data);
-            }
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
           }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var p = [];
+          p.push ($scope.prestamoOD_SEL);
+
+          MaestraPrestamoService.PostearPrestamosOD(p).then(function (data) {
+            if(data == 1) {
+              $scope.listadoPrestamos();
+            } else {
+              alert(data);
+            }
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+        });
+      }
+
+    }])
+
+    //****************************************************
+    //REPORTE DE PRESTAMOS                               *
+    //****************************************************
+    .controller('ConsultarPrestamoCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
+      //Inicializacion de variables
+      $scope.agrupar = false;
+
+      //Funcion para buscar consulta de prestamos.
+      $scope.buscarPrestamos = function($event) {
+        try {
+          var fechaInicio = $scope.fechaInicio.split('/');
+          var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+          var fechaFin = $scope.fechaFin.split('/');
+          var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+          MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
+            console.log(data);
+            $scope.registros = data;
+
+            $scope.totales();
+          });
+
+        } catch (e) {
+          alert(e);
+        }
+      }
+
+      //Para prestamos agrupados por clasificacion se calcula el porcentaje de cada categoria
+      $scope.porcentajesPrestamo = function() {
+        var registros = $scope.registros;
+        $scope.registros = [];
+        $scope.registrosAgrupados = [];
+        $scope.totalPorcentaje = 0;
+
+        registros.forEach(function (item) {
+          registro = {};
+          registro.id = item.id;
+          registro.categoriaPrestamo = item.categoriaPrestamo;
+          registro.totalCantidad = item.totalCantidad;
+          registro.totalMonto = item.totalMonto;
+          registro.porcentaje = (item.totalMonto / $scope.totalMontoAgrupado) * 100;
+
+          $scope.registrosAgrupados.push(registro);
+          $scope.totalPorcentaje += registro.porcentaje;
 
         });
       }
 
-      //Cuando se le de click a un checkbox de la lista
-      $scope.selectedReg = function(iReg) {
-        index = $scope.prestamos.indexOf(iReg);
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
 
-        if ($scope.reg[$scope.prestamos[index].noPrestamo] === true){
-          $scope.prestamosSeleccionados.push($scope.prestamos[index]);
-        }
-        else{
-          $scope.prestamosSeleccionados = _.without($scope.prestamosSeleccionados, _.findWhere($scope.prestamosSeleccionados, {noPrestamo : iReg.noPrestamo}));
-        }
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
 
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
+    }])
+
+    //****************************************************
+    //DISTRIBUCION DE INTERESES DE PRESTAMOS             *
+    //****************************************************
+    .controller('DistribucionInteresesPrestamosCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
+      //Inicializacion de variables
+      $scope.agrupar = false;
+
+      //Funcion para buscar consulta de prestamos.
+      $scope.buscarPrestamos = function($event) {
+        try {
+          var fechaInicio = $scope.fechaInicio.split('/');
+          var fechaI = fechaInicio[2] + '-' + fechaInicio[1] + '-' + fechaInicio[0];
+
+          var fechaFin = $scope.fechaFin.split('/');
+          var fechaF = fechaFin[2] + '-' + fechaFin[1] + '-' + fechaFin[0];
+
+          MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
+            console.log(data);
+            $scope.registros = data;
+
+            $scope.totales();
+          });
+
+        } catch (e) {
+          alert(e);
+        }
       }
 
-    }]);  
+      $scope.VisualizarDistribucion = function() {
+        alert('HOLA')
+      }
+
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
+
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
+
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
+    }]);
+      
 
 })(_);

@@ -229,6 +229,20 @@
         return deferred.promise;
       }
 
+      //Postear Nomina de Empleados de la Cooperativa.
+      function posteoNominaCoop(nomina) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         nominasGeneradas        : nominasGeneradas,
         generaNomina            : generaNomina,
@@ -244,7 +258,8 @@
         AplicarAhorros          : AplicarAhorros,
         generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
         generarArchivoAhorrosBalance : generarArchivoAhorrosBalance,
-        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco
+        relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco,
+        posteoNominaCoop : posteoNominaCoop
       };
 
     }])
@@ -254,7 +269,8 @@
     //CONTROLLERS                                        *
     //                                                   *
     //****************************************************
-    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', function ($scope, $filter, $window, appService, NominaService) {
+    .controller('NominaCtrl', ['$scope', '$filter', '$window', 'appService', 'NominaService', 'ContabilidadService',
+                 function ($scope, $filter, $window, appService, NominaService, ContabilidadService) {
       $scope.showGN = true;
       $scope.showCN = true;
 
@@ -527,12 +543,102 @@
         }
       }
 
+      // Mostrar/Ocultar posteo Contabilidad
+      $scope.toggleInfo = function() {
+        $scope.showPostear = !$scope.showPostear;
+      }
+
+      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
+      $scope.postearNominaCoop = function($event, nomina){
+        $scope.NominaSel = nomina;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
+
+        try {
+          console.log(nomina)
+          appService.getDocumentoCuentas('NMCO').then(function (data) {
+            $scope.documentoCuentas = data;
+
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + nomina.id;
+              desgloseCuenta.debito = documento.accion == 'D'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();
+
+          });
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Nota de Debito.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var NominaArray = [];
+          NominaArray.push($scope.NominaSel);
+
+          NominaService.posteoNominaCoop(NominaArray).then(function (data) {
+            console.log(data);
+            $scope.getNominasGeneradas();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+        });
+      }
+
     }])
 
     //****************************************************
     //CONTROLLERS REPORTE NOMINA                         *
     //****************************************************
     .controller('NominaReporteCtrl', ['$scope', '$filter', '$window', 'NominaService', function ($scope, $filter, $window, NominaService) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+
+      // Inicializar variables
       $scope.totalSueldoMensual = 0;
       $scope.totalSueldoQuincenal = 0;
       $scope.totalHorasExtras = 0;
@@ -548,6 +654,32 @@
       $scope.totalNeto = 0;
 
       $scope.registros = JSON.parse($window.sessionStorage['nominareporte']);
+      var dia = $scope.registros[0].nomina.substring(8,10);
+      var mes = $scope.registros[0].nomina.substring(5,7);
+      var agno = $scope.registros[0].nomina.substring(0,4)
+
+      if(parseInt(dia) > 15) {
+        $scope.quincena = '2da.';
+      } else {
+        $scope.quincena = '1ra.';
+      }
+
+      switch(mes) {
+        case '01': $scope.mes = 'Enero'; break;
+        case '02': $scope.mes = 'Febrero'; break;
+        case '03': $scope.mes = 'Marzo'; break;
+        case '04': $scope.mes = 'Abril'; break;
+        case '05': $scope.mes = 'Mayo'; break;
+        case '06': $scope.mes = 'Junio'; break;
+        case '07': $scope.mes = 'Julio'; break;
+        case '08': $scope.mes = 'Agosto'; break;
+        case '09': $scope.mes = 'Septiembre'; break;
+        case '10': $scope.mes = 'Octubre'; break;
+        case '11': $scope.mes = 'Noviembre'; break;
+        case '12': $scope.mes = 'Diciembre'; break;
+      }
+
+      $scope.agno = agno;
 
       $scope.registros.forEach(function (item) {
         $scope.totalSueldoMensual += parseFloat(item.salario) * 2;
@@ -574,8 +706,8 @@
     //CONTROLLERS --DESCUENTOS PRESTAMOS/AHORROS         *
     //                                                   *
     //****************************************************
-    .controller('NominaDescuentosCtrl', ['$scope', '$filter', '$window', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 
-                                          function ($scope, $filter, $window, appService, MaestraPrestamoService, FacturacionService, NominaService) {
+    .controller('NominaDescuentosCtrl', ['$scope', '$filter', '$window', 'appService', 'MaestraPrestamoService', 'FacturacionService', 'NominaService', 'ContabilidadService',
+                                          function ($scope, $filter, $window, appService, MaestraPrestamoService, FacturacionService, NominaService, ContabilidadService) {
       $scope.showAHORROS = true;
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
@@ -663,9 +795,12 @@
               prestamo = {};
               prestamo.codigoSocio = item.codigoSocio;
               prestamo.socio = item.socio;
+              prestamo.departamento = item.departamentoSocio;
+              prestamo.centrocosto = item.centrocostoSocio;
               prestamo.noPrestamo = item.noPrestamo;
               prestamo.montoCuotaQ = fecha[0] > 15? item.montoCuotaQ2 : item.montoCuotaQ1;
               prestamo.cuotaInteresQ = fecha[0] > 15? item.cuotaInteresQ2 : item.cuotaInteresQ1;
+              prestamo.cuotaInteresAhQ = fecha[0] > 15? item.cuotaInteresAhQ2 : item.cuotaInteresAhQ1;
               prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
               prestamo.balance = $filter('number')(item.balance, 2);
 
@@ -674,6 +809,19 @@
               }
               $scope.totalesPrestamos();
             });
+            
+            //Organizar por Departamento
+            $scope.prestamos.sort(function(a,b) {
+              if(a.departamento > b.departamento) {
+                return 1;
+              }
+              if(a.departamento < b.departamento) {
+                return -1;
+              }
+
+              return 0;
+            });
+
             $scope.GenerarArchivoPrestamosStatus = '';
             $window.document.getElementById('GAPS').disabled = false;
 
@@ -701,10 +849,11 @@
             var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
             var ahorro;
-            
+
             data.forEach(function (item) {
               ahorro = {};
               ahorro.codigo = item.codigo;
+              ahorro.departamento = item.departamento;
               ahorro.nombreCompleto = item.nombreCompleto;
               ahorro.cuotaAhorro = fecha[0] > 15? item.cuotaAhorroQ2 : item.cuotaAhorroQ1;
 
@@ -718,6 +867,17 @@
               $scope.totalAhorros();
               $scope.errorShow = false;
             });
+
+            $scope.ahorros.sort(function(a,b) {
+              if(a.departamento > b.departamento) {
+                return 1;
+              }
+              if(a.departamento < b.departamento) {
+                return -1
+              }
+
+              return 0;
+            });
           });
         } catch (e) {
           $scope.mostrarError(e);
@@ -730,11 +890,13 @@
         $scope.prestamoTotalMontoCuota = 0;
         $scope.prestamoTotalCuotaInteres = 0;
         $scope.prestamoTotalCuotaMasInteres = 0;
+        $scope.prestamoTotalCuotaInteresAh = 0;
 
         $scope.prestamos.forEach(function (prestamo) {
           $scope.prestamoTotalMontoCuota += parseFloat(prestamo.montoCuotaQ);
           $scope.prestamoTotalCuotaInteres += parseFloat(prestamo.cuotaInteresQ);
           $scope.prestamoTotalCuotaMasInteres += parseFloat(prestamo.cuotaMasInteresQ);
+          $scope.prestamoTotalCuotaInteresAh += parseFloat(prestamo.cuotaInteresAhQ);
         });
       }
 
@@ -951,6 +1113,96 @@
         }
       }
 
+      //Funcion para postear la nomina. (Postear es llevar al Diario)  //* tipo = 1-prestamo o 2-ahorro.
+      $scope.postearNomina = function(nomina, tipo){
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
+
+        var idoc = 0;
+        $scope.nominaSel = nomina;
+        $scope.iDocumentos = 0;
+
+        $scope.showPostear = true;
+        $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
+
+        try {
+
+          appService.getDocumentoCuentas('NOMP').then(function (data) {
+            $scope.documentoCuentas = data;
+
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
+
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + fechaFormatted;
+              
+              if(tipo == 'NOMP') { //Cuentas para cuando es nomina de Descuentos de Prestamos
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+              } else { //Cuentas para cuando es nomina de Descuentos de Ahorros
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+              }
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();
+
+          });
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Inventario - Salida.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var nominaArray = [];
+          nominaArray.push($scope.nominaSel);
+
+          // InventarioService.postearINV(salidaArray, 'SINV').then(function (data) {
+          //   console.log(data);
+          //   $scope.listadoSalidas();
+          // });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+        });
+      }
+
       //Funcion para aplicar prestamos (realizar descuentos del monto de balance de la mestra de Prestamos)
       $scope.aplicarPrestamos = function() {
         try {
@@ -1052,54 +1304,25 @@
 
       // Visualizar Reporte de Descuentos de Ahorros
       $scope.reporteDescAhorros = function() {
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
         $window.sessionStorage['descAhorros'] = JSON.stringify($scope.ahorros);
+        $window.sessionStorage['nominaAh'] = fechaFormatted;
 
         $window.open('/nomina/descuentos/ahorros/reporte/', target='_blank'); 
       }
 
       // Visualizar Reporte de Descuentos de Prestamos
       $scope.reporteDescPrestamos = function(tipoPrestamo) {
+        var fecha = $scope.fechaNomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
         $window.sessionStorage['descPrestamos'] = JSON.stringify($scope.prestamos);
-        $window.sessionStorage['tipoPrestamo'] = $scope.tipoPrestamo;
+        $window.sessionStorage['tipoPrestamo'] = tipoPrestamo;
+        $window.sessionStorage['nominaPrest'] = fechaFormatted;
 
         $window.open('/nomina/descuentos/prestamos/reporte/', target='_blank'); 
-      }
-
-      //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postearPrestamos = function() {
-        var idoc = 0;
-        $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
-
-        $scope.showPostear = true;
-        $scope.desgloseCuentas = [];
-
-        appService.getDocumentoCuentas('NOMP').then(function (data) {
-          $scope.documentoCuentas = data;
-  
-          //Prepara cada linea de posteo
-          $scope.documentoCuentas.forEach(function (documento) {
-            var desgloseCuenta = new Object();
-
-            if (documento.accion == 'D') {
-              if (documento.accion == 'D') {
-
-              }
-              $scope.totalDebito += parseFloat($scope.prestamoTotalMontoCuota.toString().replace('$','').replace(',',''));
-            } else {
-              $scope.totalCredito += parseFloat($scope.prestamoTotalCuotaMasInteres.toString().replace('$','').replace(',',''));
-            }
-
-            desgloseCuenta.cuenta = documento.getCuentaCodigo;
-            desgloseCuenta.descripcion = documento.getCuentaDescrp;
-            desgloseCuenta.ref = documento.getCodigo + $scope.fechaNomina.replace('/','');
-            desgloseCuenta.debito = documento.accion == 'D'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
-            desgloseCuenta.credito = documento.accion == 'C'? $scope.prestamoTotalMontoCuota.toString().replace('$','') : $filter('number')(0.00, 2);
-
-            $scope.desgloseCuentas.push(desgloseCuenta);
-          });
-        });
       }
 
     }])
@@ -1111,6 +1334,34 @@
       $scope.totalAhorros = 0;
 
       $scope.ahorros = JSON.parse($window.sessionStorage['descAhorros']);
+      $scope.fNomina = $window.sessionStorage['nominaAh'];
+
+      var dia = $scope.fNomina.substring(8,10);
+      var mes = $scope.fNomina.substring(5,7);
+      var agno = $scope.fNomina.substring(0,4)
+
+      if(parseInt(dia) > 15) {
+        $scope.quincena = '2da.';
+      } else {
+        $scope.quincena = '1ra.';
+      }
+
+      switch(mes) {
+        case '01': $scope.mes = 'Enero'; break;
+        case '02': $scope.mes = 'Febrero'; break;
+        case '03': $scope.mes = 'Marzo'; break;
+        case '04': $scope.mes = 'Abril'; break;
+        case '05': $scope.mes = 'Mayo'; break;
+        case '06': $scope.mes = 'Junio'; break;
+        case '07': $scope.mes = 'Julio'; break;
+        case '08': $scope.mes = 'Agosto'; break;
+        case '09': $scope.mes = 'Septiembre'; break;
+        case '10': $scope.mes = 'Octubre'; break;
+        case '11': $scope.mes = 'Noviembre'; break;
+        case '12': $scope.mes = 'Diciembre'; break;
+      }
+
+      $scope.agno = agno;
 
       $scope.ahorros.forEach(function (item) {
         $scope.totalAhorros += parseFloat(item.cuotaAhorro);
@@ -1124,15 +1375,59 @@
     //CONTROLLERS REPORTE NOMINA DESCUENTO DE PRESTAMOS  *
     //****************************************************
     .controller('NominaReporteDescPrestamosCtrl', ['$scope', '$filter', '$window', 'NominaService', function ($scope, $filter, $window, NominaService) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+
+      // Inicializar variables
       $scope.totalInteres = 0;
+      $scope.totalInteresAh = 0;
       $scope.totalCapital = 0;
       $scope.totalDesc = 0;
 
       $scope.prestamos = JSON.parse($window.sessionStorage['descPrestamos']);
       $scope.tipoPrestamo = $window.sessionStorage['tipoPrestamo'];
+      $scope.fNomina = $window.sessionStorage['nominaPrest'];
+
+      var dia = $scope.fNomina.substring(8,10);
+      var mes = $scope.fNomina.substring(5,7);
+      var agno = $scope.fNomina.substring(0,4)
+
+      if(parseInt(dia) > 15) {
+        $scope.quincena = '2da.';
+      } else {
+        $scope.quincena = '1ra.';
+      }
+
+      switch(mes) {
+        case '01': $scope.mes = 'Enero'; break;
+        case '02': $scope.mes = 'Febrero'; break;
+        case '03': $scope.mes = 'Marzo'; break;
+        case '04': $scope.mes = 'Abril'; break;
+        case '05': $scope.mes = 'Mayo'; break;
+        case '06': $scope.mes = 'Junio'; break;
+        case '07': $scope.mes = 'Julio'; break;
+        case '08': $scope.mes = 'Agosto'; break;
+        case '09': $scope.mes = 'Septiembre'; break;
+        case '10': $scope.mes = 'Octubre'; break;
+        case '11': $scope.mes = 'Noviembre'; break;
+        case '12': $scope.mes = 'Diciembre'; break;
+      }
+
+      $scope.agno = agno;
+
+      switch($scope.tipoPrestamo) {
+        case 'RE': $scope.tipoPrestamo = 'Prestamos Regulares'; break;
+        case 'VA': $scope.tipoPrestamo = 'Prestamos Vacaciones'; break;
+        case 'BO': $scope.tipoPrestamo = 'Prestamos Bonificacion'; break;
+        case 'RG': $scope.tipoPrestamo = 'Prestamos Regalia'; break;
+        case 'RI': $scope.tipoPrestamo = 'Prestamos Rifa';
+      }
 
       $scope.prestamos.forEach(function (item) {
         $scope.totalInteres += parseFloat(item.cuotaInteresQ);
+        $scope.totalInteresAh += parseFloat(item.cuotaInteresAhQ);
         $scope.totalCapital += parseFloat(item.montoCuotaQ);
         $scope.totalDesc += parseFloat(item.cuotaMasInteresQ)
 

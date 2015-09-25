@@ -185,6 +185,20 @@
         return deferred.promise;
       }
 
+      //Impresion de Orden Despacho (incrementa el campo de IMPRESA)
+      function impresionOD(noSolicitud) {
+        var deferred = $q.defer();
+
+        $http.post('/solicitudOD/print/{noSolicitud}/'.replace('{noSolicitud}',noSolicitud), {'noSolicitud': noSolicitud}).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         solicitudesOD                   : solicitudesOD,
         solicitudesODBySocio            : solicitudesODBySocio,
@@ -195,7 +209,8 @@
         AprobarRechazarSolicitudes      : AprobarRechazarSolicitudes,
         SolicitudODById                 : SolicitudODById,
         guardaSolicitudODDetalle        : guardaSolicitudODDetalle,
-        SolicitudesBySuplidorRangoFecha : SolicitudesBySuplidorRangoFecha
+        SolicitudesBySuplidorRangoFecha : SolicitudesBySuplidorRangoFecha,
+        impresionOD                     : impresionOD
       };
 
     }])
@@ -205,8 +220,12 @@
     //CONTROLLERS                                        *
     //****************************************************
     .controller('SolicitudODCtrl', ['$scope', '$filter', '$window', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 
-                                    'InventarioService', 'MaestraPrestamoService',
-                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService) {
+                                    'InventarioService', 'MaestraPrestamoService', '$rootScope',
+                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService, $rootScope) {
+      
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
       
       //Inicializacion de variables
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -232,6 +251,11 @@
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
+
+      //Traer todos los socios a javascript
+      FacturacionService.socios().then(function (data) {
+        $scope.todosLosSocios = data;
+      });
 
       
       // Mostrar/Ocultar panel de Listado de Desembolsos
@@ -425,28 +449,24 @@
       //Traer Socios
       $scope.getSocio = function($event) {
         $event.preventDefault();
-
         $scope.tableSocio = true;
 
         if($scope.solicitante.codigoEmpleado != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-            });
-
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
+          
+          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+            return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
           });
+          
+          if($scope.socios.length > 0){
+            $scope.tableSocio = true;
+            $scope.socioNoExiste = '';
+          } else {
+            $scope.tableSocio = false;
+            $scope.socioNoExiste = 'No existe el socio';
+          }
         } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
+          $scope.socios = $scope.todosLosSocios;
+          $scope.socioCodigo = '';
         }
       }
 
@@ -466,7 +486,6 @@
             $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
           }
         });
-
       }
 
       //Seleccionar Categoria
@@ -525,11 +544,11 @@
         $scope.solicitud = {};
         $scope.dataD = [];
 
-        $scope.solicitante.representanteCodigo = '';
-        $scope.solicitante.representanteNombre = undefined;
+        // $scope.solicitante.representanteCodigo = '';
+        // $scope.solicitante.representanteNombre = undefined;
         $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
-        $scope.solicitante.autorizadoPor = '';
+        $scope.solicitante.autorizadoPor = usuario;
 
         $scope.solicitud.solicitudNo = 0;
         $scope.solicitud.valorGarantizado = undefined;
@@ -717,7 +736,7 @@
       }
 
       // Visualizar Solicitud de Prestamo (desglose)
-      $scope.SolicitudFullById = function($event, solicitud) {
+      $rootScope.SolicitudFullById = function($event, solicitud) {
         $event.preventDefault();
 
         try {
@@ -808,13 +827,14 @@
       }
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
-        var IBA = (ahorroCap * 0.005);
-        var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
+        // var IBA = (ahorroCap * 0.005);
+        var INTERES = $scope.solicitud.montoSolicitado * ((InteresMensual * 12) /100);
 
-        $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
-        $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
-
-        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
+        $scope.solicitud.interesBaseAhorro = 0; //$filter('number')(IBA, 2);
+        $scope.solicitud.interesBaseGarantizado = $filter('number')(INTERES, 2);
+console.log($scope.solicitud.montoSolicitado)
+console.log(INTERES)
+        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
       }
 
       //Agregar Articulo de Orden Despacho
@@ -889,7 +909,7 @@
       }
 
       //Traer suplidores
-      $scope.getSuplidor = function($event) {
+      $scope.getSuplidorRPT = function($event) {
         $event.preventDefault();
         var suplidor = '';
 
@@ -947,10 +967,65 @@
 
       //Imprimir Orden de Despacho
       $scope.ImprimirOD = function(solicitud) {
-        $window.sessionStorage['noSolicitud'] = JSON.stringify(solicitud);
+        $window.sessionStorage['solicitudOD'] = JSON.stringify(solicitud);
         $window.open('/solicitudOD/print/{noSolicitud}'.replace('{noSolicitud}',solicitud.noSolicitud), target='_blank'); 
       }
 
+    }])
+
+    //****************************************************
+    //CONTROLLERS Imprimir Solicitud Orden Despacho      *
+    //****************************************************
+    .controller('ImprimirODCtrl', ['$scope', '$rootScope','$filter', '$window', 'SolicitudOrdenDespachoService', 'MaestraPrestamoService',
+                                        function ($scope, $rootScope, $filter, $window, SolicitudOrdenDespachoService, MaestraPrestamoService) {
+      
+
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      $scope.localidad = $window.sessionStorage['localidadL'].toUpperCase();
+      $scope.telefono = $window.sessionStorage['telefono'];
+      $scope.rnc = $window.sessionStorage['RNC'];
+      //Fin variables de Informacion General.
+
+      //Objeto que contiene la informacion de la solicitud de Prestamo
+      $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudOD']);
+      console.log($scope.solicitudP);
+
+      $scope.totalValor = function() {
+        var total = 0.0;
+        var descuento = 0;
+
+        $scope.datos.articulos.forEach(function (item) {
+          if(parseFloat(item.descuento) > 0) {
+            descuento = (parseFloat(item.descuento)/100);
+            descuento = (parseFloat(item.precio) * parseFloat(descuento) * parseFloat(item.cantidad));
+          } else {
+            descuento = 0;
+          }
+          total += (parseFloat(item.precio) * parseFloat(item.cantidad)) - descuento;
+        });
+        return total;
+      }
+
+      SolicitudOrdenDespachoService.SolicitudODById($scope.solicitudP.noSolicitud).then(function (data) {
+        $scope.datos = data[0];
+        $scope.totalValor_ = $scope.totalValor();
+
+        console.log($scope.datos);
+      });
+      
+      $scope.imprimirSol = function() {
+
+        SolicitudOrdenDespachoService.impresionOD($scope.datos.noSolicitud).then(function (data) {
+          console.log("DATA: " + data);
+
+          document.getElementById('printBoton').style.display = "None";
+          window.print();
+          window.location.reload();
+          document.getElementById('printBoton').style.display = "";
+        });
+      }
+       
     }]);
 
 })(_);

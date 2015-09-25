@@ -344,6 +344,20 @@
         return deferred.promise;
       }
 
+      //Postear registros de Entrada y Salida de Inventario.
+      function postearINV(registros, tipoDoc) {
+        var deferred = $q.defer();
+
+        $http.post('/inventario/postear-registros/', JSON.stringify({'registros': registros, 'tipoDoc': tipoDoc})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
 
       return {
         allEntradas             : allEntradas,
@@ -368,7 +382,8 @@
         eliminarEI              : eliminarEI,
         eliminarSI              : eliminarSI,
         byNoDocSalida           : byNoDocSalida,
-        procesarAjusteInv       : procesarAjusteInv
+        procesarAjusteInv       : procesarAjusteInv,
+        postearINV              : postearINV
       };
 
     }])
@@ -377,8 +392,8 @@
     //****************************************************
     //CONTROLLERS    ENTRADA DE INVENTARIO               *
     //****************************************************
-    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 
-                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService) {
+    .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 'ContabilidadService',
+                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -933,36 +948,81 @@
       $scope.postear = function(){
         var idoc = 0;
         $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
 
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
 
-        appService.getDocumentoCuentas('EINV').then(function (data) {
-          $scope.documentoCuentas = data;
-  
-          //Prepara cada linea de posteo
-          $scope.entradasSeleccionadas.forEach(function (item) {
-            $scope.documentoCuentas.forEach(function (documento) {
-              var desgloseCuenta = new Object();
-              if (documento.accion == 'D') {
-                $scope.totalDebito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              } else {
-                $scope.totalCredito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              }
+        $scope.posteoG = false;
 
-              desgloseCuenta.cuenta = documento.getCuentaCodigo;
-              desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + item.id;
-              desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+        try {
 
-              $scope.desgloseCuentas.push(desgloseCuenta);
+          appService.getDocumentoCuentas('EINV').then(function (data) {
+            $scope.documentoCuentas = data;
+    
+            //Prepara cada linea de posteo
+            $scope.entradasSeleccionadas.forEach(function (item) {
+              $scope.documentoCuentas.forEach(function (documento) {
+                var desgloseCuenta = new Object();
+
+                desgloseCuenta.cuenta = documento.getCuentaCodigo;
+                desgloseCuenta.descripcion = documento.getCuentaDescrp;
+                desgloseCuenta.ref = documento.getCodigo + item.id;
+                desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+                $scope.desgloseCuentas.push(desgloseCuenta);
+              });
+              idoc += 1;
+              $scope.totalDebitoCredito();
             });
-            idoc += 1;
+            $scope.iDocumentos = idoc;
           });
-          $scope.iDocumentos = idoc;
+        } catch (e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Entrada de Inventario.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          InventarioService.postearINV($scope.entradasSeleccionadas, 'EINV').then(function (data) {
+            console.log(data);
+            $scope.listadoEntradas();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+console.log($scope.desgloseCuentas.length)
+        $scope.desgloseCuentas.forEach(function (documento) {
+          console.log(documento)
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });
       }
 
@@ -973,6 +1033,12 @@
   //****************************************************
   .controller('ImprimirInventarioCtrl', ['$scope', '$filter', '$window', 'InventarioService', function ($scope, $filter, $window, InventarioService) {
     $scope.entrada = JSON.parse($window.sessionStorage['entrada']);
+
+    //Variables de Informacion General (EMPRESA)
+    $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+    $scope.localidad = $window.sessionStorage['localidadL'].toUpperCase();
+    $scope.telefono = $window.sessionStorage['telefono'];
+    //Fin variables de Informacion General.
 
     InventarioService.DocumentoById($scope.entrada.id).then(function (data) {
       $scope.hoy = Date.now();
@@ -1438,8 +1504,8 @@
     //****************************************************
     //CONTROLLERS   SALIDA DE INVENTARIO                 *
     //****************************************************
-    .controller('ListadoSalidaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService','InventarioService', 
-                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService) {
+    .controller('ListadoSalidaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService','InventarioService', 'ContabilidadService', 
+                                          function ($scope, $filter, $window, $rootScope, appService, InventarioService, ContabilidadService) {
       
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
@@ -1845,35 +1911,84 @@
       }
 
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
-      $scope.postear = function(salidaItem){
+      $scope.postearSalida = function(salidaItem){
         var idoc = 0;
+        $scope.salidaSel = salidaItem;
         $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
 
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
+        
+        $scope.posteoG = false;
 
-        appService.getDocumentoCuentas('SINV').then(function (data) {
-          $scope.documentoCuentas = data;
+        try {
 
-          //Prepara cada linea de posteo
-          $scope.documentoCuentas.forEach(function (documento) {
-            var desgloseCuenta = new Object();
-            if (documento.accion == 'D') {
-              $scope.totalDebito += parseFloat(salidaItem.totalGeneral.toString().replace('$','').replace(',',''));
-            } else {
-              $scope.totalCredito += parseFloat(salidaItem.totalGeneral.toString().replace('$','').replace(',',''));
-            }
+          appService.getDocumentoCuentas('SINV').then(function (data) {
+            $scope.documentoCuentas = data;
 
-            desgloseCuenta.cuenta = documento.getCuentaCodigo;
-            desgloseCuenta.descripcion = documento.getCuentaDescrp;
-            desgloseCuenta.ref = documento.getCodigo + salidaItem.id;
-            desgloseCuenta.debito = documento.accion == 'D'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-            desgloseCuenta.credito = documento.accion == 'C'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+            //Prepara cada linea de posteo
+            $scope.documentoCuentas.forEach(function (documento) {
+              var desgloseCuenta = new Object();
 
-            $scope.desgloseCuentas.push(desgloseCuenta);
+              desgloseCuenta.cuenta = documento.getCuentaCodigo;
+              desgloseCuenta.descripcion = documento.getCuentaDescrp;
+              desgloseCuenta.ref = documento.getCodigo + salidaItem.id;
+              desgloseCuenta.debito = documento.accion == 'D'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? salidaItem.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+              $scope.desgloseCuentas.push(desgloseCuenta);
+            });
+            $scope.totalDebitoCredito();
+
           });
+        } catch(e) {
+          alert(e);
+        }
+
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Inventario - Salida.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          var salidaArray = [];
+          salidaArray.push($scope.salidaSel);
+
+          InventarioService.postearINV(salidaArray, 'SINV').then(function (data) {
+            console.log(data);
+            $scope.listadoSalidas();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });
       }
 

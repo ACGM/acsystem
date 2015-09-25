@@ -275,7 +275,7 @@
 .subtitulo-sp
 	text-align center
 	display block
-	margin-top 1em
+	margin-top .3em
 	
 .datos-personales
 	
@@ -329,11 +329,12 @@
 			&:nth-child(3),
 			&:nth-child(4),
 			&:nth-child(5),
-			&:nth-child(6)
+			&:nth-child(6),
+			&:nth-child(7)
 				& td
 					&:nth-child(even)
 						text-align right
-			&:nth-child(4)
+			&:nth-child(5)
 				& td
 					&:nth-child(2),
 					&:nth-child(3)
@@ -367,7 +368,7 @@
 	font-weight bold	
 
 .table-firmas-finales
-	margin-top 3em
+	margin-top 2em
 	width 100%
 	font-size 12px
 	& tr
@@ -516,9 +517,9 @@
 	
 	.totalNeto
 		display block
-		& span
-			&:last-child
-				float right
+	// 	& span
+	// 		&:last-child
+	// 			float right
 				
 	
 	
@@ -538,5 +539,63 @@
 		border none
 			
 		
+//ORDEN DE DESPACHO
+.cabecera-orden-despacho
+	width 100%
+	tr
+		td
+			font-family courier
+			font-size 12px
+	
 
+//PRESTAMO
+	
+.table-prestamo-listado
+	font-size 10px
+	width 100%
+	margin-top .5em
+	& tr
+		&:first-child
+			background gray
+			font-weight bold
+		& td
+			border 1px solid
+			padding .3em
+	
+		&:last-child
+			background lightgray
+			font-weight bold
+	
+	& tr
+		& td
+			&:nth-child(2)
+				width 80%
+			
+			&:nth-child(1),
+			&:nth-child(3),
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7)
+				width 15%
+
+.table-prestamo-listado-agrupados
+	font-size 10px
+	width 60%
+	margin-top .5em
+	& tr
+		&:first-child
+			background gray
+			font-weight bold
+		& td
+			border 1px solid
+			padding .3em
+	
+		&:last-child
+			background lightgray
+			font-weight bold
+	tr
+		td
+			&:first-child
+				width 12px
 	

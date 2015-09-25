@@ -305,6 +305,10 @@
     .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService', 'MaestraPrestamoService',
                                         function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService, MaestraPrestamoService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+      
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
@@ -327,6 +331,11 @@
 
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
+
+      //Traer todos los socios a javascript
+      FacturacionService.socios().then(function (data) {
+        $scope.todosLosSocios = data;
+      });
 
       SolicitudPrestamoService.getInteresPrestBaseAhorro().then(function (data) {
         $scope.InteresPrestBaseAhorroAnual = data[0]['porcentajeAnual'];
@@ -502,33 +511,25 @@
       //Traer Socios
       $scope.getSocio = function($event) {
         $event.preventDefault();
-
-        // if(($event.type == 'keyup' && $event.keyCode == 13) || $event.type == 'click') {
-
         $scope.tableSocio = true;
 
         if($scope.solicitante.codigoEmpleado != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-            });
-
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
-
+          
+          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+            return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
           });
+          
+          if($scope.socios.length > 0){
+            $scope.tableSocio = true;
+            $scope.socioNoExiste = '';
+          } else {
+            $scope.tableSocio = false;
+            $scope.socioNoExiste = 'No existe el socio';
+          }
         } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
+          $scope.socios = $scope.todosLosSocios;
+          $scope.socioCodigo = '';
         }
-        // }
       }
 
        //Seleccionar Socio
@@ -625,8 +626,8 @@
         $scope.solicitud = {};
         $scope.prestamosSocioUnif = [];
 
-        $scope.solicitante.representanteCodigo = '';
-        $scope.solicitante.representanteNombre = undefined;
+        // $scope.solicitante.representanteCodigo = '';
+        // $scope.solicitante.representanteNombre = undefined;
         $scope.solicitante.auxiliar = '';
         $scope.solicitante.cobrador = usuario;
         $scope.solicitante.autorizadoPor = usuario;
@@ -903,7 +904,7 @@
         var interesBaseAhorroMensual = parseFloat($scope.InteresPrestBaseAhorroAnual/12/2/100);
         var IBA = (ahorroCap * interesBaseAhorroMensual);
         var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
-console.log(IBG)
+
         $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
         $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
         $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
@@ -918,6 +919,7 @@ console.log(IBG)
         try {
           SolicitudPrestamoService.solicitudesPrestamosEmitidas($scope.fechaInicio, $scope.fechaFin).then(function (data) {
             $scope.registros = data;
+            console.log(data);
 
             if(data.length > 0) {
               data.forEach(function (item) {
@@ -940,7 +942,9 @@ console.log(IBG)
 
             if(data.length > 0) {
               $scope.prestamosSocioUnif = [];
-              $scope.prestamosSocio = data;
+              $scope.prestamosSocio = data.filter(function (item) {
+                return item.balance > 0;
+              });
             } else {
               throw data;
             }
@@ -964,9 +968,22 @@ console.log(IBG)
     .controller('ImprimirSolicitudPCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'MaestraPrestamoService',
                                         function ($scope, $filter, $window, SolicitudPrestamoService, MaestraPrestamoService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
+
       //Objeto que contiene la informacion de la solicitud de Prestamo
       $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
       console.log($scope.solicitudP);
+
+      //Calculo de intereses para sumar al capital
+      var intG = ($scope.solicitudP.tasaInteresMensual / 2 / 100) * ($scope.solicitudP.prestacionesLaborales);
+      var intA = ($scope.solicitudP.interesBaseAhorroMensual / 2 / 100) * ($scope.solicitudP.ahorrosCapitalizados);
+      var intereses = intG + intA;
+
+      $scope.solicitudP.capitalMasIntereses = intereses + parseFloat($scope.solicitudP.valorCuotasCapital);
+      $scope.solicitudP.interesesValor = intereses;
+      console.log($scope.solicitudP.capitalMasIntereses)
 
       //Objeto que contiene la informacion del solicitante
       SolicitudPrestamoService.solicitanteDatos($scope.solicitudP.codigoSocio).then(function (data) {
@@ -977,7 +994,7 @@ console.log(IBG)
         var cuotaPrestamo;
         cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
         cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
-        $scope.varCuotaPrestamo = cuotaPrestamo / 2;
+        $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
 
         //Totales en Quincenas (ahorro y cuota Prestamo)
         $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);

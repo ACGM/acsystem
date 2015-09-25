@@ -19,7 +19,7 @@ class SolicitudesPrestamosSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar',  \
 					'categoriaPrestamo', 'estatus', 'representante', 'tasaInteresMensual', 'cantidadCuotas', 'valorCuotasCapital', \
 					'ahorrosCapitalizados', 'prestacionesLaborales', 'valorGarantizado', 'deudasPrestamos', 'codigoRepresentante', \
-					'codigoCategoria')
+					'codigoCategoria', 'interesBaseAhorroMensual')
 		ordering = ('-noSolicitud',)
 
 
@@ -45,7 +45,8 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 		model = MaestraPrestamo
 		fields = ('noPrestamo', 'estatus', 'factura', 'codigoSocio', 'socio', 'montoInicial', 'categoriaPrestamo', 'balance', 'noSolicitudPrestamo', \
 					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual', 'cuotaInteresQ1', 'cuotaInteresQ2', 'cuotaMasInteresQ1', \
-					'cuotaMasInteresQ2', 'tipoPrestamoNomina')
+					'cuotaMasInteresQ2', 'tipoPrestamoNomina', 'cuotaInteresAhQ1', 'cuotaInteresAhQ2', 'documentoDescrp', 'fechaAprobacion', \
+					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio')
 		ordering = ('-noPrestamo',)
 
 
@@ -65,7 +66,7 @@ class PagoCuotasPrestamoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = PagoCuotasPrestamo
-		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'estatus', 'tipoPago')
+		fields = ('id', 'noPrestamo', 'valorCapital', 'valorInteres', 'fechaPago', 'tipoPago')
 		ordering = ('-id',)
 
 

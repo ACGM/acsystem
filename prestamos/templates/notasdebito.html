@@ -53,7 +53,10 @@
 
 						<tr ng-repeat="nd in notasdebito" class="listado-nd-detail" ng-init="total=0">
 							<td class="[[nd.posteado | posteoFolderIcon]] posteo-[[nd.posteado]] align-center"></td>
-							<td class="align-center"><a class="icon-cog icon-imprimir" href="#"></a></td>
+							<td class="align-center">
+								<a ng-if="nd.posteado == 'N'" class="icon-cog icon-imprimir" href="#" ng-click="postearND($event, nd)"></a>
+								<a ng-if="nd.posteado == 'S'" class="icon-cog disabled icon-imprimir" href="#"></a>
+							</td>
 							<td>[[nd.fecha | date: 'dd/MM/yyyy']]</td>
 							<td><a href="#" class="sp-field" ng-click="NDFullById(nd.id)"> [[nd.id | numberFixedLen: 8]] </a></td>
 							<td>[[nd.noPrestamo | numberFixedLen: 8]]</td>

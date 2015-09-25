@@ -85,20 +85,21 @@
 		<li><a href="/prestamos/reportes/solicitudesPrestamos/" a-disabled="{{SolicitudPrestamosEmitidas}}">Solicitudes de Prestamos Emitidas</a></li>
 		<li><a href="/prestamos/reportes/solicitudesOD/" a-disabled="{{SolicitudesOrdenDespacho}}">Solicitudes Orden de Despacho</a></li>
 		<li><a href="/prestamos/reportes/prestamos" a-disabled="{{ConsultaPrestamos}}">Consulta Prestamos</a></li>
-		<li><a href="/prestamos/reportes/prestamosClasif" a-disabled="{{PrestamosPorClasificacionResumido}}">Prestamos por Clasificacion (Resumido)</a></li>
-		<li><a href="/prestamos/reportes/nc" a-disabled="{{ReporteNotasCredito}}">Reporte Notas de Credito</a></li>
-		<li><a href="/prestamos/reportes/nd" a-disabled="{{ReporteNotasDebito}}">Reporte Notas de Debito</a></li>
-		<li><a href="/prestamos/reportes/cartera" a-disabled="{{CarteraGeneralPrestamos}}">Cartera General de Prestamos</a></li>
-		<li><a href="/prestamos/reportes/prestamosPosteados" a-disabled="{{PrestamosPosteados}}">Prestamos Posteados</a></li>
+		<!-- <li><a href="/prestamos/reportes/prestamosClasif" a-disabled="{{PrestamosPorClasificacionResumido}}">Prestamos por Clasificacion (Resumido)</a></li> -->
+		<!-- <li><a href="/prestamos/reportes/nc" a-disabled="{{ReporteNotasCredito}}">Reporte Notas de Credito</a></li> -->
+		<!-- <li><a href="/prestamos/reportes/nd" a-disabled="{{ReporteNotasDebito}}">Reporte Notas de Debito</a></li> -->
+		<!-- <li><a href="/prestamos/reportes/cartera" a-disabled="{{CarteraGeneralPrestamos}}">Cartera General de Prestamos</a></li> -->
+		<!-- <li><a href="/prestamos/reportes/prestamosPosteados" a-disabled="{{PrestamosPosteados}}">Prestamos Posteados</a></li> -->
 
-	</ul>
-	<!-- Sub Menu AHorro -->
-	<ul class="sub-menu-ahorro" ng-show="SubMAhorro">
-		<li><a href="/ahorro">Retiro AHorro</a></li>
+	</ul>	
+	<!-- Sub Menu Ahorro -->
+	<ul class="sub-menu-ahorro" ng-show="SubMAhorro" ng-mouseover="ShowSubMenuAhorro(true)" ng-mouseleave="ShowSubMenuAhorro(false)">
+		<li><a href="/ahorro">Retiro Ahorro</a></li>
 		<li><a href="/generarAhorro">Generar Ahorro</a></li>
 		<li><a href="/generarInteres">Generar Interes</a></li>
 		<li><hr></li>
 	</ul>
+
 	<!-- SUB MENU DE INVENTARIO -->
 	<ul class="sub-menu-inventario" ng-show="SubMInventario" ng-mouseover="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)">
 		<li><a href="/inventario">Entrada de Inventario</a></li>

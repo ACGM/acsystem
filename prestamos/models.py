@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from administracion.models import Socio, Representante, Cobrador, CategoriaPrestamo, Suplidor, Banco, Localidad
 from facturacion.models import Factura
 
+from datetime import timedelta
+
 import datetime
 import decimal
 
@@ -181,6 +183,7 @@ class MaestraPrestamo(models.Model):
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='E')
 
 	posteadoFecha = models.DateField(null=True)
+	posteoUsr = models.ForeignKey(User, related_name='+', null=True, blank=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
 	datetimeServer = models.DateTimeField(auto_now_add=True)
@@ -189,43 +192,74 @@ class MaestraPrestamo(models.Model):
 		return '{0:0>9}'.format(self.noPrestamo)
 
 	@property
+	def documentoDescrp(self):
+		return 'Orden de Despacho' if self.noSolicitudOD != None else 'Prestamo'
+
+	@property
 	def codigoSocio(self):
 		return self.socio.codigo
 
 	@property
+	def departamentoSocio(self):
+		return self.socio.departamento.descripcion
+
+	@property
+	def centrocostoSocio(self):
+		return self.socio.departamento.centroCosto
+
+	@property
+	def fechaVencimiento(self):
+		dias = self.cantidadCuotas * 15
+		f = self.fechaAprobacion + timedelta(days=dias)
+
+		return f
+
+	@property
+	def getDescrpCatPrestamo(self):
+		return self.categoriaPrestamo.descripcion
+		
+	@property
 	def cuotaInteresQ1(self):
-		if self.montoCuotaQ1 != None:
-			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='ACTIVO').porcentajeAnual/12
-			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100)
+		if self.montoCuotaQ1 > 0:
 			interesGarant = self.tasaInteresMensual/self.quincenas/100
-
-			InteresAhorro = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
 			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
-
-			valor = interesAhorro + InteresGarantizado
 		else:
-			valor = 0
-		return 11111#valor
+			InteresGarantizado = 0
+		return InteresGarantizado
 
 	@property
 	def cuotaInteresQ2(self):
 		if self.montoCuotaQ2 != None:
-			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='ACTIVO').porcentajeAnual/12
-			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100) 
 			interesGarant = self.tasaInteresMensual/self.quincenas/100
-
-			InteresAhorro = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
 			InteresGarantizado = self.valorGarantizado * (interesGarant) if self.valorGarantizado != None else 0
-
-			valor = interesAhorro + InteresGarantizado
 		else:
-			valor = 0
-		return 1122#valor
+			InteresGarantizado = 0
+		return InteresGarantizado
+
+	@property
+	def cuotaInteresAhQ1(self):
+		if self.montoCuotaQ1 > 0:
+			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='A').porcentajeAnual/12
+			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100)
+			InteresAhorroC = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
+		else:
+			InteresAhorroC = 0
+		return InteresAhorroC
+
+	@property
+	def cuotaInteresAhQ2(self):
+		if self.montoCuotaQ2 != None:
+			intPrestBaseAhorroMens = InteresPrestamosBaseAhorros.objects.get(estatus='A').porcentajeAnual/12
+			interesAhorro = decimal.Decimal(intPrestBaseAhorroMens/self.quincenas/100) 
+			InteresAhorroC = decimal.Decimal(self.valorAhorro * (interesAhorro)) if self.valorAhorro != None else 0
+		else:
+			InteresAhorroC = 0
+		return InteresAhorroC
 
 	@property
 	def cuotaMasInteresQ1(self):
 		if self.montoCuotaQ1 != None:
-			valor = self.cuotaInteresQ1 + self.montoCuotaQ1
+			valor = self.cuotaInteresQ1 + self.cuotaInteresAhQ1 + self.montoCuotaQ1
 		else:
 			valor = 0
 		return valor
@@ -233,7 +267,7 @@ class MaestraPrestamo(models.Model):
 	@property
 	def cuotaMasInteresQ2(self):
 		if self.montoCuotaQ2 != None:
-			valor = self.cuotaInteresQ2 + self.montoCuotaQ2
+			valor = self.cuotaInteresQ2 + self.cuotaInteresAhQ2 + self.montoCuotaQ2
 		else:
 			valor = 0
 		return valor
@@ -261,15 +295,17 @@ class PrestamoUnificado(models.Model):
 # Cuotas de Pago de Prestamos
 class PagoCuotasPrestamo(models.Model):
 
-	estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
+	# estatus_choices = (('P','Pendiente'),('A','Aprobado'),('R','Rechazado'),)
 	tipo_pago_choices = (('NC','Nota de Credito'),('ND','Nota de Debito'), ('NM', 'Nomina'), ('RI', 'Recibo Ingreso'), ('AH', 'Ahorros'))
 
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True)
+	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+	valorInteresAh = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	fechaPago = models.DateField(auto_now_add=True)
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
+	docRef = models.CharField(max_length=15, null=True, blank=True)
 	tipoPago = models.CharField(max_length=2, choices=tipo_pago_choices, default='N')
+	# estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 	def __unicode__(self):
 		return '%i' % self.id
@@ -285,10 +321,12 @@ class NotaDeCreditoPrestamo(models.Model):
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
 	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
+	posteadoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 
 	userLog = models.ForeignKey(User, related_name='+')
@@ -342,10 +380,12 @@ class NotaDeDebitoPrestamo(models.Model):
 	fecha = models.DateField(auto_now=True)
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=12, decimal_places=2)
-	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+	valorInteres = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	valorInteresAh = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	concepto = models.TextField()
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 
+	posteoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 	posteado = models.CharField(max_length=1, choices=posteo_choices, default='N')
 	fechaPosteo = models.DateField(auto_now=True, null=True)
 

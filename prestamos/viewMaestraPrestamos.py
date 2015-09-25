@@ -115,6 +115,7 @@ class PrestamoById(LoginRequiredMixin, DetailView):
 		for prestamo in self.object_list:
 			data.append({
 				'noPrestamo': prestamo.noPrestamo,
+				'documentoDescrp': 'Orden de Despacho' if prestamo.noSolicitudOD != None else 'Prestamo',
 				'noSolicitudPrestamo': prestamo.noSolicitudPrestamo.noSolicitud if prestamo.noSolicitudPrestamo != None else '',
 				'noSolicitudOD': prestamo.noSolicitudOD.noSolicitud if prestamo.noSolicitudOD != None else '',
 				'factura': prestamo.factura.noFactura if prestamo.factura != None else '',

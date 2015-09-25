@@ -764,3 +764,38 @@ class getExistenciaConteoFisicoRPT(ListView):
 				})
 
 		return JsonResponse(data, safe=False)
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
+# Cambiar estatus de posteo de los registros
+# de Inventario
+# # # # # # # # # # # # # # # # # # # # # # #
+class PostearDocumentosINV(LoginRequiredMixin, View):
+
+	def post(self, request, *args, **kwargs):
+
+		try:
+			data = json.loads(request.body)
+
+			registros = data['registros']
+			tipoDoc = data['tipoDoc'] #Entrada de Inventario o Salida de Inventario
+
+			if tipoDoc == 'EINV': # (EINV / SINV)
+				#Postear documentos de Entrada de Inventario
+				for item in registros:
+					invH = InventarioH.objects.get(id=item['id'])
+					invH.posteo = 'S'
+					invH.posteoUsr = request.user
+					invH.save()
+			else:
+				#Postear documentos de Salida de Inventario
+				for item in registros:
+					invSH = InventarioHSalidas.objects.get(id=item['id'])
+					invSH.posteo = 'S'
+					invSH.posteoUsr = request.user
+					invSH.save()
+			
+			return HttpResponse('1')
+
+		except Exception as e:
+			return HttpResponse(e)

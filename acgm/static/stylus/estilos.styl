@@ -357,6 +357,9 @@ footer
 .verde
 	color verde !important
 
+.amarillo
+	color amarillo !important
+
 .azul-light
 	color darkblue !important
 
@@ -372,13 +375,14 @@ footer
 	margin-top .3em
 	padding-right 1.5em
 	position relative
-	
+
 	&--grande
 		// height 30rem
 		overflow scroll
 		border 1px solid lightgray
 		display inline-block
-
+		width 100%
+		
 
 .toolTip
 	position relative
@@ -1355,7 +1359,16 @@ footer
 	&:hover
 		color mamey
 		font-weight bold
-	
+
+.postear-nomdesc
+	text-decoration none
+	font-size 2.8rem
+	margin-left 1.2em
+	position absolute
+	color verde
+	&:hover
+		color mamey
+		font-weight bold
 // FIN MODULO DE NOMINA  **********************************
 
 // MODULO DE INVENTARIO  **********************************
@@ -1481,10 +1494,11 @@ footer
 		&:nth-child(1)
 			width 1em
 		&:nth-child(2)
-			width 3em
-		&:nth-child(3)
 			width 15em
 			text-align left
+		&:nth-child(3)
+			width 3em
+			
 
 .ncf-ei
 	width 16em
@@ -2092,9 +2106,11 @@ footer
 .listado-maestra-prestamo
 	position relative
 	overflow hidden
+	
 .listado-reg-prestamos
 	margin .8em
 	display inline-block
+	width 98%
 
 .busqueda-by-field
 	display block

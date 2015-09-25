@@ -112,8 +112,9 @@ class NominaCoopH(models.Model):
 	nota = models.TextField(blank=True)
 	archivoBanco = models.CharField(max_length=25, null=True, blank=True)
 
-	posteada = models.CharField(max_length=1, default='N')
-	fechaPosteo = models.DateField(auto_now=True, null=True)
+	posteada = models.CharField(max_length=1, default='N') # N = No, S = Si
+	fechaPosteo = models.DateField(null=True, blank=True)
+	posteoUsr = models.ForeignKey(User, null=True, blank=True, related_name='+')
 
 	userLog = models.ForeignKey(User)
 	datetime_server = models.DateTimeField(auto_now_add=True)
@@ -297,7 +298,7 @@ class NominaPrestamosAhorros(models.Model):
 		unique_together = ('nomina', 'infoTipo')
 
 
-# Cuotas Prestamos para Nomina Empresa
+# Cuotas Prestamos para Nomina Empresa (el listado de montos a descontar a cada socio en cada quincena de nomina)
 class CuotasPrestamosEmpresa(models.Model):
 
 	estatus_choices = (('P','Pendiente'),('A','Aprobado'),)
@@ -306,6 +307,7 @@ class CuotasPrestamosEmpresa(models.Model):
 	noPrestamo = models.ForeignKey(MaestraPrestamo)
 	valorCapital = models.DecimalField(max_digits=8, decimal_places=2)
 	valorInteres = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+	valorInteresAh = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 	nomina = models.DateField(null=True)
 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='P')
 	infoTipoPrestamo = models.CharField(max_length=4, default='0015')
@@ -318,9 +320,11 @@ class CuotasPrestamosEmpresa(models.Model):
 		pago.noPrestamo = self.noPrestamo
 		pago.valorCapital = self.valorCapital
 		pago.valorInteres = self.valorInteres
+		pago.docRef = '{0}'.format(self.nomina)
+		pago.tipoPago = 'NM'
 		pago.save()
 
-		super(self, CuotasPrestamosEmpresa).save(*args, **kwargs)
+		super(CuotasPrestamosEmpresa, self).save(*args, **kwargs)
 		
 	@property
 	def codigoSocio(self):

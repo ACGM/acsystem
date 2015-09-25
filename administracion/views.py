@@ -33,6 +33,11 @@ def productosSearch(request):
 	return render(request, 'productos_search.html')
 
 
+# Productos Busqueda (GENERICO) - con Precio
+def productosSearch2(request):
+	return render(request, 'productos_search2.html')
+
+
 class ProductoViewSet(viewsets.ModelViewSet):
 	queryset = Producto.objects.all().order_by('descripcion')
 	serializer_class = ProductoSerializer

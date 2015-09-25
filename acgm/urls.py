@@ -5,21 +5,22 @@ from django.contrib import admin
 from rest_framework import routers
 
 #Vistas 
+from acgm.views import InformacionGeneral
 from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesembolsoView
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
                                 AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal, relacionArchivoBancoConNomina, \
-                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos
+                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos, PostearNominaCoopView
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
                                 RPTExistenciaArticuloView, ListadoAjustesInvView, AjusteInventarioById, TransferenciaInvView, \
                                 ListadoTransfInvView, ListadoSalidasInvView, SalidaInventarioById, InventarioEliminarView, \
                                 InventarioSalidaEliminarView, RPTConteoFisicoArticuloView, getExistenciaConteoFisicoRPT, \
-                                ProcesarAjusteInvView, EntradasInvBySuplidorRangoFecha
+                                ProcesarAjusteInvView, EntradasInvBySuplidorRangoFecha, PostearDocumentosINV
 
 from facturacion.views import FacturacionView, FacturaById, ImprimirFacturaView, RPTUtilidades, RPTUtilidadesView, RPTVentasDiariasView, \
-                                RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView
+                                RPTVentasResumidoView, RPTResumenVentas, FacturaEliminarView, PostearDocumentosFACT
 
 from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutorizadorView, \
                             DesembolsoPrestamosView, SolicitudPrestamoView, NotaDeCreditoEspView, \
@@ -28,7 +29,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
                             rptPrestamos, relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, rptPrestamos, \
-                            PrestamosAPIViewByRangoFecha
+                            PrestamosAPIViewByRangoFecha, PostearNotaDebitoView, PostearNotaCreditoView
 
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
@@ -82,7 +83,7 @@ from inventario.views import ListadoEntradasInvView, ListadoAlmacenesView, getEx
                                 getExistenciaRPT, RPTMovimientoProductoAPIView
 
 from nominacoop.views import DetalleNominaGeneradaAPIView
-from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo
+from prestamos.views import SolicitudesPrestamosAPIView, PagoCuotasPrestamoAPIViewByNoPrestamo, PrestamosAPIViewByCategoria
 from prestamos.viewMaestraPrestamos import MaestraPrestamosAPIView
 
 admin.site.site_header = 'COOPERATIVA'
@@ -149,9 +150,11 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'acgm.views.login', name='login'),
     url(r'^mensajeError/$', 'acgm.views.mensajeError', name='error'),
     url(r'^mensajeInfo/$', 'acgm.views.mensajeInfo', name='info'),
+    url(r'^informacionGeneral/$', InformacionGeneral.as_view(), name='informacion_general'),
     
     #Administracion
     url(r'^productosSearch/$', 'administracion.views.productosSearch', name='productos_search'),
+    url(r'^productosSearch2/$', 'administracion.views.productosSearch2', name='productos_search2'),
     url(r'^cuentasSearch/$', 'cuenta.views.cuentasSearch', name='cuentas_search'),
 
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
@@ -189,6 +192,7 @@ urlpatterns = patterns('',
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
     url(r'^nomina/reporte/quincena/$', rptNominaQuincenal.as_view(), name='reporte_nomina_quincena'),
+    url(r'^nomina/coop/postear/$', PostearNominaCoopView.as_view(), name='nomina_cooperativa_postear'),
 
     #Inventario
     url(r'^inventario/$', InventarioView.as_view(), name='Inventario'),
@@ -204,6 +208,8 @@ urlpatterns = patterns('',
     url(r'^api/producto/existencia/(?P<codProd>[\w\s]+)/(?P<almacen>[\d]+)/$', getExistenciaByProductoView.as_view(), name='existencia_by_producto'),
     url(r'^api/inventario/entradas/(?P<suplidor>[\d]+)/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', EntradasInvBySuplidorRangoFecha.as_view(), \
                                                                                                             name='Entradas_por_suplidor_y_rangoFecha'),
+    url(r'^inventario/postear-registros/$', PostearDocumentosINV.as_view(), name='Inventario_postear_registros'),
+
     
     #Inventario#Imprimir
     url(r'^inventario/print/(?P<entrada>[\d]+)/$', ImprimirEntradaInventarioView.as_view(), name='Inventario_print'),
@@ -220,6 +226,8 @@ urlpatterns = patterns('',
     url(r'^facturajson/$', FacturaById.as_view(), name='FacturaById'),
     url(r'^facturacion/$', FacturacionView.as_view(), name='Facturacion'),
     url(r'^facturacion/eliminar/$', FacturaEliminarView.as_view(), name='Facturacion_eliminar'),
+    url(r'^facturacion/postear-registros/$', PostearDocumentosFACT.as_view(), name='Facturacion_postear_registros'),
+    
     #Factura#Imprimir
     url(r'^facturacion/print/(?P<factura>[\d]+)/$', ImprimirFacturaView.as_view(), name='factura_print'),
     #Facturacion#Reportes
@@ -257,7 +265,10 @@ urlpatterns = patterns('',
     url(r'^prestamos/reportes/prestamos/$', rptPrestamos.as_view(), name='reporte_prestamos'),
     url(r'^prestamos/reportes/prestamos/(?P<fechaI>[\d]+)/$', SolicitudesPrestamosAPIViewByCodigoNombre.as_view(), \
                                                                                 name='solicitud_prestamos_api_byCodigo'),
-
+    url(r'^prestamos/reportes/consultaPrestamos/(?P<fechaI>[\w\-]+)/(?P<fechaF>[\w\-]+)/(?P<estatus>[\w]+)/$', PrestamosAPIViewByRangoFecha.as_view(), 
+                                                                                name='consultar_prestamos'),
+    url(r'^prestamos/reportes/consultaPrestamos/agrupadosPorCategoria/$', PrestamosAPIViewByCategoria.as_view(), \
+                                                                        name='consultar_prestamos_agrupados_por_categoria'),
 
     #Prestamos -- Solicitudes Prestamos
     url(r'^prestamos/solicitudP/AprobarRechazar/$', AprobarRechazarSolicitudesPrestamosView.as_view(), name='Solicitud_de_Prestamo_accion'),
@@ -296,10 +307,14 @@ urlpatterns = patterns('',
     #Nota de Debito
     url(r'^prestamos/nota-de-debito/guardar/$', guardarNotaDebito.as_view(), name='guardar_nota_de_debito'),
     url(r'^notadedebitojson/$', NotaDeDebitoById.as_view(), name='notadedebitoById'),
+    url(r'^prestamos/nota-de-debito/postear/$', PostearNotaDebitoView.as_view(), name='postear_nota_de_debito'),
+
 
     #Nota de Credito
     url(r'^prestamos/nota-de-credito/guardar/$', guardarNotaCredito.as_view(), name='guardar_nota_de_credito'),
     url(r'^notadecreditojson/$', NotaDeCreditoById.as_view(), name='notadecreditoById'),
+    url(r'^prestamos/nota-de-credito/postear/$', PostearNotaCreditoView.as_view(), name='postear_nota_de_credito'),
+
 
     #Distribucion de Intereses
     url(r'^prestamos/distribucion-intereses/$', DistribucionInteresesView.as_view(), name='distribucion-intereses'),

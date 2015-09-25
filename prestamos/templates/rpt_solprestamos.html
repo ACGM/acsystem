@@ -9,11 +9,11 @@
 
 <mensajeerror> </mensajeerror>
 
-<section class="Factura" ng-controller="SolicitudPrestamoCtrl">
+<section class="SolicitudPrestamo" ng-controller="SolicitudPrestamoCtrl">
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<h3>[[empresa]]</h3>
 			<p class="titulo-utilidad"> Reporte de Solicitudes de Prestamos Emitidas </p>
 			<p class="fecha-utilidad"> Desde: [[fechaInicio | date : 'dd/MM/yyyy']] Hasta [[fechaFin | date : 'dd/MM/yyyy']] </p>
 		</div>
@@ -33,6 +33,8 @@
 					<td>Solicitud No.</td>
 					<td>Categoria</td>
 					<td>Socio</td>
+					<td>Tasa Interes</td>
+					<td>Interes Base Ahorro</td>
 					<td class="align-right">Monto Solicitado</td>
 					<td class="align-right">Neto Desembolsar</td>
 				</tr>
@@ -41,11 +43,13 @@
 					<td>[[registro.noSolicitud | numberFixedLen : 8]]</td>
 					<td>[[registro.categoriaPrestamo]]</td>
 					<td>[[registro.socio]]</td>
+					<td class="align-center">[[registro.tasaInteresMensual * 12 | number : 0]]</td>
+					<td class="align-center">[[registro.interesBaseAhorroMensual * 12 | number : 0]]</td>
 					<td class="align-right">[[registro.montoSolicitado | number : 2]]</td>
 					<td class="align-right">[[registro.netoDesembolsar | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="4">TOTALES:</td>
+					<td colspan="6">TOTALES:</td>
 					<td class="align-right">[[totalMontoSolicitado | number : 2]]</td>
 					<td class="align-right">[[totalNetoDesembolsar | number : 2]]</td>
 				</tr>

@@ -457,6 +457,7 @@ class GenerarArchivoPrestamos(View):
                 p.noPrestamo = MaestraPrestamo.objects.get(noPrestamo=prestamo['noPrestamo'])
                 p.valorCapital = prestamo['montoCuotaQ']
                 p.valorInteres = prestamo['cuotaInteresQ']
+                p.valorInteresAh = prestamo['cuotaInteresAhQ']
                 p.nomina = nomina
                 p.infoTipoPrestamo = InfoTipo
                 p.userLog = request.user
@@ -571,9 +572,9 @@ class AplicarPrestamos(View):
 
             for cuota in cuotas:
                 prestamoMaestra = MaestraPrestamo.objects.get(noPrestamo=cuota.noPrestamo.noPrestamo)
-                prestamoMaestra.balance -= cuota.valorCapital + cuota.valorInteres
-                prestamoMaestra.save()
-
+                guardarPagoCuotaPrestamo(self, cuota.noPrestamo.noPrestamo, cuota.valorCapital, cuota.valorInteres,  \
+                                            cuota.valorInteresAh, '{0}{1}'.format('NDCT', cuota.id), 'NM')
+                
             # Actualizar los estatus de la tabla CuotasPrestamosEmpresa y NominaPrestamosAhorros para que no esten pendiente.
             cuotas.update(estatus='A')
             NominaPrestamosAhorros.objects.filter(nomina=nomina, infoTipo=infoTipo, tipo='PR', estatus='PE').update(
@@ -589,6 +590,25 @@ class AplicarPrestamos(View):
 
 # Postear Nomina Cooperativa
 class PostearNominaCoopView(View):
-    pass
+    
+    def post(self, request, *args, **kwargs):
 
+        try:
+            data = json.loads(request.body)
+
+            NominaCoop = data['nomina']
+            
+            # Marcar nomina de los empleados de la cooperativa con posteada
+            for nm in NominaCoop:
+                nmcoop = NominaCoopH.objects.get(id=nm['id'])
+                nmcoop.estatus = 'P'
+                nmcoop.posteada = 'S'
+                nmcoop.posteoUsr = request.user
+                nmcoop.fechaPosteo = datetime.now()
+                nmcoop.save()
+
+            return HttpResponse(1)
+
+        except Exception as e:
+            return HttpResponse(e)
 	

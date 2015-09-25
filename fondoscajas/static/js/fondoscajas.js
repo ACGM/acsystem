@@ -198,6 +198,11 @@
     .controller('ImprimirDesembolsoCtrl', ['$scope', '$filter', '$window', 'FondosCajasService', 
                                         function ($scope, $filter, $window, FondosCajasService) {
       
+      //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      $scope.localidad = $window.sessionStorage['localidadL'].toUpperCase();
+      //Fin variables de Informacion General.
+      
       //Inicializacion de variables
       $scope.showLD = true;
       $scope.regAll = false;

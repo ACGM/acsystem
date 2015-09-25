@@ -190,6 +190,20 @@
         return deferred.promise;
       }
 
+      //Postear registros de Facturas.
+      function postearFACT(registros) {
+        var deferred = $q.defer();
+
+        $http.post('/facturacion/postear-registros/', JSON.stringify({'registros': registros})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byPosteo: byPosteo,
@@ -202,7 +216,8 @@
         impresionFact: impresionFact,
         reporteUtilidad : reporteUtilidad,
         resumenVentas : resumenVentas,
-        eliminarFACT : eliminarFACT
+        eliminarFACT : eliminarFACT,
+        postearFACT : postearFACT
       };
 
     }])
@@ -211,8 +226,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', '$window', 'appService', 'FacturacionService', 'InventarioService', 
-                                        function ($scope, $filter, $rootScope, $timeout, $window, appService, FacturacionService, InventarioService) {
+    .controller('ListadoFacturasCtrl', ['$scope', '$filter', '$rootScope', '$timeout', '$window', 'appService', 'FacturacionService', 'InventarioService', 'ContabilidadService', 
+                                        function ($scope, $filter, $rootScope, $timeout, $window, appService, FacturacionService, InventarioService, ContabilidadService) {
       
       //Inicializacion de variables
       $rootScope.mostrarOC = false;
@@ -236,7 +251,11 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLF = 'UpArrow';
 
-      
+      //Traer todos los socios a javascript
+      FacturacionService.socios().then(function (data) {
+        $scope.todosLosSocios = data;
+      });
+
       // Mostrar/Ocultar panel de Listado de Facturas
       $scope.toggleLF = function() {
         $scope.showLF = !$scope.showLF;
@@ -566,29 +585,24 @@
       $scope.getProducto = function($event) {
         $event.preventDefault();
 
-        $scope.tableProducto = true;
+        var descrp = '';
 
-        if($scope.producto != undefined) {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data.filter(function (registro) {
-              return $filter('lowercase')(registro.descripcion
-                                  .substring(0,$scope.producto.length)) == $filter('lowercase')($scope.producto);
-            });
-
-            if($scope.productos.length > 0){
-              $scope.tableProducto = true;
-              $scope.productoNoExiste = '';
-            } else {
-              $scope.tableProducto = false;
-              $scope.productoNoExiste = 'No existe el producto'
-            }
-
-          });
-        } else {
-          InventarioService.productos().then(function (data) {
-            $scope.productos = data;
-          });
+        if($event.type != 'click') {
+          descrp = $scope.producto;
         }
+
+        InventarioService.productos(descrp).then(function (data) {
+
+          if(data.length > 0){
+            $scope.productos = data;
+
+            $scope.tableProducto = true;
+            $scope.productoNoExiste = '';
+          } else {
+            $scope.tableProducto = false;
+            $scope.productoNoExiste = 'No existe el producto'
+          }
+        });
       }
 
       //Traer Socios
@@ -598,26 +612,21 @@
         $scope.tableSocio = true;
 
         if($scope.socioNombre != undefined) {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data.filter(function (registro) {
-              return $filter('lowercase')(registro.nombreCompleto
-                                  .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-            });
-
-            if($scope.socios.length > 0){
-              $scope.tableSocio = true;
-              $scope.socioNoExiste = '';
-            } else {
-              $scope.tableSocio = false;
-              $scope.socioNoExiste = 'No existe el socio';
-            }
-
+          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+            return $filter('lowercase')(registro.nombreCompleto
+                                .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
           });
+
+          if($scope.socios.length > 0){
+            $scope.tableSocio = true;
+            $scope.socioNoExiste = '';
+          } else {
+            $scope.tableSocio = false;
+            $scope.socioNoExiste = 'No existe el socio';
+          }
         } else {
-          FacturacionService.socios().then(function (data) {
-            $scope.socios = data;
-            $scope.socioCodigo = '';
-          });
+          $scope.socios = $scope.todosLosSocios;
+          $scope.socioCodigo = '';
         }
       }
 
@@ -750,6 +759,7 @@
           $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
         } else {
           $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+          $scope.totalDebitoCredito();
         }
       }
 
@@ -757,36 +767,79 @@
       $scope.postear = function(){
         var idoc = 0;
         $scope.iDocumentos = 0;
-        $scope.totalDebito = 0.00;
-        $scope.totalCredito = 0.00;
 
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
 
-        appService.getDocumentoCuentas('FACT').then(function (data) {
-          $scope.documentoCuentas = data;
-  
-          //Prepara cada linea de posteo
-          $scope.facturasSeleccionadas.forEach(function (item) {
-            $scope.documentoCuentas.forEach(function (documento) {
-              var desgloseCuenta = new Object();
-              if (documento.accion == 'D') {
-                $scope.totalDebito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              } else {
-                $scope.totalCredito += parseFloat(item.totalGeneral.toString().replace('$','').replace(',',''));
-              }
+        $scope.posteoG = false;
 
-              desgloseCuenta.cuenta = documento.getCuentaCodigo;
-              desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + item.id;
-              desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+        try {
 
-              $scope.desgloseCuentas.push(desgloseCuenta);
+          appService.getDocumentoCuentas('FACT').then(function (data) {
+            $scope.documentoCuentas = data;
+    
+            //Prepara cada linea de posteo
+            $scope.facturasSeleccionadas.forEach(function (item) {
+              $scope.documentoCuentas.forEach(function (documento) {
+                var desgloseCuenta = new Object();
+
+                desgloseCuenta.cuenta = documento.getCuentaCodigo;
+                desgloseCuenta.descripcion = documento.getCuentaDescrp;
+                desgloseCuenta.ref = documento.getCodigo + item.id;
+                desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+
+                $scope.desgloseCuentas.push(desgloseCuenta);
+              });
+              idoc += 1;
+              $scope.totalDebitoCredito();
             });
-            idoc += 1;
+            $scope.iDocumentos = idoc;
           });
-          $scope.iDocumentos = idoc;
+        } catch(e) {
+          alert(e);
+        }
+      }
+
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //para este modulo de Facturacion.
+      $scope.postearContabilidad = function() {
+
+        try {
+
+          //Validar que el CREDITO cuadre con el DEBITO
+          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+          }
+
+          $scope.posteoG = true;
+          $scope.desgloseCuentas.forEach(function (item) {
+            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+              console.log('Registros guardados en el diario');
+              console.log(data);
+            });
+          });
+
+          FacturacionService.postearFACT($scope.facturasSeleccionadas).then(function (data) {
+            console.log(data);
+            $scope.listadoFacturas();
+          });
+
+          alert('Los registros fueron posteados con exito!');
+
+        } catch (e) {
+          alert(e);
+        }
+      } //Linea FIN de posteo Contabilidad.
+
+      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      $scope.totalDebitoCredito = function() {
+        $scope.totalDebito = 0.00;
+        $scope.totalCredito = 0.00;
+
+        $scope.desgloseCuentas.forEach(function (documento) {
+          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });
       }
 

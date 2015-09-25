@@ -7,42 +7,47 @@
 
 </div>
 
-<section class="Factura" ng-controller="NominaReporteDescPrestamosCtrl">
+<section class="DescPrestamos" ng-controller="NominaReporteDescPrestamosCtrl">
 	
 	<div class="rptUtilidad">
 		<div class="align-center">
-			<h3>COOPERATIVA INDUSTRIAS NACIONALES </h3>
+			<h3>[[empresa]]</h3>
 			<span class="titulo-utilidad"> Validacion de Datos Nominas Descuentos </span> <br/>
-			<span class="fecha-utilidad"> Para la 1ra. Quincena del mes de Mayo </span>
+			<span class="fecha-utilidad"> Para la [[quincena]] Quincena del mes de [[mes]] del [[agno]] </span>
 			<h2>DETALLADO</h2>
 		</div>
 
 		<div>
 			<p>Impreso: {% now "d/m/Y" %}</p>
 			<p>Hora: {% now "h:i a" %}</p>
-			<p>Tipo de Nomina [[tipoPrestamo]]</p>
+			<p>Tipo de Nomina <strong>[[tipoPrestamo]]</strong></p>
 		</div>
 
 		<section class="detalle-utilidad">
 			<table class="table-producto-factura">
 				<tr>
 					<td>Codigo</td>
+					<td>Departamento</td>
 					<td>Nombre del Empleado</td>
 					<td class="align-right">Interes</td>
+					<td class="align-right">Interes Ah.</td>
 					<td class="align-right">Capital</td>
 					<td class="align-right">Total Desc.</td>
 
 				</tr>
 				<tr ng-repeat="prestamo in prestamos">
 					<td>[[prestamo.codigoSocio]]</td>
+					<td>[[prestamo.departamento]]</td>
 					<td>[[prestamo.socio]]</td>
 					<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
+					<td class="align-right">[[prestamo.cuotaInteresAhQ | number : 2]]</td>
 					<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
 					<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="2">TOTALES:</td>
+					<td colspan="3">TOTALES:</td>
 					<td class="align-right">[[totalInteres | number : 2]]</td>
+					<td class="align-right">[[totalInteresAh | number : 2]]</td>
 					<td class="align-right">[[totalCapital | number : 2]]</td>
 					<td class="align-right">[[totalDesc | number : 2]]</td>
 				</tr>
