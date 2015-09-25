@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, DetailView
 
 from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
+from prestamos.views import guardarPagoCuotaPrestamo
 from ahorro.models import AhorroSocio, MaestraAhorro
 
 from rest_framework import viewsets
@@ -15,12 +16,24 @@ from .models import DetalleRecibo, RecibosIngreso
 class reciboPost(TemplateView):
     template_name="recigoImp.html"
 
+    def 
+
     def post(self, request):
         registro = self.request.GET.get('recibo')
-        RecibosIngreso.objects.get(id=registro)
+        fecha = self.request.GET.get('fecha')
 
-        regMAhorro = MaestraAhorro()
+        recibo = RecibosIngreso.objects.get(id=registro)
+
+        regAhorro = AhorroSocio.objects.get(id=recibo.ahorro.id)
+
+        regMaestra = MaestraAhorro()
+        regMaestra.ahorro = regAhorro
+        regMaestra.fecha = fecha
+        regMaestra.monto = recibo.montoAhorro
+        regMaestra.estatus = 'P'
+        regMaestra.save()
         
+        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,0,'RI')
 
 
 
