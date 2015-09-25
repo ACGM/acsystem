@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %} Desembolso Eletronico {% endblock title %}
+
+{% block content %}
+	<section ng-controller="reciboIngCtrl" ng-init="getList()">
+		<div>
+						<table class="RecSocio-table-search-panel" ng-show="tableSocio">
+							<tr>
+								<td colspan="3" class="cerrar-table">
+									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+								</td>
+							</tr>
+							<tr class="socios-table-header">
+								<td>Codigo</td>
+								<td>Nombre</td>
+								<td>Departamento</td>
+							</tr>
+							<tr ng-repeat="s in socios" class="socios-table-detail-search">
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+							</tr>
+						</table>
+		</div>
+		<div>
+				<table class="prestamo-table-search-panel" ng-show="tablePrest">
+					<tr>
+						<td colspan="3" class="cerrar-table">
+							<a href="#" class="icon-delete" ng-click="tablePrest=false"></a>
+						</td>
+					</tr>
+					<tr class="socios-table-header">
+						<td>
+							Fecha
+						</td>
+						<td>
+							Número de Prestamo
+						</td>
+						<td>
+							Monto Inicial
+						</td>
+					</tr>
+					<tr ng-repear="x in reciboLista">
+						<td>
+							 <a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.fecha]]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.noPrestamo]]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.montoInicial]]</a>
+						</td>
+					</tr>
+				</table>
+		</div>
+		
+		<div class="reciboLista" ng-show="reciboLst">
+			<div class="panelFecha">
+				<span><b> Recibo de Ingreso</b></span>
+					<div >
+						<button class="nuevo notasNW icon-file" ng-click="nwRecibo()" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
+					</div>
+				</div>
+
+			<table class="listado-table-f" id="table-lf-listado" >
+				<tr class="listado-table-header-f">
+					<td>Registro</td>
+					<td>Fecha</td>
+					<td>Socio</td>
+					<td>Monto Ahorro</td>
+					<td>Monto Prestamo</td>
+					<td>Estatus</td>
+				</tr>
+				<tr class="listado-rcb-detail" ng-repeat="rc in reciboLista">
+					<td>
+						<a href="#" >[[rc.id]] </a>
+					</td>
+					<td>
+						[[rc.fecha |date : 'dd/MM/yyyy']]
+					</td>
+					<td>
+						[[rc.SocioNombre]]
+					</td>
+					<td>
+						[[rc.montoAhorro]]
+					</td>
+					<td>
+						[[rc.montoPrestamo]]
+					</td>
+					<td>
+						[[rc.estatus]]
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="reciboReg" ng-show="reciboCr">
+			<form action="" id="reciboForm" ng-submit="setRecibo($event)" >
+			<table>
+				<tr>
+					<tr>
+						<td>
+							Registro:
+						</td>
+						<td>
+							<input type="text" ng-model="reciboData.id" class="disable" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td>Fecha:</td>
+						<td>
+							<input type="text" ng-model="reciboData.fecha" datepicker required>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Socio:
+						</td>
+						<td>
+							<input type="text" ng-model="reciboData.socio" disabled> <input type="text" ng-model="socioNombre" ng-keyup="getSocio($event)" ng-focus="tableSocio=false" placeholder="Código o nombre del colaborador"  ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Monto Ahorro:
+						</td>
+						<td>
+							<input type="text" ng-model="reciboData.montoAhorro" value="0">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Prestamo:
+						</td>
+						<td>
+							<input type="text" ng-model="reciboData.NoPrestamo" disabled>  <input type="text" ng-model="montoInicial" ng-keyup="getPrestamosSocio($event)" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" class="producto-field-ei" required>  
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Monto Prestamo:
+						</td>
+						<td>
+							<input type="text" ng-model="reciboData.montoPrestamo" value="0">
+						</td>
+					</tr>
+
+				</tr>
+			</table>
+			<div class="bancoItem">
+					<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+					<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelarReg($event)">Limpiar</button>
+				</div>
+			<br>
+			<div ng-if="reciboData.id == null">
+				<button class="Boton  BusquedaBtn icon-save" ng-click="postearRegistro($event,reciboData.id)" >Postear</button>
+			</div>
+		</div>
+	</section>
+	
+{% endblock content %}

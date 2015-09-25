@@ -62,6 +62,7 @@ from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
 
+from reciboingreso.views import reciboTemplateView
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -71,6 +72,7 @@ from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoView
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 from prestamos.views import InteresPrestamosBaseAhorroView
+
 
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
@@ -338,6 +340,8 @@ urlpatterns = patterns('',
     url(r'^conciliacion/notas/rg',SSNotasView.as_view(), name='Notas_Fechas' ),
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     url(r'^conciliacion/banco/rg', ConBancoLs.as_view(), name='Banco_Fechas'),
+
+    url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'), 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

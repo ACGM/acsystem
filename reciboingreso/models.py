@@ -32,8 +32,8 @@ class RecibosIngreso(models.Model):
 
     # identifica si esta posteada o no
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
-    detallePrestamo = models.ForeignKey(DetalleRecibo, null=True)
-    cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="recibo_rel")
+    # detallePrestamo = models.ForeignKey(DetalleRecibo, null=True)
+    # cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="recibo_rel")
 
     def __unicode__(self):
         return '%i - %s' % (self.id, self.fecha)

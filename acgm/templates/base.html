@@ -54,7 +54,7 @@
 							ng-mouseleave-"ShowSubMenuCont(false)" href="#">Contabilidad</a>
 			</li>
 
-			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="#">Recibos de Ingresos</a></li>
+			<li class="menu-item" id="menu5"> <a class="menu-opcion" href="/reciboIngreso">Recibos de Ingresos</a></li>
 			<li class="menu-item" id="menu6"> <a class="menu-opcion" href="/desembolso">Desembolsos</a></li>
 			
 			<li ng-hide="{{inventario}}" class="menu-item" id="menu7"> <a class="menu-opcion" ng-click="ShowSubMenuInv(true)" ng-mouseleave="ShowSubMenuInv(false)" href="#">Inventario</a> </li>
@@ -208,8 +208,7 @@
 	<script type="text/javascript" src={% static "js/libs/ConciliacionBanco.js"%}></script>
 	<script type="text/javascript" src={% static "js/libs/ConsiSolicitud.js"%}></script>
 	<script type="text/javascript" src={% static "js/libs/notasConciliacion.js"%}></script>
-
-
+	<script type="text/javascript" src={% static "js/reciboIng.js"%}></script>
 
 
 </body>

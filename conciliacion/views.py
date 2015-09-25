@@ -268,7 +268,6 @@ class ConBancoView(TemplateView):
     template_name = "ConBanco.html"
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -284,7 +283,7 @@ class ConBancoView(TemplateView):
 
         for banc in bancaria:
             Data.append({
-                'id': banc.id,
+                'id': banc.pk,
                 'fecha': banc.fecha,
                 'descripcion': banc.descripcion,
                 'tipo': banc.tipo,
@@ -313,8 +312,8 @@ class ConBancoView(TemplateView):
             banco.estatus = Data['estatus']
             banco.monto = Data['monto']
             banco.save(())
-
-
+        return HttpResponse(Data['tipo'])
+        
 class ConBancoLs(DetailView):
     queryset = ConBanco.objects.all()
 

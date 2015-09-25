@@ -47,8 +47,8 @@ class NotaDCConciliacion(models.Model):
 
 
 class ConBanco(models.Model):
-    tipo_choicer = (('D', 'Debito'), ('C', 'Credito'), ('B', 'Balance Segun Banco'))
-    estatus_choicer = (('R', 'Registrado'), ('T', 'Transito'))
+    tipo_choicer = (('P', 'Deposito'), ('H', 'Cheques'), ('B', 'Balance Segun Banco'),('C', 'Credito'),('D', 'Debito'))
+    estatus_choicer = (('R', 'Registrado'), ('T', 'Transito'), ('C','Cerrado'))
 
     fecha = models.DateField()
     descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
@@ -57,4 +57,4 @@ class ConBanco(models.Model):
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
 
     def __unicode__(self):
-        return '%i-%s' % self.id, str(self.fecha)
+        return '%i-%s' % (self.id, str(self.fecha))
