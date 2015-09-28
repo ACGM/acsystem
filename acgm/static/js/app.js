@@ -46,7 +46,8 @@
     'cooperativa.conciliacionBanco',
     'cooperativa.solicitudCheque',
     'cooperativa.notaConc',
-    'cooperativa.activofijo'
+    'cooperativa.activofijo',
+    'cooperativa.reciboIng'
     ]);
 
   app.factory('appService', ['$http', '$q', '$filter', function ($http, $q, $filter) {

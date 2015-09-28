@@ -46,7 +46,7 @@ from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generar
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
 from cxp.views import CxpView, cxpSuperView
 
-from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView
+from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos
 
 from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView
 
@@ -63,6 +63,7 @@ from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
 
+from reciboingreso.views import reciboTemplateView
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -72,6 +73,7 @@ from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoView
 from fondoscajas.views import ListadoDesembolsosViewSet
 from nominacoop.views import ListadoNominasGeneradasViewSet, ListadoTiposNominasViewSet
 from prestamos.views import InteresPrestamosBaseAhorroView
+
 
 #APIView (API)
 from administracion.views import CantidadCuotasPrestamosView, CantidadCuotasODView, CategoriaPrestamoByDescrpView,\
@@ -346,6 +348,8 @@ urlpatterns = patterns('',
     url(r'^depresiacion/$', DepresiacionView.as_view(), name='Depresiacion'),
     url(r'^categoriaActivo/$', CategoriaActivoView.as_view(), name='Categiria_activo'),
     url(r'^impActivo/$', impActivoView.as_view(), name='Imp_Activo'),
+    url(r'^historicoAct/$',HistoricoActivos.as_view(), name="historico_act"),
+    url(r'^localidades/$', LocActivoView.as_view(), name='Localidad'),
 
     #Conciliacion Bancaria
     url(r'^conciliacion/Solicitudcheque$', SolicitudView.as_view(), name='Solicitud_Cheques'),
@@ -354,6 +358,8 @@ urlpatterns = patterns('',
     url(r'^conciliacion/notas/rg',SSNotasView.as_view(), name='Notas_Fechas' ),
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     url(r'^conciliacion/banco/rg', ConBancoLs.as_view(), name='Banco_Fechas'),
+
+    url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'), 
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

@@ -155,7 +155,6 @@ class NotasConciliacionView(TemplateView):
     template_name = 'NotasConciliacion.html'
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -197,23 +196,25 @@ class NotasConciliacionView(TemplateView):
         DataT = json.loads(request.body)
 
         Data = DataT['Notas']
+        try:
+            if Data['id'] is None:
+                nota = NotaDCConciliacion()
+                nota.fecha = Data['fecha']
+                nota.concepto = Data['concepto']
+                nota.monto = decimal.Decimal(Data['monto'])
+                nota.tipo = Data['tipo']
+                nota.estatus = Data['estatus']
+                nota.save()
+            else:
+                nota = NotaDCConciliacion.objects.get(id=1)
+                nota.concepto = Data['concepto']
+                nota.estatus = Data['estatus']
+                nota.save()
 
-        if Data['id'] is None:
-            nota = NotaDCConciliacion()
-            nota.fecha = Data['fecha']
-            nota.concepto = Data['concepto']
-            nota.monto = Data['estatus']
-            nota.tipo = Data['tipo']
-            nota.estatus = Data['estatus']
-            nota.save()
-        else:
-            nota = NotaDCConciliacion.objects.get(id=Data['id'])
-            nota.concepto = Data['concepto']
-            nota.estatus = Data['estatus']
-            nota.save()
-
-        return HttpResponse('1')
-
+            return HttpResponse('Ok')   
+        except Exception, e:
+            return HttpResponse(e.message)
+        
 
 class SSNotasView(DetailView):
     queryset = NotaDCConciliacion.objects.all()
@@ -245,12 +246,28 @@ class SSNotasView(DetailView):
 
         return JsonResponse(Data, safe=False)
 
+    def post(self, request):
+        DataT = json.loads(request.body)
+        Data = DataT['cuenta']
+
+        regCuenta = Cuentas.objects.get(codigo=Data['cuenta'])
+        regNota = NotaDCConciliacion.objects.get(id=Data['nota'])
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = Data[fecha]
+        regDiario.referencia = Data['ref']
+        regDiario.estatus = 'P'
+        regDiario.debito = data['debito']
+        regDiario.credito = data['credito']
+        regDiario.save()
+
+        regNota.cuentas.add(regDiario)
 
 class ConBancoView(TemplateView):
     template_name = "ConBanco.html"
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -266,7 +283,7 @@ class ConBancoView(TemplateView):
 
         for banc in bancaria:
             Data.append({
-                'id': banc.id,
+                'id': banc.pk,
                 'fecha': banc.fecha,
                 'descripcion': banc.descripcion,
                 'tipo': banc.tipo,
@@ -295,8 +312,8 @@ class ConBancoView(TemplateView):
             banco.estatus = Data['estatus']
             banco.monto = Data['monto']
             banco.save(())
-
-
+        return HttpResponse(Data['tipo'])
+        
 class ConBancoLs(DetailView):
     queryset = ConBanco.objects.all()
 

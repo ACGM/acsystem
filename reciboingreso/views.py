@@ -6,16 +6,37 @@ from django.views.generic import TemplateView, DetailView
 
 from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
-from ahorro.models import AhorroSocio
+from prestamos.views import guardarPagoCuotaPrestamo
+from ahorro.models import AhorroSocio, MaestraAhorro
 
 from rest_framework import viewsets
 
 from .models import DetalleRecibo, RecibosIngreso
 
+class reciboPost(TemplateView):
+    template_name="recigoImp.html"
+
+    def post(self, request):
+        registro = self.request.GET.get('recibo')
+        fecha = self.request.GET.get('fecha')
+
+        recibo = RecibosIngreso.objects.get(id=registro)
+
+        regAhorro = AhorroSocio.objects.get(id=recibo.ahorro.id)
+
+        regMaestra = MaestraAhorro()
+        regMaestra.ahorro = regAhorro
+        regMaestra.fecha = fecha
+        regMaestra.monto = recibo.montoAhorro
+        regMaestra.estatus = 'P'
+        regMaestra.save()
+        
+        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,0,'RI')
 
 
-class reciboView(viewsets.ModelViewSet):
-    queryset = RecibosIngreso.objects.all()
+
+class reciboTemplateView(TemplateView):
+    template_name = "reciboIng.html"
 
     def post(self, request):
         data = json.loads(request.body)
@@ -23,10 +44,13 @@ class reciboView(viewsets.ModelViewSet):
 
         if data[id] is None:
             regRecibo = RecibosIngreso()
-            regDetalle = DetalleRecibo()
             regSocio = Socio.objects.get(codigo=data['socio'])
-            regPrest = MaestraPrestamo.objects.get(id=data['prestamo'])
-            regAHorro = AhorroSocio.objects.get(id=data['ahorro'])
+
+            if data['prestamo'] != None:
+                MaestraPrestamo.objects.get(noPrestamo=data['prestamo'])
+            
+            if data['ahorro'] == 1:
+                regAHorro = AhorroSocio.objects.get(socio=regSocio)
 
             regRecibo.socioIngreso = regSocio
             regRecibo.prestamo = regPrest
@@ -37,34 +61,16 @@ class reciboView(viewsets.ModelViewSet):
             regRecibo.estatus = data['estatus']
             regRecibo.save()
 
-            regDetalle.cantCuotas = dataDp['CantCuotas']
-            regDetalle.montoCuota = dataDp['montoCuotas']
-            regDetalle.montoDistribuir = dataDp['distribuir']
-            regDetalle.save()
-            
-            regRecibo.detallePrestamo(regDetalle)
         else:
             if data['estatus'] == 'A':
                 regRecibo = RecibosIngreso.objects.get(id=data['id'])
                 regRecibo.montoPrestamo = data['montoPrestamo']
                 regRecibo.montoAhorro = data['montoAhorro']
-                regRecibo.save()
-
-                regDetalle = DetalleRecibo.objects.get(id=dataDp['id'])
-                regDetalle.cantCuotas = dataDp['CantCuotas']
-                regDetalle.montoCuotas = dataDp['montoCuotas']
-                regDetalle.montoDistribuir = dataDp['distribuir']
-                regDetalle.save()
-
-            elif data['estatus'] == 'P':
-                regRecibo = RecibosIngreso.objects.get(id=data['id'])
                 regRecibo.estatus = data['estatus']
                 regRecibo.save()
 
-
     def get(self, request, *args, **kwargs):
 
-        self.objects_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -76,34 +82,18 @@ class reciboView(viewsets.ModelViewSet):
     def json_to_response(self):
         data = list()
 
-        for recibos in self.objects_list:
+        for recibos in RecibosIngreso.objects.all():
             data.append({
                 'id': recibos.id,
                 'socioCod': recibos.socioIngreso.codigo,
                 'socio': recibos.socioIngreso.nombre + ' ' + recibos.socioIngreso.apellido,
                 'prestamo': {
-                    'id' : recibos.prestamo.id,
-                    'montoInicial': recibos.prestamo.montoInicial,
-                    'balance': recibos.prestamo.balance
-                },
-                'ahorro': {
-                    'id': recibos.ahorro.id,
-                    'balance': recibos.ahorro.balance,
-                    'disponible': recibos.ahorro.disponible
+                    'noPrestamo' : recibos.prestamo.noPrestamo if recibos.prestamo != None else '',
+                    'montoInicial': recibos.prestamo.montoInicial if recibos.prestamo != None else '',
+                    'balance': recibos.prestamo.balance if recibos.prestamo != None else ''
                 },
                 'montoPrestamo': recibos.montoPrestamo,
                 'montoAhorro': recibos.montoAhorro,
                 'fecha': recibos.fecha,
                 'estatus': recibos.estatus,
-                'detallePrestamo':{
-                    'id': recibos.detallePrestamo.id,
-                    'montoCuota': recibos.detallePrestamo.montoCuota,
-                    'montoDistribuir': recibos.detallePrestamo.montoDistribuir,
-                    'CantCuotas': recibos.detallePrestamo.cantCuotas
-                }
             })
-
-
-class reciboTemplateView(TemplateView):
-    template_name = "reciboIng.html"
-

@@ -244,7 +244,6 @@ class generarInteres(TemplateView):
         regMaestra.cuentas.add(regDiario)
 
 
-
 class impRetiroAHorro(TemplateView):
     template_name = "AhorroPrint.html"
 

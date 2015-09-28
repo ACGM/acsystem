@@ -37,5 +37,11 @@
 		    	
 		    }
 
+		    $scope.ShowSubMenuConc = function(valor){
+		    	$scope.SubConc = valor;
+		    }
+
+
+
 		}]);
 })();
