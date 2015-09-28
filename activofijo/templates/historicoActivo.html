@@ -1,0 +1,43 @@
+<div class="ahorroPrint">
+	{% extends "base.html" %}
+	{% block title %}Historico de Activos Fijos{% endblock title %}
+
+	{% block content %}
+</div>
+<section class="historico" ng-controller="hystoricoActivoCtrl" ng-init="initial()">
+	<div class="Activo-imp-Header">
+		<h3 style="text-align : center">Historico de Activos</h3>
+		<span class="printAHorroFecha">Fecha: [[fecha]]</span>
+		<br>
+	</div>
+	<div class="Activo-imp-detalle">
+		<table>
+			<tr>
+				<td>Id</td>
+				<td>Decripcion</td>
+				<td>Fecha Aquisición</td>
+				<td>Costo Original</td>
+				<td>Deprec. Mensual</td>
+				<td>Deprec. Acumulada</td>
+				<td>Deprec. el año</td>
+				<td>Valor en Libro</td>
+				<td>% Deprec.</td>
+				<td>Ultima Deprec</td>
+			</tr>
+			<tr ng-repeat="s in LsData" class="Activo-detalle">
+				<td>[[s.id]]</td>
+				<td>[[s.descripcion]]</td>
+				<td>[[s.fechaAdq | date: 'dd/MM/yyyy']]</td>
+				<td>[[s.costo |number : 2]]</td>
+				<td>[[s.dMensual |number : 2]]</td>
+				<td>[[s.dAcumulada |number : 2]]</td>
+				<td>[[s.dAgno |number : 2]]</td>
+				<td>[[s.vLibro |number : 2]]</td>
+				<td>[[s.porcentaje]]</td>
+				<td>[[s.fecha | date: 'dd/MM/yyyy']]</td>
+			</tr>
+		</table>
+	</div>
+</section>
+
+	{% endblock content %}

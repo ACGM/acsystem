@@ -9,23 +9,42 @@
 	<mensajeinfo> </mensajeinfo>
 
 	<div class="content-suplidor-table">
-					<table class="Activo-suplidor-table-search" ng-show="tableSuplidor">
-						<tr>
-							<td colspan="3" class="cerrar-table">
-								<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
-							</td>
-						</tr>
-						<tr class="socios-table-header">
-							<td>Codigo</td>
-							<td>Nombre</td>
-						</tr>
-						<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
-							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
-							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
-							
-						</tr>
-					</table>
-				</div>
+			<table class="Activo-suplidor-table-search" ng-show="tableSuplidor">
+				<tr>
+					<td colspan="3" class="cerrar-table">
+						<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+					</td>
+				</tr>
+				<tr class="socios-table-header">
+					<td>Codigo</td>
+					<td>Nombre</td>
+				</tr>
+				<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+					
+				</tr>
+			</table>
+	</div>
+
+	<div class="content-suplidor-table">
+				<table class="Activo-localidad-table-search" ng-show="tableLoc">
+					<tr>
+						<td colspan="3" class="cerrar-table">
+							<a href="#" class="icon-delete" ng-click="tableLoc=false"></a>
+						</td>
+					</tr>
+					<tr class="socios-table-header">
+						<td>Codigo</td>
+						<td>Localidad</td>
+					</tr>
+					<tr ng-repeat="s in localidad" class="socios-table-detail-search">
+						<td><a href="#" class="select-item" ng-click="selLocalidad($event,s)"> [[s.id]] </a></td>
+						<td><a href="#" class="select-item" ng-click="selLocalidad($event,s)"> [[s.descripcion]] </a></td>
+						
+					</tr>
+				</table>
+			</div>
 
 	<div class="content-suplidor-table">
 					<table class="activo-table-search" ng-show="tableCat">
@@ -45,6 +64,7 @@
 						</tr>
 					</table>
 				</div>
+
 <div class="activo-main-panel">
 			<a href="#" ng-click="addAct()" class="icon-file ActivoNew"></a>
 		</div>
@@ -62,7 +82,7 @@
 			<tr class="listado-act-detail" ng-repeat="a in lsActivos">
 				<td><a href="#"  class="utils-noDecoration" ng-click="impActivos($event,a.id)">[[a.descripcion]]</a></td>
 				<td>[[a.categoria]]</td>
-				<td>[[a.fechaAdq |date: DD/mm/yyyy]]</td>
+				<td>[[a.fechaAdq |date: 'dd/MM/yyyy']]</td>
 				<td>[[a.costo |number:2]]</td>
 				<td>
 					<div ng-if="a.estatus=='A'">En Uso</div>
@@ -71,7 +91,7 @@
 				<td><a href="#" class="utils-paddingLSmallx2 utils-noDecoration icon-list2" ng-click="getDepresiacion(a.id)"></a></td>
 			</tr>
 		</table>
-
+		<button ng-click="printList($event)" class="Boton BusquedaBtn btn icon-printer">imprimir Listado</button>
 		</div>
 	</div>
 
@@ -87,7 +107,7 @@
 				<td>Balance segun Libro</td>
 			</tr>
 			<tr class="listado-acd-detail" ng-repeat="d in depList">
-				<td>[[d.fecha |date: DD/mm/yyyy]]</td>
+				<td>[[d.fecha |date: 'dd/MM/yyyy']]</td>
 				<td>[[d.dMensual |number:2]]</td>
 				<td>[[d.dAcumulada |number:2]]</td>
 				<td>[[d.dAgno |number:2]]</td>
@@ -145,7 +165,8 @@
 					<td>Porcentaje de Depresiacion</td>
 					<td><input type="text" ng-model="actData.porc"></td>
 					<td>Localidad</td>
-					<td><input type="text" ng-model="actData.localidad"></td>
+					<td><input type="text" ng-model="actData.localidad"  ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+					<input type="text" ng-model="localidadD" ng-keyup="getLoc($event)" ng-focus="tableLoc=false" ng-click="tableLoc=false; errorShow=false; getLoc($event)" class="producto-field-ei" required></td>
 				</tr>
 				<tr>
 					<td>

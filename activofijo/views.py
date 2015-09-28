@@ -51,31 +51,26 @@ class impActivoView(TemplateView):
                 })
         return JsonResponse(data, safe=False)
 
-    
-
-
 # Clase busqueda y creacion basica
 class ActivosView(TemplateView):
     template_name = 'Activos.html'
 
-    def setCuentaActivo(self, idActivo, fecha , cta, monto):
+    def setCuentaActivo(self, idActivo, fecha , cta, monto, ref):
         try:
             diario = DiarioGeneral()
             diario.fecha = fecha
-            diario.referencia = 'ACT-' + str(idActivo)
-            # if cta['cuenta'] is not None:
+            diario.referencia = ref + str(idActivo)
             cuenta = Cuentas.objects.get(codigo=cta.cuenta.codigo)
             diario.cuenta = cuenta
-            # if cta['aux'] is not None:
-            #     aux = Auxiliares.objets.get(codigo=cta['aux'])
-            #     diario.auxiliar = aux
             diario.estatus = 'P'
+
             if cta.accion == 'D':
                 diario.debito = monto
                 diario.credito = 0
             else:
                 diario.debito = 0
                 diario.credito = monto
+
             diario.save()
 
             regActivo = Activos.objects.get(id=idActivo)
@@ -84,28 +79,29 @@ class ActivosView(TemplateView):
         except Exception, e:
             return e.message    
 
-    def setCuentaDepresiacion(self, idActivo, fecha , cta, monto):
-        diario = DiarioGeneral()
-        diario.fecha = fecha
-        diario.referencia = 'DEP-' + str(idActivo)
-        # if cta['cuenta'] is not None:
-        cuenta = Cuentas.objects.get(codigo=cta.cuenta.codigo)
-        diario.cuenta = cuenta
-        # if cta['aux'] is not None:
-        #     aux = Auxiliares.objets.get(codigo=cta['aux'])
-        #     diario.auxiliar = aux
-        diario.estatus = 'P'
-        if cta['accion'] == 'D':
-            diario.debito = monto
-            diario.credito = 0
-        else:
-            diario.debito = 0
-            diario.credito = monto
-        diario.save()
+    def setCuentaDepresiacion(self, idDepr, fecha , cta, monto, ref):
+        try:
+            diario = DiarioGeneral()
+            diario.fecha = fecha
+            diario.referencia = ref + str(idDepr)
+            cuenta = Cuentas.objects.get(codigo=cta.cuenta.codigo)
+            diario.cuenta = cuenta
+            diario.estatus = 'P'
+            
+            if cta.accion == 'D':
+                diario.debito = monto
+                diario.credito = 0
+            else:
+                diario.debito = 0
+                diario.credito = monto
 
-        regDesp = Depresiacion.objects.get(id=idActivo)
-        regDesp.cuentas.add(diario)
-        return diario.id
+            diario.save()
+
+            regDesp = Depresiacion.objects.get(id=idDepr)
+            regDesp.cuentas.add(diario)
+            return diario.id
+        except Exception, e:
+            return e.message    
 
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
@@ -175,11 +171,20 @@ class ActivosView(TemplateView):
             regActivo.estatus = 'A'
             regActivo.save()
 
-            tipo = TipoDocumento.objects.get(codigo='ACT')
+            if categoria.id == 1:
+                tdoc = 'ACTT'
+            elif categoria.id == 2:
+                tdoc = 'ACTE'
+            elif categoria.id == 3:
+                tdoc = 'ACTR'
+            else:
+                tdoc = 'ACTE'
+
+            tipo = TipoDocumento.objects.get(codigo=tdoc)
             doc = DocumentoCuentas.objects.filter(documento = tipo)
 
             for docu in doc:
-                self.setCuentaActivo(regActivo.id, Data['fechaAdq'] , documento, Data['costo'])
+                self.setCuentaActivo(regActivo.id, Data['fechaAdq'] , docu, Data['costo'],tdoc)
 
             despMensual = (decimal.Decimal(Data['costo']) / 12) * (decimal.Decimal(Data['porc'] )/ 100)
             regDepresiacion = Depresiacion()
@@ -192,16 +197,49 @@ class ActivosView(TemplateView):
             regDepresiacion.save()
             regActivo.depresiacion.add(regDepresiacion)
 
-            tipoDo = TipoDocumento.objects.get(codigo='DEP')
+            if categoria.id == 1:
+                ddoc = 'DEPT'
+            elif categoria.id == 2:
+                ddoc = 'DEPE'
+            elif categoria.id == 3:
+                ddoc = 'DEPR'
+            else:
+                ddoc = 'DEPE'
+
+            tipoDo = TipoDocumento.objects.get(codigo=ddoc)
             docDep = DocumentoCuentas.objects.filter(documento = tipo)
 
             for document in docDep:
-                self.setCuentaDepresiacion(regDepresiacion.id, date.today(), document, Data['costo'])
+                self.setCuentaDepresiacion(regDepresiacion.id, Data['fechaAdq'], document, despMensual, ddoc)
 
 
-            # return HttpResponse(tipo.codigo)
+            return HttpResponse(tdoc)
         except Exception, e:
             return HttpResponse(e)
+
+
+class LocActivoView(DetailView):
+    queryset = Localidad.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format =="json":
+            return self.json_to_response()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        for locate in Localidad.objects.all():
+            data.append({
+                'id': locate.id,
+                'descripcion': locate.descripcion,
+                'Ldescripcion': locate.descripcionLarga
+                })
+
+        return JsonResponse(data,safe=False)
 
 #clase para facilitar la categoria de los activos
 class CategoriaActivoView(DetailView):
@@ -230,16 +268,32 @@ class CategoriaActivoView(DetailView):
 class DepresiacionView(TemplateView):
     template_name = 'Depresiacion.html'
 
-    def setCuenta(self, idActivo, fecha , cta, monto):
+    def depDocument(self, idActivo, fecha, monto):
+        activo = Activos.objects.get(id=idActivo)
+
+        if activo.categoria.id == 1:
+            ddoc = 'DEPT'
+        elif activo.categoria.id == 2:
+            ddoc = 'DEPE'
+        elif activo.categoria.id == 3:
+            ddoc = 'DEPR'
+        else:
+            ddoc = 'DEPE'
+
+        tipoDo = TipoDocumento.objects.get(codigo=ddoc)
+        docDep = DocumentoCuentas.objects.filter(documento = tipoDo)
+
+        for doc in docDep:
+            self.setCuenta(idActivo, fecha, doc, monto, activo.categoria.id)
+
+        return activo.id
+
+    def setCuenta(self, idActivo, fecha , cta, monto, ref):
         diario = DiarioGeneral()
         diario.fecha = fecha
-        diario.referencia = 'DEP-' + str(idActivo)
-        # if cta['cuenta'] is not None:
+        diario.referencia = ref + str(idActivo)
         cuenta = Cuentas.objects.get(codigo=cta['cuenta'])
         diario.cuenta = cuenta
-        # if cta['aux'] is not None:
-        #     aux = Auxiliares.objets.get(codigo=cta['aux'])
-        #     diario.auxiliar = aux
         diario.estatus = 'P'
         if cta['accion'] == 'D':
             diario.debito = monto
@@ -255,7 +309,6 @@ class DepresiacionView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         Data = json.loads(request.body)
-        Dcuentas = Data['cuentas']
         fechas =   Data['fechas']
 
         
@@ -275,13 +328,44 @@ class DepresiacionView(TemplateView):
             regDesp.vLibro = antDesp.vLibro - antDesp.dMensual
             regDesp.save()
 
-            for cta in Dcuentas:
-                self.setCuenta(regDesp.id,fechas['fechaF'] ,cta, antDesp.dMensual)
+            self.depDocument(regDesp.id,fechas['fechaF'] , antDesp.dMensual)
 
             if regDesp.vLibro == 0:
                 act.estatus = 'D'
                 act.save()
+
         return HttpResponse('ok')
 
-         
-       
+
+class HistoricoActivos(TemplateView):
+    template_name = 'historicoActivo.html'
+
+    def get(self, request, *args, **kwargs):
+        format =self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+        for activo in Activos.objects.all():
+            depr = Depresiacion.objects.filter(activoId=activo.id).order_by('-fecha').first() 
+            data.append({
+                'id': activo.id,
+                'descripcion': activo.descripcion,
+                'fechaAdq': activo.fechaAdd,
+                'costo' : activo.costo,
+                'porcentaje': activo.porcentaje, 
+                'fecha': depr.fecha if depr != None else '',
+                'dMensual': depr.dMensual if depr != None else '',
+                'dAcumulada': depr.dAcumulada if depr != None else '',
+                'dAgno': depr.dAgno if depr != None else '',
+                'vLibro': depr.vLibro if depr != None else ''
+                })
+
+        return JsonResponse(data, safe=False)
+
+
+

@@ -44,9 +44,9 @@
             return deferred.promise;
 		};
 
-		function setDepresiacion(cuentas, fechas){
+		function setDepresiacion(fechas){
 			var deferred = $q.defer();
-			$http.post(apiUrlD, JSON.stringify({'cuentas':cuentas,'fechas': fechas}))
+			$http.post(apiUrlD, JSON.stringify({'fechas': fechas}))
                 .success(function (data){
                     deferred.resolve(data);
                 })
@@ -87,19 +87,48 @@
                 return deferred.promise;
         };
 
+        function getLocalidad(){
+        	var deferred = $q.defer();
+
+        	$http.get('/localidades?format=json')
+        		.success(function (data){
+        			deferred.resolve(data);})
+        		.error(function (err){
+        			deferred.resolve(err);
+        		});
+
+        		return deferred.promise;
+
+        };
+
         function getDocCuentas(){
-				deferred = $q.defer();
+			deferred = $q.defer();
 
-				$http.get('/ahorro/?format=json')
-					.success(function (data){
-						deferred.resolve(data);
-					})
-					.error(function (error){
-						deferred.resolve(error);
-					})
+			$http.get('/ahorro/?format=json')
+				.success(function (data){
+					deferred.resolve(data);
+				})
+				.error(function (error){
+					deferred.resolve(error);
+				});
 
-					return deferred.promise;
-			}
+				return deferred.promise;
+			};
+
+		function seeHystoric(){
+			deferred = $q.defer();
+
+			$http.get('/historicoAct?format=json')
+				.success(function (data){
+					deferred.resolve(data);
+				})
+				.error(function (err){
+					deferred.resolve(err);
+				});
+
+			return deferred.promise;
+		};
+
 
 
 		return {
@@ -109,7 +138,9 @@
 			getSuplidor     : getSuplidor,
 			setDepresiacion : setDepresiacion,
 			getCategoria    : getCategoria,
-			getDocCuentas	: getDocCuentas
+			getDocCuentas	: getDocCuentas,
+			getLocalidad    : getLocalidad,
+			seeHystoric		: seeHystoric
 		};
 	}])
 	
@@ -138,19 +169,21 @@
 				$scope.actData = {};
 				};
 
+
 			$scope.impActivos = function($event, id){
 				$event.preventDefault();
 				ActivoServices.getActivosById(id).then(function (data){
 					$window.sessionStorage['activo'] = JSON.stringify(data[0]);
 					$window.open('/impActivo/', target='_blank'); 
 				});
-			}
+				};
 
 
 			$scope.getCategoria = function($event){
 				$event.preventDefault();
 				$scope.tableCat = true;
 				$scope.tableSuplidor = false;
+				$scope.tableLoc = false;
 
 				if($scope.CategoriaDesc !== null ){
 					ActivoServices.getCategoria().then(function (data){
@@ -170,7 +203,6 @@
 					});
 					
 				}
-
 				else {
 					ActivoServices.getCategoria().then(function (data){
 						$scope.categoria = data;
@@ -188,32 +220,33 @@
 
 
 			$scope.getSuplidor = function($event){
-                    $event.preventDefault();
-                    $scope.tableSuplidor = true;
-                    $scope.tableCat = false;
-                    if($scope.suplidorNombre !== null) {
-                      ActivoServices.getSuplidor().then(function (data) {
-                        $scope.suplidor = data.filter(function (registro) {
-                           return $filter('lowercase')(registro.nombre
-                                              .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
-                        });
+                $event.preventDefault();
+                $scope.tableSuplidor = true;
+                $scope.tableCat = false;
+                $scope.tableLoc = false;
+                if($scope.suplidorNombre !== null) {
+                  ActivoServices.getSuplidor().then(function (data) {
+                    $scope.suplidor = data.filter(function (registro) {
+                       return $filter('lowercase')(registro.nombre
+                                          .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
+                    });
 
-                        if($scope.suplidor.length > 0){
-                          $scope.tableSuplidor = true;
-                          $scope.suplidorNoExiste = '';
-                        } else {
-                          $scope.tableSuplidor = false;
-                          $scope.suplidorNoExiste = 'No existe el suplidor';
-                        }
-
-                      });
+                    if($scope.suplidor.length > 0){
+                      $scope.tableSuplidor = true;
+                      $scope.suplidorNoExiste = '';
                     } else {
-                      ActivoServices.getSuplidor().then(function (data) {
-                        $scope.suplidor = data;
-                        $scope.suplidorCodigo = '';
-                      });
+                      $scope.tableSuplidor = false;
+                      $scope.suplidorNoExiste = 'No existe el suplidor';
                     }
-                  };
+
+                  });
+                } else {
+                  ActivoServices.getSuplidor().then(function (data) {
+                    $scope.suplidor = data;
+                    $scope.suplidorCodigo = '';
+                  });
+                }
+              };
 
 
             $scope.selSuplidor = function($event, s) {
@@ -222,6 +255,45 @@
                 $scope.actData.suplidor = s.id;
                 $scope.tableSuplidor= false;
               };
+
+
+            $scope.selLocalidad = function($event, s){
+            	$event.preventDefault();
+            	$scope.actData.localidad = s.id;
+            	$scope.localidadD = s.Ldescripcion;
+            	$scope.tableLoc = false;
+            	};
+
+
+            $scope.getLoc = function($event){
+            	$event.preventDefault();
+                $scope.tableSuplidor = false;
+                $scope.tableCat = false;
+                $scope.tableLoc = true;
+                
+                if($scope.localidadD != undefined ) {
+                  ActivoServices.getLocalidad().then(function (data) {
+                    $scope.localidad = data.filter(function (registro) {
+                       return $filter('lowercase')(registro.descripcion
+                                          .substring(0,$scope.localidadD.length)) == $filter('lowercase')($scope.localidadD);
+                    });
+
+                    if($scope.localidad.length > 0){
+                      $scope.tableLoc = true;
+                      $scope.suplidorNoExiste = '';
+                    } else {
+                      $scope.tableLoc = false;
+                      $scope.suplidorNoExiste = 'Localidad no existe';
+                    }
+
+                  });
+                } else {
+                  ActivoServices.getLocalidad().then(function (data) {
+                    $scope.localidad = data;
+                    $scope.localidadCodigo = '';
+                  });
+                }
+            	};
 
 
 			$scope.lstActivos = function($event){
@@ -248,8 +320,8 @@
 
 				ActivoServices.setActivo($scope.actData);
 				//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
-				$scope.lstActivos();
 				$scope.cancelarActivo();
+				$scope.lstActivos();
 				//$window.open('/impActivo/', target='_blank'); 
 
 				
@@ -268,7 +340,8 @@
 				$scope.actVs = true;
 				$scope.actRg = false;
 				$scope.depVs = false;
-			}      
+				}      
+
 
             $scope.getDepresiacion = function(id){
 				ActivoServices.getActivosById(id).then(function (data){
@@ -289,6 +362,12 @@
 				$scope.CategoriaDesc = null;
 	       		$scope.getCategoria();
 	       		};
+
+
+	       	$scope.printList = function($event) {
+	       		$event.preventDefault();
+	       		$window.open('/historicoAct/', target='_blank'); 
+	       	};
 
 			
 	}])
@@ -329,34 +408,28 @@
 
 		$scope.setDepresiacion = function (){
 			try{
-				if ($scope.documentos.length > 0){
-					var RgFechaA = $scope.fechaDesp.fechaI.split('/');
-          			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
-          			$scope.fechaDesp.fechaI = FechaFormat;
+				
+				var RgFechaA = $scope.fechaDesp.fechaI.split('/');
+      			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
+      			$scope.fechaDesp.fechaI = FechaFormat;
 
-          			var RgFechaB = $scope.fechaDesp.fechaF.split('/');
-          			var FechaFormat = RgFechaB[2] + '-' + RgFechaB[1] + '-' + RgFechaB[0];
-          			$scope.fechaDesp.fechaF = FechaFormat;
-          			console.log($scope.documentos)
-					ActivoServices.setDepresiacion($scope.documentos, $scope.fechaDesp);
-				}
-				else{
-					$rootScope.mostrarError("No hay cuentas definidas.");
-				}
-
+      			var RgFechaB = $scope.fechaDesp.fechaF.split('/');
+      			var FechaFormat = RgFechaB[2] + '-' + RgFechaB[1] + '-' + RgFechaB[0];
+      			$scope.fechaDesp.fechaF = FechaFormat;
+      			console.log($scope.documentos)
+				ActivoServices.setDepresiacion($scope.fechaDesp);
+				
 			}
 			catch(ex){
 				$rootScope.mostrarError(ex.message);
 			}
-
-			
 		};
 		
 
 	}])
 	
 	.controller('ImpActivosCtrl', ['$scope', '$filter', '$rootScope', 'ActivoServices','$window',
-					function($scope, $filter, $rootScope, ActivoServices,$window){
+		function($scope, $filter, $rootScope, ActivoServices,$window){
 
 		$scope.Activo = JSON.parse($window.sessionStorage['activo']);
 		$scope.Dep = [];
@@ -369,9 +442,20 @@
 					console.log($scope.Dep);
 				});
 		};
+	}])
 
+	.controller('hystoricoActivoCtrl', ['$scope', '$filter', 'ActivoServices', '$timeout',
+		function($scope, $filter, ActivoServices, $timeout){
+			$scope.LsData = [];
+			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
-
-	}]);
+			$scope.initial = function(){
+				ActivoServices.seeHystoric().then(function (data){
+					$scope.LsData = data;
+				});
+				
+			};
+			
+		}]);
 
 })();

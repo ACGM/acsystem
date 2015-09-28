@@ -16,8 +16,6 @@ from .models import DetalleRecibo, RecibosIngreso
 class reciboPost(TemplateView):
     template_name="recigoImp.html"
 
-    def 
-
     def post(self, request):
         registro = self.request.GET.get('recibo')
         fecha = self.request.GET.get('fecha')

@@ -2394,9 +2394,7 @@ footer
 	background verdeClarito
 	color white
 	& td
-		&:first-child
-			padding 0 .8em
-			
+		padding 0 .8em 0 1em
 		border 1px solid black
 		padding .16em .4em
 
@@ -3406,6 +3404,17 @@ footer
 		&:first-child
 			text-align center
 
+.Activo-localidad-table-search	
+	border 1px solid black
+	position absolute
+	top 21.3em
+	left 43.3em
+	width 40em
+	z-index 900
+	& tr
+		&:first-child
+			text-align center
+
 .activo-table-search
 	border 1px solid black
 	position absolute
@@ -3803,6 +3812,7 @@ footer
 		&:nth-child(1)
 			text-align left
 			color mamey
+			padding 0 .5em
 			font-weight bold
 			width 32em
 		&:nth-child(2) 
@@ -3817,7 +3827,11 @@ footer
 			padding 0 .6em
 			color mamey
 			font-weight bold
-		&:nth-child(5) //ORDEN C.
+		&:nth-child(5) 
+			padding 0 .3em
+			text-align center
+			width 1.2em
+		&:nth-child(6) 
 			padding 0 .3em
 			text-align center
 			width 1.2em
@@ -4020,6 +4034,8 @@ footer
 	background verdeSuave
 	margin-bottom .5em
 	padding .2em
+	&: table
+		padding .5em 0 .5em 1em
 
 .input-fecha-s
 	border-radius 0 5px 5px 0
@@ -4081,6 +4097,65 @@ footer
 
 .reciboLista
 	margin 1.3em
+
+.Activo-imp-detalle
+	margin 1em 4em
+	& td
+		&:nth-child(1)
+			padding 1em
+		&:nth-child(2) 
+			padding 1em
+		&:nth-child(3)
+			padding 1em
+		&:nth-child(4)
+			padding 1em
+		&:nth-child(5)
+			padding 1em
+		&:nth-child(6)
+			padding 1em
+		&:nth-child(7)
+			padding 1em
+		&:nth-child(8)
+			padding 1em
+		&:nth-child(9)
+			padding 1em
+		&:nth-child(10)
+			padding 1em
+			
+.Activo-detalle
+	& td
+		&:nth-child(1)
+			padding 1em
+		&:nth-child(2) 
+			padding 1em
+		&:nth-child(3)
+			padding 1em
+		&:nth-child(4)
+			padding 1em
+			color mamey
+			font-size bold
+		&:nth-child(5)
+			padding 1em
+			color mamey
+			font-size bold
+		&:nth-child(6)
+			padding 1em
+			color mamey
+			font-size bold
+		&:nth-child(7)
+			padding 1em
+			color mamey
+			font-size bold
+		&:nth-child(8)
+			padding 1em
+			color mamey
+			font-size bold
+		&:nth-child(9)
+			padding 1em
+		&:nth-child(10)
+			padding 1em
+		
+		
 
 .reciboReg
 	background verdeSuave
