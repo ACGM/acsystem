@@ -937,11 +937,13 @@
 
       //Traer prestamos para unificar.
       $scope.getPrestamosBalances = function(socio) {
+        $scope.prestamosSocioUnif = [];
+        $scope.prestamosSocio = []; 
+
         try {
           MaestraPrestamoService.prestamosDetalleByCodigoSocio(socio).then(function (data) {
 
             if(data.length > 0) {
-              $scope.prestamosSocioUnif = [];
               $scope.prestamosSocio = data.filter(function (item) {
                 return item.balance > 0;
               });

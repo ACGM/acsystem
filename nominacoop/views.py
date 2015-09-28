@@ -22,6 +22,7 @@ from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
 
 from prestamos.viewMaestraPrestamos import getBalancesPrestamos
+from prestamos.views import guardarPagoCuotaPrestamo
 from acgm.views import LoginRequiredMixin
 from ahorro.views import insMaestra, getSocioAhorro
 

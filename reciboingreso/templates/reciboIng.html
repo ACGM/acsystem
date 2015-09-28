@@ -26,7 +26,7 @@
 		<div>
 				<table class="prestamo-table-search-panel" ng-show="tablePrest">
 					<tr>
-						<td colspan="3" class="cerrar-table">
+						<td colspan="4" class="cerrar-table">
 							<a href="#" class="icon-delete" ng-click="tablePrest=false"></a>
 						</td>
 					</tr>
@@ -40,16 +40,22 @@
 						<td>
 							Monto Inicial
 						</td>
-					</tr>
-					<tr ng-repear="x in reciboLista">
 						<td>
-							 <a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.fecha]]</a>
+							Balance
+						</td>
+					</tr>
+					<tr ng-repeat="x in prestamosS" class="socios-table-detail-search">
+						<td>
+							 <a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.fechaAprobacion |date: 'dd/MM/yyyy']]</a>
 						</td>
 						<td>
 							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.noPrestamo]]</a>
 						</td>
 						<td>
-							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.montoInicial]]</a>
+							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.montoInicial |number: 2]]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item resaltar-valor" ng-click="selPrest($event,x)">[[x.balance |number: 2]]</a>
 						</td>
 					</tr>
 				</table>
@@ -110,7 +116,7 @@
 					<tr>
 						<td>Fecha:</td>
 						<td>
-							<input type="text" ng-model="reciboData.fecha" datepicker required>
+							<input type="text" ng-model="fecha" datepicker required>
 						</td>
 					</tr>
 					<tr>

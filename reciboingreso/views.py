@@ -40,25 +40,25 @@ class reciboTemplateView(TemplateView):
 
     def post(self, request):
         data = json.loads(request.body)
-        dataDp= data['detalle']
+        dataR= data['recibo']
 
-        if data[id] is None:
+        if dataR[id] is None:
             regRecibo = RecibosIngreso()
-            regSocio = Socio.objects.get(codigo=data['socio'])
+            regSocio = Socio.objects.get(codigo=dataR['socio'])
 
-            if data['prestamo'] != None:
-                MaestraPrestamo.objects.get(noPrestamo=data['prestamo'])
+            if dataR['prestamo'] != None:
+                MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
             
-            if data['ahorro'] == 1:
+            if dataR['ahorro'] == 1:
                 regAHorro = AhorroSocio.objects.get(socio=regSocio)
 
             regRecibo.socioIngreso = regSocio
             regRecibo.prestamo = regPrest
             regRecibo.ahorro = regAHorro
-            regRecibo.montoPrestamo = data['montoPrestamo']
-            regRecibo.montoAhorro = data['montoAhorro']
-            regRecibo.fecha  = data['fecha']
-            regRecibo.estatus = data['estatus']
+            regRecibo.montoPrestamo = dataR['montoPrestamo']
+            regRecibo.montoAhorro = dataR['montoAhorro']
+            regRecibo.fecha  = dataR['fecha']
+            regRecibo.estatus = dataR['estatus']
             regRecibo.save()
 
         else:

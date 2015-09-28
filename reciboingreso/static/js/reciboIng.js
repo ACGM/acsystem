@@ -80,9 +80,9 @@
 			$scope.reciboCr = false;
 			$scope.tableSocio = false;
 			$scope.tablePrest =  false;
+			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
-			$scope.getList = function($event){
-				$event.preventDefault();
+			$scope.getList = function(){
 
 				$scope.reciboLista =[];
 
@@ -155,7 +155,7 @@
 	        $scope.selPrest = function($event, x){
 	       		$event.preventDefault();
 
-	       		$scope.reciboData.prestamo=x.noPrestamo;
+	       		$scope.reciboData.NoPrestamo=x.noPrestamo;
 	            $scope.montoInicial = x.montoInicial;
 
 	            $scope.tablePrest = false;
@@ -174,11 +174,12 @@
 
 	        	MaestraPrestamoService.PrestamosbySocio($scope.reciboData.socio).then(function (data){
 	        		$scope.prestamosS = data.filter(function (reg){
-	        			return reg.estatus != "S"
-	        		});
-	        	});
-	        	$scope.tablePrest = true;
-	        	}
+	        			console.log(reg);
+		        			return reg.estatus != "S"
+		        		});
+		        	});
+		        	$scope.tablePrest = true;
+		        	}
 
 	        $rootScope.mostrarError = function(error) {
 			      $scope.errorMsg = error;
@@ -188,13 +189,16 @@
 
 	        $scope.setRecibo = function($event){
 	        	$event.preventDefault();
-
-	        	var RegFecha = $scope.reciboData.fecha.split('/');
+	  	        	var RegFecha = $scope.fecha.split('/');
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           			$scope.reciboData.fecha = FechaFormat;
 
+          			if ($scope.reciboData.id == undefined){
+          				$scope.reciboData.id = null;
+          			}
+
           		try{
-          			reciboIngServices($scope.reciboData).then(function (data){
+          			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
           				console.log(data);
           			});
           		}	
