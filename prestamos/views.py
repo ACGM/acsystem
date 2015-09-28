@@ -67,6 +67,12 @@ class DistribucionInteresesView(LoginRequiredMixin, TemplateView):
 	template_name = 'distribucion_intereses.html'
 
 
+#Vista para Tabla de Amortizacion
+class TablaAmortizacionView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'tabla_amortizacion.html'
+
+
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
 

@@ -4,41 +4,72 @@
 {% block title %} Tabla de Amortizacion {% endblock title %}
 
 {% block content %}
-	<div class="distribucion-intereses" ng-controller="DistribucionInteresesPrestamosCtrl">
+	<div class="distribucion-intereses" ng-controller="TablaAmortizacionCtrl">
 		<h1>TABLA DE AMORTIZACION</h1>
 
-		<form name="OrdenForm" novalidate>
+		<form name="AmortizacionForm" novalidate>
 			<div>
 				<table class="table-orden-factura">
 					<tr>
-						<td colspan="2"> <span>TABLA DE AMORTIZACION</span></td>
+						<td colspan="4"> <span>TABLA DE AMORTIZACION</span></td>
 					</tr>
 					<tr>
-						<td>Para el año</td>
-						<td><input type="text" ng-model="di.agno"></td>
+						<td>Monto Solicitar</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoSolicitar"></td>
 					</tr>
 					<tr>
-						<td>Al</td>
-						<td><input type="text" ng-model="di.fecha" datepicker readonly></td>
+						<td>Monto Ahorrado</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoAhorrado"></td>
+						<td>Tasa Interes Anual</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.tasaInteresAhorrado"></td>
 					</tr>
 					<tr>
-						<td>% Prestamos</td>
-						<td><input type="text" ng-model="di.porcentaje"></td>
-						
+						<td>Monto Garantizado</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoGarantizado"></td>
+						<td>Tasa Interes Anual</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.tasaInteresGarantizado"></td>
 					</tr>
 					<tr>
-						<td>Fecha Posteo</td>
+						<td>Monto Cuota Capital</td>
 						<td>
-							<input type="text" ng-model="di.fechaPosteo" datepicker readonly>
+							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
 						</td>
+						<td>Cantidad Cuotas</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas"></td>
 					</tr>
 				</table>
 			</div>
 
 			<div class="botones-acciones-distribucion-intereses">
-				<button class="icon-uniE601 Boton boton-aprobar-sp" ng-click="VisualizarDistribucion($event)">Visualizar</button>
-				<button class="icon-cog Boton boton-rechazar-sp" ng-click="ProcesarDistribucion($event)">Procesar</button>
+				<button class="Boton boton-aprobar-sp" ng-click="calcularAmortizacion()">Visualizar</button>
 			</div>
+
+			<section>
+				<table class="listado-table">
+					<tr class="listado-table-header">
+						<td>Fecha</td>
+						<td>Capital</td>
+						<td>Ahorrado</td>
+						<td>Garantizado</td>
+						<td>Interes B. Ahorro</td>
+						<td>Interes Garan.</td>
+						<td>Interes TOTAL</td>
+						<td>Cuota</td>
+						<td>Balance</td>
+					</tr>
+					<tr ng-repeat="reg in registros">
+						<td>[[reg.fecha | date : 'dd/MM/yyyy']]</td>
+						<td>[[reg.capital | number : 2 ]]</td>
+						<td>[[reg.ahorrado | number : 2]]</td>
+						<td>[[reg.garantia | number : 2]]</td>
+						<td>[[reg.IA | number : 2]]</td>
+						<td>[[reg.IG | number : 2]]</td>
+						<td>[[reg.totalInteres | number : 2]]</td>
+						<td>[[reg.cuota | number : 2]]</td>
+						<td>[[reg.balance | number : 2]]</td>
+					</tr>
+				</table>
+			</section>
 			
 		</form>
 		

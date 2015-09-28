@@ -726,7 +726,79 @@
         }
       }
       
+    }])
+
+    //****************************************************
+    //TABLA DE AMORTIZACION                              *
+    //****************************************************
+    .controller('TablaAmortizacionCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+      
+      $scope.registros = [];
+
+      $scope.calcularAmortizacion = function() {
+        var registro = {};
+
+        var solicitar = $scope.ta.montoSolicitar;
+        var ahorrado = $scope.ta.montoAhorrado;
+        var garantia = $scope.ta.montoGarantizado;
+        var capital = $scope.ta.montoSolicitar / $scope.ta.cantidadCuotas;
+        var porcentajeCuotaAhorrado = ahorrado / solicitar;
+        var porcentajeCuotaGarantizado = garantia / solicitar;
+        var cuotaAh = capital * (porcentajeCuotaAhorrado/100);
+        var cuotaGr = capital * (porcentajeCuotaGarantizado/100);
+
+        var fecha = new Date();
+        var IntAh = 0;
+        var IntGr = 0;
+        var balance = solicitar;
+
+        for(i = 0; i<$scope.ta.cantidadCuotas; i++) {
+          registro = {};
+          balance -= registro.balance; 
+          
+          registro.fecha = fecha;
+          registro.capital = capital;
+          registro.ahorrado = ahorrado;
+          registro.garantia = garantia;
+          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/12/100);
+          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/12/100);
+          registro.totalInteres = registro.IA + registro.IG;
+          registro.cuota = capital + registro.totalInteres;
+          registro.balance = balance;
+          $scope.registros.push(registro);
+
+          fecha.setDate(fecha.getDate()+15);
+          ahorrado -= registro.ahorrado;
+          garantia -= registro.garantia;
+          
+        }
+
+      }
+
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
+
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
+
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
     }]);
       
-
 })(_);
