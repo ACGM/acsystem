@@ -2,17 +2,18 @@ from django.db import models
 
 from cuenta.models import DiarioGeneral
 
-from administracion.models import Socio
+from administracion.models import Socio, Suplidor
 
 class SolicitudCheque(models.Model):
-    estatus_choicer = (('p', 'Posteado'), ('R', 'Registrado'), ('C', 'Cancelado'))
+    estatus_choicer = (('A', 'Aprobada'), ('R', 'Rechazada'), ('P', 'En Proceso'))
 
     fecha = models.DateTimeField()
-    socio = models.ForeignKey(Socio)
+    socio = models.ForeignKey(Socio, null=True, blank=True)
+    suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
     concepto = models.CharField(max_length=150, null=False, blank=False)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=False, null=False)
+    prestamo = models.PositiveIntegerField() 
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Solicitud_rel', verbose_name='Cuentas', null=True, blank=True)
 
     def __unicode__(self):
         return '%i - %s' % (self.id, str(self.fecha))

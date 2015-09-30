@@ -3,6 +3,7 @@
 
 	.factory('SolicitudServices', ['$http','$q','$filter',function ($http, $q, $filter) {
 		var apiUrl='/conciliacion/Solicitudcheque/';
+		var apiRep='/conciliacion/Solicitudcheque/rg/'
 
 		function getSolicitudes(){
 			var defered = $q.defer();
@@ -17,10 +18,24 @@
 			 return deferred.promise;
 		};
 
+		function getSuplidor(){
+                var deferred =$q.defer();
+
+                $http.get('/api/suplidor/?format=json')
+                .success(function (data){
+                    deferred.resolve(data);})
+                .error(function (err){
+                    deferred.resource(err);
+                });
+                
+                return deferred.promise;
+        };
+
+
 		function setSolicitud(solicitud){
 			var deferred = $q.defer();
 
-			http.post(apiUrl, JSON.stringify({'solicitud':solicitud}))
+			$http.post(apiUrl, JSON.stringify({'solicitud':solicitud}))
                 .success(function (data){
                     deferred.resolve(data);
                 })
@@ -67,6 +82,19 @@
 			return deferred.promise;
 		};
 
+		function wFlow(solicitud){
+			var deferred = $q.defer();
+
+			$http.post(apiRep, JSON.stringify({'solicitud': solicitud}))
+				.success(function (data){
+					deferred.resolve(data);
+				})
+				.error(function (err){
+					deferred.resolve(err);
+				});
+			return	deferred.promise;
+		};
+
 		function socios() {
                 var deferred = $q.defer();
 
@@ -85,18 +113,26 @@
 			setSolicitud : setSolicitud,
 			getSolicitudesById  :  getSolicitudesById,
 			getSolicitudByStatus : getSolicitudByStatus,
-			socios		 : socios
+			socios		 : socios,
+			getSuplidor  : getSuplidor,
+			wFlow        : wFlow
 		};
 	}])
 	
-	.controller('SolicitudChCtrl', ['$scope','$filter', '$rootScope', 'SolicitudServices','$timeout',
-		function ($scope, $filter, $rootScope, SolicitudServices, $timeout) {
+	.controller('SolicitudChCtrl', ['$scope','$filter', '$rootScope', 'SolicitudServices','$timeout','$window',
+		function ($scope, $filter, $rootScope, SolicitudServices, $timeout, $window) {
 		$scope.lsSolicitud = [];
 		$scope.socios = [];
-		$scope.solicitud = null;
+		$scope.socioNombre = null;
+		$scope.solicitud = {};
+		$scope.DEstatus = null;
 		$scope.tableSocio =false;
+		$scope.tableSuplidor = false;
 		$scope.toggleCr = false;
 		$scope.toggleLs =true;
+		$scope.chk = null;
+		$scope.flap = false;
+		$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 
 		//Lista las solicitudes realizadas.
@@ -110,45 +146,146 @@
 	   		$event.preventDefault();
 
 	        $scope.solicitud.socioId = s.codigo;
-	        $scope.solicitud.socio = s.nombreCompleto 
+	        $scope.socioNombre = s.nombreCompleto 
 
 	        $scope.tableSocio = false;
 	      };
 
 
+		$scope.getSuplidor = function($event){
+                $event.preventDefault();
+                $scope.tableSuplidor = true;
+                $scope.tableSocio = false;
+                if($scope.suplidorNombre != null || $scope.suplidorNombre != undefined) {
+                  SolicitudServices.getSuplidor().then(function (data) {
+                    $scope.suplidor = data.filter(function (registro) {
+                       return $filter('lowercase')(registro.nombre
+                                          .substring(0,$scope.suplidorNombre.length)) == $filter('lowercase')($scope.suplidorNombre);
+                    });
+
+                    if($scope.suplidor.length > 0){
+                      $scope.tableSuplidor = true;
+                      $scope.suplidorNoExiste = '';
+                    } else {
+                      $scope.tableSuplidor = false;
+                      $scope.suplidorNoExiste = 'No existe el suplidor';
+                    }
+
+                  });
+                } else {
+                  SolicitudServices.getSuplidor().then(function (data) {
+                    $scope.suplidor = data;
+                    $scope.suplidorCodigo = '';
+                  });
+                }
+              };
+
+
+        $scope.selSuplidor = function($event, s) {
+	        $event.preventDefault();
+	        $scope.suplidorNombre = s.nombre;
+	        $scope.solicitud.suplidorId = s.id;
+	        $scope.tableSuplidor= false;
+	      };
+
 		//Lista las Solicitudes por estatus.
-		$scope.solicitudEstatus = function($event, estatus){
+		$scope.solicitudEstatus = function($event){
 			$event.preventDefault();
+			alert($scope.DEstatus);
+			
         	try {
-				SolicitudServices.getSolicitudByStatus(estatus).then(function (data){
-					$scope.lsSolicitud = data;
-				});
+        		
+				//SolicitudServices.getSolicitudByStatus(estatus).then(function (data){
+				//	$scope.lsSolicitud = data;
+				//});
 			}
 			 catch (e) {
 	          $rootScope.mostrarError(e);
 	        }
-		};
+			};
 
 		//Trae todo el detalle de una solicitud.
 		$scope.SolicitudId = function(id){
 			SolicitudServices.getSolicitudesById(id).then(function (data){
 				$scope.solicitud = data;
 			});
-		};
+			};
+
 
 		$scope.setSolicitud = function($event){
 			$event.preventDefault();
 			try{
-				SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
-					var resp = data;
-				});
+
+				var RegFecha = $scope.fecha.split('/');
+          		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+          		$scope.solicitud.fecha = FechaFormat;
+				
+				if($scope.solicitud.id == undefined){
+					$scope.solicitud.id = null;
+					//$scope.solicitud.estatus = 'R';
+				}
+				debugger;
+				//SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+				//	var resp = data;
+				//});
 			}
 			catch(e){
 				$rootScope.mostrarError(e);
 			}
+			};
+
+
+		$scope.workflow = function($event,id){
+			$event.preventDefault();
+			$scope.chk = id;
+			$scope.flap = true;
 		};
 
-		//Registra una nueva solicitud.
+		$scope.cancelarSolicitud = function($event){
+			$scope.toggleCr = false;
+			$scope.toggleLs = true;
+			$scope.solicitud = {};
+		};
+
+		$scope.nwRegistro = function($event){
+			$scope.toggleCr = true;
+			$scope.toggleLs = false;
+			$scope.solicitud = {};
+		};
+
+		$scope.ActEstatus = function($event,estatus){
+			$event.preventDefault();
+			var est = null;
+			if(estatus == "aceptado"){
+				est = "A";
+			}
+			else if( estatus == "cancelado") {
+				est = "R";
+			};
+
+			if(est != null){
+				var sol = {solicitud : $scope.chk, estatus : est};
+				SolicitudServices.wFlow(sol).then(function (data){
+					if(data == "Ok"){
+						alert("Solicitud #"+$scope.chk+" Aprobada.");
+					}
+					else{
+						alert("Ocurrio un error al intentar aprobar.");
+						console.log(data);
+					}
+				});
+			};
+			var data = $scope.lsSolicitud .filter(function (reg){
+				return reg.id == $scope.chk;
+			});
+			$scope.flap = true;
+			$scope.chk = null;
+			$window.sessionStorage['solicitud'] = JSON.stringify(data);
+
+	       	$window.open('/conciliacion/Solicitudcheque/rg', target='_blank'); 
+		};
+
+		//Registra una nueva solicitud.	
 		$scope.CrSolicitud = function($event){
 			$event.preventDefault();
 			
@@ -160,28 +297,17 @@
 			 catch (e) {
 	          $rootScope.mostrarError(e);
 	        }
-		};
-
-		$scope.cancelarSolicitud = function($event){
-			$event.preventDefault();
-			
-			$scope.solicitud = null;
-			$scope.tableSocio =false;
-			$scope.toggleCr = false;
-			$scope.toggleLs =true;
-
-			$scope.solicitudList();
-
-		}
+			};
 
 		$scope.getSocio = function($event) {
 	            $event.preventDefault();
 
 	            $scope.tableSocio = true;
 
-	            if($scope.solicitud.socio !== undefined) {
-	              AhorroServices.socios().then(function (data) {
+	            if($scope.socioNombre) {
+	              SolicitudServices.socios().then(function (data) {
 	                $scope.socios = data.filter(function (registro) {
+	                	console.log(registro);
 	                  return $filter('lowercase')(registro.codigo.toString()
 	                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
 	                });
@@ -203,12 +329,20 @@
 
 	              });
 	            } else {
-	              AhorroServices.socios().then(function (data) {
+	              SolicitudServices.socios().then(function (data) {
 	                $scope.socios = data;
 	                $scope.socioCodigo = '';
 	              });
 	            }
 	          };
 
-	}]);
+	}])
+	.controller('SolicitudImpCtrl',['$scope','$filter', '$rootScope','SolicitudServices','$timeout','$window',
+		function ($scope, $filter,$rootScope,$SolicitudServices,$timeout,$window){
+			$scope.regData = {};
+
+			$scope.fill = function(){
+				$scope.regData = JSON.parse($window.sessionStorage['solicitud']);
+			}
+		}]);
 })();

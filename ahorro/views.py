@@ -25,7 +25,15 @@ def insMaestra(self, CodSocio, Fecha, Monto):
     regMaestra.ahorro = regSocio
     regMaestra.balance = Monto + regSocio.balance
     regMaestra.save()
-    return '0'
+
+
+    tipo = TipoDocumento.objects.get(codigo='AH')
+    doc = DocumentoCuentas.objects.filter(documento = tipo)
+
+    for docu in doc:
+        self.setCuenta(regMaestra.id, doc, Fecha)
+
+    return 'Ok'
 
 
 def insAhorro(self, socioId):
@@ -44,6 +52,30 @@ def getSocioAhorro(self, codSocio):
                                        'from ahorro_ahorrosocio '
                                        'where socio_id =' + str(codSocio))
     return regSocio
+
+def setCuentaMaestra(self, idMaestra, doc, Fecha):
+    regMaestra = MaestraAhorro.objects.get(id= idMaestra)
+
+    cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+    diario = DiarioGeneral()
+    diario.fecha = fecha
+    diario.referencia = 'AH-' + str(idMaestra)
+    diario.cuenta = cuenta
+    diario.estatus = 'P'
+
+    if doc.accion == 'D':
+        diario.debito = monto
+        diario.credito = 0
+    else:
+        diario.debito = 0
+        diario.credito = monto
+
+    diario.save()
+
+
+    regMaestra.cuentas.add(diario)
+    return diario.id
 
 
 class MaestraAhorroView(DetailView):

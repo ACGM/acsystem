@@ -3580,6 +3580,40 @@ footer
 			text-align left
 			padding 0 .6em
 
+.listado-Sol-detail
+	& td
+		padding .17em 0
+		border 1px solid black
+		&:nth-child(1)
+			text-align center
+			& a
+				text-decoration none
+				padding .1em
+				color white
+				background blue;
+				border-radius 100%
+		&:nth-child(2) 
+			text-align center
+			padding .5em
+			width 8em
+		&:nth-child(3)
+			width 35em
+			padding-left .2em
+		&:nth-child(4)
+			width 10em
+			text-align left
+			padding 0 .6em
+		&:nth-child(5) 
+			color mamey
+			font-style bold
+			padding 0 .3em
+			text-align right
+			width 15em
+		&:nth-child(6)
+			width 5.1em
+			text-align left
+			padding 0 .6em
+
 .listado-rcb-detail
 	& td
 		padding .17em 0
@@ -3888,6 +3922,17 @@ footer
 		&:first-child
 			text-align center
 
+.Solsocios-table-search-panel	
+	border 1px solid black
+	position absolute
+	top 2.3em
+	left 7.5em
+	width 40em
+	z-index 900
+	& tr
+		&:first-child
+			text-align center
+
 .prestamo-table-search-panel	
 	border 1px solid black
 	position absolute
@@ -4165,5 +4210,71 @@ footer
 	padding 1em
 	& td
 		padding .5em
+
+.SolicitudCon-estatus
+	margin 1em
+	padding 1.3em
+	background verdeSuave
+	border-radius 5px
+	& select
+		width 15em
+		border-radius 3px
+		
+.SolicitudCon-lista
+	margin-left 1em
+
+.SolicitudCon-Crear
+	margin 1em
+	& td 
+		padding .5em
 	
 	
+.Solsuplidor-table-search	
+	border 1px solid black
+	position absolute
+	top 13em
+	left 21.5em
+	width 40em
+	z-index 900
+	& tr
+		&:first-child
+			text-align center
+
+.Solicitud-Flap 
+	position  fixed
+	top  0px
+	right 0px
+	bottom 0px
+	left 0px
+	background rgba(0,0,0,0.8)
+	z-index 99998
+	opacity .8
+	-webkit-transition opacity 400ms ease-in
+	-moz-transition opacity 400ms ease-in
+	transition opacity 400ms ease-in
+	pointer-events none
+
+.Solicitud-Flap 
+	&:target
+		opacity 1
+		pointer-events auto
+	& div
+		pointer-events all
+		width 400px
+		position relative
+		margin 10% auto
+		padding 5px 20px  13px 20px
+		border-radius 10px
+		background #fff
+		background -moz-linear-gradient(#fff, #999)
+		background -webkit-linear-gradient(#fff, #999)
+		background -o-linear-gradient(#fff, #999)
+		z-index 99999
+
+.flapClose
+	margin-left 30em
+	text-decoration none
+	
+.srFile
+	text-decoration none
+	color white

@@ -7,7 +7,7 @@
 	
 	<section id="SearchData">
 		<div class="content-socios-table">
-			<table class="socios-table-search-panel" ng-show="tableSocio">
+			<table class="Solsocios-table-search-panel" ng-show="tableSocio">
 				<tr>
 					<td colspan="3" class="cerrar-table">
 						<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
@@ -26,31 +26,71 @@
 			</table>
 		</div>
 
+		<div class="content-suplidor-table">
+					<table class="Solsuplidor-table-search" ng-show="tableSuplidor">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Codigo</td>
+							<td>Nombre</td>
+						</tr>
+						<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+							
+						</tr>
+					</table>
+				</div>
+
 	</section>
 
 	<div class="SolicitudCon-estatus"  ng-show="toggleLs">
-		<select name="status" ng-model="DEstatus" ng-disable="editer">
-							  <option value="R" ng-click="solicitudEstatus('R')">Registrado</option>
-							  <option value="C" ng-click="solicitudEstatus('C')">Cancelado</option>
-							  <option value="P" ng-click="solicitudEstatus('P')">Posteada</option>
+		<strong>Estatus de Solicitud:</strong>
+		 <select name="status" ng-model="DEstatus" >
+							  <option value="A">Aprobadas</option>
+							  <option value="R">Rechazadas</option>
+							  <option value="P">En Proceso</option> 
+		</select>
+		<a href="#" class="icon-uniE601 icon-search srFile" ng-click="solicitudEstatus($event)" tooltip="Filtrar" title="Filtrar Solicitudes"></a>
+		<div >
+			<button class="nuevo notasNW icon-file" ng-click="nwRegistro()" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
+		</div>
 	</div>
+	
+	<div class="Solicitud-Flap" ng-show="flap">
+		<div>
+			<a href="#" class="icon-delete flapClose" ng-click="flap=false"></a>
+			<p>Desea Aprobar ó rechazar Orden</p>
+			<button class="Boton BusquedaBtn icon-check" type="submit" ng-click="ActEstatus($event,'aceptado')">Aprobar</button> 
+			<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="ActEstatus($event,'cancelado')">Rechazar</button>
+		</div>
+		
+	</div>
+
 	<div class="SolicitudCon-lista"  ng-show="toggleLs">
-		<table class="SolicitudCon-table" ng-show="toggleLs">
-			<tr>
+		<table class="listado-table-f">
+			<tr class="listado-table-header-f">
 				<td>Registro</td>
 				<td>Fecha</td>
 				<td>Socio</td>
+				<td>Suplidor</td>
 				<td>Concepto</td>
 				<td>Monto</td>
+				<td>Estatus</td>
 				<td></td>
 			</tr>
-			<tr class="SolicitudCon-detalle" ng-repeat="s in lsSolicitud">
-				<td>s.id</td>
-				<td>s.fecha</td>
-				<td>s.socio</td>
-				<td>s.concepto</td>
-				<td>s.monto</td>
-				<td></td>
+			<tr class="listado-Sol-detail" ng-repeat="s in lsSolicitud">
+				<td>[[s.id]]</td>
+				<td>[[s.fecha |date: 'dd/MM/yyyy']]</td>
+				<td>[[s.socio]]</td>
+				<td>[[s.suplidor]]</td>
+				<td>[[s.concepto]]</td>
+				<td>[[s.monto |number:2]]</td>
+				<td>[[s.estatus]]</td>
+				<td><a href="#" class="icon-check" ng-click="workflow($event,s.id)"></a></td>
 			</tr>
 		</table>
 	</div>
@@ -60,33 +100,31 @@
 			<table>
 				<tr>
 					<td>Socio</td>
-					<td><input type="text" ng-keyup="getSocio($event)" ng-model="solicitud.socio" ng-focus="tableSocio=false" placeholder="Código o nombre del Socio"  ng-click="tableSocio=false; errorShow=false;" required></td>
+					<td>
+						<input type="text" ng-model="solicitud.socioId" ng-disable="true" class="disable" readonly="">
+						<input type="text" ng-keyup="getSocio($event)" ng-model="socioNombre" ng-focus="tableSocio=false" placeholder="Código o nombre del Socio"  ng-click="tableSocio=false; errorShow=false;" required>
+					</td>
+				</tr>
+				<tr>
+					<td>Suplidor</td>
+					<td>
+						<input type="text" ng-model="solicitud.suplidorId" ng-disable="true" class="disable" readonly="">
+						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getSuplidor($event)" class="producto-field-ei" required>
+					</td>
 				</tr>
 				<tr>
 					<td>Fecha</td>
-					<td><input type="text" ng-model="solicitud.fecha"  value="[[solicitud.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+					<td><input type="text" ng-model="fecha"  value="[[solicitud.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
 				</tr>
 				<tr>
 					<td>Concepto</td>
 					<td>
-						<input type="text" ng-model="solicitud.concepto">
+						<textarea name="" id="" cols="45" rows="8" ng-model="solicitud.concepto"></textarea>
 					</td>
 				</tr>
 				<tr>
 					<td>Monto</td>
 					<td><input type="text" ng-model="solicitud.monto" value="[[solicitud.monto | number: 2 ]"></td>
-				</tr>
-				<tr>
-					<div ng-if="solicitud.estatus !== null or solicitud.estatus !==undefined"> 
-						 <td>Estatus</td>
-						 <td>
-						 	<select name="EstatusS" form="SolicitudForm" ng-model="solicitud.estatus">
-							  <option value="P">Solicitud Posteada</option>
-							  <option value="R">Solicitud Registrada</option>
-							  <option value="C">Solicitud Cancelada</option> 
-							</select>
-						 </td>
-					</div>
 				</tr>
 				<tr>
 					<td>
