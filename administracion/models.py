@@ -222,6 +222,15 @@ class Socio(models.Model):
 
         super(Socio, self).save(*args, **kwargs)
 
+        #Preparar la tabla AhorroSocio con Balance en Cero cuando es la primera vez.
+        from ahorro.models import AhorroSocio
+        ah = AhorroSocio()
+        ah.socio = self
+        ah.balance = 0
+        ah.disponible = 0
+        ah.estatus = 'A'
+        ah.save()
+
     class Meta:
         ordering = ['codigo']
         verbose_name = 'Socio'
