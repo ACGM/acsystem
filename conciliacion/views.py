@@ -41,11 +41,11 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
         if socio != None:
-            socio = Socio.objects.get(codigo=socio)
-            solicitud.socio = socio
+            soc = Socio.objects.get(codigo=socio)
+            solicitud.socio = soc
         if suplidor != None:
-            suplidor = Suplidor.objects.get(id=Data['suplidor'])
-            solicitud.suplidor = suplidor
+            sup = Suplidor.objects.get(id=suplidor)
+            solicitud.suplidor = sup
         solicitud.concepto = concepto
         solicitud.monto = monto
         solicitud.prestamo = prestamo
