@@ -57,7 +57,7 @@ from cuenta.views import DiarioViewSet
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet, generarAhorro
-from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs
+from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs,SSolicitud
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet, AuxiliarViewSet
 
@@ -337,6 +337,7 @@ urlpatterns = patterns('',
     url(r'^contabilidad/MayorGeneral/$', mayorView.as_view(), name='mayor_general'),
     url(r'^contabilidad/RegDiario/$', CuentasView.as_view(), name='reg_diario'),
 
+
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),
     url(r'^cxpOrdenJson/$', CxpOrdenView.as_view(), name='Cxp_Ordenes_api'),
@@ -357,7 +358,8 @@ urlpatterns = patterns('',
     url(r'^conciliacion/notas$', NotasConciliacionView.as_view(), name='Notas_Conciliacion'),
     url(r'^conciliacion/notas/rg',SSNotasView.as_view(), name='Notas_Fechas' ),
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
-    url(r'^conciliacion/banco/rg', ConBancoLs.as_view(), name='Banco_Fechas'),
+    url(r'^conciliacion/banco/rg$', ConBancoLs.as_view(), name='Banco_Fechas'),
+    url(r'^conciliacion/Solicitudcheque/rg$',SSolicitud.as_view(), name='ImpSolicitud'),
 
     url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'), 
     

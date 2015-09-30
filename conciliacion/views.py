@@ -39,7 +39,6 @@ class SolicitudView(TemplateView):
     template_name = 'solicitudCheque.html'
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -56,23 +55,12 @@ class SolicitudView(TemplateView):
             data.append({
                 'id': sol.id,
                 'fecha': sol.fecha,
-                'socioId': sol.socio.id,
-                'socio': sol.socio.nombreCompleto,
+                'socioId': sol.socio.id if sol.socio != None else '',
+                'socio': sol.socio.nombreCompleto if sol.socio != None else '',
+                'suplidorId': sol.suplior.id if sol.suplior != None else '',
+                'suplidor': sol.suplidor.nombre if sol.suplidor != None else '',
                 'concepto': sol.concepto,
-                'monto': sol.monto,
-                'cuenta': [{
-                               'fecha': ctas.fecha,
-                               'cuentaId': ctas.cuenta.codigo,
-                               'cuenta': ctas.cuenta.descripcion,
-                               'referencia': ctas.referencia,
-                               'auxiliarId': ctas.auxiliar.codigo,
-                               'auxiliar': ctas.auxiliar.descripcion,
-                               'estatus': ctas.estatus,
-                               'debito': ctas.debito,
-                               'credito': ctas.credito
-
-                           }
-                           for ctas in DiarioGeneral.objects.filter(referencia='SLC-' + str(sol.id))]
+                'monto': sol.monto
             })
             return JsonResponse(data, safe=False)
 
@@ -100,6 +88,21 @@ class SolicitudView(TemplateView):
         return HttpResponse('1')
 
 
+class SSolicitud(TemplateView):
+    template_name = 'impSolicitud.html'
+
+    def post(self, request):
+        data = json.loads(request.body)
+        try:
+            sol = SolicitudCheque.objects.get(id=data['solicitud'])
+            sol.estatus = data['estatus']
+            sol.save()
+
+            return HttpResponse("Ok")
+        except Exception, e:
+            return HttpResponse(e.message)
+        
+    
 class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
@@ -264,6 +267,7 @@ class SSNotasView(DetailView):
 
         regNota.cuentas.add(regDiario)
 
+
 class ConBancoView(TemplateView):
     template_name = "ConBanco.html"
 
@@ -313,6 +317,7 @@ class ConBancoView(TemplateView):
             banco.monto = Data['monto']
             banco.save(())
         return HttpResponse(Data['tipo'])
+
         
 class ConBancoLs(DetailView):
     queryset = ConBanco.objects.all()
