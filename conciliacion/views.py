@@ -8,11 +8,13 @@ from rest_framework import viewsets
 from django.shortcuts import render
 
 from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
-from administracion.models import Socio, CoBeneficiario
+from administracion.models import Socio, CoBeneficiario, Suplidor
 
 # Local Imports
 from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
+
+
 
 
 class SolicitudViewSet(viewsets.ModelViewSet):
@@ -34,7 +36,25 @@ class conBancoViewSet(viewsets.ModelViewSet):
     queryset = ConBanco.objects.all()
     serializer_class = ConBancoSerializer
 
-
+def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
+    try:
+        solicitud = SolicitudCheque()
+        solicitud.fecha = fecha
+        if socio != None:
+            socio = Socio.objects.get(codigo=socio)
+            solicitud.socio = socio
+        if suplidor != None:
+            suplidor = Suplidor.objects.get(id=Data['suplidor'])
+            solicitud.suplidor = suplidor
+        solicitud.concepto = concepto
+        solicitud.monto = monto
+        solicitud.prestamo = prestamo
+        solicitud.estatus = 'P'
+        solicitud.save()
+        return 'Ok'
+    except Exception, e:
+        return e.message
+    
 class SolicitudView(TemplateView):
     template_name = 'solicitudCheque.html'
 
@@ -69,11 +89,16 @@ class SolicitudView(TemplateView):
         Data = DataT['solicitud']
 
         if Data['id'] is None:
-            socio = Socio.objects.get(id=Data['socioId'])
+
 
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
-            solicitud.socio = socio
+            if Data['socio'] != None:
+                socio = Socio.objects.get(codigo=Data['socio'])
+                solicitud.socio = socio
+            if Data['suplidor'] != None:
+                suplidor = Suplidor.objects.get(id=Data['suplidor'])
+                solicitud.suplidor = suplidor
             solicitud.concepto = Data['concepto']
             solicitud.monto = Data['monto']
             solicitud.estatus = Data['estatus']
