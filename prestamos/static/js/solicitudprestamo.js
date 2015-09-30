@@ -302,8 +302,8 @@
     //****************************************************
     //CONTROLLERS                                        *
     //****************************************************
-    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService', 'MaestraPrestamoService',
-                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService, MaestraPrestamoService) {
+    .controller('SolicitudPrestamoCtrl', ['$scope', '$filter', '$window', 'SolicitudPrestamoService', 'FacturacionService', 'MaestraPrestamoService', 'AhorroServices',
+                                        function ($scope, $filter, $window, SolicitudPrestamoService, FacturacionService, MaestraPrestamoService, AhorroServices) {
       
       //Variables de Informacion General (EMPRESA)
       $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
@@ -542,6 +542,13 @@
         $scope.solicitante.salario = $filter('number')(s.salario,2);
         $scope.tableSocio = false;
 
+        //Traer el ahorro capitalizado del socio
+        AhorroServices.getAhorroSocio($scope.solicitante.codigoEmpleado).then(function (data) {
+          $scope.ahorroSocio = data;
+          console.log(data); 
+          $scope.solicitud.ahorrosCapitalizados = $filter('number')(data[0]['balance'], 2);
+        });
+
         $scope.getPrestamosBalances(s.codigo); //Buscar prestamos para unificar.
 
         MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
@@ -644,7 +651,7 @@
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
         
-        $scope.solicitud.ahorrosCapitalizados = "200,000";
+        $scope.solicitud.ahorrosCapitalizados = "0";
 
         $scope.showLSP = false;
         $scope.ArrowLSP = 'DownArrow';

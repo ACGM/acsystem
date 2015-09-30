@@ -220,8 +220,8 @@
     //CONTROLLERS                                        *
     //****************************************************
     .controller('SolicitudODCtrl', ['$scope', '$filter', '$window', 'SolicitudOrdenDespachoService','SolicitudPrestamoService', 'FacturacionService', 
-                                    'InventarioService', 'MaestraPrestamoService', '$rootScope',
-                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService, $rootScope) {
+                                    'InventarioService', 'MaestraPrestamoService', '$rootScope', 'AhorroServices',
+                                function ($scope, $filter, $window, SolicitudOrdenDespachoService, SolicitudPrestamoService, FacturacionService, InventarioService, MaestraPrestamoService, $rootScope, AhorroServices) {
       
       //Variables de Informacion General (EMPRESA)
       $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
@@ -479,6 +479,13 @@
         $scope.solicitante.cedula = s.cedula;
         $scope.solicitante.salario = $filter('number')(s.salario,2);
         $scope.tableSocio = false;
+
+        //Traer el ahorro capitalizado del socio
+        AhorroServices.getAhorroSocio($scope.solicitante.codigoEmpleado).then(function (data) {
+          $scope.ahorroSocio = data;
+          console.log(data); 
+          $scope.solicitud.ahorrosCapitalizados = $filter('number')(data[0]['balance'], 2);
+        });
 
         MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
 

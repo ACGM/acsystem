@@ -480,6 +480,9 @@ class MarcarPrestamoComoDCView(LoginRequiredMixin, View):
 				p.estatus = accion
 				p.save()
 
+			# Si es para marcar como cheque se creara la solicitud de cheque en el modulo de Conciliacion
+			#Codigo va aqui
+
 			return HttpResponse(1)
 
 		except Exception as e:
