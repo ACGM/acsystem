@@ -238,6 +238,9 @@
 			$scope.cuentas = [];
 		    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
 
+			AhorroServices.socios().then(function (data) {
+				$scope.todosLosSocios = data;
+			});
 
 			$scope.getListaAhorro = function(){
 
@@ -373,17 +376,17 @@
 	            $scope.tableSuplidor = false;
 
 	            if($scope.socioNombre !== undefined) {
-	              AhorroServices.socios().then(function (data) {
-	                $scope.socios = data.filter(function (registro) {
+
+	                $scope.socios = $scope.todosLosSocios.filter(function (registro) {
 	                  return $filter('lowercase')(registro.codigo.toString()
 	                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-	                });
+	                 });
 
 	                if($scope.socios.length == 0){
-	                	$scope.socios = data.filter(function (registro) {
-	                  return $filter('lowercase')(registro.nombreCompleto
-	                  		.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-	                });
+	                	$scope.socios = $scope.todosLosSocios.filter(function (registro) {
+	                  		return $filter('lowercase')(registro.nombreCompleto
+	                  			.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	                	});
 	                }
 
 	                if($scope.socios.length > 0){
@@ -394,12 +397,8 @@
 	                  $scope.socioNoExiste = 'No existe el socio';
 	                }
 
-	              });
 	            } else {
-	              AhorroServices.socios().then(function (data) {
-	                $scope.socios = data;
-	                $scope.socioCodigo = '';
-	              });
+	            	$scope.socios = $scope.todosLosSocios;
 	            }
 	          };
 

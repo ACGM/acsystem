@@ -419,16 +419,52 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLEI = 'UpArrow';
 
+      //Traer todas las cuentas a javascript
+      appService.allCuentasContables().then(function (data) {
+        if(data.length > 0) {
+          $scope.todasLasCuentas = data;
+        }
+      });
+
       // Cuentas
       $scope.cuentasBuscar = function($event) {
 
-        appService.allCuentasContables().then(function (data) {
-          if(data.length > 0) {
-            console.log(data);
-            $scope.cuentasContables = data
-            $scope.tableCuenta = true;
-          }
-        });
+        if(!isNaN($scope.Postear.cuentaBuscar)) {
+          //Para cuando es el numero de la cuenta
+          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+            return item.codigo.toString().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar;
+          });
+        } else {
+          //Para cuando es la descripcion de la cuenta
+          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+            return item.descripcion.toLowerCase().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar.toLowerCase();
+          });
+        }
+        $scope.tableCuenta = true;
+      }
+
+      // Agregar una cuenta
+      $scope.addCuentaContable = function($event, cuenta) {
+        $event.preventDefault();
+        var desgloseCuenta = new Object();
+
+        desgloseCuenta.cuenta = cuenta.codigo;
+        desgloseCuenta.descripcion = cuenta.descripcion;
+        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+        desgloseCuenta.debito = 0;
+        desgloseCuenta.credito = 0;
+
+        $scope.desgloseCuentas.push(desgloseCuenta);
+        $scope.tableCuenta = false;
+      }
+
+      $scope.quitarCC = function(desgloseC) {
+        if($scope.desgloseCuentas.length == 2) {
+          $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
+        } else {
+          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+          $scope.totalDebitoCredito();
+        }
       }
 
       // Mostrar/Ocultar panel de Listado de Entrada Inventario
@@ -929,21 +965,6 @@
         $window.open('/inventario/print/{entrada}'.replace('{entrada}',entrada.id), target='_blank'); 
       }
 
-      // Agregar una cuenta
-      $scope.addCuentaContable = function($event, cuenta) {
-        $event.preventDefault();
-        var desgloseCuenta = new Object();
-
-        desgloseCuenta.cuenta = cuenta.codigo;
-        desgloseCuenta.descripcion = cuenta.descripcion;
-        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
-        desgloseCuenta.debito = 0;
-        desgloseCuenta.credito = 0;
-
-        $scope.desgloseCuentas.push(desgloseCuenta);
-        $scope.tableCuenta = false;
-      }
-
       //Funcion para postear los registros seleccionados. (Postear es llevar al Diario)
       $scope.postear = function(){
         var idoc = 0;
@@ -1018,11 +1039,16 @@
         $scope.totalDebito = 0.00;
         $scope.totalCredito = 0.00;
 
-console.log($scope.desgloseCuentas.length)
         $scope.desgloseCuentas.forEach(function (documento) {
           console.log(documento)
-          $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
-          $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+
+          if(documento.debito.length > 0) {
+            $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+          }
+
+          if(documento.credito.length > 0) {
+            $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+          }
         });
       }
 

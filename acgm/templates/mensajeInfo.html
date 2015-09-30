@@ -34,8 +34,8 @@
 						<td>[[desgloseC.cuenta]]</td>
 						<td>[[desgloseC.descripcion]]</td>
 						<td>[[desgloseC.ref]]</td>
-						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.debito" ng-bind="desgloseC.debito"></td>
-						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.credito" ng-bind="desgloseC.credito"></td>
+						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.debito" ng-bind="desgloseC.debito" ng-keyup="totalDebitoCredito()"></td>
+						<td><input type="text" class="cantidad bg-transparent align-right resaltar-valor" ng-model="desgloseC.credito" ng-bind="desgloseC.credito" ng-keyup="totalDebitoCredito()"></td>
 						<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarCC(desgloseC)"></a></td>
 					</tr>
 					<tr>
