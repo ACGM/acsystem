@@ -2,14 +2,13 @@ from django.contrib import admin
 
 from acgm.actions import export_as_excel
 
-from cuenta.models import Auxiliar
 from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
 								 TipoDocumento, Periodo, Empresa, Cobrador, DocumentoCuentas, \
 								 CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN, \
-								 UserExtra, ArchivoBanco, CuentasAuxiliar
+								 UserExtra, ArchivoBanco
 
 
 
@@ -20,10 +19,6 @@ class CoBeneficiarioInline(admin.StackedInline):
 class OpcionInline(admin.StackedInline):
 	model = Opcion
 	extra = 2
-
-# class AuxiliarInline(admin.StackedInline):
-# 	model = Auxiliar
-# 	extra = 1
 
 @admin.register(ArchivoBanco)
 class ArchivoBancoAdmin(admin.ModelAdmin):
@@ -196,7 +191,3 @@ class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
 
-@admin.register(CuentasAuxiliar)
-class CuentasAuxiliarAdmin(admin.ModelAdmin):
-	list_display = ['id', 'cuenta', 'tipoAuxiliar']
-	list_editable = ('cuenta', 'tipoAuxiliar')

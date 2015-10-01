@@ -59,7 +59,7 @@ from administracion.views import ListadoCategoriasPrestamosViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet, generarAhorro
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs,SSolicitud
 from facturacion.views import ListadoFacturasViewSet
-from cuenta.views import CuentasViewSet, AuxiliarViewSet
+from cuenta.views import CuentasViewSet
 
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
 
@@ -91,7 +91,6 @@ router=routers.DefaultRouter()
 
 #Cuentas
 router.register(r'cuentas', CuentasViewSet)
-router.register(r'auxiliar', AuxiliarViewSet)
 router.register(r'diario', DiarioViewSet)
 
 #CXP

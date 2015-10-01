@@ -479,18 +479,6 @@ class UserExtra(models.Model):
         unique_together = ('usuario', 'localidad', 'perfil')
 
 
-# Cuentas para Relacionar con Auxiliares (Socios/Suplidores)
-class CuentasAuxiliar(models.Model):
-    auxiliar_choices = (('SO', 'Socios'), ('SU', 'Suplidores'))
-    
-    cuenta = models.ForeignKey(Cuentas)
-    tipoAuxiliar = models.CharField("Tipo Auxiliar", max_length=2, choices=auxiliar_choices, default='SO')
-
-    class Meta:
-        verbose_name = 'Cuentas para Auxiliar (Automatico)'
-        verbose_name_plural = 'Cuentas para Auxiliares (Automatico)'
-
-
 # Tipos de Documentos
 class TipoDocumento(models.Model):
     codigo = models.CharField(max_length=4)
