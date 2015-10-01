@@ -113,9 +113,12 @@
 	.controller('ChequeCtrl', ['$scope','$filter', '$rootScope', 'ChequesServices','$timeout', 
 		function ($scope, $filter, $rootScope, ChequesServices, $timeout) {
 		$scope.LsSolicitud = [];
-		$scope.Solicitud = null;
+		
+		$scope.Solicitud = {};
 		$scope.LsCheques = [];
-		$scope.reCheque = null;
+
+		$scope.reCheque = {};
+		
 		$scope.ToggleCh = false;
 		$scope.ToggleSl = false;
 		$scope.ToggleNCh = false;
@@ -144,14 +147,14 @@
 		};
 
 		$scope.setConCheque = function($event){
-				try{
-					ChequesServices.setCheques($scope.reCheque).then(function (data){
-						var resp = data;
-					});
-				}
-				catch(e){
-					$rootScope.mostrarError(e);
-				}
+			try{
+				ChequesServices.setCheques($scope.reCheque).then(function (data){
+					var resp = data;
+				});
+			}
+			catch(e){
+				$rootScope.mostrarError(e);
+			}
 			}
 
 		$scope.getSolicitud = function($event, id){

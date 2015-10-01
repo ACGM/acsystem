@@ -92,14 +92,13 @@ class SolicitudView(TemplateView):
 
         if Data['id'] is None:
 
-
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
-            if Data['socio'] != None:
-                socio = Socio.objects.get(codigo=Data['socio'])
+            if Data['socioId'] != None:
+                socio = Socio.objects.get(codigo=Data['socioId'])
                 solicitud.socio = socio
-            if Data['suplidor'] != None:
-                suplidor = Suplidor.objects.get(id=Data['suplidor'])
+            if Data['suplidorId'] != None:
+                suplidor = Suplidor.objects.get(id=Data['suplidorId'])
                 solicitud.suplidor = suplidor
             solicitud.concepto = Data['concepto']
             solicitud.monto = Data['monto']
@@ -134,7 +133,6 @@ class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -152,6 +150,9 @@ class ChequesView(TemplateView):
             data.append({
                 'id': chk.id,
                 'solicitudId': chk.solicitud.id + '-' + chk.solicitud.fecha,
+                'beneficiario': chk.solicitud.socio.nombreCompleto if hk.solicitud.socio != None else chk.solicitud.suplidor.nombre,
+                'concepto': chk.solicitud.concepto,
+                'monto': chk.solicitud.monto,
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
                 'estatus': chk.estatus
@@ -161,24 +162,29 @@ class ChequesView(TemplateView):
     def post(self, request):
         DataT = json.loads(request.body)
         Data = DataT['cheque']
+        try:
+            if Data['id'] is None:
+                solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
 
-        if Data['id'] is None:
-            solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+                cheque = ConcCheques()
+                cheque.solicitud = solicitud
+                cheque.chequeNo = Data['noCheque']
+                cheque.fecha = Data['fecha']
+                cheque.estatus = 'R'
+                cheque.save()
 
-            cheque = ConcCheques()
-            cheque.solicitud = solicitud
-            cheque.chequeNo = Data['noCheque']
-            cheque.fecha = Data['fecha']
-            cheque.estatus = 'R'
-            cheque.save()
+            else:
+                cheque = ConcCheques.objects.get(id=Data['id'])
+                cheque.estatus = Data['estatus']
+                cheque.save()
 
-        else:
-            cheque = ConcCheques.objects.get(id=Data['id'])
-            cheque.fecha = Data['fecha']
-            cheque.estatus = Data['estatus']
-            cheque.save()
+            return HttpResponse('Ok')
+        except Exception, e:
+             return HttpResponse(e.message)
 
-        return HttpResponse('1')
+class SChequeView(TemplateView):
+    template_name="impCheque.html"
+            
 
 
 class NotasConciliacionView(TemplateView):

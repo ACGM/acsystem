@@ -1,6 +1,3 @@
-// reciboIngCtrl
-
-
 (function(_){
 	angular.module('cooperativa.reciboIng',['ngAnimate'])
 
@@ -47,7 +44,7 @@
 					});
 
 				return deferred.promise;
-			}
+			};
 
 			function socios() {
                 var deferred = $q.defer();
@@ -60,13 +57,27 @@
                     }));
                   });
                   return deferred.promise;
+            };
+
+            function postRecibo(recibo){
+            	var deferred = $q.defer();
+            	$http.post('/postearRecibo', JSON.stringify({'recibo': recibo}))
+            		.success(function (data){
+            			deferred.resolve(data);
+            		})
+            		.error(function (err){
+            			deferred.resolve(err);
+            		});
+
+            	return deferred.promise;
             }
 
 			return {
 				getRecibos : getRecibos,
 				getReciboBySocio : getReciboBySocio,
 				setRecibo : setRecibo,
-				socios : socios
+				socios : socios,
+				postRecibo : postRecibo
 			};
 		}])
 		
@@ -187,6 +198,23 @@
 			      $timeout(function(){$scope.errorShow = false;}, 3000);   
 		    	};
 
+		    $scope.postRecibo = function($event,id){
+		    	var recibo = {};
+		    	recibo.fecha =
+		    	reciboIngServices.postRecibo(recibo).then(function (data){
+		    		if(data == "Ok"){
+		    			alert("Recibo #"+id+" ha sido Posteado")
+		    			$scope.reciboLst = true;
+						$scope.reciboCr = false;
+						$scope.tableSocio = false;
+						$scope.tablePrest =  false;
+		    			$scope.getList();
+		    		}else{
+		    			$rootScope.mostrarError("Ha Ocurrido un error al intentar postear el recibo #"+id)
+		    		}
+		    	});
+		    };
+
 	        $scope.setRecibo = function($event){
 	        	$event.preventDefault();
 	  	        	var RegFecha = $scope.fecha.split('/');
@@ -206,5 +234,6 @@
           			$rootScope.mostrarError(ex.message);
           		}
 	        	};
+
 }]); 
 })(_);

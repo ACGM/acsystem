@@ -8,6 +8,8 @@ from administracion.models import Socio
 from prestamos.models import MaestraPrestamo
 from prestamos.views import guardarPagoCuotaPrestamo
 from ahorro.models import AhorroSocio, MaestraAhorro
+from cuenta.models import DiarioGeneral, Cuentas
+from administracion.models import Socio, DocumentoCuentas, TipoDocumento
 
 from rest_framework import viewsets
 
@@ -16,9 +18,34 @@ from .models import DetalleRecibo, RecibosIngreso
 class reciboPost(TemplateView):
     template_name="recigoImp.html"
 
+    def setCuentaMaestra(self, idMaestra, doc, Fecha):
+        regMaestra = MaestraAhorro.objects.get(id= idMaestra)
+
+        cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+        diario = DiarioGeneral()
+        diario.fecha = fecha
+        diario.referencia = 'AH-' + str(idMaestra)
+        diario.cuenta = cuenta
+        diario.estatus = 'P'
+
+        if doc.accion == 'D':
+            diario.debito = monto
+            diario.credito = 0
+        else:
+            diario.debito = 0
+            diario.credito = monto
+
+        diario.save()
+
+
+        regMaestra.cuentas.add(diario)
+        return diario.id
+
     def post(self, request):
-        registro = self.request.GET.get('recibo')
-        fecha = self.request.GET.get('fecha')
+        data = json.loads(request.body)
+        registro = data['recibo']
+        fecha = data['fecha']
 
         recibo = RecibosIngreso.objects.get(id=registro)
 
@@ -30,10 +57,18 @@ class reciboPost(TemplateView):
         regMaestra.monto = recibo.montoAhorro
         regMaestra.estatus = 'P'
         regMaestra.save()
+
+        tipo = TipoDocumento.objects.get(codigo='AH')
+        doc = DocumentoCuentas.objects.filter(documento = tipo)
+
+        for docu in doc:
+            self.setCuenta(regMaestra.id, doc, Fecha)
+
+        return 'Ok'
         
-        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,0,'RI')
+        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RI-'+str(recibo.id),'RI')
 
-
+        return HttpResponse('Ok')
 
 class reciboTemplateView(TemplateView):
     template_name = "reciboIng.html"

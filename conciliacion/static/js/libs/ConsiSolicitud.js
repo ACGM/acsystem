@@ -31,7 +31,6 @@
                 return deferred.promise;
         };
 
-
 		function setSolicitud(solicitud){
 			var deferred = $q.defer();
 
@@ -223,12 +222,26 @@
 				
 				if($scope.solicitud.id == undefined){
 					$scope.solicitud.id = null;
-					//$scope.solicitud.estatus = 'R';
-				}
-				debugger;
-				//SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
-				//	var resp = data;
-				//});
+					$scope.solicitud.estatus = 'R';
+				};
+				
+				if($scope.solicitud.socioId == undefined){
+					$scope.solicitud.socioId = null;
+				};
+
+				if($scope.solicitud.suplidorId == undefined){
+					$scope.solicitud.suplidorId = null;
+				};
+
+				SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+					if(data=="Ok"){
+						alert("Solicitud Creada");
+						$scope.solicitudList();
+					}else{
+						$rootScope.mostrarError("No fue posible Crear la solicitud");
+						console.log(data);
+					}
+				});
 			}
 			catch(e){
 				$rootScope.mostrarError(e);

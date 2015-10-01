@@ -129,6 +129,19 @@
 			return deferred.promise;
 		};
 
+		function seeDespreciado(){
+			deferred = $q.defer();
+
+			$http.get('/activosDepresiados?format=json')
+				.success(function (data){
+					deferred.resolve(data);
+				})
+				.error(function (err){
+					deferred.resolve(err);
+				});
+
+			return deferred.promise;
+		};
 
 
 		return {
@@ -140,7 +153,8 @@
 			getCategoria    : getCategoria,
 			getDocCuentas	: getDocCuentas,
 			getLocalidad    : getLocalidad,
-			seeHystoric		: seeHystoric
+			seeHystoric		: seeHystoric,
+			seeDespreciado	: seeDespreciado
 		};
 	}])
 	
@@ -467,6 +481,17 @@
 				
 			};
 			
+		}])
+	.controller('ActivoDepCtrl', ['$scope', '$filter', 'ActivoServices', '$timeout',
+		function($scope, $filter, ActivoServices, $timeout){
+			$scope.LsData = [];
+			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+			
+			$scope.initial = function(){
+				ActivoServices.seeDespreciado().then(function (data){
+					$scope.LsData = data;
+				});
+			}
 		}]);
 
 })();
