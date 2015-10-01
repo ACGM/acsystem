@@ -81,9 +81,10 @@ class SolicitudView(TemplateView):
                 'suplidor': sol.suplidor.nombre if sol.suplidor != None else '',
                 'concepto': sol.concepto,
                 'monto': sol.monto,
-                'estatus': sol.estatus
+                'estatus': sol.estatus,
             })
-            return JsonResponse(data, safe=False)
+            
+        return JsonResponse(data, safe=False)
 
     def post(self, request):
         DataT = json.loads(request.body)
