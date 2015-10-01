@@ -53,7 +53,7 @@ class InventarioHSalidas(models.Model):
 		if total == None:
 			total = 0
 
-		return '$%s' % str(format(total,',.2f'))
+		return '%s' % str(format(total,',.2f'))
 
 	def __unicode__(self):
 		return '%i' % (self.id)
@@ -96,6 +96,9 @@ class InventarioH(models.Model):
 			return ''
 	fechaVencimiento = property(_get_fecha_vencimiento)
 
+	def codigoSuplidor(self):
+		return self.suplidor.id
+
 	@property
 	def totalGeneral(self):
 		total = 0.0
@@ -105,7 +108,7 @@ class InventarioH(models.Model):
 		if total == None:
 			total = 0
 
-		return '$%s' % str(format(total,',.2f'))
+		return '%s' % str(format(total,',.2f'))
 
 	def __unicode__(self):
 		return '%i' % (self.id)

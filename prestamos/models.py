@@ -12,13 +12,13 @@ from datetime import timedelta
 import datetime
 import decimal
 
-# Cheques
-class Cheque(models.Model):
+# # Cheques
+# class Cheque(models.Model):
 
-	estatus_choices = (('A','Aprobado'),('R','Rechazado'),)
+# 	estatus_choices = (('A','Aprobado'),('R','Rechazado'),)
 
-	chequeNo = models.IntegerField()
-	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
+# 	chequeNo = models.IntegerField()
+# 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
 
 
 # Solicitud de Prestamos
@@ -127,6 +127,14 @@ class SolicitudOrdenDespachoH(models.Model):
 	def codigoSocio(self):
 		return self.socio.codigo
 
+	@property
+	def codigoSuplidor(self):
+		return self.suplidor.id
+
+	@property
+	def valorInteresOD(self):
+		return self.netoDesembolsar * (self.tasaInteresAnual/100)
+
 	def __unicode__(self):
 		return '%s' % (str(self.noSolicitud))
 
@@ -171,7 +179,7 @@ class MaestraPrestamo(models.Model):
 	fechaDesembolso = models.DateField(null=True, blank=True)
 	usuarioDesembolso = models.ForeignKey(User, related_name='+', null=True)
 	fechaEntrega = models.DateField(null=True, blank=True)
-	chequeNo = models.ForeignKey(Cheque, null=True, blank=True)
+	chequeNo = models.PositiveIntegerField(null=True, blank=True)
 	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	valorAhorro = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	balance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)

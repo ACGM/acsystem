@@ -290,7 +290,7 @@ urlpatterns = patterns('',
                                                                                                             name='solicitud_od_api_BySuplidorRangoFecha'),
     url(r'^api/prestamos/solicitudes/od/fecha/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', SolicitudesODAPIViewByCodigoSuplidor.as_view(), \
                                                                                                     name='solicitudes_by_rangoFecha'),
-    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
+    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_orden_despacho_api'),
     url(r'^solicitudODjson/$', SolicitudODById.as_view(), name='Solicitud_ODById'),
     url(r'^solicitudOD/print/(?P<noSolicitud>[\d]+)/$', ImprimirODView.as_view(), name='ordendespacho_print'),
     url(r'^prestamos/reportes/solicitudesOD/$', rptSolicitudesBySuplidorRangoFecha.as_view(), name='solicitudes_orden_despacho_reporte'),

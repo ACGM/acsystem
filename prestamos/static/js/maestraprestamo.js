@@ -770,8 +770,8 @@
           registro.capital = capital;
           registro.ahorrado = ahorrado;
           registro.garantia = garantia;
-          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/12/100);
-          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/12/100);
+          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/24/100);
+          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/24/100);
           registro.totalInteres = registro.IA + registro.IG;
           registro.cuota = capital + registro.totalInteres;
           registro.balance = balance;

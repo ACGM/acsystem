@@ -22,5 +22,5 @@ class DiarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DiarioGeneral
         many = True
-        fields = ('id', 'fecha', 'cuenta', 'auxiliar', 'referencia', 'tipoDoc', 'debito', 'credito', 'estatus')
+        fields = ('id', 'fecha', 'cuenta', 'referencia', 'tipoDoc', 'debito', 'credito', 'estatus')
 
