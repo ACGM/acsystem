@@ -3,10 +3,61 @@
 {% block title %} Solicitud Cheque {% endblock title %}
 
 {% block content %}
-<section class="SolicitudImp" ng-controller="SolicitudImpCtrl">
-	<div>
-		hello
+<section class="SolicitudImp" ng-controller="SolicitudImpCtrl" ng-init="loadAll()">
+	<div class="Solicitud-Cheque-header">
+			<h2>Solicitud de Cheques</h2>
+			
+			<span class="printAHorroFecha">Fecha: [[fecha]]</span>
 	</div>
+	<div class="Solicitud-Cheque-detalle">
+
+		<div class="Solicitud-Cheque-monto">
+			
+			<table>
+				<tr>
+					<td><strong>Solicitante</strong></td>
+					<td>:</td>
+					<td>
+						<div ng-ig="regData[0].socio != null">[[regData[0].socio]]</div>
+						<div ng-if="regData[0].suplidor != null">[[regData[0].suplidor]]</div> </span>
+					</td>
+				</tr>
+				<tr>
+					<td><strong>Fecha de solicitud</strong></td>
+					<td>:</td>
+					<td>[[regData[0].fecha | date: 'dd/MM/yyyy']]</td>
+				</tr>
+				<tr>
+					<td><strong>Monto Solicitado</strong></td>
+					<td>:</td>
+					<td>[[regData[0].monto | number: 2]]</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="Solicitud-Cheque-Concepto">
+			<strong><h3>Concepto:</h3></strong>
+			<br>
+			<span class="item">[[regData[0].concepto]]</span>
+		</div>
+
+	</div>
+	
+	<div class="Solicitud-Cheque-Firmas">
+		<table>
+			<tr class="lineas">
+				<td>_______________________________</td>
+				<td>_______________________________</td>
+				<td>_______________________________</td>
+			</tr>
+			<tr class="centrador">
+				<td> Aprobador 1</td>
+				<td> Aprobador 2</td>
+				<td> Aprobador 3</td>
+			</tr>
+		</table>
+	</div>
+
 </section>
 
 {% endblock content %}
