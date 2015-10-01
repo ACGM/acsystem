@@ -169,6 +169,13 @@
 				$scope.actData = {};
 				};
 
+			$scope.regFechaFin = function($event){
+				$event.preventDefault();
+
+				var fecha = $scope.actData.fechaAdq.split('/');
+				var agnoMod = parseInt(fecha[2]) + parseInt($scope.actData.agnosVu);
+				$scope.actData.fechaDep = fecha[0]+'/'+fecha[1]+'/'+agnoMod;
+			}
 
 			$scope.impActivos = function($event, id){
 				$event.preventDefault();
@@ -409,15 +416,19 @@
 		$scope.setDepresiacion = function (){
 			try{
 				
-				var RgFechaA = $scope.fechaDesp.fechaI.split('/');
+				var RgFechaA = $scope.fechaF.split('/');
       			var FechaFormat = RgFechaA[2] + '-' + RgFechaA[1] + '-' + RgFechaA[0];
       			$scope.fechaDesp.fechaI = FechaFormat;
-
-      			var RgFechaB = $scope.fechaDesp.fechaF.split('/');
-      			var FechaFormat = RgFechaB[2] + '-' + RgFechaB[1] + '-' + RgFechaB[0];
       			$scope.fechaDesp.fechaF = FechaFormat;
-      			console.log($scope.documentos)
-				ActivoServices.setDepresiacion($scope.fechaDesp);
+
+				ActivoServices.setDepresiacion($scope.fechaDesp).then(function (data){
+					if (data =="ok"){
+						alert("Activos Depreciados");
+					}
+					else{
+						alert(data);
+					}
+				});
 				
 			}
 			catch(ex){

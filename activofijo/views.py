@@ -280,6 +280,9 @@ class DepresiacionView(TemplateView):
         else:
             ddoc = 'DEPE'
 
+        activo.descripcion = 'no'
+        activo.save()
+
         tipoDo = TipoDocumento.objects.get(codigo=ddoc)
         docDep = DocumentoCuentas.objects.filter(documento = tipoDo)
 
@@ -291,7 +294,7 @@ class DepresiacionView(TemplateView):
     def setCuenta(self, idActivo, fecha , cta, monto, ref):
         diario = DiarioGeneral()
         diario.fecha = fecha
-        diario.referencia = ref + str(idActivo)
+        diario.referencia = ref +'-'+ str(idActivo)
         cuenta = Cuentas.objects.get(codigo=cta['cuenta'])
         diario.cuenta = cuenta
         diario.estatus = 'P'
