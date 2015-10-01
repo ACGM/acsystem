@@ -2,13 +2,14 @@ from django.contrib import admin
 
 from acgm.actions import export_as_excel
 
+from cuenta.models import Auxiliar
 from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
 								 TipoDocumento, Periodo, Empresa, Cobrador, DocumentoCuentas, \
 								 CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN, \
-								 UserExtra, ArchivoBanco
+								 UserExtra, ArchivoBanco, CuentasAuxiliar
 
 
 
@@ -20,6 +21,9 @@ class OpcionInline(admin.StackedInline):
 	model = Opcion
 	extra = 2
 
+# class AuxiliarInline(admin.StackedInline):
+# 	model = Auxiliar
+# 	extra = 1
 
 @admin.register(ArchivoBanco)
 class ArchivoBancoAdmin(admin.ModelAdmin):
@@ -82,8 +86,8 @@ class TipoSuplidorAdmin(admin.ModelAdmin):
 
 @admin.register(Suplidor)
 class SuplidorAdmin(admin.ModelAdmin):
-	list_display = ['id','clase','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor','auxiliar']
-	list_editable = ('nombre','telefono','intereses','tipoSuplidor','auxiliar','clase')
+	list_display = ['id','clase','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor',]
+	list_editable = ('nombre','telefono','intereses','tipoSuplidor','clase')
 	search_fields = ('cedulaRNC','nombre')
 	list_filter = ('clase',)
 
@@ -191,3 +195,8 @@ class CobradorAdmin(admin.ModelAdmin):
 class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
+
+@admin.register(CuentasAuxiliar)
+class CuentasAuxiliarAdmin(admin.ModelAdmin):
+	list_display = ['id', 'cuenta', 'tipoAuxiliar']
+	list_editable = ('cuenta', 'tipoAuxiliar')

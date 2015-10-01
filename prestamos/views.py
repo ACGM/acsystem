@@ -17,7 +17,9 @@ from .serializers import SolicitudesPrestamosSerializer, PagoCuotasPrestamoSeria
 
 from .models import SolicitudPrestamo, PrestamoUnificado, MaestraPrestamo, PagoCuotasPrestamo, InteresPrestamosBaseAhorros, \
 					NotaDeDebitoPrestamo, NotaDeCreditoPrestamo
+
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador, UserExtra, Banco, DocumentoCuentas
+from conciliacion.views import prestSolicitud
 
 from acgm.views import LoginRequiredMixin
 
@@ -480,8 +482,11 @@ class MarcarPrestamoComoDCView(LoginRequiredMixin, View):
 				p.estatus = accion
 				p.save()
 
-			# Si es para marcar como cheque se creara la solicitud de cheque en el modulo de Conciliacion
-			#Codigo va aqui
+				# Si es para marcar como cheque se creara la solicitud de cheque en el modulo de Conciliacion
+				if accion == 'C':
+					concepto = "Este es el cheque del prestamo..."
+					fecha = datetime.datetime.now()
+					prestSolicitud(self, fecha, prestamo['codigoSocio'], None, concepto, prestamo['balance'], prestamo['noPrestamo'])
 
 			return HttpResponse(1)
 

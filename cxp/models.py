@@ -1,6 +1,6 @@
 from django.db import models
 from administracion.models import Suplidor, Socio
-from cuenta.models import Cuentas, Auxiliares, DiarioGeneral
+from cuenta.models import Cuentas, DiarioGeneral
 
 # Detalle de articulos y precio del mismo de la Orden
 class DetalleOrden(models.Model):

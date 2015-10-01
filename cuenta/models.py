@@ -2,7 +2,6 @@
 
 from django.db import models
 
-
 class CuentasControl(models.Model):
     codigoControl = models.PositiveIntegerField('Cuenta control', unique=True)
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
@@ -47,18 +46,22 @@ class Cuentas(models.Model):
         super(Cuentas, self).save(*args, **kwargs)
 
 
-class Auxiliares(models.Model):
-    # auxiliares Contables
+# Auxiliares Contables
+class Auxiliar(models.Model):
 
-    codigo = models.PositiveIntegerField(verbose_name="Código Auxiliar", null=False, blank=False, unique=True)
-    descripcion = models.CharField(max_length=200, verbose_name="Descripcion", blank=False, null=False)
+    codigo = models.CharField(verbose_name="Código Auxiliar", max_length=20, null=False, blank=False, unique=True)
+    socio = models.PositiveIntegerField(null=True, blank=True)
+    suplidor = models.PositiveIntegerField(null=True, blank=True)
     cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta")
 
     def __unicode__(self):
-        return '%s-%s' % (str(self.codigo), self.descripcion)
+        return '%s' % (self.codigo)
 
     class Meta:
+        verbose_name = 'Auxiliar'
+        verbose_name_plural = 'Auxiliares'
         ordering = ['codigo']
+
 
 class DiarioGeneral(models.Model):
     estatus_choicer = (('P', 'Posteada'), ('R', 'Registrada'), ('C', 'Cancelada'))
@@ -66,7 +69,7 @@ class DiarioGeneral(models.Model):
     fecha = models.DateField()
     cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=True, blank=True)
     referencia = models.CharField("Ref", max_length=30, blank=False, null=False)
-    auxiliar = models.ForeignKey(Auxiliares, verbose_name="Aux", null=True, blank=True)
+    auxiliar = models.ForeignKey(Auxiliar, verbose_name="Aux", null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
     debito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Debito")
     credito = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Credito")

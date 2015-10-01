@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 from django.shortcuts import render
 
-from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
+from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor
 
 # Local Imports

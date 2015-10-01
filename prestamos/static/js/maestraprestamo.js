@@ -65,6 +65,7 @@
       //Marcar Prestamo como Desembolso Electronico o Cheque.
       function MarcarPrestamoDC(prestamos, accion) {
         var deferred = $q.defer();
+        console.log(prestamos);
 
         $http.post('/prestamos/maestra/marcarcomo/', JSON.stringify({'prestamos': prestamos, 'accion': accion})). 
           success(function (data) {
@@ -291,6 +292,11 @@
       $scope.mostrarError = function(error) {
         $scope.errorMsg = error;
         $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
       }
 
       //Listado de todos los prestamos
@@ -734,9 +740,9 @@
     .controller('TablaAmortizacionCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
                                         function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
       
-      $scope.registros = [];
 
       $scope.calcularAmortizacion = function() {
+        $scope.registros = [];
         var registro = {};
 
         var solicitar = $scope.ta.montoSolicitar;
@@ -754,8 +760,11 @@
         var balance = solicitar;
 
         for(i = 0; i<$scope.ta.cantidadCuotas; i++) {
+          balance = balance - capital
+          
           registro = {};
-          balance -= registro.balance; 
+
+          fecha.setDate(fecha.getDate()+15);
           
           registro.fecha = fecha;
           registro.capital = capital;
@@ -768,12 +777,11 @@
           registro.balance = balance;
           $scope.registros.push(registro);
 
-          fecha.setDate(fecha.getDate()+15);
-          ahorrado -= registro.ahorrado;
-          garantia -= registro.garantia;
+          ahorrado -= registro.IA;
+          garantia -= registro.IG;
           
         }
-
+        console.log($scope.registros);
       }
 
       $scope.totales = function() {

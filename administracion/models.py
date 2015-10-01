@@ -3,13 +3,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cuenta.models import Cuentas, Auxiliares
+from cuenta.models import Cuentas
 
 import datetime
 
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
 
 # Localidades
 class Localidad(models.Model):
@@ -154,7 +155,7 @@ class Suplidor(models.Model):
     intereses = models.DecimalField("Intereses %", max_digits=5, decimal_places=2, blank=True, null=True, default=0)
     tipoSuplidor = models.ForeignKey(TipoSuplidor, null=True, blank=True)
     clase = models.CharField(max_length=1, choices=clase_choices, default='N')
-    auxiliar = models.ForeignKey(Auxiliares, null=True, blank=True)
+    # auxiliar = models.ForeignKey(Auxiliares, null=True, blank=True)
     tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=2, null=True, blank=True)
     cuentaBancaria = models.CharField("Cuenta Bancaria", max_length=20, null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
@@ -476,6 +477,18 @@ class UserExtra(models.Model):
     class Meta:
         ordering = ('usuario',)
         unique_together = ('usuario', 'localidad', 'perfil')
+
+
+# Cuentas para Relacionar con Auxiliares (Socios/Suplidores)
+class CuentasAuxiliar(models.Model):
+    auxiliar_choices = (('SO', 'Socios'), ('SU', 'Suplidores'))
+    
+    cuenta = models.ForeignKey(Cuentas)
+    tipoAuxiliar = models.CharField("Tipo Auxiliar", max_length=2, choices=auxiliar_choices, default='SO')
+
+    class Meta:
+        verbose_name = 'Cuentas para Auxiliar (Automatico)'
+        verbose_name_plural = 'Cuentas para Auxiliares (Automatico)'
 
 
 # Tipos de Documentos
