@@ -75,14 +75,16 @@ class SolicitudView(TemplateView):
             data.append({
                 'id': sol.id,
                 'fecha': sol.fecha,
-                'socioId': sol.socio.id if sol.socio != None else '',
+                'socioId': sol.socio.codigo if sol.socio != None else '',
                 'socio': sol.socio.nombreCompleto if sol.socio != None else '',
-                'suplidorId': sol.suplior.id if sol.suplior != None else '',
+                'suplidorId': sol.suplidor.id if sol.suplidor != None else '',
                 'suplidor': sol.suplidor.nombre if sol.suplidor != None else '',
                 'concepto': sol.concepto,
-                'monto': sol.monto
+                'monto': sol.monto,
+                'estatus': sol.estatus,
             })
-            return JsonResponse(data, safe=False)
+            
+        return JsonResponse(data, safe=False)
 
     def post(self, request):
         DataT = json.loads(request.body)

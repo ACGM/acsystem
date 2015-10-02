@@ -10,7 +10,7 @@ class ConcChequeAdmin(admin.ModelAdmin):
 
 @admin.register(SolicitudCheque)
 class SolicitudAdmin(admin.ModelAdmin):
-    list_display = ['id', 'fecha', 'socio', 'concepto', 'monto', 'estatus']
+    list_display = ['id', 'fecha', 'socio', 'suplidor','concepto', 'monto', 'estatus']
 
 
 @admin.register(NotaDCConciliacion)

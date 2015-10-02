@@ -2,11 +2,11 @@
 	angular.module('cooperativa.solicitudCheque', ['ngAnimate'])
 
 	.factory('SolicitudServices', ['$http','$q','$filter',function ($http, $q, $filter) {
-		var apiUrl='/conciliacion/Solicitudcheque/';
-		var apiRep='/conciliacion/Solicitudcheque/rg/'
+		var apiUrl='/conciliacion/Solicitudcheque';
+		var apiRep='/conciliacion/Solicitudcheque/rg'
 
 		function getSolicitudes(){
-			var defered = $q.defer();
+			var deferred = $q.defer();
 
 			$http.get(apiUrl+'?format=json')
 				.success(function (data){
@@ -137,6 +137,7 @@
 
 		//Lista las solicitudes realizadas.
 		$scope.solicitudList = function(){
+			
 			SolicitudServices.getSolicitudes().then(function (data){
 				$scope.lsSolicitud = data;
 			});
@@ -253,7 +254,7 @@
 			$scope.solicitud = {};
 		};
 
-		$scope.ActEstatus = function($event,estatus){
+		$scope.ActEstatus = function($event,estatus,id){
 			$event.preventDefault();
 			var est = null;
 			if(estatus == "aceptado"){
@@ -264,10 +265,10 @@
 			};
 
 			if(est != null){
-				var sol = {solicitud : $scope.chk, estatus : est};
+				var sol = {solicitud : id, estatus : est};
 				SolicitudServices.wFlow(sol).then(function (data){
 					if(data == "Ok"){
-						alert("Solicitud #"+$scope.chk+" Aprobada.");
+						alert("Solicitud #"+id+" Aprobada.");
 					}
 					else{
 						alert("Ocurrio un error al intentar aprobar.");
@@ -275,11 +276,24 @@
 					}
 				});
 			};
+
 			var data = $scope.lsSolicitud .filter(function (reg){
-				return reg.id == $scope.chk;
+				return reg.id == id;
 			});
+		
 			$scope.flap = true;
 			$scope.chk = null;
+			$window.sessionStorage['solicitud'] = JSON.stringify(data);
+
+	       	$window.open('/conciliacion/Solicitudcheque/rg', target='_blank'); 
+		};
+
+		$scope.printSol = function($event,id){
+			var data = $scope.lsSolicitud .filter(function (reg){
+				return reg.id == id;
+			});
+			
+			console.log(data);
 			$window.sessionStorage['solicitud'] = JSON.stringify(data);
 
 	       	$window.open('/conciliacion/Solicitudcheque/rg', target='_blank'); 
@@ -298,6 +312,7 @@
 	          $rootScope.mostrarError(e);
 	        }
 			};
+
 
 		$scope.getSocio = function($event) {
 	            $event.preventDefault();
@@ -339,10 +354,12 @@
 	}])
 	.controller('SolicitudImpCtrl',['$scope','$filter', '$rootScope','SolicitudServices','$timeout','$window',
 		function ($scope, $filter,$rootScope,$SolicitudServices,$timeout,$window){
-			$scope.regData = {};
 
-			$scope.fill = function(){
-				$scope.regData = JSON.parse($window.sessionStorage['solicitud']);
+			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+			$scope.loadAll = function(){
+				$scope.regData = JSON.parse($window.sessionStorage['solicitud']);	
+				console.log($scope.regData[0]);			
 			}
 		}]);
 })();

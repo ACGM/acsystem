@@ -3,7 +3,7 @@
 {% block title %} Solicitud Cheque {% endblock title %}
 
 {% block content %}
-<div class="SolicitudCon" ng-controller="SolicitudChCtrl">
+<div class="SolicitudCon" ng-controller="SolicitudChCtrl" ng-init="solicitudList()"> 
 	
 	<section id="SearchData">
 		<div class="content-socios-table">
@@ -73,13 +73,14 @@
 	<div class="SolicitudCon-lista"  ng-show="toggleLs">
 		<table class="listado-table-f">
 			<tr class="listado-table-header-f">
-				<td>Registro</td>
+				<td>ID</td>
 				<td>Fecha</td>
 				<td>Socio</td>
 				<td>Suplidor</td>
 				<td>Concepto</td>
 				<td>Monto</td>
 				<td>Estatus</td>
+				<td></td>
 				<td></td>
 			</tr>
 			<tr class="listado-Sol-detail" ng-repeat="s in lsSolicitud">
@@ -89,8 +90,19 @@
 				<td>[[s.suplidor]]</td>
 				<td>[[s.concepto]]</td>
 				<td>[[s.monto |number:2]]</td>
-				<td>[[s.estatus]]</td>
-				<td><a href="#" class="icon-check" ng-click="workflow($event,s.id)"></a></td>
+				<td>
+					<div ng-if="s.estatus =='P' ">
+						<strong>En Proceso</strong>
+					</div>
+					<div ng-if="s.estatus =='A' ">
+						<strong>Aprobado</strong>
+					</div>
+					<div ng-if="s.estatus =='R' ">
+						<strong>Rechazada</strong>
+					</div>
+				</td>
+				<td><a href="#" class="icon-printer workflow2" ng-click="printSol($event,s.id)"></a></td>
+				<td><a href="#" class="icon-moneybag workflow" ng-click="workflow($event,s.estatus,s.id)"></a></td>
 			</tr>
 		</table>
 	</div>
