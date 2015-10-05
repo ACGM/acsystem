@@ -267,7 +267,7 @@
 			$scope.solicitud = {};
 		};
 
-		$scope.ActEstatus = function($event,estatus,id){
+		$scope.ActEstatus = function($event,estatus){
 			$event.preventDefault();
 			var est = null;
 			if(estatus == "aceptado"){
@@ -278,27 +278,25 @@
 			};
 
 			if(est != null){
-				var sol = {solicitud : id, estatus : est};
+				var sol = {};
+				sol.solId = $scope.chk;
+				sol.estatus = est;
+				console.log(sol);
 				SolicitudServices.wFlow(sol).then(function (data){
 					if(data == "Ok"){
-						alert("Solicitud #"+id+" Aprobada.");
+						$scope.flap = false;
+						alert("Se ha completado la solicitud #"+$scope.chk);
+						$scope.chk = null;
 					}
 					else{
+						$scope.flap = false;
 						alert("Ocurrio un error al intentar aprobar.");
 						console.log(data);
 					}
 				});
+
 			};
-
-			var data = $scope.lsSolicitud .filter(function (reg){
-				return reg.id == id;
-			});
-		
-			$scope.flap = true;
-			$scope.chk = null;
-			$window.sessionStorage['solicitud'] = JSON.stringify(data);
-
-	       	$window.open('/conciliacion/Solicitudcheque/rg', target='_blank'); 
+			$scope.solicitudList();	
 		};
 
 		$scope.printSol = function($event,id){
