@@ -603,6 +603,8 @@
       
       //Inicializacion de variables
       $scope.agrupar = false;
+      $scope.estatus = 'P';
+      $scope.tipoSocio = 'S';
 
       //Funcion para buscar consulta de prestamos.
       $scope.buscarPrestamos = function($event) {
@@ -615,7 +617,9 @@
 
           MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
             console.log(data);
-            $scope.registros = data;
+            $scope.registros = data.filter(function (item) {
+              return item.tipoSocio == $scope.tipoSocio;
+            });
 
             $scope.totales();
           });

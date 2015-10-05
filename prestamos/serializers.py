@@ -47,7 +47,7 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 		fields = ('noPrestamo', 'estatus', 'factura', 'codigoSocio', 'socio', 'montoInicial', 'categoriaPrestamo', 'balance', 'noSolicitudPrestamo', \
 					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual', 'cuotaInteresQ1', 'cuotaInteresQ2', 'cuotaMasInteresQ1', \
 					'cuotaMasInteresQ2', 'tipoPrestamoNomina', 'cuotaInteresAhQ1', 'cuotaInteresAhQ2', 'documentoDescrp', 'fechaAprobacion', \
-					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio')
+					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio', 'tipoSocio')
 		ordering = ('-noPrestamo',)
 
 

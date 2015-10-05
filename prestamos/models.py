@@ -208,6 +208,10 @@ class MaestraPrestamo(models.Model):
 		return self.socio.codigo
 
 	@property
+	def tipoSocio(self):
+		return self.socio.estatus
+
+	@property
 	def departamentoSocio(self):
 		return self.socio.departamento.descripcion
 
