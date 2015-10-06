@@ -189,7 +189,7 @@
 
         }])
         .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout', 'SolicitudOrdenDespachoService',
-            function($scope, $filter, $rootScope, cxpService, $timeout){
+            function($scope, $filter, $rootScope, cxpService, $timeout, SolicitudOrdenDespachoService){
                 $scope.cxpData = [];
                 $scope.cxpDataDetalle = [];
                 $scope.cxpDiario = [];
@@ -213,6 +213,7 @@
                 $scope.OrdenList = true;
                 $scope.getdate = false;
                 $scope.selectSocio = null;
+                $scope.tableOrden = false;
                 $scope.detallesOrd={};
 
                 
@@ -266,6 +267,15 @@
                 }
             };
 
+            $scope.findOrden = function ($event){
+                $scope.tableOrden = true;
+               SolicitudOrdenDespachoService.solicitudesODForCXP().then(function (data) {
+                        return data.filter(function (reg){
+                            return reg.socios == $scope.cxpDataReg.socioId && reg.suplidor == $scope.cxpDataReg.suplidorId
+                        });
+                 });
+            }
+
             $scope.toggleDat= function(){
                 $scope.showDat = !$scope.showDat;
 
@@ -308,8 +318,6 @@
                 var RegFecha = $scope.cxpDataReg.fecha.split('/');
                 var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
                 $scope.cxpDataReg.fecha = FechaFormat;
-
-               debugger;
                
                 var result = cxpService.setOrden($scope.cxpDataReg, $scope.cxpDataDetalle);
                 $scope.limpiar();
@@ -323,30 +331,6 @@
                 console.log(result);    
 
             }
-
-            // $scope.calcMonto = function(){
-            //     var total=0;
-
-            //      var detalle ={};
-            //         detalle.articulo = $scope.detallesOrd.articulo;
-            //         detalle.monto = $scope.detallesOrd.monto;
-
-            //     $scope.cxpDataDetalle.push(detalle);
-
-            //     if($scope.cxpDataDetalle != undefined){
-                    
-            //         for (i = 0; i < $scope.cxpDataDetalle.length; i++){
-            //             total = total + parseInt($scope.cxpDataDetalle[i].monto);
-            //         }
-            //         $scope.cxpDataReg.monto=total;
-            //         $scope.cxpDataReg.montoCuotas=total/36;
-            //         $scope.cxpDataReg.cuotas = 36;
-
-            //         $scope.detallesOrd.articulo = "";
-            //         $scope.detallesOrd.monto = 0;
-
-            //     }
-            // }   
 
             $scope.getSuplidor = function($event){
                     $event.preventDefault();
@@ -407,14 +391,29 @@
                   };
                          //Seleccionar Socio
             
+            $scope.selOrden = function($event, s) {
+                $event.preventDefault();
+                
+                $scope.cxpDataReg.orden = s.noSolicitud ;
+                $scope.ordenReg = s.noSolicitud+'-'+s.fechaSolicitud ;
+                $scope.cxpDataReg.monto = s.monto;
+                $scope.tableOrden = false;
+                
+              };
+
             $scope.selSocio = function($event, s) {
                 $event.preventDefault();
                 
                 $scope.socioNombre = s.nombreCompleto;
                 $scope.cxpDataReg.socioId = s.codigo;
                 $scope.tableSocio = false;
+
+                $scope.cxpDataReg.orden = null ;
+                $scope.ordenReg = null ;
+                $scope.cxpDataReg.monto = 0;
                 
               };
+
 
             $scope.selSuplidor = function($event, s) {
                 $event.preventDefault();
@@ -422,6 +421,10 @@
                 $scope.suplidorNombre = s.nombre;
                 $scope.cxpDataReg.suplidorId = s.id;
                 $scope.tableSuplidor= false;
+
+                $scope.cxpDataReg.orden = null ;
+                $scope.ordenReg = null ;
+                $scope.cxpDataReg.monto = 0;
               };
 
             $scope.getAllData = function(){
@@ -444,8 +447,7 @@
 
                     $scope.suplidorNombre = $scope.cxpDataReg.suplidor;
                     $scope.socioNombre = $scope.cxpDataReg.socio;
-                    $scope.cxpDataDetalle = $scope.cxpDataReg.detalleOrden;
-                    $scope.getdate = $filter('date')($scope.cxpDataReg.fecha,'dd/MM/yyyy');
+                    $scope.cxpDataReg.fecha = $filter('date')($scope.cxpDataReg.fecha,'dd/MM/yyyy');
                     $scope.OrdenList = false;
                     $scope.OrdenCrPanel = true;
                     $scope.panelDetalleArt = true;
