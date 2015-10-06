@@ -143,6 +143,24 @@
         return deferred.promise;
       }
 
+      //Listado de Entradas de Inventario aprobadas para CXP.
+      function allEntradasForCXP() {
+        var deferred = $q.defer();
+
+        allEntradas().then(function (data) {
+          var results = data.filter(function (item) {
+            return item.posteo == 'S' && item.cxp == 'E';
+          });
+
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
       //Existencia de Producto
       function getExistenciaByProducto(producto, almacen) {
         var deferred = $q.defer();
@@ -383,7 +401,8 @@
         eliminarSI              : eliminarSI,
         byNoDocSalida           : byNoDocSalida,
         procesarAjusteInv       : procesarAjusteInv,
-        postearINV              : postearINV
+        postearINV              : postearINV,
+        allEntradasForCXP       : allEntradasForCXP
       };
 
     }])
@@ -395,6 +414,7 @@
     .controller('ListadoEntradaInvCtrl', ['$scope', '$filter', '$window', '$rootScope', 'appService', 'InventarioService', 'ContabilidadService',
                                           function ($scope, $filter, $window, $rootScope, appService, InventarioService, ContabilidadService) {
       
+
       //Inicializacion de variables
       $scope.mostrar = 'mostrar';
       $scope.tipoinv = "E";

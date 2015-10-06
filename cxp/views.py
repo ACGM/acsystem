@@ -6,7 +6,7 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
 from cxp.models import OrdenCompra, DetalleOrden, CxpSuperCoop
-from cuenta.models import DiarioGeneral, Cuentas, Auxiliares
+from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Suplidor, Socio, TipoDocumento
 from .serializers import OrdenSerializer, DetalleOrdenSerializer
 

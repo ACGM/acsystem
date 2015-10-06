@@ -20,7 +20,6 @@ class OpcionInline(admin.StackedInline):
 	model = Opcion
 	extra = 2
 
-
 @admin.register(ArchivoBanco)
 class ArchivoBancoAdmin(admin.ModelAdmin):
 	list_display = ['id', 'bancoAsign', 'tipoServicio', 'envio', 'secuencia', 'userLog']
@@ -82,8 +81,8 @@ class TipoSuplidorAdmin(admin.ModelAdmin):
 
 @admin.register(Suplidor)
 class SuplidorAdmin(admin.ModelAdmin):
-	list_display = ['id','clase','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor','auxiliar']
-	list_editable = ('nombre','telefono','intereses','tipoSuplidor','auxiliar','clase')
+	list_display = ['id','clase','tipoIdentificacion','cedulaRNC','nombre','telefono','intereses','tipoSuplidor',]
+	list_editable = ('nombre','telefono','intereses','tipoSuplidor','clase')
 	search_fields = ('cedulaRNC','nombre')
 	list_filter = ('clase',)
 
@@ -191,3 +190,4 @@ class CobradorAdmin(admin.ModelAdmin):
 class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
+

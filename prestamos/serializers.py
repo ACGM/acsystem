@@ -31,7 +31,8 @@ class SolicitudesOrdenesDespachoSerializer(serializers.HyperlinkedModelSerialize
 
 	class Meta:
 		model = SolicitudOrdenDespachoH
-		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', 'estatus', 'suplidor')
+		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', \
+					'estatus', 'suplidor', 'codigoSuplidor', 'cxp', 'valorInteresOD', 'tasaInteresAnual')
 		ordering = ('-noSolicitud',)
 
 
@@ -46,7 +47,7 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 		fields = ('noPrestamo', 'estatus', 'factura', 'codigoSocio', 'socio', 'montoInicial', 'categoriaPrestamo', 'balance', 'noSolicitudPrestamo', \
 					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual', 'cuotaInteresQ1', 'cuotaInteresQ2', 'cuotaMasInteresQ1', \
 					'cuotaMasInteresQ2', 'tipoPrestamoNomina', 'cuotaInteresAhQ1', 'cuotaInteresAhQ2', 'documentoDescrp', 'fechaAprobacion', \
-					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio')
+					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio', 'tipoSocio')
 		ordering = ('-noPrestamo',)
 
 
@@ -120,6 +121,13 @@ class InteresPrestamoBaseAhorroSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = InteresPrestamosBaseAhorros
 		fields = ('id', 'porcentajeAnual', 'estatus')
+
+
+# Listado de Desembolsos Electronicos
+# class DesembolsosElectronicos(serializers.HyperlinkedModelSerializer):
+
+# 	class Meta:
+# 		model = DesembolsoElectronico
 
 
 # Distribucion de Excedentes (proceso de calculos de interes - Anual)

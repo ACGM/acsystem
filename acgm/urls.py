@@ -28,7 +28,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             AprobarRechazarSolicitudesPrestamosView, PrestamosDesembolsoElectronico, \
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
-                            rptPrestamos, relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, rptPrestamos, \
+                            rptPrestamos, relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, \
                             PrestamosAPIViewByRangoFecha, PostearNotaDebitoView, PostearNotaCreditoView, TablaAmortizacionView
 
 
@@ -59,7 +59,7 @@ from administracion.views import ListadoCategoriasPrestamosViewSet
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet, generarAhorro
 from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs,SSolicitud
 from facturacion.views import ListadoFacturasViewSet
-from cuenta.views import CuentasViewSet, AuxiliarViewSet
+from cuenta.views import CuentasViewSet
 
 from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
 
@@ -91,7 +91,6 @@ router=routers.DefaultRouter()
 
 #Cuentas
 router.register(r'cuentas', CuentasViewSet)
-router.register(r'auxiliar', AuxiliarViewSet)
 router.register(r'diario', DiarioViewSet)
 
 #CXP
@@ -291,7 +290,7 @@ urlpatterns = patterns('',
                                                                                                             name='solicitud_od_api_BySuplidorRangoFecha'),
     url(r'^api/prestamos/solicitudes/od/fecha/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', SolicitudesODAPIViewByCodigoSuplidor.as_view(), \
                                                                                                     name='solicitudes_by_rangoFecha'),
-    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_od_api'),
+    url(r'^api/prestamos/solicitudes/od/$', SolicitudesODAPIView.as_view(), name='solicitud_orden_despacho_api'),
     url(r'^solicitudODjson/$', SolicitudODById.as_view(), name='Solicitud_ODById'),
     url(r'^solicitudOD/print/(?P<noSolicitud>[\d]+)/$', ImprimirODView.as_view(), name='ordendespacho_print'),
     url(r'^prestamos/reportes/solicitudesOD/$', rptSolicitudesBySuplidorRangoFecha.as_view(), name='solicitudes_orden_despacho_reporte'),

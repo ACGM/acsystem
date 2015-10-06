@@ -65,6 +65,7 @@
       //Marcar Prestamo como Desembolso Electronico o Cheque.
       function MarcarPrestamoDC(prestamos, accion) {
         var deferred = $q.defer();
+        console.log(prestamos);
 
         $http.post('/prestamos/maestra/marcarcomo/', JSON.stringify({'prestamos': prestamos, 'accion': accion})). 
           success(function (data) {
@@ -291,6 +292,11 @@
       $scope.mostrarError = function(error) {
         $scope.errorMsg = error;
         $scope.errorShow = true;
+      }
+
+      // Mostrar/Ocultar error
+      $scope.toggleError = function() {
+        $scope.errorShow = !$scope.errorShow;
       }
 
       //Listado de todos los prestamos
@@ -597,6 +603,8 @@
       
       //Inicializacion de variables
       $scope.agrupar = false;
+      $scope.estatus = 'P';
+      $scope.tipoSocio = 'S';
 
       //Funcion para buscar consulta de prestamos.
       $scope.buscarPrestamos = function($event) {
@@ -609,7 +617,9 @@
 
           MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
             console.log(data);
-            $scope.registros = data;
+            $scope.registros = data.filter(function (item) {
+              return item.tipoSocio == $scope.tipoSocio;
+            });
 
             $scope.totales();
           });
@@ -734,9 +744,9 @@
     .controller('TablaAmortizacionCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
                                         function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
       
-      $scope.registros = [];
 
       $scope.calcularAmortizacion = function() {
+        $scope.registros = [];
         var registro = {};
 
         var solicitar = $scope.ta.montoSolicitar;
@@ -754,26 +764,28 @@
         var balance = solicitar;
 
         for(i = 0; i<$scope.ta.cantidadCuotas; i++) {
+          balance = balance - capital
+          
           registro = {};
-          balance -= registro.balance; 
+
+          fecha.setDate(fecha.getDate()+15);
           
           registro.fecha = fecha;
           registro.capital = capital;
           registro.ahorrado = ahorrado;
           registro.garantia = garantia;
-          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/12/100);
-          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/12/100);
+          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/24/100);
+          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/24/100);
           registro.totalInteres = registro.IA + registro.IG;
           registro.cuota = capital + registro.totalInteres;
           registro.balance = balance;
           $scope.registros.push(registro);
 
-          fecha.setDate(fecha.getDate()+15);
-          ahorrado -= registro.ahorrado;
-          garantia -= registro.garantia;
+          ahorrado -= registro.IA;
+          garantia -= registro.IG;
           
         }
-
+        console.log($scope.registros);
       }
 
       $scope.totales = function() {

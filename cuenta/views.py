@@ -6,10 +6,10 @@ from django.views.generic import DetailView, TemplateView, View
 
 from django.shortcuts import render
 
-from .models import Cuentas, Auxiliares, DiarioGeneral, CuentasControl
+from .models import Cuentas, DiarioGeneral, CuentasControl
 from administracion.models import TipoDocumento
 
-from .serializers import CuentasSerializer, AuxiliarSerializer, DiarioSerializer,  \
+from .serializers import CuentasSerializer, DiarioSerializer,  \
     CuentasControlSerializer
 
 import json
@@ -155,12 +155,7 @@ class CuentasView(DetailView):
 class CuentasViewSet(viewsets.ModelViewSet):
     queryset = Cuentas.objects.all()
     serializer_class = CuentasSerializer
-
-
-class AuxiliarViewSet(viewsets.ModelViewSet):
-    queryset = Auxiliares.objects.all()
-    serializer_class = AuxiliarSerializer
-
+    
 
 class DiarioViewSet(viewsets.ModelViewSet):
     queryset = DiarioGeneral.objects.all()

@@ -22,14 +22,19 @@
 			<span>Fecha Fin</span>
 			<input type="text" class="fecha-solicitud-field-t" ng-model="fechaFin" datepicker>
 			
-			<p>
-				<span>Estatus</span>
-				<select class="field-choices" name="posteo" id="posteo" ng-model="estatus">
-					<option value="P" selected="selected">Posteados</option>
-					<option value="E">En proceso</option>
-					<option value="S">Saldados</option>
-				</select>
-			</p>
+			<span>Estatus</span>
+			<select class="field-choices" name="posteo" id="posteo" ng-model="estatus">
+				<option value="P" selected="selected">Posteados</option>
+				<option value="E">En proceso</option>
+				<option value="S">Saldados</option>
+			</select>
+
+			<span>Tipo Socio</span>
+			<select class="field-choices" name="posteo" id="tipoSocio" ng-model="tipoSocio">
+				<option value="S" selected="selected">Socios</option>
+				<option value="E">Empleados</option>
+				<option value="I">Inactivos</option>
+			</select>			
 
 			<input type="checkbox" ng-model="agrupar">
 			<span>Agrupados por clasificacion</span>

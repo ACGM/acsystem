@@ -109,6 +109,25 @@
         return deferred.promise;
       }
 
+      //Filtrar el listado de Solicitudes para CXP
+      //Trae todas las ordenes de despacho que estan aprobadas y estan pendiente de procesar en CXP.
+      function solicitudesODForCXP() {
+        var deferred = $q.defer();
+
+        solicitudesOD(undefined).then(function (data) {
+          var results = data.filter(function (registro) {
+            return registro.estatus == 'A' && registro.cxp == 'E';
+          });
+          
+          if(results.length > 0) {
+            deferred.resolve(results);
+          } else {
+            deferred.reject();
+          }
+        });
+        return deferred.promise;
+      }
+
       //Categorias de prestamos (para ORDENES DE DESPACHO).
       function categoriasPrestamos(id, categoria) {
         var deferred = $q.defer();
@@ -210,7 +229,8 @@
         SolicitudODById                 : SolicitudODById,
         guardaSolicitudODDetalle        : guardaSolicitudODDetalle,
         SolicitudesBySuplidorRangoFecha : SolicitudesBySuplidorRangoFecha,
-        impresionOD                     : impresionOD
+        impresionOD                     : impresionOD,
+        solicitudesODForCXP             : solicitudesODForCXP
       };
 
     }])

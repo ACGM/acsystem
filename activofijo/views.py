@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from .models import CategoriaActivo, Depresiacion, Activos
 from .serializers import CategoriaActivoSerializer, DepresiacionSerializer, ActivosSerializer
-from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
+from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Suplidor, Localidad, DocumentoCuentas, TipoDocumento
 
 
