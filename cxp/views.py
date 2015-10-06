@@ -20,7 +20,6 @@ class CxpOrdenView(DetailView):
 
         try:
             data = dataT['Orden']
-            dataDet = dataT['Detalle']
 
             if data['id'] is None:
             
@@ -30,36 +29,14 @@ class CxpOrdenView(DetailView):
                 regOrden.orden = int(data['orden'])
                 regOrden.fecha = data['fecha']
                 regOrden.monto = decimal.Decimal(data['monto'])
-                regOrden.cuotas = int(data['cuotas'])
-                regOrden.montocuotas = decimal.Decimal(data['montoCuotas'])
                 regOrden.estatus = data['estatus']
                 regOrden.save()
-            
-                for det in dataDet:
-                    regDetalle = DetalleOrden()
-                    regDetalle.articulo = det['articulo']
-                    regDetalle.monto = decimal.Decimal(det['monto'])
-                    regDetalle.orden = regOrden.id
-                    regDetalle.save()
-                    regOrden.detalleOrden.add(regDetalle)
 
             else:
 
                 OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
                 OrdenCompra.objects.filter(id=data['id']).update(cuotas = decimal.Decimal(data['cuotas']))
                 OrdenCompra.objects.filter(id=data['id']).update(montocuotas = decimal.Decimal(data['montoCuotas']))
-                regOrden = OrdenCompra.objects.filter(id=data['id'])
-                for det in dataDet:
-                    if det['id'] is None:
-                        regDetalle = DetalleOrden()
-                        regDetalle.articulo = det['articulo']
-                        regDetalle.monto = decimal.Decimal(det['monto'])
-                        regDetalle.orden = regOrden.id
-                        regDetalle.save()
-                        regOrden.detalleOrden.add(regDetalle)
-                    else:
-                        DetalleOrden.objects.filter(id=det.id).update(articulo = det['articulo'])
-                        DetalleOrden.objects.filter(id=det.id).update(monto = decimal.Decimal(det['monto']))
             
             return HttpResponse('Ok')
         except Exception as ex:
@@ -88,16 +65,8 @@ class CxpOrdenView(DetailView):
                 'orden': ordenes.orden,
                 'fecha': ordenes.fecha,
                 'monto': ordenes.monto,
-                'cuotas': ordenes.cuotas,
                 'estatus': ordenes.estatus,
-                'montoCuotas': ordenes.montocuotas,
-                'detalleOrden': [
-                    {
-                        'id': detalle.id,
-                        'articulo': detalle.articulo,
-                        'monto': detalle.monto
-                    }
-                    for detalle in DetalleOrden.objects.filter(orden=ordenes.id)]
+            
             })
         return JsonResponse(data, safe=False)
 
@@ -118,8 +87,8 @@ class CxpSuperCoop(DetailView):
             cxpSuper.descuento = data['descuento']
             cxpSuper.monto = decimal.Decimal(data['monto'])
             cxpSuper.estatus = data['estatus']
-
             cxpSuper.save()
+            
         else:
             cxpSuper = CxpSuperCoop.objects.filter(id=data['id'])
             cxpSuper.factura = data['factura']

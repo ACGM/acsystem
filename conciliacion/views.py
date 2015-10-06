@@ -7,15 +7,17 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 from django.shortcuts import render
 
+<<<<<<< HEAD
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor
+=======
+from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
+from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento,DocumentoCuentas
+>>>>>>> moduloYei
 
 # Local Imports
 from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
-
-
-
 
 class SolicitudViewSet(viewsets.ModelViewSet):
     queryset = SolicitudCheque.objects.all()
@@ -92,16 +94,16 @@ class SolicitudView(TemplateView):
 
         if Data['id'] is None:
 
-
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
-            if Data['socio'] != None:
-                socio = Socio.objects.get(codigo=Data['socio'])
+            if Data['socioId'] != None:
+                socio = Socio.objects.get(codigo=Data['socioId'])
                 solicitud.socio = socio
-            if Data['suplidor'] != None:
-                suplidor = Suplidor.objects.get(id=Data['suplidor'])
+            if Data['suplidorId'] != None:
+                suplidor = Suplidor.objects.get(id=Data['suplidorId'])
                 solicitud.suplidor = suplidor
             solicitud.concepto = Data['concepto']
+            solicitud.prestamo = 0
             solicitud.monto = Data['monto']
             solicitud.estatus = Data['estatus']
             solicitud.save()
@@ -112,20 +114,21 @@ class SolicitudView(TemplateView):
             solicitud.estatus = Data['estatus']
             solicitud.save()
 
-        return HttpResponse('1')
+        return HttpResponse('Ok')
 
 
 class SSolicitud(TemplateView):
     template_name = 'impSolicitud.html'
 
     def post(self, request):
-        data = json.loads(request.body)
+        dataT = json.loads(request.body)
+        data = dataT['solicitud']
         try:
-            sol = SolicitudCheque.objects.get(id=data['solicitud'])
+            sol = SolicitudCheque.objects.get(id=data['solId'])
             sol.estatus = data['estatus']
             sol.save()
 
-            return HttpResponse("Ok")
+            return HttpResponse('Ok')
         except Exception, e:
             return HttpResponse(e.message)
         
@@ -133,8 +136,30 @@ class SSolicitud(TemplateView):
 class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
+    def regCuentasChk(self, chkId, doc, monto, fecha):
+
+        cheque = ConcCheques.objects.get(id=chkId)
+        regCuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+        regDiario = DiarioGeneral()
+        regDiario.cuenta = regCuenta
+        regDiario.fecha = fecha
+        regDiario.referencia = 'CHK-'+str(chkId)
+        regDiario.estatus = 'P'
+
+        if doc.accion == 'D':
+            regDiario.debito = monto
+            regDiario.credito = 0
+        else:
+            regDiario.debito = 0
+            regDiario.credito = monto
+
+        regDiario.save()
+        cheque.cuenta.add(regDiario)
+        return 'Ok'
+
+
     def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
         format = self.request.GET.get('format')
 
         if format == "json":
@@ -151,10 +176,22 @@ class ChequesView(TemplateView):
         for chk in cheque:
             data.append({
                 'id': chk.id,
-                'solicitudId': chk.solicitud.id + '-' + chk.solicitud.fecha,
+                'solicitud': chk.solicitud.id,
+                'beneficiario': chk.solicitud.socio.nombreCompleto if chk.solicitud.socio != None else chk.solicitud.suplidor.nombre,
+                'concepto': chk.solicitud.concepto,
+                'monto': chk.solicitud.monto,
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
-                'estatus': chk.estatus
+                'estatus': chk.estatus,
+                # 'cuenta':[{
+                #     'id': cta.id,
+                #     'codigoCta': cta.cuenta.codigo, # if cta.cuenta != None else '',
+                #     'cuenta': cta.cuenta.descripcion,
+                #     'aux': cta.auxiliar.codigo,
+                #     'debito': cta.debito,
+                #     'credito': cta.credito
+                #     }
+                #    for cta in DiarioGeneral.objects.filter(referencia='CHK-'+ str(chk.id))]
             })
         return JsonResponse(data, safe=False)
 
@@ -162,24 +199,36 @@ class ChequesView(TemplateView):
         DataT = json.loads(request.body)
         Data = DataT['cheque']
 
-        if Data['id'] is None:
-            solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+        try:
+            if Data['id'] is None:
+                solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+                regtipo = TipoDocumento.objects.get(codigo="CHK")
+                regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
-            cheque = ConcCheques()
-            cheque.solicitud = solicitud
-            cheque.chequeNo = Data['noCheque']
-            cheque.fecha = Data['fecha']
-            cheque.estatus = 'R'
-            cheque.save()
+                cheque = ConcCheques()
+                cheque.solicitud = solicitud
+                cheque.chequeNo = Data['noCheque']
+                cheque.fecha = Data['fecha']
+                cheque.estatus = 'R'
+                cheque.save()
 
-        else:
-            cheque = ConcCheques.objects.get(id=Data['id'])
-            cheque.fecha = Data['fecha']
-            cheque.estatus = Data['estatus']
-            cheque.save()
+                solicitud.estatus = 'E'
+                solicitud.save()
 
-        return HttpResponse('1')
+                for doc in regDocumentos:
+                    self.regCuentasChk(cheque.id, doc, solicitud.monto, cheque.fecha)
+            else:
+                cheque = ConcCheques.objects.get(id=Data['id'])
+                cheque.estatus = Data['estatus']
+                cheque.save()
 
+            return HttpResponse('Ok')
+        except Exception, e:
+             return HttpResponse(e.message)
+
+class SChequeView(TemplateView):
+    template_name="impCheque.html"
+            
 
 class NotasConciliacionView(TemplateView):
     template_name = 'NotasConciliacion.html'

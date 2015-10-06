@@ -102,7 +102,18 @@
 					</div>
 				</td>
 				<td><a href="#" class="icon-printer workflow2" ng-click="printSol($event,s.id)"></a></td>
-				<td><a href="#" class="icon-moneybag workflow" ng-click="workflow($event,s.estatus,s.id)"></a></td>
+				<td>
+					<div ng-if="s.estatus =='P' ">
+						<a href="#" class="icon-moneybag workflow" ng-click="workflow($event,s.id)"></a>
+					</div>
+					<div ng-if="s.estatus =='A' ">
+						<span class="icon-moneybag workflow"></span>
+					</div>
+					<div ng-if="s.estatus =='R' ">
+						<span class="icon-moneybag workflow"></span>
+					</div>
+					
+				</td>
 			</tr>
 		</table>
 	</div>
@@ -114,24 +125,24 @@
 					<td>Socio</td>
 					<td>
 						<input type="text" ng-model="solicitud.socioId" ng-disable="true" class="disable" readonly="">
-						<input type="text" ng-keyup="getSocio($event)" ng-model="socioNombre" ng-focus="tableSocio=false" placeholder="Código o nombre del Socio"  ng-click="tableSocio=false; errorShow=false;" required>
+						<input type="text" ng-keyup="getSocio($event)" ng-model="socioNombre" ng-focus="tableSocio=false" placeholder="Código o nombre del Socio"  ng-click="tableSocio=false; errorShow=false;" >
 					</td>
 				</tr>
 				<tr>
 					<td>Suplidor</td>
 					<td>
 						<input type="text" ng-model="solicitud.suplidorId" ng-disable="true" class="disable" readonly="">
-						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getSuplidor($event)" class="producto-field-ei" required>
+						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false; getSuplidor($event)" class="producto-field-ei" >
 					</td>
 				</tr>
 				<tr>
 					<td>Fecha</td>
-					<td><input type="text" ng-model="fecha"  value="[[solicitud.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+					<td><input type="text" ng-model="fecha"  value="[[solicitud.fecha | date: 'dd/MM/yyyy']]" datepicker required></td>
 				</tr>
 				<tr>
 					<td>Concepto</td>
 					<td>
-						<textarea name="" id="" cols="45" rows="8" ng-model="solicitud.concepto"></textarea>
+						<textarea name="" id="" cols="45" rows="8" ng-model="solicitud.concepto" required></textarea>
 					</td>
 				</tr>
 				<tr>

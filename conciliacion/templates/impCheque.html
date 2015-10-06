@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} {% endblock title %}
+
+{% block content %}
+<section class="chequeMain" ng-controller="ImpchequeCtrl" ng-init="start()">
+	<div class="cheque-header">
+		<span class="fecha"><span>[[dia]]</span><span>[[mes]]</span><span>[[agno]]</span></span>
+		<br>
+		<span class="cheque-nombre"><span>[[regData.beneficiario]]</span><span>*[[regData.monto |number:2]]**</span></span>
+		<br>
+		<span class="cheque-montoLetras">[[regData.monto| NumLetra ]]</span>
+	</div>
+	<div class="cheque-concepto">
+		<table>
+			<tr class="cheque-concepto-tabla">
+				<td>[[regData.fecha]]</td>
+				<td>[[regData.concepto]]</td>
+				<td>[[regData.monto |number:2]]</td>
+			</tr>
+		</table>
+	</div>
+	<div class="cheque-cuentas">
+		<span class="noCheque">[[regData.noCheque]]</span>
+		<span class="cuenta-fecha">[[fecha]]</span>
+		<span class="nombre">[[regData.beneficiario]]</span>
+		<table>
+			<tr class="cheque-cuenta-tabla" ng-repeat="cta in cuentas">
+				<td>[[cta.codigo]]</td>
+				<td>[[cta.aux]] </td>
+				<td>[[cta.descripcion]] </td>
+				<td>[[cta.debito |number:2]]</td>
+				<td>[[cta.credito |number:2]]</td>
+			</tr>
+		</table>
+	</div>
+</section>
+{% endblock content %}

@@ -20,7 +20,7 @@ class DetalleRecibo(models.Model):
 
 # Registra todos los ingresos externos para un prestamo o el ahorro.
 class RecibosIngreso(models.Model):
-    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+    estatus_choices = (('R', 'Registrado'), ('I', 'Inactivas'), ('P', 'Posteada'))
 
     socioIngreso = models.ForeignKey(Socio)
     prestamo = models.ForeignKey(MaestraPrestamo, null=True, blank=True)

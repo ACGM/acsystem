@@ -136,24 +136,64 @@
 				$event.preventDefault();
 				try{
 					
-					// var regFecha = $scope.rgNote.fecha.split('/');
-					// var FechaFormat = regFecha[2] + '-' + regFecha[1] + '-' + regFecha[0];
-					// $scope.rgNote.fecha = FechaFormat;
-					// $scope.rgNote.estatus = 'R';
+					var regFecha = $scope.rgNote.fecha.split('/');
+					var FechaFormat = regFecha[2] + '-' + regFecha[1] + '-' + regFecha[0];
+					$scope.rgNote.fecha = FechaFormat;
+					$scope.rgNote.estatus = 'P';
 
-					// if($scope.rgNote.id == undefined){
-					// 	$scope.rgNote.id = null;
-					// }
-					// $scope.registro = null
-					// NotasConcServices.setNotas($scope.rgNote).then(function (data){
-					// 	$scope.registro = data;
-					// });
+					if($scope.rgNote.id == undefined){
+						$scope.rgNote.id = null;
+					}
+					$scope.registro = null
+					NotasConcServices.setNotas($scope.rgNote).then(function (data){
+						$scope.registro = data;
+					});
 					$scope.posteo();
 				}
 				catch(e){
 					$rootScope.mostrarError(e);
 				}
 			}
+
+			 $scope.cuentasBuscar = function($event) {
+
+		        if(!isNaN($scope.Postear.cuentaBuscar)) {
+		          //Para cuando es el numero de la cuenta
+		          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+		            return item.codigo.toString().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar;
+		          });
+		        } else {
+		          //Para cuando es la descripcion de la cuenta
+		          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+		            return item.descripcion.toLowerCase().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar.toLowerCase();
+		          });
+		        }
+		        $scope.tableCuenta = true;
+		      }
+
+		     // Agregar una cuenta
+		      $scope.addCuentaContable = function($event, cuenta) {
+		        $event.preventDefault();
+		        var desgloseCuenta = new Object();
+
+		        desgloseCuenta.cuenta = cuenta.codigo;
+		        desgloseCuenta.descripcion = cuenta.descripcion;
+		        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+		        desgloseCuenta.debito = 0;
+		        desgloseCuenta.credito = 0;
+
+		        $scope.desgloseCuentas.push(desgloseCuenta);
+		        $scope.tableCuenta = false;
+		      }
+
+		      $scope.quitarCC = function(desgloseC) {
+		        if($scope.desgloseCuentas.length == 2) {
+		          $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
+		        } else {
+		          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+		          $scope.totalDebitoCredito();
+		        }
+		      }
 
 			$scope.posteo = function(){
 				 var idoc = 0;
@@ -166,31 +206,31 @@
 
 			      $scope.registro = '1';
 
-			      appService.getDocumentoCuentas('NCC').then(function (data) {
-			        var documentoCuentas = data[0];
-			        console.log(documentoCuentas);
+			      // appService.getDocumentoCuentas('NCC').then(function (data) {
+			      //   var documentoCuentas = data[0];
+			      //   console.log(documentoCuentas);
 
 			        //Prepara cada linea de posteo
 
-			        var desgloseCuenta = new Object();
-			        if($scope.rgNote.tipo =='D'){
-			        	$scope.totalDebito += parseFloat($scope.rgNote.monto);
-			        }else{
-			        	$scope.totalCredito += parseFloat($scope.rgNote.monto);
-			        }
-			        desgloseCuenta.cuenta = documentoCuentas.getCuentaCodigo;
-		            desgloseCuenta.descripcion = documentoCuentas.getCuentaDescrp;
-		            desgloseCuenta.ref = documentoCuentas.getCodigo + $scope.registro;
-		            desgloseCuenta.debito = $scope.rgNote.tipo == 'D'? $scope.rgNote.monto: $filter('number')(0.00, 2);
-		            desgloseCuenta.credito = $scope.rgNote.tipo == 'C'? $scope.rgNote.monto: $filter('number')(0.00, 2);
-		            desgloseCuenta.nota = $scope.registro;
+			        // var desgloseCuenta = new Object();
+			        // if($scope.rgNote.tipo =='D'){
+			        // 	$scope.totalDebito += parseFloat($scope.rgNote.monto);
+			        // }else{
+			        // 	$scope.totalCredito += parseFloat($scope.rgNote.monto);
+			        // }
+			        // desgloseCuenta.cuenta = documentoCuentas.getCuentaCodigo;
+		         //    desgloseCuenta.descripcion = documentoCuentas.getCuentaDescrp;
+		         //    desgloseCuenta.ref = documentoCuentas.getCodigo + $scope.registro;
+		         //    desgloseCuenta.debito = $scope.rgNote.tipo == 'D'? $scope.rgNote.monto: $filter('number')(0.00, 2);
+		         //    desgloseCuenta.credito = $scope.rgNote.tipo == 'C'? $scope.rgNote.monto: $filter('number')(0.00, 2);
+		         //    desgloseCuenta.nota = $scope.registro;
 
-			        $scope.desgloseCuentas.push(desgloseCuenta);
-			        console.log(desgloseCuenta);
+			        // $scope.desgloseCuentas.push(desgloseCuenta);
+			        // console.log(desgloseCuenta);
 
-			     });
+			     };
 
-			}
+			
 
 			$scope.getConNota = function($event, id){
 				NotasConcServices.getNotasId(id).then(function (data){

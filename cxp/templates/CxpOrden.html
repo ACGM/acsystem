@@ -18,37 +18,35 @@
 			<table class="listado-table-f" id="table-lf-listado" ng-init="getAllData()">
 						<tr class="listado-table-header-f">
 							<!-- <td><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"> </td> -->
-							<td># Registro</td>
+							<td>Registro</td>
 							<td>Estatus</td>
 							<td>Fecha</td>
 							<td>Orden</td>
 							<td>Socio</td>
 							<td>Suplidor</td>
 							<td>Monto</td>
-							<td>Cuotas</td>
 							<td>Imprimir</td>
 							<td>Eliminar</td>
 						</tr>
 
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
-							<!-- <td><input type="checkbox" name="c[[Orden.id]]" ng-disabled="[[Orden.estatus | posteo]]" ng-checked="valoresChk[Orden.id]" ng-model="reg[Orden.id]" ng-click="selectedReg(Orden)"> </td> -->
 							<td><a href="#" class="sp-field" ng-click="selOrdenById(Orden.id)">[[Orden.id]]</a></td>
-							<td class="icon-folder estatus-[[Orden.estatus]]"></td>
+							<td class="icon-folder estatus-[[Orden.estatus]]">
+								
+							</td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
-							<td>[[Orden.orden | numberFixedLen: 8]]</td>
+							<td>[[Orden.orden | number: 2]]</td>
 							<td>[[Orden.socio ]]</td>
 							<td>[[Orden.suplidor]]</td>
 							<td>[[Orden.monto | number: 2]]</td>
-							<td>[[Orden.cuotas | number:2|numberFixedLen: 4]]</td>
 							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td>
 							<td>
 								<div ng-if="Orden.estatus == 'A'"> <a href="#" class="icon-delete icon-eliminar" ng-click="deleteOrden()"></a></div> 
 								<div ng-if="Orden.estatus == 'P' || Orden.estatus == 'I'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
 
 							</td>
-						</tr>
-									
-					</table>
+						</tr>				
+			</table>
 		</div>
 		
 
@@ -97,13 +95,27 @@
 					</table>
 				</div>
 
-				<table class="data-entry-header-table">
-					<tr>
-						<td>Orden</td>
-						<td> <input type="text" ng-model="cxpDataReg.orden">
-						<a href="#" class="icon-uniE601 icon-buscar" ng-click="findOrden($event)"></a> </td> 
+				<div class="content-socios-table">
+					<table class="orden-table-search" ng-show="tableOrden">
+						<tr>
+							<td colspan="3" class="cerrar-table">
+								<a href="#" class="icon-delete" ng-click="tableOrden=false"></a>
+							</td>
+						</tr>
+						<tr class="socios-table-header">
+							<td>Orden</td>
+							<td>Fecha</td>
+							<td>Monto</td>
+						</tr>
+						<tr ng-repeat="s in socios" class="orden-table-detail-search">
+							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.noSolicitud ]] </a></td>
+							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.fechaSolicitud | date: 'dd/MM/yyyy']] </a></td>
+							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.montoSolicitado  |number:2]] </a></td>
+						</tr>
+					</table>
+				</div>
 
-					</tr>
+				<table class="data-entry-header-table">
 					<tr>
 						<td>Fecha</td>
 						<td> <input type="text" ng-model="cxpDataReg.fecha" value="[[cxpDataReg.fecha | date: 'dd/MM/yyyy']]" datepicker required> </td>
@@ -131,55 +143,23 @@
 						</td>
 					</tr>
 					<tr>
+						<td>Orden</td>
+						<td> <input type="text" ng-model="cxpDataReg.orden" ng-disabled="true" class="input-no-editable codigo-socio-field-f"> <input type="text" ng-model="ordenReg">
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="findOrden($event)"></a> </td> 
+
+					</tr>
+					<tr>
 						<td>Monto</td>
 						<td> 
 							<input type="text" ng-model="cxpDataReg.monto" class="input-no-editable"  ng-disabled="true">
 						</td>
-					<!-- </tr>
-						<tr>
-						<td>Cant Cuotas</td>
-						<td> <input type="text" ng-model="cxpDataReg.cuotas" readonly class="input-no-editable"  ng-disabled="true"> </td>
-					</tr>
-					<tr>
-						<td>Cuotas</td>
-						<td> <input type="text" ng-model="cxpDataReg.montoCuotas" readonly class="input-no-editable"  ng-disabled="true"> </td>
-					</tr> -->
+				
 				</table>
 			
 				<button class="smallMargin icon-save Boton"  ng-click="guardarOrden($event)" >Guardar</button>
 				<button class="smallMargin icon-delete Boton danger" >Cancelar</button>
 				
 			</section>
-		
-			<!-- <div class="producto-find-ei" ng-show="panelDetalleArt">
-				<div class="sub-menu">
-					Detalle de Ordenes
-					<a href="#" class="[[DetArrow]]" ng-click="toggleDt()"></a>
-				</div>
-				<div ng-show="DetallesArt">
-					<div>
-						Articulo: <span>
-									<input type="text" ng-model="detallesOrd.articulo"> 
-								</span>
-						Monto: <span> 
-							  	  <input type="text" ng-model="detallesOrd.monto"> 
-							  </span>
-					</div>
-					<button class="smallMargin icon-plus Boton" type="submit" ng-click="calcMonto()" >Agregar</button>
-					
-
-					<table  id="TbDetalle" class="listado-table-f data-entry-header-table">
-						<tr class="listado-table-header-f Orden-Articulos">
-							<td style="width:90.5%;">Articulo</td>
-							<td>Precio</td>
-						</tr>
-						<tr class="DetalleOrden"  ng-repeat="detalle in cxpDataDetalle" >
-							<td>[[detalle.articulo]]</td>
-							<td>[[detalle.monto |number:2]]</td>
-						</tr>
-					</table>
-				</div>
- -->
 			</div>
 		</form>
 

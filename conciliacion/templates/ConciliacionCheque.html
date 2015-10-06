@@ -5,46 +5,48 @@
 {% block content %}
 	<div class="cheques" ng-controller="ChequeCtrl">
 		<div class="cheque-botons">
-			<button class="Boton BusquedaBtn icon-save" type="submit" ng-click="listSolicitud($event)">Solicitudes</button>
-			<button class="Boton BusquedaBtn icon-save" type="submit" ng-click="listCheques($event)">Cheques</button>
+			<button class="Boton BusquedaBtn icon-file" type="submit" ng-click="listSolicitud($event)">Solicitudes</button>
+			<button class="Boton BusquedaBtn icon-banknote" type="submit" ng-click="listCheques($event)">Cheques</button>
 
 		</div>
 		<div class="cheque-lista" ng-show="ToggleSl">
-			<table class="cheque-table">
-				<tr>
-					<td># Registro</td>
+			<table class="listado-table-f">
+				<tr class="listado-table-header-f">
+					<td>Registro</td>
 					<td>Fecha</td>
-					<td>Socio</td>
+					<td>Beneficiario</td>
 					<td>Concepto</td>
 					<td>Monto</td>
 					<td>Convertir a cheque</td>
 				</tr>
-				<tr ng-repeat="s in LsSolicitud">
+				<tr class="listado-csol-detail" ng-repeat="s in LsSolicitud">
 					<td>[[s.id]]</td>
-					<td>[[s.fecha]]</td>
-					<td>[[s.socio]]</td>
+					<td>[[s.fecha |date: 'dd/MM/yyyy']]</td>
+					<td>[[s.socio]] [[s.supervisor]]</td>
 					<td>[[s.concepto]]</td>
-					<td>[[s.monto]]</td>
-					<td> <a href="#" class="utils-noDecoration icon-banknote" ng-click="setAhorro()"></a></td>
+					<td>$[[s.monto | number: 2]]</td>
+					<td> <a href="#" class="utils-noDecoration icon-banknote" ng-click="NewCheque($event,s)"></a></td>
 				</tr>
 			</table>
 		</div>
 
 		<div class="cheque-lista-ch" ng-show="ToggleCh">
-			<table class="cheque-table">
-				<tr>
-					<td># Registro</td>
+			<table  class="listado-table-f">
+				<tr class="listado-table-header-f">
+					<td>Registro</td>
 					<td>Solicitud</td>
 					<td>No Cheque</td>
 					<td>Fecha</td>
+					<td>Beneficiario</td>
 					<td>Estatus</td>
 					<td>Imprimir</td>
 				</tr>
-				<tr ng-repeat="ch in LsCheques">
+				<tr class="listado-chk-detail" ng-repeat="ch in LsCheques">
 					<td>[[ch.id]]</td>
 					<td>[[ch.solicitud]]</td>
 					<td>[[ch.noCheque]]</td>
-					<td>[[ch.fecha]]</td>
+					<td>[[ch.fecha | date: 'dd/MM/yyyy']]</td>
+					<td>[[ch.beneficiario]]</td>
 					<td>
 						<div ng-if="ch.estatus == 'P' ">
 							Posteada
@@ -59,7 +61,7 @@
 							Transito
 						</div>
 					</td>
-					<td> <a href="#" class="utils-noDecoration icon-print" ng-click="printChk()"></a></td>
+					<td> <a href="#" class="utils-noDecoration icon-printer" ng-click="printChk($event, ch)"></a></td>
 				</tr>
 			</table>
 		</div>
@@ -69,7 +71,7 @@
 				<table>
 					<tr>
 						<td>
-							# Registro
+							Registro
 						</td>
 						<td>
 							<input type="text" ng-model="reCheque.id" disabled>
@@ -77,21 +79,39 @@
 					</tr>
 					<tr>
 						<td>Solicitud</td>
-						<td><input type="text" ng-model="reCheque.solicitudId" disabled></td>
+						<td><input type="text" ng-model="reCheque.solicitud" disabled></td>
+					</tr>
+					<tr>
+						<td>Beneficiario</td>
+						<td>
+							<input type="text" ng-model="reCheque.beneficiario" disabled="">
+						</td>
 					</tr>
 					<tr>
 						<td>No Cheque</td>
-						<td><input type="text" ng-model="reCheque.noCheque"></td>
+						<td><input type="text" ng-model="reCheque.noCheque" require></td>
 					</tr>
 					<tr>
 						<td>Fecha</td>
-						<td><input type="text" ng-model="reCheque.fecha" value="[[reCheque.fecha | date: 'dd/MM/yyyy']]" datepicker></td>
+						<td><input type="text" ng-model="reCheque.fecha" value="[[reCheque.fecha | date: 'dd/MM/yyyy']]" datepicker require></td>
 					</tr>
 					<tr>
-						<div ng-if="reCheque.id !== null and  reCheque.id !== undefine">
-							<td>Estatus</td>
-							<td><input type="text" ng-model="reCheque.estatus"></td>
-						</div>
+						<td>
+							<div ng-if="reCheque.id != null">
+							Estatus
+							</div>
+						</td>
+						<td>
+							<div ng-if="reCheque.id != null">
+								<select name="" ng-model="reCheque.estatus">
+									<option value="T">En Transito</option>
+									<option value="P">Posteado</option>
+									<option value="R">Registrado</option>
+									<option value="C">Cancelado</option>
+									<option value="D">Devueltos</option>
+								</select>
+							</div>
+							</td>
 					</tr>
 					<tr>
 						<td>
