@@ -5,14 +5,14 @@ from cuenta.models import DiarioGeneral
 from administracion.models import Socio, Suplidor
 
 class SolicitudCheque(models.Model):
-    estatus_choicer = (('A', 'Aprobada'), ('R', 'Rechazada'), ('P', 'En Proceso'))
+    estatus_choicer = (('A', 'Aprobada'), ('R', 'Rechazada'), ('P', 'En Proceso'),('E', 'Emitido'))
 
-    fecha = models.DateTimeField()
+    fecha = models.DateField()
     socio = models.ForeignKey(Socio, null=True, blank=True)
     suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
     concepto = models.CharField(max_length=150, null=False, blank=False)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=False, null=False)
-    prestamo = models.PositiveIntegerField() 
+    prestamo = models.PositiveIntegerField(null=True, blank=True) 
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
 
     def __unicode__(self):
@@ -27,6 +27,7 @@ class ConcCheques(models.Model):
     chequeNo = models.PositiveIntegerField(null=False, blank=False, verbose_name='# Cheque')
     fecha = models.DateTimeField()
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
 
     def __unicode__(self):
         return '%i-%s' % (self.chequeNo, self.id)

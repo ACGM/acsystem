@@ -370,5 +370,30 @@ class HistoricoActivos(TemplateView):
 
         return JsonResponse(data, safe=False)
 
+class ActDepresiados(TemplateView):
+    template_name = "ActDepresiados.html"
 
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
 
+        if format == 'json':
+            return self.json_to_response()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+        for activo in Activos.objects.filter(estatus='D'):
+            depr = Depresiacion.objects.filter(activoId=activo.id).order_by('-fecha').first() 
+            data.append({
+                'id': activo.id,
+                'descripcion': activo.descripcion,
+                'fechaAdq': activo.fechaAdd,
+                'costo' : activo.costo,
+                'porcentaje': activo.porcentaje, 
+                'fecha': depr.fecha if depr != None else '',
+                'dMensual': depr.dMensual if depr != None else '',
+                'dAcumulada': depr.dAcumulada if depr != None else '',
+                'dAgno': depr.dAgno if depr != None else '',
+                'vLibro': depr.vLibro if depr != None else ''
+                })

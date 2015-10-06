@@ -31,7 +31,6 @@
                 return deferred.promise;
         };
 
-
 		function setSolicitud(solicitud){
 			var deferred = $q.defer();
 
@@ -223,12 +222,26 @@
 				
 				if($scope.solicitud.id == undefined){
 					$scope.solicitud.id = null;
-					//$scope.solicitud.estatus = 'R';
-				}
-				debugger;
-				//SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
-				//	var resp = data;
-				//});
+					$scope.solicitud.estatus = 'R';
+				};
+				
+				if($scope.solicitud.socioId == undefined){
+					$scope.solicitud.socioId = null;
+				};
+
+				if($scope.solicitud.suplidorId == undefined){
+					$scope.solicitud.suplidorId = null;
+				};
+
+				SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+					if(data=="Ok"){
+						alert("Solicitud Creada");
+						$scope.solicitudList();
+					}else{
+						$rootScope.mostrarError("No fue posible Crear la solicitud");
+						console.log(data);
+					}
+				});
 			}
 			catch(e){
 				$rootScope.mostrarError(e);
@@ -254,7 +267,7 @@
 			$scope.solicitud = {};
 		};
 
-		$scope.ActEstatus = function($event,estatus,id){
+		$scope.ActEstatus = function($event,estatus){
 			$event.preventDefault();
 			var est = null;
 			if(estatus == "aceptado"){
@@ -265,27 +278,25 @@
 			};
 
 			if(est != null){
-				var sol = {solicitud : id, estatus : est};
+				var sol = {};
+				sol.solId = $scope.chk;
+				sol.estatus = est;
+				console.log(sol);
 				SolicitudServices.wFlow(sol).then(function (data){
 					if(data == "Ok"){
-						alert("Solicitud #"+id+" Aprobada.");
+						$scope.flap = false;
+						alert("Se ha completado la solicitud #"+$scope.chk);
+						$scope.chk = null;
 					}
 					else{
+						$scope.flap = false;
 						alert("Ocurrio un error al intentar aprobar.");
 						console.log(data);
 					}
 				});
+
 			};
-
-			var data = $scope.lsSolicitud .filter(function (reg){
-				return reg.id == id;
-			});
-		
-			$scope.flap = true;
-			$scope.chk = null;
-			$window.sessionStorage['solicitud'] = JSON.stringify(data);
-
-	       	$window.open('/conciliacion/Solicitudcheque/rg', target='_blank'); 
+			$scope.solicitudList();	
 		};
 
 		$scope.printSol = function($event,id){

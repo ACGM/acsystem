@@ -77,6 +77,7 @@
 					<td>Monto Ahorro</td>
 					<td>Monto Prestamo</td>
 					<td>Estatus</td>
+					<td></td>
 				</tr>
 				<tr class="listado-rcb-detail" ng-repeat="rc in reciboLista">
 					<td>
@@ -95,7 +96,23 @@
 						[[rc.montoPrestamo]]
 					</td>
 					<td>
-						[[rc.estatus]]
+						<div ng-if="rc.estatus == 'R">
+							registrado
+						</div>
+						<div ng-if="rc.estatus == 'P">
+							Posteado
+						</div>
+						<div ng-if="rc.estatus == 'I">
+							Nula
+						</div>
+					</td>
+					<td>
+						<div ng-if="rc.estatus == 'R">
+							<a href="#" class="icon-folder-open" ng-click=""></a>
+						</div>
+						<div ng-if="rc.estatus != 'R">
+							<span class="icon-folder"></span>
+						</div>
 					</td>
 				</tr>
 			</table>

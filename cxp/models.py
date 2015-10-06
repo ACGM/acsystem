@@ -23,10 +23,7 @@ class OrdenCompra(models.Model):
     orden = models.PositiveIntegerField(null=False, blank=False, verbose_name="# Orden")
     fecha = models.DateField(verbose_name="Fecha")
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
-    cuotas = models.PositiveIntegerField(null=False, blank=False, verbose_name="Cuotas")
-    montocuotas = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
-    detalleOrden = models.ManyToManyField(DetalleOrden, related_name='detalle_ref', verbose_name="Detalle de Orden")
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_ref", verbose_name='Detalle Cuentas')
 
     def __unicode__(self):
