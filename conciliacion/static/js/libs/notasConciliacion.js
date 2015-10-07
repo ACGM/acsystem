@@ -102,7 +102,17 @@
 			$scope.fechai = null;
 			$scope.fechaf = null;
 			$scope.rgNote = {};
+		    
+		    $scope.desgloseCuentas = [];
+		    $scope.posteoG = false;
 
+
+			//Traer todas las cuentas a javascript
+	      	appService.allCuentasContables().then(function (data) {
+	        	if(data.length > 0) {
+	          		$scope.todasLasCuentas = data;
+	        	}
+	      	});
 
 			$scope.nueva = function(){
 				$scope.CrNota = true;
@@ -154,6 +164,10 @@
 					$rootScope.mostrarError(e);
 				}
 			}
+			// Mostrar/Ocultar posteo Contabilidad
+		    $scope.toggleInfo = function() {
+		       $scope.showPostear = !$scope.showPostear;
+		    }
 
 			 $scope.cuentasBuscar = function($event) {
 
@@ -175,10 +189,13 @@
 		      $scope.addCuentaContable = function($event, cuenta) {
 		        $event.preventDefault();
 		        var desgloseCuenta = new Object();
-
+				
+				console.log($scope.desgloseCuentas)
+				console.log(cuenta)
+		        
 		        desgloseCuenta.cuenta = cuenta.codigo;
 		        desgloseCuenta.descripcion = cuenta.descripcion;
-		        desgloseCuenta.ref = $scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+		        desgloseCuenta.ref = 'TEST-0000';//$scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
 		        desgloseCuenta.debito = 0;
 		        desgloseCuenta.credito = 0;
 
@@ -193,6 +210,24 @@
 		          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
 		          $scope.totalDebitoCredito();
 		        }
+		      }
+
+		      //Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+		      $scope.totalDebitoCredito = function() {
+		        $scope.totalDebito = 0.00;
+		        $scope.totalCredito = 0.00;
+
+		        $scope.desgloseCuentas.forEach(function (documento) {
+		          console.log(documento)
+
+		          if(documento.debito.length > 0) {
+		            $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+		          }
+
+		          if(documento.credito.length > 0) {
+		            $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+		          }
+		        });
 		      }
 
 			$scope.posteo = function(){

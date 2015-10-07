@@ -20,6 +20,7 @@ class Cuentas(models.Model):
     # Origenes de cuentas
     origen_choices = (('D', 'Debito'), ('C', 'Credito'),)
     tipo_choicer = (('G', 'General'), ('D', 'Detalle'))
+    tipo_socio = (('S', 'Standard'), ('E', 'Empleado'))
 
     # Campos Base
     codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)
@@ -29,11 +30,14 @@ class Cuentas(models.Model):
     #Para Identificar si es una cuenta Control
     control = models.BooleanField(default=False)
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
+    tipoSocio = models.CharField(max_length=1, choices=tipo_socio, default='S')
 
     def __unicode__(self):
         return '%s-%s' % (str(self.codigo), self.descripcion)
 
     class Meta:
+        verbose_name = 'Cuenta'
+        verbose_name_plural = 'Cuentas'
         ordering = ['codigo']
 
     def save(self, *args, **kwargs):
