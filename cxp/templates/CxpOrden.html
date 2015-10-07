@@ -132,7 +132,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Suplidro</td>
+						<td>Suplidor</td>
 						<td> <input type="text" ng-model="cxpDataReg.suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
 							<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
 
@@ -144,9 +144,12 @@
 					</tr>
 					<tr>
 						<td>Orden</td>
-						<td> <input type="text" ng-model="cxpDataReg.orden" ng-disabled="true" class="input-no-editable codigo-socio-field-f"> <input type="text" ng-model="ordenReg">
-						<a href="#" class="icon-uniE601 icon-buscar" ng-click="findOrden($event)"></a> </td> 
-
+						<td> 
+							<input type="text" ng-model="cxpDataReg.orden" ng-disabled="true" class="input-no-editable codigo-socio-field-f"> 
+							<input type="text" ng-model="ordenReg">
+							
+							<a href="#" class="icon-uniE601 icon-buscar" ng-click="findOrden($event)"></a> 
+						</td> 
 					</tr>
 					<tr>
 						<td>Monto</td>

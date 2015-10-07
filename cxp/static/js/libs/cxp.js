@@ -269,6 +269,7 @@
 
             $scope.findOrden = function ($event){
                 $scope.tableOrden = true;
+                
                SolicitudOrdenDespachoService.solicitudesODForCXP().then(function (data) {
                         return data.filter(function (reg){
                             return reg.socios == $scope.cxpDataReg.socioId && reg.suplidor == $scope.cxpDataReg.suplidorId
