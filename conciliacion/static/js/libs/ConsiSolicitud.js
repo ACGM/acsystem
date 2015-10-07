@@ -148,6 +148,9 @@
 	        $scope.solicitud.socioId = s.codigo;
 	        $scope.socioNombre = s.nombreCompleto 
 
+	        $scope.suplidorNombre = null;
+	        $scope.solicitud.suplidorId = null;
+
 	        $scope.tableSocio = false;
 	      };
 
@@ -185,6 +188,10 @@
 	        $event.preventDefault();
 	        $scope.suplidorNombre = s.nombre;
 	        $scope.solicitud.suplidorId = s.id;
+
+	         $scope.solicitud.socioId = null;
+	        $scope.socioNombre = null;
+
 	        $scope.tableSuplidor= false;
 	      };
 
@@ -222,7 +229,7 @@
 				
 				if($scope.solicitud.id == undefined){
 					$scope.solicitud.id = null;
-					$scope.solicitud.estatus = 'R';
+					$scope.solicitud.estatus = 'P';
 				};
 				
 				if($scope.solicitud.socioId == undefined){

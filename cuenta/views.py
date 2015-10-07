@@ -34,14 +34,7 @@ class MaestroView(View):
 
     def json_to_response(self):
         data = list()
-        Mayor = DiarioGeneral.objects.raw('select s.id \
-                                             ,s.fecha\
-                                             ,s.codigo \
-                                             ,s.descripcion\
-                                             ,sum(s.debito) as debito \
-                                             ,sum(s.credito) as credito\
-                                             from (\
-                                                 select di.id\
+        Mayor = DiarioGeneral.objects.raw('select di.id\
                                                  ,di.fecha\
                                                  ,c.codigo\
                                                  ,c.descripcion\
@@ -49,20 +42,7 @@ class MaestroView(View):
                                                  ,sum(di.credito) as credito \
                                                  from cuenta_diariogeneral as di \
                                                     left join cuenta_cuentas c on c.id = di.cuenta_id\
-                                                    where di.cuenta_id is not NULL group by di.fecha, c.codigo\
-                                             union \
-                                                 select di.id\
-                                                 ,di.fecha\
-                                                 ,c.codigo\
-                                                 ,c.descripcion\
-                                                 ,sum(di.debito) as debito\
-                                                 ,sum(di.credito) as credito\
-                                                    from cuenta_diariogeneral as di\
-                                                 left join cuenta_auxiliares au on au.id =di.auxiliar_id\
-                                                 left join cuenta_cuentas c on c.id = au.cuenta_id\
-                                                 where di.auxiliar_id is not NULL\
-                                                 group by di.fecha, c.codigo) as s group by s.codigo\
-                                                  order by s.fecha, s.codigo ')
+                                                    where di.cuenta_id is not NULL group by di.fecha, c.codigo')
 
         for maestro in Mayor:
             data.append({
@@ -125,7 +105,6 @@ class CuentasView(DetailView):
                     'id': item.id,
                     'cuenta': item.cuenta.codigo if item.cuenta != None else '',
                     'cDescripcion': item.cuenta.descripcion if item.cuenta != None else '',
-                    'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
                     'aDescripcion': item.auxiliar.descripcion if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
@@ -141,8 +120,6 @@ class CuentasView(DetailView):
                     'id': item.id,
                     'cuenta': item.cuenta.codigo if item.cuenta != None else '',
                     'cDescripcion': item.cuenta.descripcion if item.cuenta != None else '',
-                    'auxiliar': item.auxiliar.codigo if item.auxiliar != None else '',
-                    'aDescripcion': item.auxiliar.descripcion if item.auxiliar != None else '',
                     'ref': item.referencia,
                     'fecha': item.fecha,
                     'estatus': item.estatus,

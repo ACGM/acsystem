@@ -36,7 +36,7 @@
 					return deferred.promise;
 			}
 
-			function getCuentaDocDoc(doc){
+			function getCuentaDoc(doc){
 				var deferred = $q.defer();
 
 				getCuentaDoc().then(function (data){
@@ -489,7 +489,6 @@
 				$scope.ahorroDt.libre = libre;
 
 
-
 				var tipo;
 
 				if ($scope.retiro.tipo == 'A'){
@@ -598,7 +597,7 @@
           		var FechaFormat2 = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           	    $scope.GrInteres.fechaF = FechaFormat2;
 
-          	    $scope.cuenta = getAhorroSocio.getCuentaDoc('IAH');
+          	    $scope.cuenta = AhorroServices.getCuentaDoc('AHIN');
 
 				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF, $scope.documentos);				
 			};

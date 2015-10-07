@@ -7,13 +7,10 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 from django.shortcuts import render
 
-<<<<<<< HEAD
+
 from cuenta.models import DiarioGeneral, Cuentas
-from administracion.models import Socio, CoBeneficiario, Suplidor
-=======
-from cuenta.models import DiarioGeneral, Auxiliares, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento,DocumentoCuentas
->>>>>>> moduloYei
+
 
 # Local Imports
 from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco

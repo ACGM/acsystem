@@ -63,10 +63,8 @@ class reciboPost(TemplateView):
 
         for docu in doc:
             self.setCuenta(regMaestra.id, doc, Fecha)
-
-        return 'Ok'
         
-        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RI-'+str(recibo.id),'RI')
+        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RIRG')
 
         return HttpResponse('Ok')
 
@@ -77,14 +75,14 @@ class reciboTemplateView(TemplateView):
         data = json.loads(request.body)
         dataR= data['recibo']
 
-        if dataR[id] is None:
+        if dataR['id'] is None:
             regRecibo = RecibosIngreso()
             regSocio = Socio.objects.get(codigo=dataR['socio'])
 
-            if dataR['prestamo'] != None:
-                MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
+            if dataR['NoPrestamo'] != None:
+                regPrest = MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
             
-            if dataR['ahorro'] == 1:
+            if dataR['montoAhorro'] != None :
                 regAHorro = AhorroSocio.objects.get(socio=regSocio)
 
             regRecibo.socioIngreso = regSocio

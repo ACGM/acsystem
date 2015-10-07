@@ -201,7 +201,7 @@
 
 
 			$scope.getCategoria = function($event){
-				$event.preventDefault();
+				
 				$scope.tableCat = true;
 				$scope.tableSuplidor = false;
 				$scope.tableLoc = false;

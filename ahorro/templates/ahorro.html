@@ -109,25 +109,13 @@
 						<div class="registrosPanel">
 							<table id="tabla-detalleCuentas" class="listado-table detalle-Ahorro-w">
 								<tr class="listado-table-header-ei utils-upperBorderR">
-									<th><input type="checkbox" id="postAll"> </th>
 									<th>Registro</th>
 									<th>Fecha</th>
 									<th>Monto</th>
 									<th>Estatus</th>
+									<th>Postear</th>
 								</tr>
 								<tr ng-repeat="registro in AhorrosPorSocio[0].maestra" class="listado-ardt-detail">
-								<td>
-									<div ng-if="registro.estatus =='O' "> 
-										<input id="postRetiro" type="checkbox" checked="true" disabled>
-									</div>
-									<div ng-if="registro.estatus =='I' "> 
-										<input id="postRetiro" type="checkbox" disabled>
-									</div>
-									<div ng-if="registro.estatus == 'A'">
-										<input id="postRetiro" type="checkbox" >
-									</div>
-									
-								</td>
 								<td>
 									<div ng-if="registro.estatus == 'A'">
 										<a href="#" ng-click="getRegRetiro(registro.retiro)" class='utils-gr utils-noDecoration icon-pencil'></a>
@@ -147,7 +135,19 @@
 									</div>
 									<div ng-if="registro.estatus == 'P'"> 
 										<span class="icon-archivo  disabled" tooltip="Posteadas">Posteada</span>
-									</div>  
+									</div> 
+									<td>
+									<div ng-if="registro.estatus =='o' "> 
+										<input id="postRetiro" type="checkbox" checked="true" disabled>
+									</div>
+									<div ng-if="registro.estatus =='I' "> 
+										<input id="postRetiro" type="checkbox" disabled>
+									</div>
+									<div ng-if="registro.estatus == 'A'">
+										<input id="postRetiro" type="checkbox" >
+									</div>
+									
+								</td> 
 							    </td> 
 									
 								</tr>
@@ -191,9 +191,8 @@
 						</td>
 						<td>
 							<select name="TipoRet" form="retiroForm" ng-model="retiro.tipo">
-							  <option value="A">Retiro Ahorro</option>
-							  <option value="J">Retiro por Ajuste</option>
-							  <option value="O">Retiro Otros</option>
+							  <option value="R">Retiro Ahorro</option>
+							  <option value="E">Retiro por extraorinario</option>
 							  
 							</select>
 						</td>

@@ -280,7 +280,6 @@ class DepresiacionView(TemplateView):
         else:
             ddoc = 'DEPE'
 
-        activo.descripcion = 'no'
         activo.save()
 
         tipoDo = TipoDocumento.objects.get(codigo=ddoc)
