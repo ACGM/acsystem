@@ -165,3 +165,16 @@ for line in f:
 	socio.save()
 
 f.close
+
+
+#Asignar atributo para cuentas que son CONTROL
+for cc in CuentasControl.objects.all():
+	try:
+		c = Cuentas.objects.get(codigo=cc.codigoControl)
+		c.control = True
+		c.cuentaControl = cc
+		c.save()
+	except cc.DoesNotExist:
+		pass
+
+		
