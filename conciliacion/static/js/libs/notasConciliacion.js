@@ -93,8 +93,8 @@
 		};
 	}])
 	
-	.controller('NotasConcCtrl', ['$scope','$filter', '$rootScope', 'NotasConcServices','$timeout','appService', '$window', 
-		function ($scope, $filter, $rootScope, NotasConcServices, timeout, appService, $window ) {
+	.controller('NotasConcCtrl', ['$scope','$filter', '$rootScope', 'NotasConcServices','$timeout','appService', '$window', 'ContabilidadService',
+		function ($scope, $filter, $rootScope, NotasConcServices, timeout, appService, $window, ContabilidadService ) {
 			$scope.CrNota= false;
 			$scope.lsView = true;
 			$scope.LsNotas = [];
@@ -158,10 +158,12 @@
 					NotasConcServices.setNotas($scope.rgNote).then(function (data){
 						$scope.registro = data;
 					});
-					$scope.posteo();
+					$scope.iDocumentos = 0;
+					$scope.toggleInfo();
 				}
 				catch(e){
-					$rootScope.mostrarError(e);
+					// $rootScope.mostrarError(e);
+					alert(e);
 				}
 			}
 			// Mostrar/Ocultar posteo Contabilidad
@@ -221,49 +223,45 @@
 		          console.log(documento)
 
 		          if(documento.debito.length > 0) {
-		            $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
+		            $scope.totalDebito += parseFloat(documento.debito);
 		          }
 
 		          if(documento.credito.length > 0) {
-		            $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
+		            $scope.totalCredito += parseFloat(documento.credito);
 		          }
 		        });
 		      }
 
-			$scope.posteo = function(){
-				 var idoc = 0;
-			      $scope.iDocumentos = 0;
-			      $scope.totalDebito = 0.00;
-			      $scope.totalCredito = 0.00;
+		  //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+	      //para este modulo de Conciliacion.
+	      $scope.postearContabilidad = function() {
 
-			      $scope.showPostear = true;
-			      $scope.desgloseCuentas = [];
+	        try {
 
-			      $scope.registro = '1';
+	          //Validar que el CREDITO cuadre con el DEBITO
+	          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+	            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+	          }
 
-			      // appService.getDocumentoCuentas('NCC').then(function (data) {
-			      //   var documentoCuentas = data[0];
-			      //   console.log(documentoCuentas);
+	          $scope.posteoG = true;
+	          $scope.desgloseCuentas.forEach(function (item) {
+	            ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+	              console.log('Registros guardados en el diario');
+	              console.log(data);
+	            });
+	          });
 
-			        //Prepara cada linea de posteo
+	          // InventarioService.postearINV($scope.entradasSeleccionadas, 'EINV').then(function (data) {
+	          //   console.log(data);
+	          //   $scope.listadoEntradas();
+	          // });
 
-			        // var desgloseCuenta = new Object();
-			        // if($scope.rgNote.tipo =='D'){
-			        // 	$scope.totalDebito += parseFloat($scope.rgNote.monto);
-			        // }else{
-			        // 	$scope.totalCredito += parseFloat($scope.rgNote.monto);
-			        // }
-			        // desgloseCuenta.cuenta = documentoCuentas.getCuentaCodigo;
-		         //    desgloseCuenta.descripcion = documentoCuentas.getCuentaDescrp;
-		         //    desgloseCuenta.ref = documentoCuentas.getCodigo + $scope.registro;
-		         //    desgloseCuenta.debito = $scope.rgNote.tipo == 'D'? $scope.rgNote.monto: $filter('number')(0.00, 2);
-		         //    desgloseCuenta.credito = $scope.rgNote.tipo == 'C'? $scope.rgNote.monto: $filter('number')(0.00, 2);
-		         //    desgloseCuenta.nota = $scope.registro;
+	          alert('Los registros fueron posteados con exito!');
 
-			        // $scope.desgloseCuentas.push(desgloseCuenta);
-			        // console.log(desgloseCuenta);
-
-			     };
+	        } catch (e) {
+	          alert(e);
+	        }
+	      } //Linea FIN de posteo Contabilidad.
 
 			
 
