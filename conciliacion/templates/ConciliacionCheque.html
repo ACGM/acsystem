@@ -17,6 +17,7 @@
 					<td>Beneficiario</td>
 					<td>Concepto</td>
 					<td>Monto</td>
+					<td>Estatus</td>
 					<td>Convertir a cheque</td>
 				</tr>
 				<tr class="listado-csol-detail" ng-repeat="s in LsSolicitud">
@@ -25,6 +26,17 @@
 					<td>[[s.socio]] [[s.supervisor]]</td>
 					<td>[[s.concepto]]</td>
 					<td>$[[s.monto | number: 2]]</td>
+					<td>
+						<div ng-if="s.estatus =='P' ">
+							<strong>En Proceso</strong>
+						</div>
+						<div ng-if="s.estatus =='A' ">
+							<strong>Aprobado</strong>
+						</div>
+						<div ng-if="s.estatus =='R' ">
+							<strong>Rechazada</strong>
+						</div>
+					</td>
 					<td> <a href="#" class="utils-noDecoration icon-banknote" ng-click="NewCheque($event,s)"></a></td>
 				</tr>
 			</table>

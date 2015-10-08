@@ -7,14 +7,14 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 from django.shortcuts import render
 
-
 from cuenta.models import DiarioGeneral, Cuentas
-from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento,DocumentoCuentas
+from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento, DocumentoCuentas
 
 
 # Local Imports
 from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
+
 
 class SolicitudViewSet(viewsets.ModelViewSet):
     queryset = SolicitudCheque.objects.all()
@@ -35,6 +35,7 @@ class conBancoViewSet(viewsets.ModelViewSet):
     queryset = ConBanco.objects.all()
     serializer_class = ConBancoSerializer
 
+
 def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
     try:
         solicitud = SolicitudCheque()
@@ -42,7 +43,7 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
         if socio != None:
             soc = Socio.objects.get(codigo=socio)
             solicitud.socio = soc
-        if suplidor != None:
+        if suplidor is not None:
             sup = Suplidor.objects.get(id=suplidor)
             solicitud.suplidor = sup
         solicitud.concepto = concepto
@@ -53,7 +54,8 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
         return 'Ok'
     except Exception, e:
         return e.message
-    
+
+
 class SolicitudView(TemplateView):
     template_name = 'solicitudCheque.html'
 
@@ -82,7 +84,7 @@ class SolicitudView(TemplateView):
                 'monto': sol.monto,
                 'estatus': sol.estatus,
             })
-            
+
         return JsonResponse(data, safe=False)
 
     def post(self, request):
@@ -90,7 +92,6 @@ class SolicitudView(TemplateView):
         Data = DataT['solicitud']
 
         if Data['id'] is None:
-
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
             if Data['socioId'] != None:
@@ -128,8 +129,8 @@ class SSolicitud(TemplateView):
             return HttpResponse('Ok')
         except Exception, e:
             return HttpResponse(e.message)
-        
-    
+
+
 class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
@@ -141,7 +142,7 @@ class ChequesView(TemplateView):
         regDiario = DiarioGeneral()
         regDiario.cuenta = regCuenta
         regDiario.fecha = fecha
-        regDiario.referencia = 'CHK-'+str(chkId)
+        regDiario.referencia = 'CHK-' + str(chkId)
         regDiario.estatus = 'P'
 
         if doc.accion == 'D':
@@ -154,7 +155,6 @@ class ChequesView(TemplateView):
         regDiario.save()
         cheque.cuenta.add(regDiario)
         return 'Ok'
-
 
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
@@ -221,11 +221,12 @@ class ChequesView(TemplateView):
 
             return HttpResponse('Ok')
         except Exception, e:
-             return HttpResponse(e.message)
+            return HttpResponse(e.message)
+
 
 class SChequeView(TemplateView):
-    template_name="impCheque.html"
-            
+    template_name = "impCheque.html"
+
 
 class NotasConciliacionView(TemplateView):
     template_name = 'NotasConciliacion.html'
@@ -287,10 +288,10 @@ class NotasConciliacionView(TemplateView):
                 nota.estatus = Data['estatus']
                 nota.save()
 
-            return HttpResponse('Ok')   
+            return HttpResponse('Ok')
         except Exception, e:
             return HttpResponse(e.message)
-        
+
 
 class SSNotasView(DetailView):
     queryset = NotaDCConciliacion.objects.all()
@@ -308,7 +309,7 @@ class SSNotasView(DetailView):
                                          'fecha, tipo, '
                                          'monto, estatus '
                                          'from conciliacion_notadcconciliacion'
-                                         'WHERE fecha BETWEEN '+fechaI+' AND '+fechaF)
+                                         'WHERE fecha BETWEEN ' + fechaI + ' AND ' + fechaF)
 
         for detalle in registros:
             Data.append({
@@ -391,7 +392,7 @@ class ConBancoView(TemplateView):
             banco.save(())
         return HttpResponse(Data['tipo'])
 
-        
+
 class ConBancoLs(DetailView):
     queryset = ConBanco.objects.all()
 

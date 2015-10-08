@@ -332,7 +332,7 @@ class DepresiacionView(TemplateView):
 
             self.depDocument(regDesp.id,fechas['fechaF'] , antDesp.dMensual)
 
-            if regDesp.vLibro == 0:
+            if regDesp.vLibro < 10:
                 act.estatus = 'D'
                 act.save()
 

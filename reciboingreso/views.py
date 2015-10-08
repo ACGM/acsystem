@@ -48,23 +48,24 @@ class reciboPost(TemplateView):
         fecha = data['fecha']
 
         recibo = RecibosIngreso.objects.get(id=registro)
+        if recibo.ahorro != None:
+            regAhorro = AhorroSocio.objects.get(id=recibo.ahorro.id)
 
-        regAhorro = AhorroSocio.objects.get(id=recibo.ahorro.id)
+            regMaestra = MaestraAhorro()
+            regMaestra.ahorro = regAhorro
+            regMaestra.fecha = fecha
+            regMaestra.monto = recibo.montoAhorro
+            regMaestra.estatus = 'P'
+            regMaestra.save()
 
-        regMaestra = MaestraAhorro()
-        regMaestra.ahorro = regAhorro
-        regMaestra.fecha = fecha
-        regMaestra.monto = recibo.montoAhorro
-        regMaestra.estatus = 'P'
-        regMaestra.save()
+            tipo = TipoDocumento.objects.get(codigo='AHRG')
+            doc = DocumentoCuentas.objects.filter(documento = tipo)
 
-        tipo = TipoDocumento.objects.get(codigo='AH')
-        doc = DocumentoCuentas.objects.filter(documento = tipo)
-
-        for docu in doc:
-            self.setCuenta(regMaestra.id, doc, Fecha)
+            for docu in doc:
+                self.setCuenta(regMaestra.id, doc, Fecha)
         
-        guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RIRG')
+        if recibo.prestamo != None:
+            guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RIRG')
 
         return HttpResponse('Ok')
 
@@ -79,26 +80,36 @@ class reciboTemplateView(TemplateView):
             regRecibo = RecibosIngreso()
             regSocio = Socio.objects.get(codigo=dataR['socio'])
 
-            if dataR['NoPrestamo'] != None:
-                regPrest = MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
-            
-            if dataR['montoAhorro'] != None :
-                regAHorro = AhorroSocio.objects.get(socio=regSocio)
-
             regRecibo.socioIngreso = regSocio
-            regRecibo.prestamo = regPrest
-            regRecibo.ahorro = regAHorro
-            regRecibo.montoPrestamo = dataR['montoPrestamo']
-            regRecibo.montoAhorro = dataR['montoAhorro']
             regRecibo.fecha  = dataR['fecha']
             regRecibo.estatus = dataR['estatus']
+
+            if dataR['NoPrestamo'] != None:
+                regPrest = MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
+                regRecibo.prestamo = regPrest
+                regRecibo.montoPrestamo = dataR['montoPrestamo']
+
+            if dataR['montoAhorro'] != None :
+                regAHorro = AhorroSocio.objects.get(socio=regSocio)
+                regRecibo.ahorro = regAHorro
+                regRecibo.montoAhorro = dataR['montoAhorro']
+            
             regRecibo.save()
 
         else:
             if data['estatus'] == 'A':
                 regRecibo = RecibosIngreso.objects.get(id=data['id'])
-                regRecibo.montoPrestamo = data['montoPrestamo']
-                regRecibo.montoAhorro = data['montoAhorro']
+                
+                if dataR['NoPrestamo'] != None:
+                    regPrest = MaestraPrestamo.objects.get(noPrestamo=dataR['NoPrestamo'])
+                    regRecibo.prestamo = regPrest
+                    regRecibo.montoPrestamo = dataR['montoPrestamo']
+
+                if dataR['montoAhorro'] != None :
+                    regAHorro = AhorroSocio.objects.get(socio=regSocio)
+                    regRecibo.ahorro = regAHorro
+                    regRecibo.montoAhorro = dataR['montoAhorro']
+
                 regRecibo.estatus = data['estatus']
                 regRecibo.save()
 

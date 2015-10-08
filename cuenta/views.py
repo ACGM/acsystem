@@ -22,7 +22,6 @@ def cuentasSearch(request):
 class MaestroView(View):
 
     def get(self, request, *args, **kwargs):
-        # self.object_list = self.get_queryset()
 
         format = self.request.GET.get('format')
 
@@ -42,7 +41,7 @@ class MaestroView(View):
                                                  ,sum(di.credito) as credito \
                                                  from cuenta_diariogeneral as di \
                                                     left join cuenta_cuentas c on c.id = di.cuenta_id\
-                                                    where di.cuenta_id is not NULL group by di.fecha, c.codigo')
+                                                    where di.cuenta_id is not NULL group by di.fecha, c.codigo order by di.fecha, c.codigo' )
 
         for maestro in Mayor:
             data.append({
