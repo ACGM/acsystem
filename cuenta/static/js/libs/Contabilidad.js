@@ -174,8 +174,8 @@
 			        doc.codCuenta = cuenta;
 			        doc.ref = ref;
 			        doc.estatus = 'P';
-			        doc.debito = debito.replace(',','');
-			        doc.credito = credito.replace(',','');
+			        doc.debito = debito > 0? debito.replaceAll(',','') : 0;
+			        doc.credito = credito > 0? credito.replaceAll(',','') : 0;
 console.log(doc)
 			        $http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': doc})).
 			          success(function (data) {

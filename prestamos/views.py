@@ -447,10 +447,14 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 
 						for p in prestamosUnif:
 							if oSolicitud.estatus == 'A':
+
 								prestamo = MaestraPrestamo.objects.get(noPrestamo=p.prestamoUnificado.noPrestamo)
 								prestamo.estatus = 'S'
-								prestamo.balance = 0
+								# prestamo.balance = 0
 								prestamo.save()
+
+								# Aplicar saldo de prestado unificado -- NCPU = Nota de Credito Prestamo Unificado
+								guardarPagoCuotaPrestamo(self, p.prestamoUnificado.noPrestamo, prestamo.balance, 0, 0,'{0}{1}'.format('NCPU', p.prestamoUnificado.id), 'NC')
 
 							p.estatus = oSolicitud.estatus
 							p.save()
