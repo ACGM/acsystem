@@ -521,6 +521,10 @@ class DocumentoCuentas(models.Model):
     def getCuentaDescrp(self):
         return self.cuenta.descripcion
 
+    @property
+    def getTipoSocio(self):
+        return self.cuenta.tipoSocio
+
     class Meta:
         ordering = ['documento', 'cuenta']
         unique_together = ('documento', 'cuenta', 'accion')
