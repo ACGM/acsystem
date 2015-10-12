@@ -71,6 +71,7 @@
 
 .icon-credit:before {
 	content: "\e908";
+	padding 0 .5em
 }
 
 .icon-user:before {
@@ -1465,7 +1466,10 @@ footer
 
 .content-suplidores-table
 	position relative
-	
+
+.content-orden-table
+	position relative
+
 .suplidores-table-search	
 	border 1px solid black
 	width 34em
@@ -3775,9 +3779,9 @@ footer
 			padding-left .2em
 		&:nth-child(4)
 			width 5.1em
-			text-align right
+			text-align center
 			padding 0 .6em
-		&:nth-child(5) //ORDEN C.
+		&:nth-child(5) 
 			padding 0 .3em
 			text-align left
 			width 20em
@@ -3795,6 +3799,8 @@ footer
 			font-weight bold
 			text-align right
 			width 10em
+		&:nth-child(8)
+			text-align center
 		&:nth-child(9),&:nth-child(10)
 			text-align center	
 	
@@ -3997,25 +4003,23 @@ footer
 			width 2em
 		&:nth-child(2)
 			text-align center
-			width 5em
+			width 5.3em
 		&:nth-child(3) 
-			padding-left .6em
-			text-align left
+			padding 0 .6em
+			width 12em
+			text-align right
+			color mamey
+			font-weight bold
 			
 		&:nth-child(4)
-			width 12em
+			width 5em
 			padding 0 .6em
-			text-align right
-			color mamey
-			font-weight bold
-		&:nth-child(5)
-			width 12em
-			text-align right
-			padding 0 .6em
-			color mamey
-			font-weight bold
-		&:nth-child(6) //ORDEN C.
 			text-align center
+			
+		&:nth-child(5)
+			width 5em
+			text-align center
+			padding 0 .6em
 			
 
 .RecSocio-table-search-panel	
@@ -4370,6 +4374,17 @@ footer
 		&:first-child
 			text-align center
 
+.orden-table-search
+	border 1px solid black
+	position absolute
+	top 7.2em
+	left 8em
+	width 40em
+	z-index 900
+	& tr
+		&:first-child
+			text-align center
+
 .Solicitud-Flap 
 	position  fixed
 	top  0px
@@ -4534,7 +4549,18 @@ footer
 			&:nth-child(5)
 				text-align right
 				padding 1em 3em
-		
+
+.icon-color-green
+	text-decoration none
+	color verdeSuave
+
+.icon-color-red
+	text-decoration none
+	color red
+
+.icon-color-gray
+	text-decoration none
+	color gray
 	
 	
 	

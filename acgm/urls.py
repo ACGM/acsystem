@@ -61,7 +61,7 @@ from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsVi
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet
 
-from cxp.views import OrdenViewSet, DetalleOrderViewSet, CxpOrdenView, CxpSuperCoop
+from cxp.views import CxpOrdenView, CxpSuperCoop
 
 from reciboingreso.views import reciboTemplateView, reciboPost
 
@@ -93,9 +93,6 @@ router=routers.DefaultRouter()
 router.register(r'cuentas', CuentasViewSet)
 router.register(r'diario', DiarioViewSet)
 
-#CXP
-router.register(r'ordenCompra',OrdenViewSet)
-router.register(r'detalleOrder',DetalleOrderViewSet)
 
 #ahorro
 router.register(r'ahorro',AhorroViewSet)

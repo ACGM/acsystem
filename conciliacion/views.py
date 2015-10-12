@@ -134,7 +134,7 @@ class SSolicitud(TemplateView):
 class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
-    def regCuentasChk(self, chkId, doc, monto, fecha):
+    def regCuentasChk(self, chkId, doc, monto, fecha, ref):
 
         cheque = ConcCheques.objects.get(id=chkId)
         regCuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
@@ -142,7 +142,7 @@ class ChequesView(TemplateView):
         regDiario = DiarioGeneral()
         regDiario.cuenta = regCuenta
         regDiario.fecha = fecha
-        regDiario.referencia = 'CHK-' + str(chkId)
+        regDiario.referencia = ref + str(chkId)
         regDiario.estatus = 'P'
 
         if doc.accion == 'D':
@@ -171,6 +171,7 @@ class ChequesView(TemplateView):
         cheque = ConcCheques.objects.all()
 
         for chk in cheque:
+            cuentas = DiarioGeneral.objects.filter(id=chk.cuenta)
             data.append({
                 'id': chk.id,
                 'solicitud': chk.solicitud.id,
@@ -180,15 +181,15 @@ class ChequesView(TemplateView):
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
                 'estatus': chk.estatus,
-                # 'cuenta':[{
-                #     'id': cta.id,
-                #     'codigoCta': cta.cuenta.codigo, # if cta.cuenta != None else '',
-                #     'cuenta': cta.cuenta.descripcion,
-                #     'aux': cta.auxiliar.codigo,
-                #     'debito': cta.debito,
-                #     'credito': cta.credito
-                #     }
-                #    for cta in DiarioGeneral.objects.filter(referencia='CHK-'+ str(chk.id))]
+                'cuenta':[{
+                    'id': cta.id,
+                    'codigoCta': cta.cuenta.codigo, # if cta.cuenta != None else '',
+                    'cuenta': cta.cuenta.descripcion,
+                    # 'aux': cta.auxiliar.codigo,
+                    'debito': cta.debito,
+                    'credito': cta.credito
+                    }
+                   for cta in cuentas]
             })
         return JsonResponse(data, safe=False)
 
@@ -199,7 +200,13 @@ class ChequesView(TemplateView):
         try:
             if Data['id'] is None:
                 solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
-                regtipo = TipoDocumento.objects.get(codigo="CHK")
+                
+                if solicitud.socio is not None:
+                    regtipo = TipoDocumento.objects.get(codigo="CHKS")
+                
+                if solicitud.suplidor is not None:
+                    regtipo = TipoDocumento.objects.get(codigo="CHKS")
+
                 regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
                 cheque = ConcCheques()
@@ -213,7 +220,7 @@ class ChequesView(TemplateView):
                 solicitud.save()
 
                 for doc in regDocumentos:
-                    self.regCuentasChk(cheque.id, doc, solicitud.monto, cheque.fecha)
+                    self.regCuentasChk(cheque.id, doc, solicitud.monto, cheque.fecha,regtipo.codigo)
             else:
                 cheque = ConcCheques.objects.get(id=Data['id'])
                 cheque.estatus = Data['estatus']
