@@ -5,11 +5,32 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
-from cxp.models import OrdenCompra, DetalleOrden, CxpSuperCoop
+from cxp.models import OrdenCompra, CxpSuperCoop
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Suplidor, Socio, TipoDocumento
-from .serializers import OrdenSerializer, DetalleOrdenSerializer
+from .serializers import OrdenSerializer
 
+
+
+def SetCuentaOrden(self, ordenId, doc, ref):
+    regOrden = OrdenCompra.objects.get(id=ordenId)
+    cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+    diario = DiarioGeneral()
+    diario.fecha = fecha
+    diario.referencia = ref+'-'+ str(idMaestra)
+    diario.cuenta = cuenta
+    diario.estatus = 'P'
+
+    if doc.accion == 'D':
+        diario.debito = regMaestra.monto
+        diario.credito = 0
+    else:
+        diario.debito = 0
+        diario.credito = regMaestra.monto
+    diario.save()
+
+    regOrden.detalleCuentas.add(diario)
 
 class CxpOrdenView(DetailView):
     queryset = OrdenCompra.objects.all()
@@ -18,29 +39,29 @@ class CxpOrdenView(DetailView):
 
         dataT = json.loads(request.body)
 
-        try:
-            data = dataT['Orden']
+        # try:
+        data = dataT['Orden']
 
-            if data['id'] is None:
-            
-                regOrden = OrdenCompra()
-                regOrden.suplidor = Suplidor.objects.get(id=data['suplidorId'])
-                regOrden.socio = Socio.objects.get(codigo=data['socioId'])
-                regOrden.orden = int(data['orden'])
-                regOrden.fecha = data['fecha']
-                regOrden.monto = decimal.Decimal(data['monto'])
-                regOrden.estatus = data['estatus']
-                regOrden.save()
+        if data['id'] is None:
+        
+            regOrden = OrdenCompra()
+            regOrden.suplidor = Suplidor.objects.get(id=data['suplidorId'])
+            regOrden.socio = Socio.objects.get(codigo=data['socioId'])
+            regOrden.orden = int(data['orden'])
+            regOrden.fecha = data['fecha']
+            regOrden.monto = decimal.Decimal(data['monto'])
+            regOrden.estatus = data['estatus']
+            regOrden.save()
 
-            else:
+        else:
 
-                OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
-                OrdenCompra.objects.filter(id=data['id']).update(cuotas = decimal.Decimal(data['cuotas']))
-                OrdenCompra.objects.filter(id=data['id']).update(montocuotas = decimal.Decimal(data['montoCuotas']))
-            
-            return HttpResponse('Ok')
-        except Exception as ex:
-            return HttpResponse(ex)
+            OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
+            OrdenCompra.objects.filter(id=data['id']).update(cuotas = decimal.Decimal(data['cuotas']))
+            OrdenCompra.objects.filter(id=data['id']).update(montocuotas = decimal.Decimal(data['montoCuotas']))
+        
+        return HttpResponse('Ok')
+        # except Exception as ex:
+        #     return HttpResponse(ex)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -78,34 +99,17 @@ class CxpSuperCoop(DetailView):
         data = request.body
         dataCuentas = data['cuentas']
 
-        if data['id'] is None:
-            cxpSuper = CxpSuperCoop()
-            cxpSuper.factura = data['factura']
-            cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
-            cxpSuper.fecha = data['fecha']
-            cxpSuper.concepto = data['concepto']
-            cxpSuper.descuento = data['descuento']
-            cxpSuper.monto = decimal.Decimal(data['monto'])
-            cxpSuper.estatus = data['estatus']
-            cxpSuper.save()
-            
-        else:
-            cxpSuper = CxpSuperCoop.objects.filter(id=data['id'])
-            cxpSuper.factura = data['factura']
-            cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
-            cxpSuper.fecha = data['fecha']
-            cxpSuper.concepto = data['concepto']
-            cxpSuper.descuento = data['descuento']
-            cxpSuper.monto = data['monto']
-            cxpSuper.estatus = data['estatus']
-            cxpSuper.save()
+        cxpSuper = CxpSuperCoop()
+        cxpSuper.factura = data['factura']
+        cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
+        cxpSuper.fecha = data['fecha']
+        cxpSuper.concepto = data['concepto']
+        cxpSuper.descuento = data['descuento']
+        cxpSuper.monto = decimal.Decimal(data['monto'])
+        cxpSuper.estatus = data['estatus']
+        cxpSuper.save()
 
-            if dataCuentas[0]["diario"] is not None:
-                for cuenta in dataCuentas:
-                    regCuenta = DiarioGeneral.objects.get(id=cuenta)
-                    cxpSuper.detalleCuentas = regCuenta
-
-        return HttpResponse('1')
+        return HttpResponse('Ok')
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -148,20 +152,30 @@ class CxpSuperCoop(DetailView):
             })
 
 
-# ViewSet de ordenes de compra, listo para API
-class OrdenViewSet(viewsets.ModelViewSet):
-    queryset = OrdenCompra.objects.all()
-    serializer_class = OrdenSerializer
-
-
-# ViewSet de Detalles Ordenes
-class DetalleOrderViewSet(viewsets.ModelViewSet):
-    queryset = DetalleOrden.objects.all()
-    serializer_class = DetalleOrdenSerializer
-
-
 class CxpView(TemplateView):
     template_name = 'CxpOrden.html'
+
+    def post(self,request):
+        try:
+            orden = self.request.GET.get('orden')
+
+            regOrden = OrdenCompra.objects.get(id=orden);
+            regOrden.estatus = 'P'
+
+            if regOrden.socio.estatus == 'Socio':
+                ref = 'CXOS'
+            else:
+                ref = 'CXOE'
+
+            tipo = TipoDocumento.objects.get(codigo=ref)
+            doc = DocumentoCuentas.objects.filter(documento = tipo)
+
+            for document in doc:
+                self.SetCuentaOrden(self,regOrden.id,document,ref)
+
+            return HttpResponse('Ok')
+        except Exception, e:
+            return HttpResponse(e)
 
 class cxpSuperView(TemplateView):
     template_name = 'CxpOrdenSuper'

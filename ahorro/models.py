@@ -35,6 +35,7 @@ class MaestraAhorro(models.Model):
 
     fecha = models.DateField()
     ahorro = models.ForeignKey(AhorroSocio, null=False, blank=False)
+    prestamo = models.PositiveIntegerField(null=True, blank=True, verbose_name="# Prestamo")
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Monto", null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="ahorro_rel")
@@ -45,6 +46,11 @@ class MaestraAhorro(models.Model):
     class Meta:
         ordering = ['fecha']
 
+
+class ahorroGenerados(models.Model):
+
+    fecha = models.DateField()
+    
 
 
 

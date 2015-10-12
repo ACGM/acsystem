@@ -14,6 +14,16 @@
 			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
 		</div>
 
+		<div class="Solicitud-Flap" ng-show="flap">
+			<div>
+				<a href="#" class="icon-delete flapClose" ng-click="flap=false"></a>
+				<p>Desea Postear o cancelar CXP</p>
+				<button class="Boton BusquedaBtn icon-coin" type="submit" ng-click="CxpOrdenEstatus($event,'postear')">Postear</button> 
+				<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="CxpOrdenEstatus($event,'cancelar')">Cancelar</button>
+			</div>
+			
+		</div>
+
 		<div ng-show="OrdenList">
 			<table class="listado-table-f" id="table-lf-listado" ng-init="getAllData()">
 						<tr class="listado-table-header-f">
@@ -25,26 +35,20 @@
 							<td>Socio</td>
 							<td>Suplidor</td>
 							<td>Monto</td>
-							<td>Imprimir</td>
-							<td>Eliminar</td>
+							<!-- <td>Imprimir</td> -->
 						</tr>
 
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
-							<td><a href="#" class="sp-field" ng-click="selOrdenById(Orden.id)">[[Orden.id]]</a></td>
-							<td class="icon-folder estatus-[[Orden.estatus]]">
-								
+							<td>[[Orden.id]]</td>
+							<td>
+								<a href="#" class="icon-folder estatus-[[Orden.estatus]]" style="text-decoration: none;" ng-click="workflow($event,Orden.id)" tooltip="[[Orden.estatus]]"></a>
 							</td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
-							<td>[[Orden.orden | number: 2]]</td>
+							<td>[[Orden.orden ]]</td>
 							<td>[[Orden.socio ]]</td>
 							<td>[[Orden.suplidor]]</td>
 							<td>[[Orden.monto | number: 2]]</td>
-							<td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td>
-							<td>
-								<div ng-if="Orden.estatus == 'A'"> <a href="#" class="icon-delete icon-eliminar" ng-click="deleteOrden()"></a></div> 
-								<div ng-if="Orden.estatus == 'P' || Orden.estatus == 'I'"> <a href="#" class="icon-delete icon-eliminar disabled"></a></div> 
-
-							</td>
+							<!-- <td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td> -->
 						</tr>				
 			</table>
 		</div>
@@ -95,7 +99,7 @@
 					</table>
 				</div>
 
-				<div class="content-socios-table">
+				<div class="content-orden-table">
 					<table class="orden-table-search" ng-show="tableOrden">
 						<tr>
 							<td colspan="3" class="cerrar-table">
@@ -107,7 +111,7 @@
 							<td>Fecha</td>
 							<td>Monto</td>
 						</tr>
-						<tr ng-repeat="s in socios" class="orden-table-detail-search">
+						<tr ng-repeat="s in ROrden" class="orden-table-detail-search">
 							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.noSolicitud ]] </a></td>
 							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.fechaSolicitud | date: 'dd/MM/yyyy']] </a></td>
 							<td><a href="#" class="select-item" ng-click="selOrden($event,s)"> [[s.montoSolicitado  |number:2]] </a></td>
@@ -160,7 +164,7 @@
 				</table>
 			
 				<button class="smallMargin icon-save Boton"  ng-click="guardarOrden($event)" >Guardar</button>
-				<button class="smallMargin icon-delete Boton danger" >Cancelar</button>
+				<button class="smallMargin icon-delete Boton danger" ng-click="limpiar($event)">Cancelar</button>
 				
 			</section>
 			</div>
