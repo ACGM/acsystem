@@ -66,9 +66,9 @@ def insMaestra(self, CodSocio, Fecha, Monto):
 
 
     if regSocio.socio.estatus == 'Socio':
-        ref = 'AHRS'
+        ref = 'AHTS'
     else:
-        ref = 'AHRE'
+        ref = 'AHTE'
 
     tipo = TipoDocumento.objects.get(codigo=ref)
     doc = DocumentoCuentas.objects.filter(documento = tipo)
