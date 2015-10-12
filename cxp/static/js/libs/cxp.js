@@ -172,6 +172,20 @@
                 return deferred.promise;
             }
 
+            function postCxpOrden(orden){
+                var deferred = $q.defer();
+
+                $http.post('/cxp/cxpOrden/?orden='+orden).
+                    success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve (err);
+                    });
+
+                return deferred.promise;
+            };
+
             return {
                 getAll: getAll,
                 getCxpsById: getCxpsById,
@@ -183,7 +197,8 @@
                 suplidor: suplidor,
                 setOrden: setOrden,
                 getOcSuplidor: getOcSuplidor,
-                getOcFecha: getOcFecha
+                getOcFecha: getOcFecha,
+                postCxpOrden : postCxpOrden
                 
             };
 
@@ -215,6 +230,9 @@
                 $scope.selectSocio = null;
                 $scope.tableOrden = false;
                 $scope.detallesOrd={};
+                $scope.ROrden  = [];
+                $scope.flap = false;
+
 
                 
             $scope.nuevaOrden = function(){
@@ -230,6 +248,9 @@
                 $scope.cxpDataDetalle = [];
                 $scope.cxpDiario = [];
                 $scope.detallesOrd = {};
+                $scope.ROrden  = [];
+                $scope.cxpDataReg = {};
+
                 
             };
 
@@ -271,9 +292,12 @@
                 $scope.tableOrden = true;
                 
                SolicitudOrdenDespachoService.solicitudesODForCXP().then(function (data) {
-                        return data.filter(function (reg){
-                            return reg.socios == $scope.cxpDataReg.socioId && reg.suplidor == $scope.cxpDataReg.suplidorId
+                        console.log(data);
+                        $scope.ROrden = data.filter(function (reg){
+                            console.log(reg.codigoSocio== $scope.cxpDataReg.socioId)
+                            return reg.codigoSocio == $scope.cxpDataReg.socioId && reg.codigoSuplidor == $scope.cxpDataReg.suplidorId
                         });
+                        
                  });
             }
 
@@ -303,6 +327,30 @@
                 $scope.suplidorId = null;
                 $scope.socioNombre = null;
                 $scope.suplidorNombre = null;
+                $scope.ordenReg = null;
+                $scope.OrdenList = true;
+                $scope.OrdenCrPanel = false;
+
+            }
+
+            $scope.CxpOrdenEstatus = function($event,estatus){
+                $event.preventDefault();
+
+                var est = ""
+                if(estatus =="postear"){
+                    est = "p";
+                }else{
+                    est = "I"
+                }
+                $scope.flap = false;
+                cxpService.postCxpOrden($scope.orden).then(function (data){
+                    if(data == "Ok"){
+                        alert("La orden # "+$scope.orden+" Ha sido posteada");
+                    }else{
+                         alert("Ocurrio un error al intentar guardar la orden");
+                    }
+                });
+
 
             }
 
@@ -331,7 +379,14 @@
 
                 console.log(result);    
 
-            }
+            };
+
+            $scope.workflow = function($event,id){
+                $event.preventDefault();
+                
+                $scope.orden = id;
+                $scope.flap = true;
+        };
 
             $scope.getSuplidor = function($event){
                     $event.preventDefault();
@@ -361,7 +416,8 @@
                       });
                     }
                   };
-                  
+             
+            
             $scope.getSocio = function($event) {
                     $event.preventDefault();
                     $scope.tableSocio = true;
@@ -390,21 +446,21 @@
                       });
                     }
                   };
-                         //Seleccionar Socio
-            
+
+
             $scope.selOrden = function($event, s) {
                 $event.preventDefault();
                 
                 $scope.cxpDataReg.orden = s.noSolicitud ;
                 $scope.ordenReg = s.noSolicitud+'-'+s.fechaSolicitud ;
-                $scope.cxpDataReg.monto = s.monto;
+                $scope.cxpDataReg.monto = s.netoDesembolsar;
                 $scope.tableOrden = false;
                 
               };
 
+
             $scope.selSocio = function($event, s) {
                 $event.preventDefault();
-                
                 $scope.socioNombre = s.nombreCompleto;
                 $scope.cxpDataReg.socioId = s.codigo;
                 $scope.tableSocio = false;

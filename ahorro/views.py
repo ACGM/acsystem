@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 
-from .models import InteresesAhorro, MaestraAhorro, AhorroSocio
+from .models import InteresesAhorro, MaestraAhorro, AhorroSocio, ahorroGenerados
 from cuenta.models import DiarioGeneral, Cuentas
 from prestamos.models import MaestraPrestamo
 from administracion.models import Socio, DocumentoCuentas, TipoDocumento
@@ -23,13 +23,13 @@ def BalanceSocioP(self, socio):
                                                 )
         return prestamos
 
-def setCuentaMaestra(self, idMaestra, doc, fecha):
+def setCuentaMaestra(self, idMaestra, doc, fecha, ref):
     regMaestra = MaestraAhorro.objects.get(id= idMaestra)
     cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
 
     diario = DiarioGeneral()
     diario.fecha = fecha
-    diario.referencia = 'AHRG-' + str(idMaestra)
+    diario.referencia = ref+'-'+ str(idMaestra)
     diario.cuenta = cuenta
     diario.estatus = 'P'
 
@@ -46,6 +46,7 @@ def setCuentaMaestra(self, idMaestra, doc, fecha):
     regMaestra.cuentas.add(diario)
     return diario.id
 
+
 def insMaestra(self, CodSocio, Fecha, Monto):
     regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)
     regInteres = InteresesAhorro.objects.get(id=1)
@@ -60,13 +61,16 @@ def insMaestra(self, CodSocio, Fecha, Monto):
     ahorro = AhorroSocio.objects.get(codigo=CodSocio)
     ahorro.balance = ahorro.balance + monto
 
+    if regSocio.socio.estatus == 'Socio':
+        ref = 'AHRS'
+    else:
+        ref = 'AHRE'
 
-
-    tipo = TipoDocumento.objects.get(codigo='AHRG')
+    tipo = TipoDocumento.objects.get(codigo=ref)
     doc = DocumentoCuentas.objects.filter(documento = tipo)
 
     for docu in doc:
-        setCuentaMaestra(self,regMaestra.id, doc, Fecha)
+        setCuentaMaestra(self,regMaestra.id, doc, Fecha, ref)
 
     return 'Ok'
 
@@ -87,8 +91,6 @@ def getSocioAhorro(self, codSocio):
                                        'from ahorro_ahorrosocio '
                                        'where socio_id =' + str(codSocio))
     return regSocio
-
-
 
 
 class MaestraAhorroView(DetailView):
@@ -179,10 +181,6 @@ class generarAhorro(TemplateView):
         data = json.loads(request.body)
         fecha = data['fecha']
         Qui = data['quincena']
-        cuenta = data['cuentas']
-
-        regtipo = TipoDocumento.objects.get(codigo="AHRG")
-        regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
         for ah in AhorroSocio.objects.filter(estatus="A"):
             socio = Socio.objects.get(codigo=ah.socio.codigo)
@@ -198,22 +196,35 @@ class generarAhorro(TemplateView):
             regMaestra.estatus = "P"
             regMaestra.save()
 
+            if ah.socio.estatus == 'Socio':
+                referen = 'AHRS'
+            else:
+                referen = 'AHRE'
+
+            regtipo = TipoDocumento.objects.get(codigo=referen)
+            regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
+
             ah.balance = ah.balance + monto
             ah.disponible = ah.disponible + monto
             ah.save()
+
             for x in cuenta:
-                self.setCtasAhorro(x['cuenta'],x['accion'],regMaestra.id,fecha,monto,socio)
+                self.setCtasAhorro(x['cuenta'],x['accion'],regMaestra.id,fecha,monto,socio, referen)
+
+            regComp = ahorroGenerados()
+            regComp,fecha = fecha
+            regComp.save()
 
         return HttpResponse("Ok")
 
-    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio, ref):
         regCuenta = Cuentas.objects.get(codigo=cuenta)
         regMaestra = MaestraAhorro.objects.get(id=maestra)
 
         regDiario = DiarioGeneral()
         regDiario.cuenta = regCuenta
         regDiario.fecha = fecha
-        regDiario.referencia = 'AHRG-'+str(socio)
+        regDiario.referencia = ref+str(socio)
         regDiario.estatus = 'P'
         if accion == 'D':
             regDiario.debito = monto
@@ -234,12 +245,17 @@ class generarInteres(TemplateView):
 
         fechaI = data["fechaI"]
         fechaF = data["fechaF"]
-        cuenta = data["cuentas"]
-
-        regtipo = TipoDocumento.objects.get(codigo="AHIN")
-        regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
         for ah in AhorroSocio.objects.all():
+            
+            if ah.socio.estatus == 'Socio':
+                ref = 'AHIS'
+            else:
+                ref = 'AHIE'
+
+            regtipo = TipoDocumento.objects.get(codigo=ref)
+            regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
+
             inter = InteresesAhorro.objects.get(id=1)
             mensual = MaestraAhorro.objects.raw('select '
                                                 'x.ahorro_id'
@@ -264,12 +280,14 @@ class generarInteres(TemplateView):
             regMaestra.estatus = "p"
             regMaestra.save()
 
+            self.setCuentaMaestra(self, regMaestra.id, regDocumentos, fechaF, ref)
+
             ah.balance = ah.balance + monto
             ah.save()
 
         return HttpResponse("Ok")
 
-    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio):
+    def setCtasAhorro(self, cuenta, accion, maestra, fecha, monto, socio, ref):
         regCuenta = Cuentas.objects.get(codigo=cuenta)
         regMaestra = MaestraAhorro.objects.get(id=maestra)
 
@@ -349,9 +367,13 @@ class AhorroView(TemplateView):
                     balance = balance  - decimal.Decimal(dataT['retiro']['monto']) 
                     disponible = balance
                     regMaestra = MaestraAhorro()
+                    if dataT['retiro']['numPrestamo'] != None:
+                        regMaestra.prestamo = dataT['retiro']['numPrestamo']
+
                     regMaestra.ahorro = regAhorro
                     regMaestra.fecha = dataT['retiro']['fecha']
                     regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
+
                     regMaestra.estatus = dataT['retiro']['estatus']
                     regMaestra.save()
 

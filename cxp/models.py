@@ -2,17 +2,6 @@ from django.db import models
 from administracion.models import Suplidor, Socio
 from cuenta.models import Cuentas, DiarioGeneral
 
-# Detalle de articulos y precio del mismo de la Orden
-class DetalleOrden(models.Model):
-    articulo = models.CharField(max_length=200, default=False, blank=False, null=False, verbose_name="Articulo")
-    monto = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False, verbose_name="Precio")
-    orden = models.PositiveIntegerField(verbose_name='Orden')
-    def __unicode__(self):
-        return self.articulo
-
-    class Meta:
-        ordering = ['articulo']
-
 
 # Registro de ordenes de compra a Socio
 class OrdenCompra(models.Model):

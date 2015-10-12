@@ -32,6 +32,7 @@ class Cuentas(models.Model):
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
     tipoSocio = models.CharField(max_length=1, choices=tipo_socio, default='S')
 
+
     def __unicode__(self):
         return '%s-%s' % (str(self.codigo), self.descripcion)
 

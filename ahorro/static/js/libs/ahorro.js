@@ -67,10 +67,10 @@
 				 return deferred.promise;
 			}
 
-			function setDiarioReg(cuenta){
+			function setDiarioReg(registro){
 				var deferred = $q.defer();
 
-				$http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': cuenta}))
+				$http.post('/contabilidad/RegDiario/', JSON.stringify({'registro': registro}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -236,6 +236,11 @@
 			$scope.documentos = null;
 			$scope.retiro = {};
 			$scope.cuentas = [];
+			$scope.fechaI = null;
+			$scope.fechaF = null;
+			$scope.tempAh = [];
+			$scope.flap = false;
+			$scope.redId = null;
 		    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 			AhorroServices.socios().then(function (data) {
@@ -263,6 +268,26 @@
 		
 			};
 
+			$scope.filterFecha = function($event){
+				$event.preventDefault();
+
+				if($scope.tempAh.length > 0){
+					$scope.AhorrosPorSocio = $scope.tempAh;
+				}else{
+					$scope.tempAh = $scope.AhorrosPorSocio;
+				};
+
+				$scope.AhorrosPorSocio = $scope.AhorrosPorSocio.filter(function (data) {
+
+					var RegFecha = $scope.retiro.fecha.split('-');
+          			var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
+          			data.fecha = FechaFormat;
+          			return data.fecha >= $scope.fechaI && data.fecha <= $scope.fechaF;
+
+				});
+
+			};
+
 			$scope.toggleAhorroPanel = function(){
 
 				if($scope.AhorroPanel === true){
@@ -276,36 +301,64 @@
 
 			}
 
+			$scope.workflow = function($event,id){
+				$event.preventDefault();
+				$scope.redId = id;
+				$scope.flap = true;
+			};
+
 			$scope.setAhorro = function($event){
 				$event.preventDefault();
 				try{
+					
 					if($scope.retiro.id === undefined){
 						$scope.retiro.id = null;
 					}
+
+					if($scope.retiro.prestamo === undefined){
+						$scope.retiro.prestamo = null;
+					}
+
+
 					var RegFecha = $scope.retiro.fecha.split('/');
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           			$scope.retiro.fecha = FechaFormat;
+          			$scope.retiro.estatus = "A";
 					
 					AhorroServices.setAhorroRegS($scope.retiro, 0).then(function (data){
 						$scope.retiro.id = data
 						return data;
 					});
-
-					window.setTimeout($scope.setCuentas(),4000);
 					
 					$window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
 
 					$scope.getListaAhorro();
 
-					// $scope.cancelRetiro();
-					// $scope.NoMaestra();
-					//$window.open('/impAhorro/', target='_blank'); 
+					
 				}
 
 				catch(ex){
 					$rootScope.mostrarError(ex.message);
 				}
 				
+			};
+
+			$scope.extra = function($event,visual){
+				$event.preventDefault();
+				$scope.retiro.prestamo = null;
+				$scope.regNumero = visual;
+			};
+
+			$scope.PostearRetiro = function($event,est){
+				var reg = {};
+				reg.id = $scope.redId;
+
+				if(est == "postear"){
+					reg.estatus = "P";
+				}else{
+					reg.estatus = "I";
+				}
+				AhorroServices.setDiarioReg(cuenta);
 			};
 
 			$scope.setCuentas = function(){
