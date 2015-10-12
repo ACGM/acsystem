@@ -93,6 +93,11 @@
 			$scope.tablePrest =  false;
 			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
+		    //Traer todos los socios a javascript
+	        reciboIngServices.socios().then(function (data) {
+	          $scope.todosLosSocios = data;
+	        });
+
 			$scope.getList = function(){
 
 				$scope.reciboLista =[];
@@ -133,16 +138,15 @@
 	            $scope.tableSuplidor = false;
 
 	            if($scope.socioNombre !== undefined) {
-	              reciboIngServices.socios().then(function (data) {
-	                $scope.socios = data.filter(function (registro) {
+	                $scope.socios = $scope.todosLosSocios.filter(function (registro) {
 	                  return $filter('lowercase')(registro.codigo.toString()
 	                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
 	                });
 
 	                if($scope.socios.length == 0){
-	                	$scope.socios = data.filter(function (registro) {
-	                  return $filter('lowercase')(registro.nombreCompleto
-	                  		.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	                	$scope.socios = $scope.todosLosSocios.filter(function (registro) {
+	                  		return $filter('lowercase')(registro.nombreCompleto
+	                  			.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
 	                });
 	                }
 
@@ -154,12 +158,9 @@
 	                  $scope.socioNoExiste = 'No existe el socio';
 	                }
 
-	              });
 	            } else {
-	              reciboIngServices.socios().then(function (data) {
-	                $scope.socios = data;
+	                $scope.socios = $scope.todosLosSocios;
 	                $scope.socioCodigo = '';
-	              });
 	            }
 	          };
 
