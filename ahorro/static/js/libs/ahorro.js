@@ -70,7 +70,7 @@
 			function setDiarioReg(registro){
 				var deferred = $q.defer();
 
-				$http.post('/contabilidad/RegDiario/', JSON.stringify({'registro': registro}))
+				$http.post('/documentoCuenta/', JSON.stringify({'registro': registro}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -351,40 +351,15 @@
 
 			$scope.PostearRetiro = function($event,est){
 				var reg = {};
-				reg.id = $scope.redId;
+				reg.idMaestra = $scope.redId;
 
 				if(est == "postear"){
 					reg.estatus = "P";
 				}else{
 					reg.estatus = "I";
 				}
-				AhorroServices.setDiarioReg(cuenta);
+				AhorroServices.setDiarioReg(reg);
 			};
-
-			$scope.setCuentas = function(){
-				for (var x=0; x < $scope.documentos.length; x++) {
-					
-					var cuenta = {}
-						cuenta.codCuenta = $scope.documentos[x].cuenta;
-						if($scope.documentos[x].accion == "D"){
-							cuenta.debito = $scope.retiro.monto;
-							cuenta.credito = 0;	
-						}else{
-							cuenta.debito = 0;
-							cuenta.credito = $scope.retiro.monto;
-						}
-						cuenta.fecha = $scope.retiro.fecha;
-						cuenta.ref = "RAH-" + $scope.retiro.socio.toString();
-						cuenta.estatus = "A"
-
-					AhorroServices.setDiarioReg(cuenta).then(function (data){
-						var salida = AhorroServices.setAhorroRegS($scope.retiro, data);
-						return data;
-					});
-					
-					}
-				
-			}
 
 			$scope.AhorroById = function(Id){
 				try{
