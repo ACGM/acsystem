@@ -323,8 +323,7 @@
 			
 			try {
 				var result = SolicitudServices.setSolicitud($scope.solicitud);
-				$scope.lsSolicitud = [];
-				$scope.solicitudList();
+				$scope.limpiar();
 			}
 			 catch (e) {
 	          $rootScope.mostrarError(e);
@@ -369,6 +368,24 @@
 	            }
 	          };
 
+
+	    $scope.limpiar = function($event){
+	    	$scope.lsSolicitud = [];
+			$scope.socios = [];
+			$scope.socioNombre = null;
+			$scope.solicitud = {};
+			$scope.DEstatus = null;
+			$scope.tableSocio =false;
+			$scope.tableSuplidor = false;
+			$scope.toggleCr = false;
+			$scope.toggleLs =true;
+			$scope.chk = null;
+			$scope.flap = false;
+			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+			$scope.solicitudList();
+
+	    }
 	}])
 	.controller('SolicitudImpCtrl',['$scope','$filter', '$rootScope','SolicitudServices','$timeout','$window',
 		function ($scope, $filter,$rootScope,$SolicitudServices,$timeout,$window){

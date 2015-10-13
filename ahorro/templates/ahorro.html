@@ -21,6 +21,43 @@
 		</div>
 		
 	</div>
+	<div>
+				<table class="ahorroPres-table-search-panel	" ng-show="tablePrest">
+					<tr>
+						<td colspan="4" class="cerrar-table">
+							<a href="#" class="icon-delete" ng-click="tablePrest=false"></a>
+						</td>
+					</tr>
+					<tr class="socios-table-header">
+						<td>
+							Fecha
+						</td>
+						<td>
+							Número de Prestamo
+						</td>
+						<td>
+							Monto Inicial
+						</td>
+						<td>
+							Balance
+						</td>
+					</tr>
+					<tr ng-repeat="x in prestamosS" class="socios-table-detail-search">
+						<td>
+							 <a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.fechaAprobacion |date: 'dd/MM/yyyy']]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.noPrestamo]]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item" ng-click="selPrest($event,x)">[[x.montoInicial |number: 2]]</a>
+						</td>
+						<td>
+							<a href="#" class="select-item resaltar-valor" ng-click="selPrest($event,x)">[[x.balance |number: 2]]</a>
+						</td>
+					</tr>
+				</table>
+		</div>
 		<div ng-show="AhorroPanel">
 			<section id="mainSection">
 				<section class="Ahorro-main" ng-init="getListaAhorro()">
@@ -65,7 +102,7 @@
 									<th>Imprimir</th>
 								</tr>
 								<tr ng-repeat="ahorro in Ahorros" class="listado-ar-detail">
-									<td><a href="#" ng-click="AhorroById([[ahorro.id]])" class='utils-gr utils-noDecoration icon-pencil'><span class=""></span> </a></td>
+									<td><a href="#" ng-click="AhorroById(ahorro.id,ahorro.socioId)" class='utils-gr utils-noDecoration icon-pencil'><span class=""></span> </a></td>
 									<td>[[ahorro.socio]] </td>
 									<td class="utils-alingTRight"> [[ahorro.balance |number:2]]</td>
 									<td class="utils-alingTRight"> [[ahorro.disponible |number:2]] </td>
@@ -213,12 +250,12 @@
 					<tr id="prestamoNo">
 						<td style="padding:1.2em 1.4em 0 .7em; width:5em; ">
 							
-								Prestamo #:	
+							Prestamo #:	
 						</td>
 						<td>
 							
 								<input type="text" name="" ng-model="retiro.prestamo" ng-disable="true" class="disable" readonly="">
-								<input type="text" ng-model="numPrestamo">
+								<input type="text" ng-model="numPrestamo" ng-click="getPrestamosSocio($event)">
 							
 						</td>
 					</tr>

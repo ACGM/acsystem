@@ -5,23 +5,23 @@
 {% block content %}
 	<section ng-controller="reciboIngCtrl" ng-init="getList()">
 		<div>
-						<table class="RecSocio-table-search-panel" ng-show="tableSocio">
-							<tr>
-								<td colspan="3" class="cerrar-table">
-									<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
-								</td>
-							</tr>
-							<tr class="socios-table-header">
-								<td>Codigo</td>
-								<td>Nombre</td>
-								<td>Departamento</td>
-							</tr>
-							<tr ng-repeat="s in socios" class="socios-table-detail-search">
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
-								<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
-							</tr>
-						</table>
+				<table class="RecSocio-table-search-panel" ng-show="tableSocio">
+					<tr>
+						<td colspan="3" class="cerrar-table">
+							<a href="#" class="icon-delete" ng-click="tableSocio=false"></a>
+						</td>
+					</tr>
+					<tr class="socios-table-header">
+						<td>Codigo</td>
+						<td>Nombre</td>
+						<td>Departamento</td>
+					</tr>
+					<tr ng-repeat="s in socios" class="socios-table-detail-search">
+						<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.codigo]] </a></td>
+						<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.nombreCompleto]] </a></td>
+						<td><a href="#" class="select-item" ng-click="selSocio($event,s)"> [[s.departamento]] </a></td>
+					</tr>
+				</table>
 		</div>
 		<div>
 				<table class="prestamo-table-search-panel" ng-show="tablePrest">
@@ -81,36 +81,36 @@
 				</tr>
 				<tr class="listado-rcb-detail" ng-repeat="rc in reciboLista">
 					<td>
-						<a href="#" >[[rc.id]] </a>
+						<a href="#" >[[rc.id]]</a>
 					</td>
 					<td>
 						[[rc.fecha |date : 'dd/MM/yyyy']]
 					</td>
 					<td>
-						[[rc.SocioNombre]]
+						[[rc.socio]]
 					</td>
 					<td>
-						[[rc.montoAhorro]]
+						[[rc.montoAhorro |number :2]]
 					</td>
 					<td>
-						[[rc.montoPrestamo]]
+						[[rc.montoPrestamo |number :2]]
 					</td>
 					<td>
-						<div ng-if="rc.estatus == 'R">
+						<div ng-if="rc.estatus == 'R'">
 							registrado
 						</div>
-						<div ng-if="rc.estatus == 'P">
+						<div ng-if="rc.estatus == 'P'">
 							Posteado
 						</div>
-						<div ng-if="rc.estatus == 'I">
+						<div ng-if="rc.estatus == 'I'">
 							Nula
 						</div>
 					</td>
 					<td>
-						<div ng-if="rc.estatus == 'R">
+						<div ng-if="rc.estatus == 'R'">
 							<a href="#" class="icon-folder-open" ng-click=""></a>
 						</div>
-						<div ng-if="rc.estatus != 'R">
+						<div ng-if="rc.estatus != 'R'">
 							<span class="icon-folder"></span>
 						</div>
 					</td>

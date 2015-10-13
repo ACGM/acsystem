@@ -214,8 +214,8 @@
 			};
 		}])
 		
-	  	.controller('AhorroController', ['$scope', '$filter', '$window', '$rootScope', 'AhorroServices','$timeout',
-								function ($scope, $filter, $window , $rootScope, AhorroServices, $timeout){                        	
+	  	.controller('AhorroController', ['$scope', '$filter', '$window', '$rootScope', 'AhorroServices','$timeout','MaestraPrestamoService',
+								function ($scope, $filter, $window , $rootScope, AhorroServices, $timeout, MaestraPrestamoService){                        	
 			$scope.Ahorros=[];
 			$scope.AhorrosPorSocio=[];
 			$scope.AhorroHistorico=[];
@@ -234,6 +234,7 @@
 			$scope.socioReg = null;
 			$scope.editer = false;
 			$scope.RetiroPanel = false;
+			$scope.tablePrest = false;
 			$scope.documentos = null;
 			$scope.retiro = {};
 			$scope.cuentas = [];
@@ -242,17 +243,53 @@
 			$scope.tempAh = [];
 			$scope.flap = false;
 			$scope.redId = null;
+			$scope.prestamosS = {};
 		    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 			AhorroServices.socios().then(function (data) {
 				$scope.todosLosSocios = data;
 			});
 
+
+			$scope.limpiar = function(){
+				$scope.Ahorros=[];
+				$scope.AhorrosPorSocio=[];
+				$scope.AhorroHistorico=[];
+				$scope.errorShow=false;
+				$scope.errorMsg='';
+				$scope.idAhorro=null;
+				$scope.Socio=null;
+				$scope.Balance=null;
+				$scope.Disponible=null;
+				$scope.ArrowAhorro = "UpArrow";
+				$scope.ArrowDetalle = "DownArrow";
+				$scope.AhorroPanel = true;
+				$scope.DetalleAhorro = false;
+				$scope.MaestraDetalle=[];
+				$scope.tableSocio = false;
+				$scope.socioReg = null;
+				$scope.editer = false;
+				$scope.RetiroPanel = false;
+				$scope.tablePrest = false;
+				$scope.documentos = null;
+				$scope.retiro = {};
+				$scope.cuentas = [];
+				$scope.fechaI = null;
+				$scope.fechaF = null;
+				$scope.tempAh = [];
+				$scope.flap = false;
+				$scope.redId = null;
+				$scope.prestamosS = {};
+			    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
+			};
+
+
 			$scope.getListaAhorro = function(){
 
 			 	try{
 					AhorroServices.getAllAhorro().then(function (data) {
 						$scope.Ahorros=data;
+						
 					});
 
 					if ($scope.documentos == null ){
@@ -332,8 +369,8 @@
 					});
 					
 					$window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
-
-					$scope.getListaAhorro();
+					$scope.limpiar ();
+					 $scope.getListaAhorro();
 
 					
 				}
@@ -362,8 +399,9 @@
 				AhorroServices.setDiarioReg(reg);
 			};
 
-			$scope.AhorroById = function(Id){
+			$scope.AhorroById = function(Id, codigo){
 				try{
+					$scope.Socio = codigo
 
                     AhorroServices.getAhorroById(Id).then(function (data){
                     	
@@ -489,6 +527,21 @@
 
 	       		$window.open('/impHyAhorro/', target='_blank'); 
 	       	}
+
+
+			$scope.getPrestamosSocio = function($event){
+				$event.preventDefault();
+				
+				$scope.tablePrest = true;
+	        	MaestraPrestamoService.PrestamosbySocio($scope.Socio).then(function (data){
+	        		$scope.prestamosS = data.filter(function (reg){
+		        			return reg.estatus != "S"
+		        		});
+
+	        		
+		        	});
+		        	
+		    }
 
 		}])
 .controller('ImprimirAhorroController', ['$scope', '$filter','$window', '$rootScope', 'AhorroServices','$timeout',

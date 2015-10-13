@@ -173,10 +173,10 @@ class DocumentosAhorro(DetailView):
 
             if regMaestra.prestamo != None:
                 guardarPagoCuotaPrestamo(regMaestra.prestamo,regMaestra.prestamo,0,'RIRG-'+str(regMaestra.id),'RIRG')
-                if regAhorro.socio.estatus == 'Socio':
-                    ref = 'AHXS'
-                else:
-                    ref = 'AHXE'
+                # if regAhorro.socio.estatus == 'Socio':
+                #     ref = 'AHXS'
+                # else:
+                #     ref = 'AHXE'
             else:
                 if regAhorro.socio.estatus == 'Socio':
                     ref = 'AHRS'
@@ -361,7 +361,6 @@ class AhorroView(TemplateView):
         dataT = json.loads(request.body)
         data = dataT['retiro']
 
-        return HttpResponse
         regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
 
@@ -371,8 +370,8 @@ class AhorroView(TemplateView):
                 if dataT['retiro']['id'] is None:
                     
                     regMaestra = MaestraAhorro()
-                    if dataT['retiro']['numPrestamo'] != None:
-                        regMaestra.prestamo = dataT['retiro']['numPrestamo']
+                    if dataT['retiro']['prestamo'] != None:
+                        regMaestra.prestamo = dataT['retiro']['prestamo']
 
                     regMaestra.ahorro = regAhorro
                     regMaestra.fecha = dataT['retiro']['fecha']
@@ -387,6 +386,7 @@ class AhorroView(TemplateView):
                     
                     regMaestra.cuentas.add(regDiario)
                     regMaestra.save()
+
             return HttpResponse('Ok')
 
 

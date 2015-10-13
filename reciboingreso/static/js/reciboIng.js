@@ -98,14 +98,28 @@
 	          $scope.todosLosSocios = data;
 	        });
 
+	        $scope.cancelarReg = function($event){
+	        	$scope.reciboData = {}
+				$scope.reciboLista = [];
+				$scope.prestamosS = [];
+				$scope.reciboLst = true;
+				$scope.reciboCr = false;
+				$scope.tableSocio = false;
+				$scope.tablePrest =  false;
+				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+	        }
+
 			$scope.getList = function(){
 
 				$scope.reciboLista =[];
 
 				reciboIngServices.getRecibos().then(function (data) {
 					$scope.reciboLista = data;
+					console.log(data);
 				});
 			}
+
+
 
 			$scope.nwRecibo = function($event){
 				$scope.reciboLst = false;
@@ -201,7 +215,7 @@
 
 		    $scope.postRecibo = function($event,id){
 		    	var recibo = {};
-		    	recibo.fecha =
+		    	recibo.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 		    	reciboIngServices.postRecibo(recibo).then(function (data){
 		    		if(data == "Ok"){
 		    			alert("Recibo #"+id+" ha sido Posteado")
@@ -226,10 +240,15 @@
           				$scope.reciboData.id = null;
           			}
 
+          			if ($scope.reciboData.estatus == undefined){
+          				$scope.reciboData.estatus = "R";
+          			}
+
           		try{
           			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
           				console.log(data);
           			});
+          			 $scope.cancelarReg($event);
           		}	
           		catch(ex){
           			$rootScope.mostrarError(ex.message);

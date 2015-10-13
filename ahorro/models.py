@@ -48,8 +48,11 @@ class MaestraAhorro(models.Model):
 
 
 class ahorroGenerados(models.Model):
+    tipo_choices = (('A', 'Ahorro'), ('I', 'Interes'))
 
     fecha = models.DateField()
+    tipoRegistro = models.CharField(max_length=1, choices=tipo_choices, verbose_name="Tipo Registro")
+
     
 
 

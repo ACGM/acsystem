@@ -18,14 +18,14 @@ from .models import DetalleRecibo, RecibosIngreso
 class reciboPost(TemplateView):
     template_name="recigoImp.html"
 
-    def setCuentaMaestra(self, idMaestra, doc, Fecha):
+    def setCuentaMaestra(self, idMaestra, doc, Fecha, ref):
         regMaestra = MaestraAhorro.objects.get(id= idMaestra)
 
         cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
 
         diario = DiarioGeneral()
         diario.fecha = fecha
-        diario.referencia = 'AH-' + str(idMaestra)
+        diario.referencia = ref+'-' + str(idMaestra)
         diario.cuenta = cuenta
         diario.estatus = 'P'
 
@@ -58,14 +58,20 @@ class reciboPost(TemplateView):
             regMaestra.estatus = 'P'
             regMaestra.save()
 
-            tipo = TipoDocumento.objects.get(codigo='AHRG')
+            if regMaestra.ahorro.socio.estatus == 'Socio':
+                ref = 'AHTS'
+            if regMaestra.ahorro.socio.estatus == 'Empleado':
+                ref = 'AHTE'
+
+
+            tipo = TipoDocumento.objects.get(codigo=ref)
             doc = DocumentoCuentas.objects.filter(documento = tipo)
 
             for docu in doc:
-                self.setCuenta(regMaestra.id, doc, Fecha)
+                self.setCuenta(self,regMaestra.id, doc, Fecha, ref)
         
         if recibo.prestamo != None:
-            guardarPagoCuotaPrestamo(recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RIRG')
+            self.guardarPagoCuotaPrestamo(self,recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RI')
 
         return HttpResponse('Ok')
 
@@ -112,6 +118,7 @@ class reciboTemplateView(TemplateView):
 
                 regRecibo.estatus = data['estatus']
                 regRecibo.save()
+        return HttpResponse('Ok')
 
     def get(self, request, *args, **kwargs):
 
@@ -130,7 +137,7 @@ class reciboTemplateView(TemplateView):
             data.append({
                 'id': recibos.id,
                 'socioCod': recibos.socioIngreso.codigo,
-                'socio': recibos.socioIngreso.nombre + ' ' + recibos.socioIngreso.apellido,
+                'socio': recibos.socioIngreso.nombres + ' ' + recibos.socioIngreso.apellidos,
                 'prestamo': {
                     'noPrestamo' : recibos.prestamo.noPrestamo if recibos.prestamo != None else '',
                     'montoInicial': recibos.prestamo.montoInicial if recibos.prestamo != None else '',
@@ -141,3 +148,4 @@ class reciboTemplateView(TemplateView):
                 'fecha': recibos.fecha,
                 'estatus': recibos.estatus,
             })
+        return JsonResponse(data, safe=False)
