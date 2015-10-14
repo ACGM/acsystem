@@ -57,6 +57,10 @@ class Factura(models.Model):
 
 		return '$%s' % str(format(total,',.2f'))
 
+	@property
+	def tipoSocio(self):
+		return self.socio.estatus
+
 
 # Detalle de la Factura
 class Detalle(models.Model):

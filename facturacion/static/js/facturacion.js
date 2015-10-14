@@ -782,17 +782,26 @@
             $scope.facturasSeleccionadas.forEach(function (item) {
               $scope.documentoCuentas.forEach(function (documento) {
                 var desgloseCuenta = new Object();
+                
+                console.log('Documento de Cuentas:');
+                console.log(documento);
+                console.log('Documento de Factura:');
+                console.log(item);
 
-                desgloseCuenta.cuenta = documento.getCuentaCodigo;
-                desgloseCuenta.descripcion = documento.getCuentaDescrp;
-                desgloseCuenta.ref = documento.getCodigo + item.id;
-                desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
-                desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+                if(documento.getTipoSocio == 'N' || documento.getTipoSocio == item.tipoSocio) {
+                  desgloseCuenta.cuenta = documento.getCuentaCodigo;
+                  desgloseCuenta.descripcion = documento.getCuentaDescrp;
+                  desgloseCuenta.ref = documento.getCodigo + item.id;
+                  desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
+                  desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
 
-                $scope.desgloseCuentas.push(desgloseCuenta);
+                  $scope.desgloseCuentas.push(desgloseCuenta);
+                }
+
               });
               idoc += 1;
               $scope.totalDebitoCredito();
+              console.log($scope.desgloseCuentas);
             });
             $scope.iDocumentos = idoc;
           });
