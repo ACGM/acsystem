@@ -145,10 +145,10 @@
 				 return deferred.promise;
 			}
 
-			function setAhorroRegS(retiro, cuenta){
+			function setAhorroRegS(retiro){
 				var deferred = $q.defer();
 				
-				$http.post('/ahorro/', JSON.stringify({'retiro':retiro,'cuenta': cuenta}))
+				$http.post('/ahorro/', JSON.stringify({'retiro':retiro}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -252,6 +252,7 @@
 
 
 			$scope.limpiar = function(){
+				debugger;
 				$scope.Ahorros=[];
 				$scope.AhorrosPorSocio=[];
 				$scope.AhorroHistorico=[];
@@ -281,6 +282,7 @@
 				$scope.redId = null;
 				$scope.prestamosS = {};
 			    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
+			    $scope.numPrestamo = null;
 			};
 
 
@@ -363,13 +365,15 @@
           			$scope.retiro.fecha = FechaFormat;
           			$scope.retiro.estatus = "A";
 					
-					AhorroServices.setAhorroRegS($scope.retiro, 0).then(function (data){
-						$scope.retiro.id = data
+					AhorroServices.setAhorroRegS($scope.retiro).then(function (data){
+						if(data=="Ok"){
+							alert("Retiro Registrado");
+						}
 						return data;
 					});
 					
 					$window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
-					$scope.limpiar ();
+					$scope.limpiar();
 					 $scope.getListaAhorro();
 
 					
@@ -527,6 +531,14 @@
 
 	       		$window.open('/impHyAhorro/', target='_blank'); 
 	       	}
+
+	       	$scope.selPrest = function($event, s){
+	       		$event.preventDefault();
+
+	       		$scope.retiro.prestamo = s.noPrestamo;
+	       		$scope.numPrestamo = s.montoInicial.toString()+"-"+s.fechaAprobacion.toString(); 
+	       		$scope.tablePrest = false;
+	       	};
 
 
 			$scope.getPrestamosSocio = function($event){

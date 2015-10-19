@@ -261,15 +261,16 @@
 			$scope.cuentas = [];
 
 		$scope.start = function(){
-
+			debugger;
 			$scope.regData = JSON.parse($window.sessionStorage['chk']);
+			$scope.cuentas = $scope.regData.cuenta;
 			var formFecha = $scope.regData.fecha.split('-');
 			$scope.dia = formFecha[2];
 			$scope.mes = formFecha[1];
 			$scope.agno = formFecha[0];
 
 
-			$scope.letras =40000;
+			
 		}	
 			
 	}]);

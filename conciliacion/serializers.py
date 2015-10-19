@@ -14,7 +14,7 @@ class chequesSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ConcCheques
         many = True
-        fields = ('id', 'solicitud', 'chequeNo', 'fecha', 'estatus')
+        fields = ('id','fecha', 'solicitud', 'chequeNo',  'estatus')
 
 
 class NotasSerializer(serializers.HyperlinkedModelSerializer):
