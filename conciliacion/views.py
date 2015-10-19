@@ -153,7 +153,7 @@ class ChequesView(TemplateView):
             regDiario.credito = monto
 
         regDiario.save()
-        cheque.cuenta.add(regDiario)
+        cheque.cuentas.add(regDiario)
         return 'Ok'
 
     def get(self, request, *args, **kwargs):
@@ -171,7 +171,8 @@ class ChequesView(TemplateView):
         cheque = ConcCheques.objects.all()
 
         for chk in cheque:
-            cuentas = DiarioGeneral.objects.filter(id=chk.cuenta)
+            # cuentas = DiarioGeneral.objects.filter(id=chk.cuentas)
+
             data.append({
                 'id': chk.id,
                 'solicitud': chk.solicitud.id,
@@ -183,13 +184,13 @@ class ChequesView(TemplateView):
                 'estatus': chk.estatus,
                 'cuenta':[{
                     'id': cta.id,
-                    'codigoCta': cta.cuenta.codigo, # if cta.cuenta != None else '',
+                    'codigoCta': cta.cuenta.codigo,
                     'cuenta': cta.cuenta.descripcion,
                     # 'aux': cta.auxiliar.codigo,
                     'debito': cta.debito,
                     'credito': cta.credito
                     }
-                   for cta in cuentas]
+                   for cta in chk.cuentas.all()]
             })
         return JsonResponse(data, safe=False)
 
@@ -205,7 +206,7 @@ class ChequesView(TemplateView):
                     regtipo = TipoDocumento.objects.get(codigo="CHKS")
                 
                 if solicitud.suplidor is not None:
-                    regtipo = TipoDocumento.objects.get(codigo="CHKS")
+                    regtipo = TipoDocumento.objects.get(codigo="CHKC")
 
                 regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 

@@ -166,7 +166,7 @@ class DocumentosAhorro(DetailView):
         data = dataR['registro']
 
         regMaestra = MaestraAhorro.objects.get(id=data['idMaestra'])
-
+        return HttpResponse("Entro")
         if data['estatus'] == 'P':
             regMaestra.estatus = 'P'
             regAhorro = AhorroSocio.objects.get(id=regMaestra.ahorro.id)
@@ -204,6 +204,7 @@ class DocumentosAhorro(DetailView):
         else: 
             regMaestra.estatus = 'I'
             regMaestra.save()
+        return HttpResponse('Ok')
 
 
 class InteresAhorroViewSet(viewsets.ModelViewSet):
@@ -347,16 +348,6 @@ class AhorroView(TemplateView):
 
         return JsonResponse(data, safe=False)
 
-
-    def BalanceSocioP(self, socio):
-        prestamos = MaestraPrestamo.objects.raw('SELECT '
-                                                'SUM(p.balance) balance '
-                                                'FROM prestamos_maestraprestamo p '
-                                                'INNER JOIN administracion_socio s ON s.id = p.socio_id '
-                                                'HAVING p.estatus = "P" and s.codigo =' + int(socio) \
-                                                )
-        return prestamos
-
     def post(self, request, *args, **kwargs):
         dataT = json.loads(request.body)
         data = dataT['retiro']
@@ -364,28 +355,25 @@ class AhorroView(TemplateView):
         regSocio = Socio.objects.get(codigo=dataT['retiro']['socio'])
         regAhorro = AhorroSocio.objects.get(socio=regSocio.id)
 
-        try:          
+        try:
             idMaestra = dataT['retiro']['id']
-            if dataT['retiro']['tipo'] == 'R':
-                if dataT['retiro']['id'] is None:
-                    
-                    regMaestra = MaestraAhorro()
-                    if dataT['retiro']['prestamo'] != None:
-                        regMaestra.prestamo = dataT['retiro']['prestamo']
+            if dataT['retiro']['id'] is None:
+                
+                regMaestra = MaestraAhorro()
+                if dataT['retiro']['prestamo'] != None:
+                    regMaestra.prestamo = dataT['retiro']['prestamo']
 
-                    regMaestra.ahorro = regAhorro
-                    regMaestra.fecha = dataT['retiro']['fecha']
-                    regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
+                regMaestra.ahorro = regAhorro
+                regMaestra.fecha = dataT['retiro']['fecha']
+                regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
 
-                    regMaestra.estatus = dataT['retiro']['estatus']
-                    regMaestra.save()
+                regMaestra.estatus = dataT['retiro']['estatus']
+                regMaestra.save()
 
-                else:
-                    regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
-                    regDiario = get_object_or_404(DiarioGeneral, pk=cuenta)
-                    
-                    regMaestra.cuentas.add(regDiario)
-                    regMaestra.save()
+            else:
+                regMaestra = get_object_or_404(MaestraAhorro, pk=idMaestra)
+                
+                regMaestra.save()
 
             return HttpResponse('Ok')
 

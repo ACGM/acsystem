@@ -5,7 +5,7 @@ from .models import ConcCheques, SolicitudCheque, NotaDCConciliacion, ConBanco
 
 @admin.register(ConcCheques)
 class ConcChequeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'solicitud', 'chequeNo', 'fecha', 'estatus']
+    list_display = ['id','fecha', 'solicitud', 'chequeNo',  'estatus']
 
 
 @admin.register(SolicitudCheque)
