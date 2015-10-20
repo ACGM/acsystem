@@ -14,7 +14,7 @@
 	<div class="cheque-concepto">
 		<table>
 			<tr class="cheque-concepto-tabla">
-				<td>[[regData.fecha]]</td>
+				<td>[[regData.fecha |date: 'dd/MM/yyyy']]</td>
 				<td>[[regData.concepto]]</td>
 				<td>[[regData.monto |number:2]]</td>
 			</tr>
@@ -22,7 +22,7 @@
 	</div>
 	<div class="cheque-cuentas">
 		<span class="noCheque">[[regData.noCheque]]</span>
-		<span class="cuenta-fecha">[[fecha]]</span>
+		<span class="cuenta-fecha">[[regData.fecha |date: 'dd/MM/yyyy']]</span>
 		<span class="nombre">[[regData.beneficiario]]</span>
 		<table>
 			<tr class="cheque-cuenta-tabla" ng-repeat="cta in cuentas">

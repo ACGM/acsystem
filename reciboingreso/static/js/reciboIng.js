@@ -59,9 +59,9 @@
                   return deferred.promise;
             };
 
-            function postRecibo(recibo){
+            function postRecibo(recibo, fecha){
             	var deferred = $q.defer();
-            	$http.post('/postearRecibo', JSON.stringify({'recibo': recibo}))
+            	$http.post('/postearRecibo', JSON.stringify({'recibo': recibo,'fecha': fecha}))
             		.success(function (data){
             			deferred.resolve(data);
             		})
@@ -214,9 +214,13 @@
 		    	};
 
 		    $scope.postRecibo = function($event,id){
-		    	var recibo = {};
-		    	recibo.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
-		    	reciboIngServices.postRecibo(recibo).then(function (data){
+		    	$event.preventDefault();
+
+		    	var fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+		    	var RegFecha = $scope.fecha.split('/');
+          		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+          		fecha = FechaFormat;
+		    	reciboIngServices.postRecibo(id, fecha).then(function (data){
 		    		if(data == "Ok"){
 		    			alert("Recibo #"+id+" ha sido Posteado")
 		    			$scope.reciboLst = true;
