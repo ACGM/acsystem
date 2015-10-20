@@ -178,7 +178,7 @@ class CxpView(TemplateView):
             return HttpResponse(e)
 
 class cxpSuperView(TemplateView):
-    template_name = 'CxpOrdenSuper'
+    template_name = 'CxpOrdenSuper.html'
 
 
 

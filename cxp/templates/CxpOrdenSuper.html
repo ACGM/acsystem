@@ -4,9 +4,46 @@
 
 {% block content %}
 
-<div id="main" ng-controller="cxpController">
-	<section class="">
+<section id="main" ng-controller="CxpSuperCtrl">
+	<section class="super-">
+		
+		<div class="sub-menu">	
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" ng-click="nuevaOSuper()" title="Nueva CXP Super" ></button>
+			</div>
+				<a href="#" ng-click="toggleLF()">CXP SuperCoop</a>
+			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
+		</div>
+
+		<div class="Solicitud-Flap" ng-show="flap">
+			<div>
+				<a href="#" class="icon-delete flapClose" ng-click="flap=false"></a>
+				<p>Desea Postear o cancelar CXP</p>
+				<button class="Boton BusquedaBtn icon-coin" type="submit" ng-click="CxpOrdenEstatus($event,'postear')">Postear</button> 
+				<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="CxpOrdenEstatus($event,'cancelar')">Cancelar</button>
+			</div>
 			
+		</div>
+
+		<div class="content-suplidor-table">
+			<table class="suplidor-table-search" ng-show="tableSuplidor">
+				<tr>
+					<td colspan="3" class="cerrar-table">
+						<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+					</td>
+				</tr>
+				<tr class="socios-table-header">
+					<td>Codigo</td>
+					<td>Nombre</td>
+				</tr>
+				<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+					
+				</tr>
+			</table>
+		</div>
+
 	</section>
-</div>
-{% endbock content %}
+</section>
+{% endblock content %}

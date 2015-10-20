@@ -532,7 +532,14 @@
     .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout' 
         , function ($scope, $filter, $rootScope, cxpService, $timeout) {
 
-      $scope.lstCxpOrden = []
+        $scope.lstCxpOrden = [];
+        $scope.superData = {};
+
+
+
+        $scope.nuevaOSuper = function(){
+
+        }
 
         
     }]);
