@@ -12,14 +12,6 @@ from datetime import timedelta
 import datetime
 import decimal
 
-# # Cheques
-# class Cheque(models.Model):
-
-# 	estatus_choices = (('A','Aprobado'),('R','Rechazado'),)
-
-# 	chequeNo = models.IntegerField()
-# 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
-
 
 # Solicitud de Prestamos
 class SolicitudPrestamo(models.Model):
