@@ -158,7 +158,6 @@
             		else{
             			deferred.reject();
             		}
-                    console.log(result);
 
             	});
                   return deferred.promise;
