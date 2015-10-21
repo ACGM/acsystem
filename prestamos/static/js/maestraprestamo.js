@@ -525,13 +525,23 @@
             $scope.documentoCuentas.forEach(function (documento) {
               var desgloseCuenta = new Object();
 
-              desgloseCuenta.cuenta = documento.getCuentaCodigo;
-              desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + $scope.prestamoOD_SEL.noPrestamo;
-              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+              console.log('Documento de Cuentas:');
+              console.log(documento);
+              console.log('Documento de Prestamo:');
+              console.log($scope.prestamoOD_SEL);
 
-              $scope.desgloseCuentas.push(desgloseCuenta);
+              if(documento.getTipoSocio == 'N' || documento.getTipoSocio == $scope.prestamoOD_SEL.tipoSocio) {
+
+                desgloseCuenta.cuenta = documento.getCuentaCodigo;
+                desgloseCuenta.descripcion = documento.getCuentaDescrp;
+                desgloseCuenta.ref = documento.getCodigo + $scope.prestamoOD_SEL.noPrestamo;
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+
+                $scope.desgloseCuentas.push(desgloseCuenta);
+              }
+              
+
             });
             $scope.totalDebitoCredito();     
 
