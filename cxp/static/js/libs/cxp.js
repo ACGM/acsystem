@@ -8,6 +8,7 @@
                 $http.get('/cxpOrdenJson/?format=json')
                     .success(function (data) {
                         deferred.resolve(data);
+                        console.log(data);
                     })
                     .error(function (data) {
                         deferred.resolve(data);
@@ -20,6 +21,7 @@
                 $http.get('/cxpSuperJson/?format=json')
                     .success(function (data) {
                         deferred.resolve(data);
+
                     })
                     .error(function (data) {
                         deferred.resolve(data);

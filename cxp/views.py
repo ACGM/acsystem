@@ -10,6 +10,7 @@ from django.utils import timezone
 from cxp.models import OrdenCompra, CxpSuperCoop
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Suplidor, Socio, TipoDocumento, DocumentoCuentas
+from prestamos.models import SolicitudOrdenDespachoH
 from .serializers import OrdenSerializer
 
 
@@ -76,6 +77,10 @@ class CxpOrdenView(DetailView):
             regOrden.estatus = data['estatus']
             regOrden.save()
 
+            regDespacho = SolicitudOrdenDespachoH.objects.get(id = data['orden'])
+            regDespacho.cxp ='P'
+            regDespacho.save()
+
         else:
 
             OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
@@ -110,6 +115,19 @@ class CxpOrdenView(DetailView):
                 'fecha': ordenes.fecha,
                 'monto': ordenes.monto,
                 'estatus': ordenes.estatus,
+                'detalleCuentas': [
+                    {
+                        'id': cuentas.id,
+                        'fecha': cuentas.fecha,
+                        'cuenta': cuentas.cuenta.codigo,
+                        'referencia': cuentas.referencia,
+                        'estatus': cuentas.estatus,
+                        'debito': cuentas.debito,
+                        'credito': cuentas.credito,
+
+                    }
+                    for cuentas in ordenes.detalleCuentas.all()
+                ],
             
             })
         return JsonResponse(data, safe=False)
@@ -161,20 +179,19 @@ class CxpSuperCoopView(DetailView):
                 'estatus': cxpSuper.estatus,
                 'monto': cxpSuper.monto,
                 'descuento': cxpSuper.descuento,
-                # 'detalleCuentas': [
-                #     {
-                #         'id': cuentas.id,
-                #         'fecha': cuentas.fecha,
-                #         'cuenta': cuentas.cuenta,
-                #         'referencia': cuentas.referencia,
-                #         'auxiliar': cuentas.auxiliar,
-                #         'estatus': cuentas.estatus,
-                #         'debito': cuentas.debito,
-                #         'credito': cuentas.credito,
+                'detalleCuentas': [
+                    {
+                        'id': cuentas.id,
+                        'fecha': cuentas.fecha,
+                        'cuenta': cuentas.cuenta.codigo,
+                        'referencia': cuentas.referencia,
+                        'estatus': cuentas.estatus,
+                        'debito': cuentas.debito,
+                        'credito': cuentas.credito,
 
-                #     }
-                #     for cuentas in cxpSuper.detalleCuentas
-                # ]
+                    }
+                    for cuentas in cxpSuper.detalleCuentas.all()
+                ],
             })
         return JsonResponse(data, safe=False)
 
@@ -227,6 +244,13 @@ class cxpSuperView(TemplateView):
             return HttpResponse('Ok')
         except Exception, e:
             return HttpResponse(e)
+
+# class CxpSolicitud(DetailView):
+#     queryset = OrdenCompra.objects.all()
+
+#     def post(request):
+        
+
 
 
 
