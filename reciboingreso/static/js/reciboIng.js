@@ -253,6 +253,7 @@
           				console.log(data);
           			});
           			 $scope.cancelarReg($event);
+          			 $scope.getList();
           		}	
           		catch(ex){
           			$rootScope.mostrarError(ex.message);

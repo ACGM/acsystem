@@ -273,7 +273,7 @@ class NotasConciliacionView(TemplateView):
                                'credito': ctas.credito
 
                            }
-                           for ctas in DiarioGeneral.objects.filter(referencia='NCC-' + str(nota.id))]
+                           for ctas in DiarioGeneral.objects.filter(referencia='NCCD-' + str(nota.id))]
             })
         return JsonResponse(data, safe=False)
 
