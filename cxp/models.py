@@ -24,6 +24,8 @@ class OrdenCompra(models.Model):
 
 # Cuenta por pagar a suplidor de SuperCoop
 class CxpSuperCoop(models.Model):
+    estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     factura = models.CharField(max_length=10, default=False, null=False, blank=False, verbose_name="# Factura")
     fecha = models.DateField(verbose_name="Fecha")
@@ -32,9 +34,9 @@ class CxpSuperCoop(models.Model):
                                 verbose_name="Monto")
     descuento = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False,
                                     verbose_name="Desc")
-    estatus = models.BooleanField(default=False)
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_super_ref",
-                                            verbose_name='Detalle Cuentas')
+                                            verbose_name='Detalle Cuentas', null=True, blank=True)
 
     def __unicode__(self):
         return '%s-%s' %(str(self.factura), self.suplidor.nombre)
