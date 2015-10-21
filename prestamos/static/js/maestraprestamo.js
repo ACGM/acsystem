@@ -508,7 +508,9 @@
         $scope.posteoG = false;
 
         try {
-
+          console.log('TIPO DOCUMENTO:');
+          console.log(prestamo.documentoDescrp);
+          
           //Verificar si es un Prestamo o una Orden de Despacho.
           if(prestamo.documentoDescrp == 'Prestamo') {
             docCuentas = 'PRES';
@@ -527,9 +529,9 @@
 
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + prestamo.noPrestamo;
-              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+              desgloseCuenta.ref = documento.getCodigo + $scope.prestamoOD_SEL.noPrestamo;
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });
@@ -541,7 +543,7 @@
         }
       }
 
-            //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
       //para este modulo de Inventario - Salida.
       $scope.postearContabilidad = function() {
 
@@ -554,6 +556,7 @@
 
           $scope.posteoG = true;
           $scope.desgloseCuentas.forEach(function (item) {
+            console.log()
             ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
               console.log('Registros guardados en el diario');
               console.log(data);

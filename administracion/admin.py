@@ -190,4 +190,5 @@ class CobradorAdmin(admin.ModelAdmin):
 class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
+	search_fields = ('documento__descripcion',)
 
