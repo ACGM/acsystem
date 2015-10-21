@@ -20,21 +20,21 @@ class reciboPost(TemplateView):
 
     def setCuentaMaestra(self, idMaestra, doc, Fecha, ref):
         regMaestra = MaestraAhorro.objects.get(id= idMaestra)
-
+        
         cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
 
         diario = DiarioGeneral()
-        diario.fecha = fecha
+        diario.fecha = Fecha
         diario.referencia = ref+'-' + str(idMaestra)
         diario.cuenta = cuenta
         diario.estatus = 'P'
 
         if doc.accion == 'D':
-            diario.debito = monto
+            diario.debito = regMaestra.monto
             diario.credito = 0
         else:
             diario.debito = 0
-            diario.credito = monto
+            diario.credito = regMaestra.monto
 
         diario.save()
 
@@ -58,9 +58,9 @@ class reciboPost(TemplateView):
             regMaestra.estatus = 'P'
             regMaestra.save()
 
-            if regMaestra.ahorro.socio.estatus == 'Socio':
+            if regMaestra.ahorro.socio.estatus == 'S':
                 ref = 'AHTS'
-            if regMaestra.ahorro.socio.estatus == 'Empleado':
+            if regMaestra.ahorro.socio.estatus == 'E':
                 ref = 'AHTE'
 
 
@@ -68,10 +68,10 @@ class reciboPost(TemplateView):
             doc = DocumentoCuentas.objects.filter(documento = tipo)
 
             for docu in doc:
-                self.setCuenta(self,regMaestra.id, doc, Fecha, ref)
+                self.setCuentaMaestra(regMaestra.id, docu, fecha, ref)
         
         if recibo.prestamo != None:
-            self.guardarPagoCuotaPrestamo(self,recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,'RIRG-'+str(recibo.id),'RI')
+            guardarPagoCuotaPrestamo(self,recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,0,'RIRG-'+str(recibo.id),'AH')
 
         return HttpResponse('Ok')
 

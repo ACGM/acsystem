@@ -20,7 +20,7 @@ class Cuentas(models.Model):
     # Origenes de cuentas
     origen_choices = (('D', 'Debito'), ('C', 'Credito'),)
     tipo_choicer = (('G', 'General'), ('D', 'Detalle'))
-    tipo_socio = (('S', 'Standard'), ('E', 'Empleado'))
+    tipo_socio = (('N', 'Normal'), ('S', 'Socio'), ('E', 'Empleado'),)
 
     # Campos Base
     codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)

@@ -120,5 +120,5 @@ class DocumentoCuentasSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = DocumentoCuentas
-		fields = ('getCodigo', 'documento', 'getCuentaCodigo', 'getCuentaDescrp', 'accion',)
+		fields = ('getCodigo', 'documento', 'getCuentaCodigo', 'getCuentaDescrp', 'accion', 'getTipoSocio')
 		

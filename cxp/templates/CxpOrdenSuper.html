@@ -4,9 +4,153 @@
 
 {% block content %}
 
-<div id="main" ng-controller="cxpController">
-	<section class="">
+<section id="main" ng-controller="CxpSuperCtrl" ng-init="getAllData()">
+	<div class="content-suplidor-table">
+				<table class="Super-suplidor-table-search" ng-show="tableSuplidor">
+					<tr>
+						<td colspan="3" class="cerrar-table">
+							<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+						</td>
+					</tr>
+					<tr class="socios-table-header">
+						<td>Codigo</td>
+						<td>Nombre</td>
+					</tr>
+					<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+						<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+						<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+						
+					</tr>
+				</table>
+	</div>
+
+	<div class="Solicitud-Flap" ng-show="flap">
+			<div>
+				<a href="#" class="icon-delete flapClose" ng-click="flap=false"></a>
+				<p>Desea Postear o cancelar CXP SuperCoop</p>
+				<button class="Boton BusquedaBtn icon-coin" type="submit" ng-click="CxpSuperEstatus($event,'postear')">Postear</button> 
+				<button class="Boton BusquedaBtn danger icon-delete" type="reset" ng-click="CxpSuperEstatus($event,'cancelar')">Cancelar</button>
+			</div>	
+	</div>
+	<section  ng-show="vwTablas">
+		<div class="sub-menu">
+			<div class="menu-entrada-inventario-listado">
+				<button class="nuevo icon-file" ng-click="nuevoRegistro()" title="Nuevo Registro" ></button>
+			</div>
+				<a href="#" ng-click="toggleLF()">CXP Super Coop</a>
+			<a class="[[ArrowLF]]" href="#" ng-click="toggleLF()"></a>
+			<div class="superFecha"> 
+				Fecha inicio : <input type="text" ng-model="sfechai" datepicker>
+				Fecha Final  : <input type="text" ng-model="sfechaf" datepicker>
+			</div>	
 			
+		</div>
+		<div>
+			<table class="super-table-search-panel">
+				<tr class="super-table-header">
+					<td>Id</td>
+					<td>Suplidor</td>
+					<td>Factura</td>
+					<td>Fecha</td>
+					<td>Monto</td>
+					<td>Estatus</td>
+					<td>Postear</td>
+				</tr>
+				<tr ng-repeat="x in lstCxpOrden" class="super-table-detail-search">
+					<td>[[x.id]]</td>
+					<td>[[x.suplidor]]</td>
+					<td>[[x.factura]]</td>
+					<td>[[x.fecha |date: 'dd/MM/yyyy']]</td>
+					<td>[[x.monto |number: 2]]</td>
+					<td>
+						<div ng-if="x.estatus =='A'">
+							Activo
+						</div>
+						<div ng-if="x.estatus =='P'">
+							Posteado
+						</div>
+						<div ng-if="x.estatus =='I'">
+							Cancelada
+						</div>
+					</td>
+					<td>
+						<div ng-if="x.estatus =='A'">
+							<a href="#" class="icon-folder estatus-[[x.estatus]]" style="text-decoration: none;" 
+							ng-click="workflow($event,x.id)" tooltip="[[x.estatus]]"></a>
+						</div>
+						<div ng-if="x.estatus =='P'">
+							<span class="icon-folder estatus-[[x.estatus]]" ></span>
+						</div>
+						<div ng-if="x.estatus =='I'">
+							<span class="icon-folder estatus-[[x.estatus]]" ></span>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
 	</section>
-</div>
-{% endbock content %}
+	
+	<section ng-show="vwRegistro">
+		<div class="super-panel-reg">
+			<form name="CxpSuperForm" class="data-entry-section" novalidate ng-submit="guardarCxp($event)">
+				<div class="super-div-reg">
+					<table class="super-table-reg">
+							<tr>
+								<td>Fecha:</td>
+								<td>
+									<input type="text" ng-model="fecha" datepicker required>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Suplidor:
+								</td>
+								<td>
+									<input type="text" ng-model="cxSuperData.suplidor" disabled> <input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSuplidor=false" placeholder="Código o nombre del suplidor"  ng-click="tableSuplidor=false; errorShow=false;" class="producto-field-ei" required>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									# Factura:
+								</td>
+								<td>
+									<input type="text" ng-model="cxSuperData.factura" value="0" required>
+								</td>
+							</tr>
+							<tr>
+								<td>Concepto:</td>
+								<td>
+									 <textarea cols="30" rows="6" ng-model="cxSuperData.concepto">
+								
+									 </textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Monto:
+								</td>
+								<td>
+									<input type="text" ng-model="cxSuperData.monto" required>  
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Descuento:
+								</td>
+								<td>
+									<input type="text" ng-model="cxSuperData.descuento" value="0">
+								</td>
+							</tr>
+
+						</tr>
+					</table>
+					<div class="bancoItem">
+							<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="limpiar($event)">Limpiar</button>
+						</div>
+	      		    </div>
+			</form>
+		</div>
+	</section>
+</section>
+{% endblock content %}

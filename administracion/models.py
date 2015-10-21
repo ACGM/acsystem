@@ -182,7 +182,7 @@ class Socio(models.Model):
     estado_civil_choices = (('S', 'Soltero(a)'), ('C', 'Casado(a)'), ('U', 'Union Libre'),)
     estatus_choices = (('S', 'Socio'), ('E', 'Empleado'), ('I', 'Inactivo'),)
 
-    codigo = models.PositiveIntegerField(unique=True)
+    codigo = models.PositiveIntegerField()
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=40)
     direccion = models.TextField(blank=True)
@@ -224,13 +224,14 @@ class Socio(models.Model):
         super(Socio, self).save(*args, **kwargs)
 
         #Preparar la tabla AhorroSocio con Balance en Cero cuando es la primera vez.
-        from ahorro.models import AhorroSocio
-        ah = AhorroSocio()
-        ah.socio = self
-        ah.balance = 0
-        ah.disponible = 0
-        ah.estatus = 'A'
-        ah.save()
+        if self.id == None:
+            from ahorro.models import AhorroSocio
+            ah = AhorroSocio()
+            ah.socio = self
+            ah.balance = 0
+            ah.disponible = 0
+            ah.estatus = 'A'
+            ah.save()
 
     class Meta:
         ordering = ['codigo']
@@ -520,6 +521,10 @@ class DocumentoCuentas(models.Model):
     @property
     def getCuentaDescrp(self):
         return self.cuenta.descripcion
+
+    @property
+    def getTipoSocio(self):
+        return self.cuenta.tipoSocio
 
     class Meta:
         ordering = ['documento', 'cuenta']

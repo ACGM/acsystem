@@ -1,13 +1,15 @@
 import json
 import decimal
+import datetime
 
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
+from django.utils import timezone
 
 from cxp.models import OrdenCompra, CxpSuperCoop
 from cuenta.models import DiarioGeneral, Cuentas
-from administracion.models import Suplidor, Socio, TipoDocumento
+from administracion.models import Suplidor, Socio, TipoDocumento, DocumentoCuentas
 from .serializers import OrdenSerializer
 
 
@@ -18,19 +20,40 @@ def SetCuentaOrden(self, ordenId, doc, ref):
 
     diario = DiarioGeneral()
     diario.fecha = fecha
-    diario.referencia = ref+'-'+ str(idMaestra)
+    diario.referencia = ref+'-'+ str(ordenId)
     diario.cuenta = cuenta
     diario.estatus = 'P'
 
     if doc.accion == 'D':
-        diario.debito = regMaestra.monto
+        diario.debito = regOrden.monto
         diario.credito = 0
     else:
         diario.debito = 0
-        diario.credito = regMaestra.monto
+        diario.credito = regOrden.monto
     diario.save()
 
     regOrden.detalleCuentas.add(diario)
+
+
+def SetCuentaSuper(self, superCxp, doc, ref):
+    regSuper = CxpSuperCoop.objects.get(id=superCxp);
+    cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+    diario = DiarioGeneral()
+    diario.fecha = timezone.now()
+    diario.referencia = ref+'-'+ str(superCxp)
+    diario.cuenta = cuenta
+    diario.estatus = 'P'
+
+    if doc.accion == 'D':
+        diario.debito = regSuper.monto - regSuper.descuento
+        diario.credito = 0
+    else:
+        diario.debito = 0
+        diario.credito = regSuper.monto - regSuper.descuento
+    diario.save()
+
+    regSuper.detalleCuentas.add(diario)
 
 class CxpOrdenView(DetailView):
     queryset = OrdenCompra.objects.all()
@@ -92,16 +115,18 @@ class CxpOrdenView(DetailView):
         return JsonResponse(data, safe=False)
 
 
-class CxpSuperCoop(DetailView):
+class CxpSuperCoopView(DetailView):
     queryset = CxpSuperCoop.objects.all()
 
     def post(self, request):
-        data = request.body
-        dataCuentas = data['cuentas']
+        dataT = json.loads(request.body)
+        data = dataT['regSuper']
+
+        sup = Suplidor.objects.get(id=data['suplidor'])
 
         cxpSuper = CxpSuperCoop()
         cxpSuper.factura = data['factura']
-        cxpSuper.suplidor = Suplidor.objects.filter(id=data['suplidor'])
+        cxpSuper.suplidor = sup
         cxpSuper.fecha = data['fecha']
         cxpSuper.concepto = data['concepto']
         cxpSuper.descuento = data['descuento']
@@ -125,7 +150,7 @@ class CxpSuperCoop(DetailView):
     def json_to_response(self):
         data = list()
 
-        for cxpSuper in self.object_list:
+        for cxpSuper in CxpSuperCoop.objects.all():
             data.append({
                 'id': cxpSuper.id,
                 'suplidorId': cxpSuper.suplidor.id,
@@ -133,23 +158,25 @@ class CxpSuperCoop(DetailView):
                 'factura': cxpSuper.factura,
                 'fecha': cxpSuper.fecha,
                 'concepto': cxpSuper.concepto,
+                'estatus': cxpSuper.estatus,
                 'monto': cxpSuper.monto,
                 'descuento': cxpSuper.descuento,
-                'detalleCuentas': [
-                    {
-                        'id': cuentas.id,
-                        'fecha': cuentas.fecha,
-                        'cuenta': cuentas.cuenta,
-                        'referencia': cuentas.referencia,
-                        'auxiliar': cuentas.auxiliar,
-                        'estatus': cuentas.estatus,
-                        'debito': cuentas.debito,
-                        'credito': cuentas.credito,
+                # 'detalleCuentas': [
+                #     {
+                #         'id': cuentas.id,
+                #         'fecha': cuentas.fecha,
+                #         'cuenta': cuentas.cuenta,
+                #         'referencia': cuentas.referencia,
+                #         'auxiliar': cuentas.auxiliar,
+                #         'estatus': cuentas.estatus,
+                #         'debito': cuentas.debito,
+                #         'credito': cuentas.credito,
 
-                    }
-                    for cuentas in DiarioGeneral.objects.filter(reference='CXPS-' + cxpSuper.id)
-                ]
+                #     }
+                #     for cuentas in cxpSuper.detalleCuentas
+                # ]
             })
+        return JsonResponse(data, safe=False)
 
 
 class CxpView(TemplateView):
@@ -162,7 +189,7 @@ class CxpView(TemplateView):
             regOrden = OrdenCompra.objects.get(id=orden);
             regOrden.estatus = 'P'
 
-            if regOrden.socio.estatus == 'Socio':
+            if regOrden.socio.estatus == 'S':
                 ref = 'CXOS'
             else:
                 ref = 'CXOE'
@@ -178,7 +205,29 @@ class CxpView(TemplateView):
             return HttpResponse(e)
 
 class cxpSuperView(TemplateView):
-    template_name = 'CxpOrdenSuper'
+    template_name = 'CxpOrdenSuper.html'
+
+    def post(self,request):
+        try:
+            superCxp = self.request.GET.get('super')
+
+            regSuper = CxpSuperCoop.objects.get(id=superCxp);
+            regSuper.estatus = 'P'
+
+            ref = 'CXSS'
+
+            tipo = TipoDocumento.objects.get(codigo=ref)
+            doc = DocumentoCuentas.objects.filter(documento = tipo)
+
+            for document in doc:
+                SetCuentaSuper(self,regSuper.id,document,ref)
+
+            regSuper.save()
+            
+            return HttpResponse('Ok')
+        except Exception, e:
+            return HttpResponse(e)
+
 
 
 

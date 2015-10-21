@@ -161,7 +161,7 @@
 			function setIntereses(fechaI, fechaF, cuentas){
 				var deferred = $q.defer();
 				
-				$http.post('/generarInteres/', JSON.stringify({'fechaI':fechaI, 'fechaF': fechaF,'cuentas': cuentas}))
+				$http.post('/generarInteres/', JSON.stringify({'fechaI':fechaI, 'fechaF': fechaF}))
 					.success(function (data){
 						deferred.resolve(data);
 					})
@@ -310,7 +310,7 @@
 
 			$scope.filterFecha = function($event){
 				$event.preventDefault();
-
+				
 				if($scope.tempAh.length > 0){
 					$scope.AhorrosPorSocio = $scope.tempAh;
 				}else{
@@ -318,11 +318,22 @@
 				};
 
 				$scope.AhorrosPorSocio = $scope.AhorrosPorSocio.filter(function (data) {
+					debugger;
+					return data.maestra.filter(function (reg){
 
-					var RegFecha = $scope.retiro.fecha.split('-');
-          			var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
-          			data.fecha = FechaFormat;
-          			return data.fecha >= $scope.fechaI && data.fecha <= $scope.fechaF;
+						var RegFecha = $scope.fechaI.split('/');
+          				var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+          				var fechaI = FechaFormat;
+
+          				var RegFecha2 = $scope.fechaF.split('/');
+          				var FechaFormat2 = RegFecha2[2] + '-' + RegFecha2[1] + '-' + RegFecha2[0];
+          				var fechaF = FechaFormat2;
+
+          				return reg.fecha >= fechaI && reg.fecha <= fechaF;
+					});
+					
+     				
+          			
 
 				});
 
@@ -665,6 +676,8 @@
 								function ($scope, $filter,$window, $rootScope, AhorroServices, $timeout){
 			$scope.GrInteres = [];
 			$scope.documentos =  null;
+			$scope.fechaI = null;
+			$scope.fechaF = null;
 
 
 			$scope.cargarData = function(){
@@ -682,18 +695,25 @@
 
 
 			$scope.generarInteres = function(){
-
-				var RegFecha = $scope.GrInteres.fechaI.split('/');
+				
+				var RegFecha = $scope.fechaI.split('/');
           		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           	    $scope.GrInteres.fechaI = FechaFormat;
 
-          	    var RegFecha2 = $scope.GrInteres.fechaF.split('/');
-          		var FechaFormat2 = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+          	    var RegFecha2 = $scope.fechaF.split('/');
+          		var FechaFormat2 = RegFecha2[2] + '-' + RegFecha2[1] + '-' + RegFecha2[0];
           	    $scope.GrInteres.fechaF = FechaFormat2;
 
-          	    $scope.cuenta = AhorroServices.getCuentaDoc('AHIN');
+          	    console.log($scope.fechaI);
+          	    console.log($scope.fechaF);
 
-				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF, $scope.documentos);				
+				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF).then(function (data){
+					if (data == "Ok"){
+						alert("Intereses generados")
+					}else{
+						console.log(data);
+					}
+				});				
 			};
 }]); 
 })(_);
