@@ -319,7 +319,7 @@ class CuotasPrestamosEmpresa(models.Model):
 		pago = PagoCuotasPrestamo()
 		pago.noPrestamo = self.noPrestamo
 		pago.valorCapital = self.valorCapital
-		pago.valorInteres = self.valorInteres
+		pago.valorInteres = self.valorInteres + self.valorInteresAh
 		pago.docRef = '{0}'.format(self.nomina)
 		pago.tipoPago = 'NM'
 		pago.save()
@@ -332,7 +332,7 @@ class CuotasPrestamosEmpresa(models.Model):
 
 	@property
 	def montoTotal(self):
-		return self.valorCapital + self.valorInteres
+		return self.valorCapital + self.valorInteres + self.valorInteresAh
 
 	class Meta:
 		unique_together = ('noPrestamo', 'nomina')
