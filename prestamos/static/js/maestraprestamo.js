@@ -269,7 +269,7 @@
       }
 
       function panelesSize() {
-        document.getElementById('prestamosContainer').style.height = (window.innerHeight - 280) + 'px';
+        document.getElementById('prestamosContainer').style.height = (window.innerHeight - 220) + 'px';
       }
 
       // Mostrar/Ocultar panel de Listado de Facturas
@@ -508,8 +508,6 @@
         $scope.posteoG = false;
 
         try {
-          console.log('TIPO DOCUMENTO:');
-          console.log(prestamo.documentoDescrp);
           
           //Verificar si es un Prestamo o una Orden de Despacho.
           if(prestamo.documentoDescrp == 'Prestamo') {
@@ -556,10 +554,11 @@
 
           $scope.posteoG = true;
           $scope.desgloseCuentas.forEach(function (item) {
-            console.log()
+            console.log('Item a Postear: ');
+            console.log(item)
+
             ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
-              console.log('Registros guardados en el diario');
-              console.log(data);
+              console.log('Registros guardados en el diario: ' + data);
             });
           });
 
