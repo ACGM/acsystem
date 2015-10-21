@@ -41,7 +41,13 @@
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
 							<td>[[Orden.id]]</td>
 							<td>
-								<a href="#" class="icon-folder estatus-[[Orden.estatus]]" style="text-decoration: none;" ng-click="workflow($event,Orden.id)" tooltip="[[Orden.estatus]]"></a>
+								<div ng-if="Orden.estatus != 'P'">
+									<a href="#" class="icon-folder estatus-[[Orden.estatus]]" style="text-decoration: none;" ng-click="workflow($event,Orden.id)" tooltip="[[Orden.estatus]]"></a>
+								</div>
+								<div ng-if="Orden.estatus == 'P'">
+									<span class="icon-folder estatus-[[Orden.estatus]]"></span>
+								</div>
+								
 							</td>
 							<td>[[Orden.fecha | date: 'dd/MM/yyyy']]</td>
 							<td>[[Orden.orden ]]</td>
@@ -169,6 +175,7 @@
 			</section>
 			</div>
 		</form>
+		
 
 	</section>
 {% endblock content%}
