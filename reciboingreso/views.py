@@ -58,6 +58,10 @@ class reciboPost(TemplateView):
             regMaestra.estatus = 'P'
             regMaestra.save()
 
+            regAhorro.balance = regAhorro.balance + recibo.montoAhorro
+            regAhorro.disponible = regAhorro.disponible + recibo.montoAhorro
+            regAhorro.save()
+
             if regMaestra.ahorro.socio.estatus == 'S':
                 ref = 'AHTS'
             if regMaestra.ahorro.socio.estatus == 'E':

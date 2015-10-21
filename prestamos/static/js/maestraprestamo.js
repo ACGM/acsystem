@@ -269,7 +269,7 @@
       }
 
       function panelesSize() {
-        document.getElementById('prestamosContainer').style.height = (window.innerHeight - 280) + 'px';
+        document.getElementById('prestamosContainer').style.height = (window.innerHeight - 220) + 'px';
       }
 
       // Mostrar/Ocultar panel de Listado de Facturas
@@ -508,7 +508,7 @@
         $scope.posteoG = false;
 
         try {
-
+          
           //Verificar si es un Prestamo o una Orden de Despacho.
           if(prestamo.documentoDescrp == 'Prestamo') {
             docCuentas = 'PRES';
@@ -525,13 +525,23 @@
             $scope.documentoCuentas.forEach(function (documento) {
               var desgloseCuenta = new Object();
 
-              desgloseCuenta.cuenta = documento.getCuentaCodigo;
-              desgloseCuenta.descripcion = documento.getCuentaDescrp;
-              desgloseCuenta.ref = documento.getCodigo + prestamo.noPrestamo;
-              desgloseCuenta.debito = documento.accion == 'D'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? $filter('number') (prestamo.montoInicial, 2) : $filter('number')(0.00, 2);
+              console.log('Documento de Cuentas:');
+              console.log(documento);
+              console.log('Documento de Prestamo:');
+              console.log($scope.prestamoOD_SEL);
 
-              $scope.desgloseCuentas.push(desgloseCuenta);
+              if(documento.getTipoSocio == 'N' || documento.getTipoSocio == $scope.prestamoOD_SEL.tipoSocio) {
+
+                desgloseCuenta.cuenta = documento.getCuentaCodigo;
+                desgloseCuenta.descripcion = documento.getCuentaDescrp;
+                desgloseCuenta.ref = documento.getCodigo + $scope.prestamoOD_SEL.noPrestamo;
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+
+                $scope.desgloseCuentas.push(desgloseCuenta);
+              }
+              
+
             });
             $scope.totalDebitoCredito();     
 
@@ -541,7 +551,7 @@
         }
       }
 
-            //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      //Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
       //para este modulo de Inventario - Salida.
       $scope.postearContabilidad = function() {
 
@@ -554,9 +564,11 @@
 
           $scope.posteoG = true;
           $scope.desgloseCuentas.forEach(function (item) {
+            console.log('Item a Postear: ');
+            console.log(item)
+
             ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
-              console.log('Registros guardados en el diario');
-              console.log(data);
+              console.log('Registros guardados en el diario: ' + data);
             });
           });
 

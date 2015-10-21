@@ -248,11 +248,16 @@
           				$scope.reciboData.estatus = "R";
           			}
 
+          			if ($scope.reciboData.NoPrestamo == undefined){
+          				$scope.reciboData.NoPrestamo = null;
+          			}
+
           		try{
           			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
-          				console.log(data);
+          				$scope.cancelarReg($event);
+          			 $scope.getList();
           			});
-          			 $scope.cancelarReg($event);
+          			 
           		}	
           		catch(ex){
           			$rootScope.mostrarError(ex.message);

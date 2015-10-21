@@ -12,7 +12,9 @@ class SolicitudCheque(models.Model):
     suplidor = models.ForeignKey(Suplidor, null=True, blank=True)
     concepto = models.CharField(max_length=150, null=False, blank=False)
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=False, null=False)
-    prestamo = models.PositiveIntegerField(null=True, blank=True) 
+    prestamo = models.PositiveIntegerField(null=True, blank=True)
+    cxpOrden = models.PositiveIntegerField(null=True, blank=True)
+    superOrden = models.PositiveIntegerField(null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
 
     def __unicode__(self):

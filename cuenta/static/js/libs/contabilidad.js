@@ -158,7 +158,6 @@
             		else{
             			deferred.reject();
             		}
-                    console.log(result);
 
             	});
                   return deferred.promise;
@@ -174,9 +173,13 @@
 			        doc.codCuenta = cuenta;
 			        doc.ref = ref;
 			        doc.estatus = 'P';
-			        doc.debito = debito > 0? debito.replaceAll(',','') : 0;
-			        doc.credito = credito > 0? credito.replaceAll(',','') : 0;
-console.log(doc)
+			        doc.debito = parseFloat(debito) > 0? debito.replaceAll(',','') : 0;
+			        doc.credito = parseFloat(credito) > 0? credito.replaceAll(',','') : 0;
+
+			        console.log('Debito: ' + debito);
+			        console.log('Credito: ' + credito);
+					console.log(doc)
+
 			        $http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': doc})).
 			          success(function (data) {
 			            deferred.resolve(data);
