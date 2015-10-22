@@ -855,12 +855,14 @@
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
         // var IBA = (ahorroCap * 0.005);
-        var INTERES = $scope.solicitud.montoSolicitado * ((InteresMensual * 12) /100);
+        var INTERES = $scope.solicitud.montoSolicitado * (parseInt(InteresMensual * 12) /100);
 
         $scope.solicitud.interesBaseAhorro = 0; //$filter('number')(IBA, 2);
         $scope.solicitud.interesBaseGarantizado = $filter('number')(INTERES, 2);
-console.log($scope.solicitud.montoSolicitado)
-console.log(INTERES)
+
+        console.log($scope.solicitud.montoSolicitado)
+        console.log(INTERES)
+
         $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
       }
 
