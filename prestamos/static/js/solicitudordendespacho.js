@@ -511,6 +511,8 @@
 
           if(data.length > 0) {
             $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
+          } else {
+            $scope.solicitud.deudasPrestamos = 0;
           }
         });
       }
@@ -588,8 +590,7 @@
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
-        $scope.solicitud.ahorrosCapitalizados = "200,000";
-        $scope.solicitud.deudasPrestamos = "50,000";
+        $scope.solicitud.ahorrosCapitalizados = "0";
 
         $scope.showLSP = false;
         $scope.ArrowLSP = 'DownArrow';
