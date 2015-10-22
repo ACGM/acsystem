@@ -12,14 +12,6 @@ from datetime import timedelta
 import datetime
 import decimal
 
-# # Cheques
-# class Cheque(models.Model):
-
-# 	estatus_choices = (('A','Aprobado'),('R','Rechazado'),)
-
-# 	chequeNo = models.IntegerField()
-# 	estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
-
 
 # Solicitud de Prestamos
 class SolicitudPrestamo(models.Model):
@@ -229,7 +221,47 @@ class MaestraPrestamo(models.Model):
 	@property
 	def getDescrpCatPrestamo(self):
 		return self.categoriaPrestamo.descripcion
-		
+	
+	@property
+	def getCodigoSuplidor(self):
+		codigo = 0
+		if self.noSolicitudOD != None:
+			codigo = self.noSolicitudOD.suplidor.id
+
+		return codigo
+
+	@property
+	def getRNCSuplidor(self):
+		rnc = ''
+		if self.noSolicitudOD != None:
+			rnc = self.noSolicitudOD.suplidor.cedulaRNC
+
+		return rnc
+
+	@property
+	def getNombreSuplidor(self):
+		nombre = ''
+		if self.noSolicitudOD != None:
+			nombre = self.noSolicitudOD.suplidor.nombre
+
+		return nombre
+
+	@property
+	def getMontoSinInteres(self):
+		montoOD = 0
+		if self.noSolicitudOD != None:
+			montoOD = self.noSolicitudOD.montoSolicitado
+
+		return montoOD
+
+	@property
+	def getMontoInteres(self):
+		montoInteresOD = 0
+		if self.noSolicitudOD != None:
+			montoInteresOD = self.montoInicial - self.noSolicitudOD.montoSolicitado
+
+		return montoInteresOD
+
 	@property
 	def cuotaInteresQ1(self):
 		if self.montoCuotaQ1 > 0:

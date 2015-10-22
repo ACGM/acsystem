@@ -1021,7 +1021,8 @@
       }
 
       // Generar Archivo para Prestamos (envio para nomina empleados)
-      $scope.archivoPrestamos = function() {
+      $scope.archivoPrestamos = function($event) {
+        $event.preventDefault();
 
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
@@ -1034,6 +1035,9 @@
           case 'RG': INFOTIPO = '2008'; break;
           case 'RI': INFOTIPO = '2012'; break;
         }
+
+        console.log('Prestamos');
+        console.log($scope.prestamos);
 
         NominaService.generarArchivoPrestamos($scope.prestamos, fechaFormatted, INFOTIPO).then(function (data) {
           if(data != 1) {

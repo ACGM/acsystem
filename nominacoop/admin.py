@@ -39,7 +39,7 @@ class NominaCoopDAdmin(admin.ModelAdmin):
 
 @admin.register(CuotasPrestamosEmpresa)
 class CuotasPrestamosEmpresaAdmin(admin.ModelAdmin):
-	list_display = ['id', 'codigoSocio', 'valorCapital', 'valorInteres', 'fecha', 'nomina', 'estatus', 'infoTipoPrestamo']
+	list_display = ['id', 'codigoSocio', 'valorCapital', 'valorInteres', 'valorInteresAh', 'fecha', 'nomina', 'estatus', 'infoTipoPrestamo']
 	# list_display = ['socio', 'noPrestamo', 'cuota', 'valorCapital', 'valorInteres', 'fecha', 'nomina', 'estatus']
 
 @admin.register(CuotasAhorrosEmpresa)

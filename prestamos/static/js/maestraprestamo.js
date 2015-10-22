@@ -504,16 +504,21 @@
 
         $scope.showPostear = true;
         $scope.desgloseCuentas = [];
-
         $scope.posteoG = false;
 
         try {
           
+          console.log(prestamo);
+
           //Verificar si es un Prestamo o una Orden de Despacho.
           if(prestamo.documentoDescrp == 'Prestamo') {
             docCuentas = 'PRES';
           } else {
-            docCuentas = 'ORD1';
+            if(prestamo.getRNCSuplidor == '11111111111') {
+              docCuentas = 'ORD2';
+            } else {
+              docCuentas = 'ORD1';
+            }
           }
 
           $scope.prestamoOD_SEL = prestamo; //Asigno el prestamo para cuando se vaya a "Llevar a Contabilidad"
@@ -531,17 +536,29 @@
               console.log($scope.prestamoOD_SEL);
 
               if(documento.getTipoSocio == 'N' || documento.getTipoSocio == $scope.prestamoOD_SEL.tipoSocio) {
+                valor = 0;
+
+                if(documento.getCuentaCodigo == 410201) { //La cuenta de FINANCIAMIENTO 410201
+                  valor = $filter('number') ($scope.prestamoOD_SEL.getMontoInteres, 2);
+                }
+
+                if(documento.getCuentaCodigo == 21010401 || documento.getCuentaCodigo == 190101) { //Cuenta Proveedor/Sirena
+                  valor = $filter('number') ($scope.prestamoOD_SEL.getMontoSinInteres, 2);
+                }
+
+                if(documento.getCuentaCodigo == 11130201 || documento.getCuentaCodigo == 11130202) { //Cuenta Socio/Empleado
+                  valor = $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2);
+                }
 
                 desgloseCuenta.cuenta = documento.getCuentaCodigo;
                 desgloseCuenta.descripcion = documento.getCuentaDescrp;
                 desgloseCuenta.ref = documento.getCodigo + $scope.prestamoOD_SEL.noPrestamo;
-                desgloseCuenta.debito = documento.accion == 'D'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
-                desgloseCuenta.credito = documento.accion == 'C'? $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.debito = documento.accion == 'D'? valor : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? valor : $filter('number')(0.00, 2);
 
                 $scope.desgloseCuentas.push(desgloseCuenta);
               }
               
-
             });
             $scope.totalDebitoCredito();     
 

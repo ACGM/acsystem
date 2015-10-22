@@ -511,6 +511,8 @@
 
           if(data.length > 0) {
             $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
+          } else {
+            $scope.solicitud.deudasPrestamos = 0;
           }
         });
       }
@@ -588,8 +590,7 @@
 
         $scope.solicitud.fechaSolicitud = $filter('date')(Date.now(),'dd/MM/yyyy');
         $scope.solicitud.fechaDescuento = $filter('date')(Date.now(),'dd/MM/yyyy');
-        $scope.solicitud.ahorrosCapitalizados = "200,000";
-        $scope.solicitud.deudasPrestamos = "50,000";
+        $scope.solicitud.ahorrosCapitalizados = "0";
 
         $scope.showLSP = false;
         $scope.ArrowLSP = 'DownArrow';
@@ -855,12 +856,14 @@
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
         // var IBA = (ahorroCap * 0.005);
-        var INTERES = $scope.solicitud.montoSolicitado * ((InteresMensual * 12) /100);
+        var INTERES = $scope.solicitud.montoSolicitado * (parseInt(InteresMensual * 12) /100);
 
         $scope.solicitud.interesBaseAhorro = 0; //$filter('number')(IBA, 2);
         $scope.solicitud.interesBaseGarantizado = $filter('number')(INTERES, 2);
-console.log($scope.solicitud.montoSolicitado)
-console.log(INTERES)
+
+        console.log($scope.solicitud.montoSolicitado)
+        console.log(INTERES)
+
         $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
       }
 

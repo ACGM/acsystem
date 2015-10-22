@@ -295,8 +295,8 @@ def getPrestamosResumidos(self, fechaNomina):
 											s.codigo codigoSocioQ, \
 											s.nombreCompleto, \
 											SUM(c.valorCapital) montoCapital, \
-											SUM(c.valorInteres) montoInteres, \
-											SUM(c.valorCapital) + SUM(c.valorInteres) montoTotalQ \
+											SUM(c.valorInteres) + SUM(c.valorInteresAh) montoInteres, \
+											SUM(c.valorCapital) + SUM(c.valorInteres) + SUM(c.valorInteresAh) montoTotalQ \
 										FROM nominacoop_cuotasprestamosempresa c \
 										LEFT JOIN administracion_socio s ON c.socio_id = s.id \
 										GROUP BY c.nomina, c.socio_id \
