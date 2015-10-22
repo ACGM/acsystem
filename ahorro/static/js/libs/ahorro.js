@@ -252,7 +252,6 @@
 
 
 			$scope.limpiar = function(){
-				debugger;
 				$scope.Ahorros=[];
 				$scope.AhorrosPorSocio=[];
 				$scope.AhorroHistorico=[];
@@ -318,7 +317,6 @@
 				};
 
 				$scope.AhorrosPorSocio = $scope.AhorrosPorSocio.filter(function (data) {
-					debugger;
 					return data.maestra.filter(function (reg){
 
 						var RegFecha = $scope.fechaI.split('/');
@@ -384,6 +382,7 @@
 					});
 					
 					$window.sessionStorage['retiro'] = JSON.stringify($scope.retiro);
+					$window.open('/impAhorro', target='_blank'); 
 					$scope.limpiar();
 					 $scope.getListaAhorro();
 
@@ -577,13 +576,33 @@
 
 			
 			$scope.registro = function(){
-				var balance = $scope.ahorro.balance - $scope.retiro.monto;
-				var retiro = $scope.retiro.monto;
-				var deuda = $scope.ahorro.balance - $scope.ahorro.disponible;
-				var libre = (disponible - deuda)- retiro;
+				var tipo;
+				var balance;
+				var retiro ;
+				var deuda ;
+				var disponible;
 
+				if ($scope.retiro.tipo == 'E'){
+					tipo ="Retiro Ahorro";
+					balance = $scope.ahorro.balance - $scope.retiro.monto;
+				 	retiro = $scope.retiro.monto;
+				 	deuda = ($scope.ahorro.disponible -  $scope.ahorro.balance) * -1 ;
+				 	disponible = $scope.ahorro.disponible - $scope.retiro.monto;
+				}
+				else if($scope.retiro.tipo == 'R'){
+					tipo = "Retiro por extraorinario";
 
-				var disponible = $scope.ahorro.disponible - $scope.retiro.monto;
+					balance = $scope.ahorro.balance - $scope.retiro.monto;
+				 	retiro = $scope.retiro.monto;
+				 	deuda = ($scope.ahorro.disponible -  $scope.ahorro.balance) * -1 ;
+				 	disponible = $scope.ahorro.disponible - $scope.retiro.monto;
+				 	if(disponible < 0){
+				 		disponible = 0
+				 	}
+				}
+				
+
+				$scope.retiro.tipo = tipo;
 
 				$scope.ahorroDt.socioId = $scope.ahorro.socioId;
 				$scope.ahorroDt.socio = $scope.ahorro.socio;
@@ -591,22 +610,10 @@
 				$scope.ahorroDt.disponible = disponible;
 				$scope.ahorroDt.retiro = retiro;
 				$scope.ahorroDt.deuda = deuda;
-				$scope.ahorroDt.libre = libre;
+				
 
 
-				var tipo;
-
-				if ($scope.retiro.tipo == 'A'){
-					tipo ="Retito de Ahorro";
-				}
-				else if($scope.retiro.tipo == 'J'){
-					tipo = "Retiro por Ajuste";
-				}
-				else{
-					tipo = "Retiro Otros";
-				}
-
-				$scope.retiro.tipo = tipo;
+				
 
 			}
 

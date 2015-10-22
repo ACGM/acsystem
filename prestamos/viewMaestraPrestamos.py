@@ -13,6 +13,7 @@ from .serializers import MaestraPrestamosListadoSerializer, BalancePrestamosSoci
 
 from .models import MaestraPrestamo
 from administracion.models import CategoriaPrestamo, Cobrador, Representante, Socio, Autorizador
+from cuenta.models import DiarioGeneral
 
 from acgm.views import LoginRequiredMixin
 
@@ -187,3 +188,24 @@ class guardarCambiosPrestamo(View):
 
 		except Exception as e:
 			return HttpResponse(e)
+
+
+#Funcion para devolver las cuentas de un prestamo en especifico
+#Parametro : Numero de Prestamo
+def getCuentasByPrestamo(self, noPrestamo):
+
+	try:
+		refFind = 'PRES' + noPrestamo
+		cuentas = DiarioGeneral.objects.filter(referencia=refFind)
+
+		data = list()
+
+		for cuenta in cuentas:
+			data.append({
+				'cuenta': cuenta.cuenta.codigo,
+			})
+
+		return JsonResponse(data, safe=False)
+		
+	except Exception as e:
+		raise Exception(e)

@@ -1,6 +1,20 @@
 (function(_){
 	angular.module('cooperativa.solicitudCheque', ['ngAnimate'])
 
+	.filter('estatusSolicitud', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('E', 'Cheque Emitido')
+                .replace('P', 'En Proceso')
+                .replace('A', 'Aprobado')
+                .replace('R', 'Rechazado');
+        	return input;
+     	 }
+  		})
+
+
 	.factory('SolicitudServices', ['$http','$q','$filter',function ($http, $q, $filter) {
 		var apiUrl='/conciliacion/Solicitudcheque';
 		var apiRep='/conciliacion/Solicitudcheque/rg'
@@ -139,6 +153,7 @@
 			
 			SolicitudServices.getSolicitudes().then(function (data){
 				$scope.lsSolicitud = data;
+				console.log(data);
 			});
 		};
 
