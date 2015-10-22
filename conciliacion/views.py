@@ -9,6 +9,8 @@ from django.shortcuts import render
 
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento, DocumentoCuentas
+from cxp.models import OrdenCompra, CxpSuperCoop
+from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
 
 
 # Local Imports
@@ -38,6 +40,7 @@ class conBancoViewSet(viewsets.ModelViewSet):
 
 def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
     try:
+
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
         if socio != None:
@@ -49,6 +52,38 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
         solicitud.concepto = concepto
         solicitud.monto = monto
         solicitud.prestamo = prestamo
+        solicitud.estatus = 'P'
+        solicitud.save()
+        return 'Ok'
+    except Exception, e:
+        return e.message
+
+def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
+    try:
+
+        solicitud = SolicitudCheque()
+        solicitud.fecha = fecha
+        sup = Suplidor.objects.get(id=suplidor)
+        solicitud.suplidor = sup
+        solicitud.concepto = concepto
+        solicitud.monto = monto
+        solicitud.cxpOrden = orden
+        solicitud.estatus = 'P'
+        solicitud.save()
+        return 'Ok'
+    except Exception, e:
+        return e.message
+
+def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
+    try:
+
+        solicitud = SolicitudCheque()
+        solicitud.fecha = fecha
+        sup = Suplidor.objects.get(id=suplidor)
+        solicitud.suplidor = sup
+        solicitud.concepto = concepto
+        solicitud.monto = monto
+        solicitud.superOrden = regSuper
         solicitud.estatus = 'P'
         solicitud.save()
         return 'Ok'
@@ -134,25 +169,12 @@ class SSolicitud(TemplateView):
 class ChequesView(TemplateView):
     template_name = 'ConciliacionCheque.html'
 
-    def regCuentasChk(self, chkId, doc, monto, fecha, ref):
+    def regCuentasChk(self, chkId, diario):
 
         cheque = ConcCheques.objects.get(id=chkId)
-        regCuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
 
-        regDiario = DiarioGeneral()
-        regDiario.cuenta = regCuenta
-        regDiario.fecha = fecha
-        regDiario.referencia = ref + str(chkId)
-        regDiario.estatus = 'P'
-
-        if doc.accion == 'D':
-            regDiario.debito = monto
-            regDiario.credito = 0
-        else:
-            regDiario.debito = 0
-            regDiario.credito = monto
-
-        regDiario.save()
+        regDiario = DiarioGeneral.objects.get(id=diario)
+    
         cheque.cuentas.add(regDiario)
         return 'Ok'
 
@@ -198,38 +220,49 @@ class ChequesView(TemplateView):
         DataT = json.loads(request.body)
         Data = DataT['cheque']
 
-        try:
-            if Data['id'] is None:
-                solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+        # try:
+        if Data['id'] is None:
+            solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+            
+            cuentas = list()
+
+            if solicitud.cxpOrden != None:
+                orden = OrdenCompra.objects.get(id = solicitud.cxpOrden) 
+                for orCuentas in orden.detalleCuentas.all():
+                    cuentas.append(orCuentas.id)
+            elif solicitud.superOrden != None:
+                cxSuper = CxpSuperCoop.objects.get(id = solicitud.superOrden)
+                for spCuentas in cxSuper.detalleCuentas.all():
+                    cuentas.append(spCuentas.id)
+            elif solicitud.prestamo != None:
+                regCuentas = getCuentasByPrestamo(solicitud.prestamo)
                 
-                if solicitud.socio is not None:
-                    regtipo = TipoDocumento.objects.get(codigo="CHKS")
-                
-                if solicitud.suplidor is not None:
-                    regtipo = TipoDocumento.objects.get(codigo="CHKC")
-
-                regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
-
-                cheque = ConcCheques()
-                cheque.solicitud = solicitud
-                cheque.chequeNo = Data['noCheque']
-                cheque.fecha = Data['fecha']
-                cheque.estatus = 'R'
-                cheque.save()
-
-                solicitud.estatus = 'E'
-                solicitud.save()
-
-                for doc in regDocumentos:
-                    self.regCuentasChk(cheque.id, doc, solicitud.monto, cheque.fecha,regtipo.codigo)
             else:
-                cheque = ConcCheques.objects.get(id=Data['id'])
-                cheque.estatus = Data['estatus']
-                cheque.save()
+                raise Exception("Documento Origen no esta Posteado")
 
-            return HttpResponse('Ok')
-        except Exception, e:
-            return HttpResponse(e.message)
+
+            cheque = ConcCheques()
+            cheque.solicitud = solicitud
+            cheque.chequeNo = Data['noCheque']
+            cheque.fecha = Data['fecha']
+            cheque.estatus = 'R'
+            cheque.save()
+
+            for cta in cuentas: 
+                self.regCuentasChk(cheque.id, cta)
+
+            solicitud.estatus = 'E'
+            solicitud.save()
+
+           
+        else:
+            cheque = ConcCheques.objects.get(id=Data['id'])
+            cheque.estatus = Data['estatus']
+            cheque.save()
+
+        return HttpResponse('Ok')
+        # except Exception, e:
+        #     return HttpResponse(e.message)
 
 
 class SChequeView(TemplateView):

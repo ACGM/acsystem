@@ -55,6 +55,7 @@
 					<td>Monto</td>
 					<td>Estatus</td>
 					<td>Postear</td>
+					<td>Solicitar cheque</td>
 				</tr>
 				<tr ng-repeat="x in lstCxpOrden" class="super-table-detail-search">
 					<td>[[x.id]]</td>
@@ -84,6 +85,15 @@
 						<div ng-if="x.estatus =='I'">
 							<span class="icon-folder estatus-[[x.estatus]]" ></span>
 						</div>
+					</td>
+					<td>
+						<div ng-if="x.estatusCh == 'S'">
+							<a href="#" class="icon-cog estatus-[[x.estatus]]" style="text-decoration: none;" ng-click="setSolicitud($event,x.id)" tooltip="[[x.estatus]]"></a>
+						</div>
+						<div ng-if="x.estatusCh != 'S'">
+							<span class="icon-cog estatus-[[x.estatus]]"></span>
+						</div>
+						
 					</td>
 				</tr>
 			</table>

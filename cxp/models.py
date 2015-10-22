@@ -6,6 +6,7 @@ from cuenta.models import Cuentas, DiarioGeneral
 # Registro de ordenes de compra a Socio
 class OrdenCompra(models.Model):
     estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+    estatusCh_choices =(('R', 'Registrado'),('N','No Emitida'), ('S', 'Disponible Solicitud'))
 
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     socio = models.ForeignKey(Socio, null=False, blank=False, default=False, verbose_name="Socio")
@@ -13,6 +14,7 @@ class OrdenCompra(models.Model):
     fecha = models.DateField(verbose_name="Fecha")
     monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, verbose_name="Monto")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
+    estatusCh = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Estatus Solicitud", default='N')
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_ref", verbose_name='Detalle Cuentas')
 
     def __unicode__(self):
@@ -25,6 +27,7 @@ class OrdenCompra(models.Model):
 # Cuenta por pagar a suplidor de SuperCoop
 class CxpSuperCoop(models.Model):
     estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+    estatusCh_choices =(('R', 'Registrado'),('N','No Emitida'),('S', 'Disponible Solicitud'))
 
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     factura = models.CharField(max_length=10, default=False, null=False, blank=False, verbose_name="# Factura")
@@ -35,6 +38,7 @@ class CxpSuperCoop(models.Model):
     descuento = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False,
                                     verbose_name="Desc")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
+    estatusCh = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Estatus Solicitud", default='N')
     detalleCuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_super_ref",
                                             verbose_name='Detalle Cuentas', null=True, blank=True)
 

@@ -73,7 +73,9 @@ class reciboPost(TemplateView):
 
             for docu in doc:
                 self.setCuentaMaestra(regMaestra.id, docu, fecha, ref)
-        
+            recibo.estatus= 'P'
+            recibo.save()
+
         if recibo.prestamo != None:
             guardarPagoCuotaPrestamo(self,recibo.prestamo.noPrestamo,recibo.montoPrestamo,0,0,'RIRG-'+str(recibo.id),'AH')
 
@@ -99,7 +101,7 @@ class reciboTemplateView(TemplateView):
                 regRecibo.prestamo = regPrest
                 regRecibo.montoPrestamo = dataR['montoPrestamo']
 
-            if dataR['montoAhorro'] != None :
+            if dataR['montoAhorro'] != None or dataR['montoAhorro'] == 0:
                 regAHorro = AhorroSocio.objects.get(socio=regSocio)
                 regRecibo.ahorro = regAHorro
                 regRecibo.montoAhorro = dataR['montoAhorro']

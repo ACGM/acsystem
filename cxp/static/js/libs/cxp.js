@@ -8,7 +8,6 @@
                 $http.get('/cxpOrdenJson/?format=json')
                     .success(function (data) {
                         deferred.resolve(data);
-                        console.log(data);
                     })
                     .error(function (data) {
                         deferred.resolve(data);
@@ -225,6 +224,34 @@
                     });
 
                 return deferred.promise;
+            };//cxp/solicitud/supercoop/
+
+            function solicitudSuperCoop(orden){
+                var deferred = $q.defer();
+
+                $http.post('/cxp/solicitud/supercoop/?super='+orden)
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve (err);
+                    });
+
+                return deferred.promise;
+            }; //cxp/solicitud/ordenCompra/
+
+            function solicitudOrden(orden){
+                var deferred = $q.defer();
+
+                $http.post('/cxp/solicitud/ordenCompra/?orden='+orden)
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve (err);
+                    });
+
+                return deferred.promise;
             };
 
             return {
@@ -242,7 +269,9 @@
                 postCxpOrden : postCxpOrden,
                 getAllSuper : getAllSuper,
                 postCxpSuper: postCxpSuper, 
-                setSuper    : setSuper
+                setSuper    : setSuper,
+                solicitudSuperCoop : solicitudSuperCoop,
+                solicitudOrden     : solicitudOrden
 
                 
             };
@@ -392,7 +421,9 @@
                 $scope.flap = false;
                 cxpService.postCxpOrden($scope.orden).then(function (data){
                     if(data == "Ok"){
+                        $scope.getAllData();
                         alert("La orden # "+$scope.orden+" Ha sido posteada");
+
                     }else{
                          alert("Ocurrio un error al intentar guardar la orden");
                     }
@@ -424,7 +455,7 @@
                 $scope.OrdenReg = true;
                 $scope.ArrowLF = 'DownArrow';
 
-                $scope.limpiar();   
+                $scope.getAllData();
 
             };
 
@@ -531,11 +562,13 @@
                 $scope.cxpDataReg.monto = 0;
               };
 
+
             $scope.getAllData = function(){
                 try{
                     cxpService.getAll().then(function (data){
                         var datar = data;
                         $scope.cxpData = datar;
+                        console.log(data);
                     });
                     
                 }  
@@ -544,6 +577,7 @@
                 }
             
                 };
+
 
             $scope.selOrdenById = function(id){
                 cxpService.getCxpsById(id).then(function (data){
@@ -561,18 +595,34 @@
                                     });
                 };
 
+
             $scope.getCxpByDate = function(){
                 $scope.cxpFilterData=cxpService.getCxpByDate($scope.fechaI, $scope.fechaF);
                 };
+
 
             $scope.getCxpSocio = function(){
                 $scope.cxpFilterData=cxpService.getCxpBySocio($scope.socioId);
                 };
 
+
             $scope.getcxpSup = function(){
                 $scope.cxpFilterData= cxpService.getCxpBySuplidor($scope.idSuplidor);
                 };
     
+            $scope.setSolicitud = function($event,id){
+                $event.preventDefault();
+
+                cxpService.solicitudOrden(id).then(function (data){
+                    if(data == "Ok"){
+                        $scope.getAllData();
+                        alert("Fue creada la solicitud para la orden #"+id);
+                    }else{
+                        console.log(data);
+                        alert("Ha ocurrido un error al intentar generar la solicitud");
+                    }
+                });
+            };
         }])
 
         .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout', 
@@ -593,6 +643,7 @@
                     cxpService.getAllSuper().then(function (data){
                         var datar = data;
                         $scope.lstCxpOrden = datar;
+                        console.log(data);
                     });
                     
                 }  
@@ -660,6 +711,7 @@
                 cxpService.postCxpSuper($scope.super).then(function (data){
                     
                     if(data == "Ok"){
+                        $scope.getAllData();
                         alert("La orden # "+$scope.super+" Ha sido posteada");
                     }
 
@@ -705,14 +757,31 @@
                
                 var result = cxpService.setSuper($scope.cxSuperData).then(function (data){
                     if(data =="Ok"){
+                        $scope.getAllData();
                         alert("CxP Creada")
+                        $scope.limpiar($event);
                     }else{
+                        alert("Ocurrio un error al intentar registrar la CXP")
                         console.log(data);
                     }
                 });
-                //$scope.limpiar(); 
+               
 
                 };
-        
+            
+
+            $scope.setSolicitud = function($event,id){
+                $event.preventDefault();
+
+                cxpService.solicitudSuperCoop(id).then(function (data){
+                    if(data == "Ok"){
+                        alert("Fue creada la solicitud para el registro #"+id);
+                    }else{
+                        console.log(data);
+                        alert("Ha ocurrido un error al intentar generar la solicitud");
+                    }
+                });
+            };
+
             }]);
 })(_);

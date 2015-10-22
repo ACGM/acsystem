@@ -158,7 +158,7 @@ class DocumentosAhorro(DetailView):
         data = dataR['registro']
 
         regMaestra = MaestraAhorro.objects.get(id=data['idMaestra'])
-       
+
         if data['estatus'] == 'P':
             regMaestra.estatus = 'P'
             regAhorro = AhorroSocio.objects.get(id=regMaestra.ahorro.id)

@@ -1,6 +1,20 @@
 (function(_){
 	angular.module('cooperativa.reciboIng',['ngAnimate'])
 
+
+
+	.filter('EstatusRecibo', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('P', 'Posteada')
+                .replace('I', 'Nula')
+                .replace('R', 'Registrada');
+        	return input;
+     	 }
+  		})
+
 		.factory('reciboIngServices', ['$http','$q','$filter',function ($http, $q, $filter) {
 			var apiUrl='/reciboIngreso';
 
@@ -124,6 +138,8 @@
 			$scope.nwRecibo = function($event){
 				$scope.reciboLst = false;
 				$scope.reciboCr = true;
+
+				$scope.reciboData.montoAhorro
 			}
 
 			$scope.editRecibo = function($event, id){
@@ -222,12 +238,13 @@
           		fecha = FechaFormat;
 		    	reciboIngServices.postRecibo(id, fecha).then(function (data){
 		    		if(data == "Ok"){
+		    			$scope.getList();
 		    			alert("Recibo #"+id+" ha sido Posteado")
 		    			$scope.reciboLst = true;
 						$scope.reciboCr = false;
 						$scope.tableSocio = false;
 						$scope.tablePrest =  false;
-		    			$scope.getList();
+		    			
 		    		}else{
 		    			$rootScope.mostrarError("Ha Ocurrido un error al intentar postear el recibo #"+id)
 		    		}
@@ -242,20 +259,24 @@
 
           			if ($scope.reciboData.id == undefined){
           				$scope.reciboData.id = null;
-          			}
+          			};
 
           			if ($scope.reciboData.estatus == undefined){
           				$scope.reciboData.estatus = "R";
-          			}
+          			};
 
           			if ($scope.reciboData.NoPrestamo == undefined){
           				$scope.reciboData.NoPrestamo = null;
-          			}
+          			};
+
+          			if(reciboData.montoAhorro == undefined){
+          				reciboData.montoAhorro = null;
+          			};
 
           		try{
           			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
           				$scope.cancelarReg($event);
-          			 $scope.getList();
+          			 	$scope.getList();
           			});
           			 
           		}	
