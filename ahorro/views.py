@@ -165,7 +165,8 @@ class DocumentosAhorro(DetailView):
             regAhorro = AhorroSocio.objects.get(id=regMaestra.ahorro.id)
 
             if regMaestra.prestamo != None:
-                guardarPagoCuotaPrestamo(self,regMaestra.prestamo,regMaestra.monto,0,0,'RIRG-'+str(regMaestra.id),'AH')
+                montoRet = regMaestra.monto * -1
+                guardarPagoCuotaPrestamo(self,regMaestra.prestamo,montoRet,0,0,'RIRG-'+str(regMaestra.id),'AH')
                 if regAhorro.socio.estatus == 'S':
                     ref = 'AHXS'
                 else:
