@@ -32,11 +32,13 @@ class AhorroSocio(models.Model):
 # Maneja todas las transacciones de ahorro realizada en las quincenas
 class MaestraAhorro(models.Model):
     estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
+    tipo_choices = (('R', 'Retiro'), ('I', 'Ingresos'))
 
     fecha = models.DateField()
     ahorro = models.ForeignKey(AhorroSocio, null=False, blank=False)
     prestamo = models.PositiveIntegerField(null=True, blank=True, verbose_name="# Prestamo")
     monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Monto", null=False, blank=False)
+    tipo = models.CharField(max_length=1, choices=tipo_choices, verbose_name="Tipo", default="I")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="ahorro_rel")
 
