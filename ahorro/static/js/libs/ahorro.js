@@ -252,13 +252,12 @@
 
 
 			$scope.limpiar = function(){
-				$scope.Ahorros=[];
+				
 				$scope.AhorrosPorSocio=[];
 				$scope.AhorroHistorico=[];
 				$scope.errorShow=false;
 				$scope.errorMsg='';
 				$scope.idAhorro=null;
-				$scope.Socio=null;
 				$scope.Balance=null;
 				$scope.Disponible=null;
 				$scope.ArrowAhorro = "UpArrow";
@@ -283,12 +282,15 @@
 				$scope.maestraAh =[];
 			    $scope.retiro['fecha'] = $filter('date')(Date.now(),'dd/MM/yyyy');
 			    $scope.numPrestamo = null;
+			    // document.getElementById("prestamoNo").style.display = "none";
 			};
 
 
 			$scope.getListaAhorro = function(){
 
 			 	try{
+			 		// document.getElementById("prestamoNo").style.display = "none";
+			 		$scope.Ahorros=[];
 					AhorroServices.getAllAhorro().then(function (data) {
 						$scope.Ahorros=data;
 						
@@ -309,6 +311,18 @@
 				}
 		
 			};
+
+			$scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
 
 			$scope.filterFecha = function($event){
 				$event.preventDefault();
@@ -332,7 +346,7 @@
           			return data.fecha >= fechaI && data.fecha <= fechaF
 				});
 				
-				$scope.maestraAh = socios;
+				$scope.maestraAh = socios.sort($scope.objectSorteable);
 				
 
 			};
@@ -395,15 +409,10 @@
 					$window.open('/impAhorro', target='_blank'); 
 					$scope.limpiar();
 					
-					$scope.getListaAhorro();
-					$timeout(function(){
-					 	$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
-					 }, 5000);  
-					
-					
-					
+					// $scope.getListaAhorro();
 
-					
+					$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
+
 				}
 
 				catch(ex){
@@ -414,13 +423,20 @@
 
 			$scope.extra = function($event,visual){
 				$event.preventDefault();
+				
 				$scope.retiro.prestamo = null;
-				$scope.regNumero = visual;
+				// if(visual == true){
+				// 	document.getElementById("prestamoNo").style.display = "initial";
+				// }
+				// else{
+				// 	document.getElementById("prestamoNo").style.display = "none";
+				// }
 			};
 
 			$scope.PostearRetiro = function($event,est){
 				var reg = {};
 				reg.idMaestra = $scope.redId;
+
 
 				if(est == "postear"){
 					reg.estatus = "P";
@@ -435,16 +451,14 @@
 					if(data =="Ok"){
 						alert("Registro ha sido posteado")
 					}
-				$scope.getListaAhorro();
-				$timeout(function(){
-					 	$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
-					 }, 5000);  
+
+				$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
+
 				});
 			};
 
 			$scope.AhorroById = function(Id, codigo){
-				try{
-					debugger;
+					
 					$scope.Socio = codigo
 					$scope.SocioAhorroId = Id;
 
@@ -459,24 +473,19 @@
                     		return salida;
                     	});
 
-                    	$scope.maestraAh = $scope.AhorrosPorSocio[0].maestra;
+                    	$scope.maestraAh = $scope.AhorrosPorSocio[0].maestra.sort($scope.objectSorteable);
                     	
                     });
                     
                     $scope.DetalleAhorro = true;
                     $scope.toggleAhorroPanel();
-
+                    
                    	var xj = $scope.Ahorros.filter(function (data){
                    		return data.id==Id;
-                   	});
-                   	 $window.sessionStorage['ahorro'] = JSON.stringify(xj[0]);
-                   	$scope.retiro['socio'] = xj[0].socioId;
-                   	
-					}
-
-				catch (ex){
-					$rootScope.mostrarError('Ocurrio un error al intentar cargar los datos: '+ex.message);
-				}
+                   	});               
+                   	    	
+               	 	$window.sessionStorage['ahorro'] = JSON.stringify(xj[0]);
+               		$scope.retiro['socio'] = xj[0].socioId;
 			};
 
 			$rootScope.mostrarError = function(error) {
@@ -537,6 +546,7 @@
 
 	            $scope.tableSocio = false;
 	          };
+
 
 	       	$scope.newRetiro = function(){
 	       		$scope.RetiroPanel = true;

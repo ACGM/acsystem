@@ -233,7 +233,7 @@
 						        		  ContabilidadService.getDiarioByFecha($scope.SFechaI, $scope.SFechaF).then(function (data){
 						                    if(data.length > 0){
 						                    	console.log(data)
-						                        $scope.diario = data;
+						                        $scope.diario = data.sort(function(a, b){return b-a});
 						                        $scope.calTotales();
 						                    }else{
 						                        $scope.diario=[];
@@ -281,10 +281,10 @@
 						            try{
 						                ContabilidadService.getDiarioByCuenta($scope.SFechaI, $scope.SFechaF, $scope.SCuenta).then(function (data){
 						                   if(data.length > 0){
-						                        $scope.diario = data;
+						                        $scope.diario = data.sort(function(a, b){return b-a});
 						                        $scope.calTotales();
 						                   }else{
-						                        $scope.diario = data;
+						                        $scope.diario = data.sort(function(a, b){return b-a});;
 						                        $scope.calTotales();
 						                   }
 						                    

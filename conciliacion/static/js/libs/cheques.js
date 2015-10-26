@@ -135,6 +135,19 @@
 
 		};
 
+		   $scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
+
+
 		$scope.NewCheque =function($event,s){
 			$event.preventDefault();
 			console.log(s);
@@ -165,14 +178,14 @@
 			$scope.ToggleCh = true;
 
 			ChequesServices.getCheques().then(function (data){
-				$scope.LsCheques = data;
+				$scope.LsCheques = data.sort($scope.objectSorteable);
 			});
 
 		};
 
 		$scope.getSolicitudes = function($event){
 			ChequesServices.getSolicitudByStatus('P').then(function (data){
-				$scope.LsSolicitud = data;
+				$scope.LsSolicitud = data.sort($scope.objectSorteable);
 
 			});
 		};

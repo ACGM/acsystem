@@ -112,6 +112,19 @@
 	          $scope.todosLosSocios = data;
 	        });
 
+	        $scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
+
+
 	        $scope.cancelarReg = function($event){
 	        	$scope.reciboData = {}
 				$scope.reciboLista = [];
@@ -121,15 +134,18 @@
 				$scope.tableSocio = false;
 				$scope.tablePrest =  false;
 				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+				$scope.getList();
 	        }
 
 			$scope.getList = function(){
 
 				$scope.reciboLista =[];
+				$scope.reciboData = {};
 
 				reciboIngServices.getRecibos().then(function (data) {
-					$scope.reciboLista = data;
+					$scope.reciboLista = data.sort($scope.objectSorteable);
 					console.log(data);
+				
 				});
 			}
 
@@ -139,7 +155,7 @@
 				$scope.reciboLst = false;
 				$scope.reciboCr = true;
 
-				$scope.reciboData.montoAhorro
+				// $scope.reciboData.montoAhorro
 			}
 
 			$scope.editRecibo = function($event, id){
@@ -253,6 +269,8 @@
 
 	        $scope.setRecibo = function($event){
 	        	$event.preventDefault();
+	        	
+
 	  	        	var RegFecha = $scope.fecha.split('/');
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           			$scope.reciboData.fecha = FechaFormat;
@@ -269,8 +287,8 @@
           				$scope.reciboData.NoPrestamo = null;
           			};
 
-          			if(reciboData.montoAhorro == undefined){
-          				reciboData.montoAhorro = null;
+          			if($scope.reciboData.montoAhorro == undefined){
+          				$scope.reciboData.montoAhorro = null;
           			};
 
           		try{

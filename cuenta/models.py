@@ -21,12 +21,15 @@ class Cuentas(models.Model):
     origen_choices = (('D', 'Debito'), ('C', 'Credito'),)
     tipo_choicer = (('G', 'General'), ('D', 'Detalle'))
     tipo_socio = (('N', 'Normal'), ('S', 'Socio'), ('E', 'Empleado'),)
+    nivel_choices = (('1','Primer nivel'),('2','Segundo Nivel'), ('3','Tercer Nivel'),
+                     ('4','Cuarto Nivel'), ('5','Quinto Nivel'), ('6','Sexto Nivel'))
 
     # Campos Base
     codigo = models.PositiveIntegerField(verbose_name="Código Cuenta", null=False, blank=False, unique=True)
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
     origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
     tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name="Tipo Cuenta")
+    nivel = models.CharField(max_length=1, choices=nivel_choices, verbose_name="Nivel de cuenta")
     #Para Identificar si es una cuenta Control
     control = models.BooleanField(default=False)
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
