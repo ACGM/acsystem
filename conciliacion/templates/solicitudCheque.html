@@ -80,8 +80,8 @@
 				<td>Concepto</td>
 				<td>Monto</td>
 				<td>Estatus</td>
-				<td></td>
-				<td></td>
+				<td>Imprimir</td>
+				<td>Aprobar</td>
 			</tr>
 			<tr class="listado-Sol-detail" ng-repeat="s in lsSolicitud">
 				<td>[[s.id]]</td>
@@ -91,15 +91,7 @@
 				<td>[[s.concepto]]</td>
 				<td>[[s.monto |number:2]]</td>
 				<td>
-					<div ng-if="s.estatus =='P' ">
-						<strong>En Proceso</strong>
-					</div>
-					<div ng-if="s.estatus =='A' ">
-						<strong>Aprobado</strong>
-					</div>
-					<div ng-if="s.estatus =='R' ">
-						<strong>Rechazada</strong>
-					</div>
+					<strong> [[s.estatus | estatusSolicitud]] </strong>
 				</td>
 				<td><a href="#" class="icon-printer workflow2" ng-click="printSol($event,s.id)"></a></td>
 				<td>
@@ -110,6 +102,9 @@
 						<span class="icon-moneybag workflow"></span>
 					</div>
 					<div ng-if="s.estatus =='R' ">
+						<span class="icon-moneybag workflow"></span>
+					</div>
+					<div ng-if="s.estatus =='E' ">
 						<span class="icon-moneybag workflow"></span>
 					</div>
 					

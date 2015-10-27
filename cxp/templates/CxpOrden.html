@@ -35,16 +35,16 @@
 							<td>Socio</td>
 							<td>Suplidor</td>
 							<td>Monto</td>
-							<!-- <td>Imprimir</td> -->
+							<td>Solicitud Cheque</td>
 						</tr>
 
 						<tr ng-repeat="Orden in cxpData" class="listado-Or-detail">
 							<td>[[Orden.id]]</td>
 							<td>
-								<div ng-if="Orden.estatus != 'P'">
+								<div ng-if="Orden.estatus == 'A'">
 									<a href="#" class="icon-folder estatus-[[Orden.estatus]]" style="text-decoration: none;" ng-click="workflow($event,Orden.id)" tooltip="[[Orden.estatus]]"></a>
 								</div>
-								<div ng-if="Orden.estatus == 'P'">
+								<div ng-if="Orden.estatus != 'A'">
 									<span class="icon-folder estatus-[[Orden.estatus]]"></span>
 								</div>
 								
@@ -54,7 +54,14 @@
 							<td>[[Orden.socio ]]</td>
 							<td>[[Orden.suplidor]]</td>
 							<td>[[Orden.monto | number: 2]]</td>
-							<!-- <td><a href="#" class="icon-printer imprimir-icon" ng-click="ImprimirOrden(Orden)"></a> </td> -->
+							<td>
+								<div ng-if="Orden.estatusCh != 'S'">
+									<span class="icon-cog"></span>
+								</div>
+								<div ng-if="Orden.estatusCh == 'S'">
+									<a href="#" class="icon-cog" ng-click="setSolicitud($event,Orden.id)"></a>
+								</div>
+							</td>
 						</tr>				
 			</table>
 		</div>

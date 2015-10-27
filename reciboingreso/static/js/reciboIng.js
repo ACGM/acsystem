@@ -1,6 +1,20 @@
 (function(_){
 	angular.module('cooperativa.reciboIng',['ngAnimate'])
 
+
+
+	.filter('EstatusRecibo', function() {
+      return function (input) {
+        if (!input) return "";
+
+        input = input
+                .replace('P', 'Posteada')
+                .replace('I', 'Nula')
+                .replace('R', 'Registrada');
+        	return input;
+     	 }
+  		})
+
 		.factory('reciboIngServices', ['$http','$q','$filter',function ($http, $q, $filter) {
 			var apiUrl='/reciboIngreso';
 
@@ -98,6 +112,19 @@
 	          $scope.todosLosSocios = data;
 	        });
 
+	        $scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
+
+
 	        $scope.cancelarReg = function($event){
 	        	$scope.reciboData = {}
 				$scope.reciboLista = [];
@@ -107,15 +134,18 @@
 				$scope.tableSocio = false;
 				$scope.tablePrest =  false;
 				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+				$scope.getList();
 	        }
 
 			$scope.getList = function(){
 
 				$scope.reciboLista =[];
+				$scope.reciboData = {};
 
 				reciboIngServices.getRecibos().then(function (data) {
-					$scope.reciboLista = data;
+					$scope.reciboLista = data.sort($scope.objectSorteable);
 					console.log(data);
+				
 				});
 			}
 
@@ -124,6 +154,8 @@
 			$scope.nwRecibo = function($event){
 				$scope.reciboLst = false;
 				$scope.reciboCr = true;
+
+				// $scope.reciboData.montoAhorro
 			}
 
 			$scope.editRecibo = function($event, id){
@@ -222,12 +254,13 @@
           		fecha = FechaFormat;
 		    	reciboIngServices.postRecibo(id, fecha).then(function (data){
 		    		if(data == "Ok"){
+		    			$scope.getList();
 		    			alert("Recibo #"+id+" ha sido Posteado")
 		    			$scope.reciboLst = true;
 						$scope.reciboCr = false;
 						$scope.tableSocio = false;
 						$scope.tablePrest =  false;
-		    			$scope.getList();
+		    			
 		    		}else{
 		    			$rootScope.mostrarError("Ha Ocurrido un error al intentar postear el recibo #"+id)
 		    		}
@@ -236,26 +269,32 @@
 
 	        $scope.setRecibo = function($event){
 	        	$event.preventDefault();
+	        	
+
 	  	        	var RegFecha = $scope.fecha.split('/');
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           			$scope.reciboData.fecha = FechaFormat;
 
           			if ($scope.reciboData.id == undefined){
           				$scope.reciboData.id = null;
-          			}
+          			};
 
           			if ($scope.reciboData.estatus == undefined){
           				$scope.reciboData.estatus = "R";
-          			}
+          			};
 
           			if ($scope.reciboData.NoPrestamo == undefined){
           				$scope.reciboData.NoPrestamo = null;
-          			}
+          			};
+
+          			if($scope.reciboData.montoAhorro == undefined){
+          				$scope.reciboData.montoAhorro = null;
+          			};
 
           		try{
           			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
           				$scope.cancelarReg($event);
-          			 $scope.getList();
+          			 	$scope.getList();
           			});
           			 
           		}	

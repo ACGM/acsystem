@@ -119,18 +119,34 @@
 				$scope.lsView = false;
 			};
 
+			 $scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
+
 			$scope.getConcNotas = function($event){
 				// $event.preventDefault();
+				
 				NotasConcServices.getNotas().then(function (data){
 					$scope.LsNotas = [];
-					$scope.LsNotas = data;
+					$scope.LsNotas = data.sort($scope.objectSorteable);
+					$scope.lsView = true;
+	          		$scope.CrNota = false;
+	          		$scope.showPostear  = false;
 				});
 			};
 
 			$scope.getConNotasF = function($event){
-				$scope.LsNotas = null;
-				console.log($scope.fechai);
-
+				$scope.LsNotas = [];
+				
+				
 				NotasConcServices.getNotas().then(function (data){
 					$scope.LsNotas = data.filter(function(rep){
 						var RegFecha = rep.fecha.split('-');
@@ -138,7 +154,10 @@
           				rep.fecha = FechaFormat;
 
 						return rep.fecha >= $scope.fechai && rep.fecha <= $scope.fechaf; 
-					});
+					}).sort($scope.objectSorteable);
+					$scope.lsView = true;
+	          		$scope.CrNota = false;
+	          		$scope.showPostear  = false;
 				});
 			};
 
@@ -237,7 +256,7 @@
 	      $scope.postearContabilidad = function() {
 
 	        try {
-
+	        
 	          //Validar que el CREDITO cuadre con el DEBITO
 	          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
 	            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
@@ -255,7 +274,7 @@
 	          //   console.log(data);
 	          //   $scope.listadoEntradas();
 	          // });
-
+			 $scope.getConcNotas();
 	          alert('Los registros fueron posteados con exito!');
 
 	        } catch (e) {

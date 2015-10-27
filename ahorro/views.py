@@ -119,6 +119,7 @@ class MaestraAhorroView(DetailView):
                         'id': maestra.id,
                         'fecha': maestra.fecha,
                         'monto': maestra.monto,
+                        'tipo' : maestra.tipo,
                         'estatus': maestra.estatus,
                     }
                     for maestra in MaestraAhorro.objects.filter(ahorro=ahorro.id)]
@@ -158,13 +159,14 @@ class DocumentosAhorro(DetailView):
         data = dataR['registro']
 
         regMaestra = MaestraAhorro.objects.get(id=data['idMaestra'])
-       
+
         if data['estatus'] == 'P':
             regMaestra.estatus = 'P'
             regAhorro = AhorroSocio.objects.get(id=regMaestra.ahorro.id)
 
             if regMaestra.prestamo != None:
-                guardarPagoCuotaPrestamo(self,regMaestra.prestamo,regMaestra.monto,0,0,'RIRG-'+str(regMaestra.id),'AH')
+                montoRet = regMaestra.monto * -1
+                guardarPagoCuotaPrestamo(self,regMaestra.prestamo,montoRet,0,0,'RIRG-'+str(regMaestra.id),'AH')
                 if regAhorro.socio.estatus == 'S':
                     ref = 'AHXS'
                 else:
@@ -176,10 +178,14 @@ class DocumentosAhorro(DetailView):
                     ref = 'AHRE'
 
             balance = regAhorro.balance
-            balance = balance  - regMaestra.monto
-            prestamos = getBalancesPrestamos(self,str(regAhorro.socio.codigo))
+            balance = balance  + regMaestra.monto
+           
+            prestamos = getBalancesPrestamos(regAhorro.socio.codigo)
             
             disponible = balance - decimal.Decimal(prestamos[0].balance)
+            
+            if disponible < 0:
+                disponible = 0
 
             regMaestra.save()
             regAhorro.balance = balance
@@ -190,7 +196,7 @@ class DocumentosAhorro(DetailView):
             regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
             for doc in regDocumentos:
-                self.setCuentaMaestra(self, regMaestra.id, doc, regMaestra.fecha, ref)
+                setCuentaMaestra(self, regMaestra.id, doc, regMaestra.fecha, ref)
 
         else: 
             regMaestra.estatus = 'I'
@@ -233,6 +239,7 @@ class generarAhorro(TemplateView):
             regMaestra.fecha = fecha
             regMaestra.monto = monto
             regMaestra.estatus = "P"
+
             regMaestra.save()
 
             if ah.socio.estatus == 'S':
@@ -371,6 +378,7 @@ class AhorroView(TemplateView):
                 regMaestra.monto = decimal.Decimal(dataT['retiro']['monto']) * (-1)
 
                 regMaestra.estatus = dataT['retiro']['estatus']
+                regMaestra.tipo = "R"
                 regMaestra.save()
 
             else:

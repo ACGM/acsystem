@@ -23,19 +23,23 @@
 				<tr class="listado-csol-detail" ng-repeat="s in LsSolicitud">
 					<td>[[s.id]]</td>
 					<td>[[s.fecha |date: 'dd/MM/yyyy']]</td>
-					<td>[[s.socio]] [[s.supervisor]]</td>
+					<td>[[s.socio]] [[s.suplidor]]</td>
 					<td>[[s.concepto]]</td>
 					<td>$[[s.monto | number: 2]]</td>
 					<td>
-						<div ng-if="s.estatus =='P' ">
+						<div ng-if="s.estatus == 'P' ">
 							<strong>En Proceso</strong>
 						</div>
-						<div ng-if="s.estatus =='A' ">
+						<div ng-if="s.estatus == 'A' ">
 							<strong>Aprobado</strong>
 						</div>
-						<div ng-if="s.estatus =='R' ">
+						<div ng-if="s.estatus == 'R' ">
 							<strong>Rechazada</strong>
 						</div>
+						<div ng-if="s.estatus == 'E' ">
+							<strong>Cheque Emitido</strong>
+						</div>
+
 					</td>
 					<td> <a href="#" class="utils-noDecoration icon-banknote" ng-click="NewCheque($event,s)"></a></td>
 				</tr>
@@ -128,7 +132,7 @@
 					<tr>
 						<td>
 							<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
-							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRegistro()">Limpiar</button>
+							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRegistro($event)">Limpiar</button>
 						</td>
 					</tr>
 				</table>

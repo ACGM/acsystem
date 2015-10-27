@@ -67,7 +67,7 @@
 
 			getSolicitudes().then(function (data){
 				var result =data.filter(function (reg){
-					return reg.estatus = estatus;
+					return reg.estatus == estatus;
 				});
 
 				if (result.length > 0){
@@ -135,19 +135,34 @@
 
 		};
 
+		   $scope.objectSorteable = function(a, b){
+				if(a.id < b.id){
+					return 1;
+				}
+
+				if(a.id > b.id){
+					return -1;
+				}
+
+				return 0;
+			}
+
+
 		$scope.NewCheque =function($event,s){
 			$event.preventDefault();
-
+			console.log(s);
 			$scope.reCheque.solicitud = s.id
 			var fecha = s.fecha.split('-')
+
 			$scope.reCheque.id = null;
+
 			$scope.reCheque.fecha = fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 			$scope.reCheque.estatus = "R";
-			if(s.socio != undefined){
+			if(s.socio != ""){
 				$scope.reCheque.beneficiario = s.socio	
 			}
 			else{
-				$scope.reCheque.beneficiario = s.supervisor
+				$scope.reCheque.beneficiario = s.suplidor
 			};
 
 			$scope.ToggleCh = false;
@@ -163,14 +178,14 @@
 			$scope.ToggleCh = true;
 
 			ChequesServices.getCheques().then(function (data){
-				$scope.LsCheques = data;
+				$scope.LsCheques = data.sort($scope.objectSorteable);
 			});
 
 		};
 
 		$scope.getSolicitudes = function($event){
 			ChequesServices.getSolicitudByStatus('P').then(function (data){
-				$scope.LsSolicitud = data;
+				$scope.LsSolicitud = data.sort($scope.objectSorteable);
 
 			});
 		};
@@ -184,12 +199,23 @@
 
 				ChequesServices.setCheques($scope.reCheque).then(function (data){
 					var resp = data;
+					if(data == "Ok"){
+						
+						alert("Cheque generado")
+					}else{
+						alert("Ocurrio un error al intentar generar el cheque");
+						console.log(data);
+					}
+						$scope.cancelRegistro ($event);
+						$scope.listCheques($event);
+						
 				});
 			}
 			catch(e){
 				$rootScope.mostrarError(e);
 			}
 			}
+
 
 		$rootScope.mostrarError = function(error) {
 			      $scope.errorMsg = error;
@@ -215,22 +241,6 @@
 			});
 		};
 
-		$scope.insCheque = function($event){
-			$event.preventDefault();
-
-			try{
-				var result = ChequesServices.setCheques($scope.reCheque).then(function (data){
-					if(data == "Ok"){
-						$scope.cancelRegistro();
-					}else{
-						$rootScope.mostrarError("Ha ocurrido un error al guardar cheque");
-					}
-				} );
-			}
-			 catch (e) {
-	          $rootScope.mostrarError(e);
-	        }
-		};
 
 		$scope.printChk = function($event,ch){
 			$window.sessionStorage['chk'] = JSON.stringify(ch);
@@ -242,6 +252,9 @@
 			$scope.ToggleCh = false;
 			$scope.ToggleSl = true;
 			$scope.ToggleNCh = false;
+			$scope.reCheque = {};
+
+
 		};
 		
 	}])
