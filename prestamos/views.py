@@ -275,19 +275,24 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
 			SolPrestamo.userLog = User.objects.get(username=request.user.username)
 
+			#Verificar para prestamos unificados
+			montoPrestamosUnificados = 0
+
+			for pu_valida in prestamosUnificados:
+				montoPrestamosUnificados += decimal.Decimal(pu_valida['balance'])
+			
+			if montoPrestamosUnificados > SolPrestamo.netoDesembolsar:
+				raise Exception('El monto de los prestamos a unificar no puede ser mayor al MONTO SOLICITADO.')
+
 			SolPrestamo.save()
 
 			#Guardar los prestamos a Unificar
-			montoPrestamosUnificados = 0
-
 			for pu in prestamosUnificados:
 				prestamoUnif = PrestamoUnificado()
 				prestamoUnif.solicitudPrestamo = SolPrestamo
 				prestamoUnif.prestamoUnificado =  MaestraPrestamo.objects.get(noPrestamo=pu['noPrestamo'])
 				prestamoUnif.capitalUnificado = pu['balance']
 				prestamoUnif.save()
-
-				montoPrestamosUnificados += decimal.Decimal(prestamoUnif.capitalUnificado)
 			#Fin Prestamos a Unificar
 
 			SolPrestamo.netoDesembolsar -= montoPrestamosUnificados
@@ -660,8 +665,7 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	# NC = Nota de Credito   ---- RI = Recibo Ingreso
 	# AH = Descontar desde ahorro para pagar capital a prestamo.
 	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
-		prestamo.balance = prestamo.balance - decimal.Decimal(cuota.valorCapital)
-		prestamo.save()
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(cuota.valorCapital))
 
 	# Nota de Debito
 	if tipoDoc == 'ND':
@@ -670,7 +674,24 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 
 	# Nomina de descuentos
 	if tipoDoc == 'NM':
-		prestamo.balance = prestamo.balance - cuota.valorCapital
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(cuota.valorCapital))
+
         prestamo.valorAhorro = prestamo.valorAhorro - cuota.valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - cuota.valorInteresAh >= 0 else 0
         prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
+        
         prestamo.save()
+
+
+# Metodo para validar si el pago del prestamo es completo
+# Tambien es utilizado para rebajar el balance
+def validaPagoPrestamo(self, objPrestamo, montoAbono):
+
+	if objPrestamo.balance - montoAbono < 0:
+		raise Exception('El monto del abono al prestamo es mayor que el balance a la fecha.')
+
+	else:
+		objPrestamo.balance = objPrestamo.balance - montoAbono
+		if objPrestamo.balance == 0:
+			objPrestamo.estatus = 'S'
+
+		objPrestamo.save()

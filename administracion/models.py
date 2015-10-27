@@ -376,15 +376,6 @@ class Autorizador(models.Model):
         verbose_name_plural = 'Config 3.1) Autorizadores'
 
 
-# Tipos de Notas de Credito Globales
-class TipoNCGlobal(models.Model):
-    tipo_choices = (('1', 'NCG'), ('2', 'NCG2'),)
-
-    tipo = models.CharField(max_length=1, choices=tipo_choices, default='')
-    descripcion = models.CharField(max_length=150)
-    cuenta = models.ForeignKey(Cuentas)
-
-
 # Bancos
 class Banco(models.Model):
     estatus_choices = (('A', 'Activo'), ('I', 'Inactivo'))
@@ -406,30 +397,6 @@ class Banco(models.Model):
     class Meta:
         ordering = ['nombre']
         verbose_name_plural = 'Config 2.1) Bancos'
-
-
-# Periodos (Fiscales)
-class Periodo(models.Model):
-    estatus_choices = (('A', 'Activo'), ('C', 'Cerrado',))
-    mes_choices = (
-        ('01', 'Enero'), ('02', 'Febrero'),
-        ('03', 'Marzo'), ('04', 'Abril'),
-        ('05', 'Mayo'), ('06', 'Junio'),
-        ('07', 'Julio'), ('08', 'Agosto'),
-        ('09', 'Septiembre'), ('10', 'Octubre'),
-        ('11', 'Noviembre'), ('12', 'Diciembre'),
-    )
-
-    mes = models.CharField(max_length=2, choices=mes_choices, default='01')
-    agno = models.CharField("Agno", max_length=4)
-    estatus = models.CharField(max_length=1, choices=estatus_choices, default='A')
-
-    def __unicode__(self):
-        return '%s%s' % (self.mes, self.agno)
-
-    class Meta:
-        ordering = ['-agno']
-        verbose_name_plural = 'Config 7.3) Periodos'
 
 
 # Empresas

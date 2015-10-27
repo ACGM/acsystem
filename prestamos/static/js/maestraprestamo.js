@@ -538,16 +538,24 @@
               if(documento.getTipoSocio == 'N' || documento.getTipoSocio == $scope.prestamoOD_SEL.tipoSocio) {
                 valor = 0;
 
-                if(documento.getCuentaCodigo == 410201) { //La cuenta de FINANCIAMIENTO 410201
-                  valor = $filter('number') ($scope.prestamoOD_SEL.getMontoInteres, 2);
-                }
-
-                if(documento.getCuentaCodigo == 21010401 || documento.getCuentaCodigo == 190101) { //Cuenta Proveedor/Sirena
-                  valor = $filter('number') ($scope.prestamoOD_SEL.getMontoSinInteres, 2);
-                }
-
-                if(documento.getCuentaCodigo == 11130201 || documento.getCuentaCodigo == 11130202) { //Cuenta Socio/Empleado
+                //Para cuando es una PRETAMO
+                if($scope.prestamoOD_SEL.documentoDescrp == 'Prestamo') {
+                  console.log('PASO POR PRESTAMO')
                   valor = $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2);
+
+                } else { //Para las ORDENES DE DESPACHO
+                  
+                  if(documento.getCuentaCodigo == 410201) { //La cuenta de FINANCIAMIENTO 410201
+                    valor = $filter('number') ($scope.prestamoOD_SEL.getMontoInteres, 2);
+                  }
+
+                  if(documento.getCuentaCodigo == 21010401 || documento.getCuentaCodigo == 190101) { //Cuenta Proveedor/Sirena
+                    valor = $filter('number') ($scope.prestamoOD_SEL.getMontoSinInteres, 2);
+                  }
+
+                  if(documento.getCuentaCodigo == 11130201 || documento.getCuentaCodigo == 11130202) { //Cuenta Socio/Empleado
+                    valor = $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2);
+                  }
                 }
 
                 desgloseCuenta.cuenta = documento.getCuentaCodigo;
