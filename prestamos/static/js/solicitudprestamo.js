@@ -2,11 +2,12 @@
 
   angular.module('cooperativa.solicitudprestamo', ['ngAnimate'])
 
-    .filter('estatusSolicitud', function() {
+    .filter('estatusSolicitudOD', function() {
       return function (input) {
         if (!input) return "";
 
         input = input
+                .replace('P', false)
                 .replace('A', true)
                 .replace('R', true)
                 .replace('C', true);

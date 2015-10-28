@@ -94,6 +94,7 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 			SolOrdenDespacho.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
 			SolOrdenDespacho.userLog = User.objects.get(username=request.user.username)
+			# SolOrdenDespacho.estatus = 'A'
 
 			SolOrdenDespacho.save()
 
@@ -197,6 +198,7 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 					maestra.valorGarantizado = oSolicitud.valorGarantizado
 					maestra.balance = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
 					maestra.userLog = request.user
+					maestra.factura = Factura.objects.get(noFactura=oSolicitud.factura)
 
 					maestra.save()
 

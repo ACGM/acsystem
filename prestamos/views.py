@@ -652,16 +652,6 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	#Obtener el prestamo como tal
 	prestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
 
-	cuota = PagoCuotasPrestamo()
-	cuota.noPrestamo = prestamo
-	cuota.valorCapital = valorCapital
-	cuota.valorInteres = valorInteres
-	cuota.valorInteresAh = valorInteresAh
-	cuota.fecha = datetime.datetime.now()
-	cuota.docRef = docReferencia
-	cuota.tipoPago = tipoDoc
-	cuota.save()
-
 	# NC = Nota de Credito   ---- RI = Recibo Ingreso
 	# AH = Descontar desde ahorro para pagar capital a prestamo.
 	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
@@ -680,18 +670,47 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
         prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
         
         prestamo.save()
-
+	
+	#Guardar la cuota
+	cuota = PagoCuotasPrestamo()
+	cuota.noPrestamo = prestamo
+	cuota.valorCapital = valorCapital
+	cuota.valorInteres = valorInteres
+	cuota.valorInteresAh = valorInteresAh
+	cuota.fecha = datetime.datetime.now()
+	cuota.docRef = docReferencia
+	cuota.tipoPago = tipoDoc
+	cuota.save()
 
 # Metodo para validar si el pago del prestamo es completo
 # Tambien es utilizado para rebajar el balance
-def validaPagoPrestamo(self, objPrestamo, montoAbono):
+def validaPagoPrestamo(self, Prestamo, montoAbono):
 
-	if objPrestamo.balance - montoAbono < 0:
+	if Prestamo.balance - montoAbono < 0:
 		raise Exception('El monto del abono al prestamo es mayor que el balance a la fecha.')
 
 	else:
-		objPrestamo.balance = objPrestamo.balance - montoAbono
-		if objPrestamo.balance == 0:
-			objPrestamo.estatus = 'S'
+		Prestamo.balance = Prestamo.balance - montoAbono
+		while montoAbono > 0:
+			if montoCuotaQ1 > 0:
+				Prestamo.balance - prestamo.balance
 
-		objPrestamo.save()
+		
+		if Prestamo.balance == 0:
+			Prestamo.estatus = 'S'
+
+		Prestamo.save()
+
+
+#Guardar una cuota de Prestamo
+def guardarCuotaPrestamo(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
+
+	cuota = PagoCuotasPrestamo()
+	cuota.noPrestamo = prestamo
+	cuota.valorCapital = valorCapital
+	cuota.valorInteres = valorInteres
+	cuota.valorInteresAh = valorInteresAh
+	cuota.fecha = datetime.datetime.now()
+	cuota.docRef = docReferencia
+	cuota.tipoPago = tipoDoc
+	cuota.save()
