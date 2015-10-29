@@ -77,7 +77,10 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			SolOrdenDespacho.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
 
 			SolOrdenDespacho.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0
-			SolOrdenDespacho.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
+			
+			if solicitud['deudasPrestamos'] > 0:
+				SolOrdenDespacho.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
+				
 			SolOrdenDespacho.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
 			SolOrdenDespacho.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado'].replace(',','')) if solicitud['valorGarantizado'] != None else 0
 			SolOrdenDespacho.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))

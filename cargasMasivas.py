@@ -182,3 +182,26 @@ for cc in CuentasControl.objects.all():
 		c.save()
 	except cc.DoesNotExist:
 		pass
+
+
+#Carga TIPOS DE DOCUMENTOS
+f = open('tiposdocs.csv', 'r')
+for line in f:
+	line = line.split(',')
+	td = TipoDocumento()
+	td.codigo = line[0].decode('latin-1').strip()
+	td.descripcion = line[1].decode('latin-1').strip()
+	td.save()
+f.close()
+
+
+#Documentos RELACIONADOS con cuentas
+f = open('doccta.csv', 'r')
+for line in f:
+	line = line.split('-')
+	drc = DocumentoCuentas()
+	drc.documento = TipoDocumento.objects.get(codigo=line[0].decode('latin-1').strip())
+	drc.cuenta = Cuentas.objects.get(codigo=line[1].decode('latin-1').strip())
+	drc.accion = line[2].decode('latin-1').strip()
+	drc.save()
+f.close()

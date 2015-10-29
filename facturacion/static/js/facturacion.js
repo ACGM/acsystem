@@ -803,7 +803,7 @@
               if(documento.getTipoSocio == 'N' || documento.getTipoSocio == item.tipoSocio) {
                 desgloseCuenta.cuenta = documento.getCuentaCodigo;
                 desgloseCuenta.descripcion = documento.getCuentaDescrp;
-                desgloseCuenta.ref = documento.getCodigo + item.id;
+                desgloseCuenta.ref = documento.getCodigo + item.noFactura;
                 desgloseCuenta.debito = documento.accion == 'D'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
                 desgloseCuenta.credito = documento.accion == 'C'? item.totalGeneral.toString().replace('$','') : $filter('number')(0.00, 2);
 
