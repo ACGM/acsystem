@@ -867,7 +867,7 @@
         if(INTERES > 0) {
           $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replaceAll(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
         } else {
-          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replaceAll(',',''))
+          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replaceAll(',','')));
         }
       }
 
