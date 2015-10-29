@@ -690,10 +690,18 @@ def validaPagoPrestamo(self, Prestamo, montoAbono):
 		raise Exception('El monto del abono al prestamo es mayor que el balance a la fecha.')
 
 	else:
-		Prestamo.balance = Prestamo.balance - montoAbono
 		while montoAbono > 0:
-			if montoCuotaQ1 > 0:
-				Prestamo.balance - prestamo.balance
+			if Prestamo.montoCuotaQ1 >= 0:
+				if montoAbono > Prestamo.montoCuotaQ1:
+					Prestamo.balance -= Prestamo.montoCuotaQ1
+					montoAbono -= Prestamo.montoCuotaQ1
+					Prestamo.save()
+
+			if Prestamo.montoCuotaQ2 >= 0:
+				if montoAbono > Prestamo.montoCuotaQ2:
+					Prestamo.balance -= Prestamo.montoCuotaQ2
+					montoAbono -= Prestamo.montoCuotaQ2
+					Prestamo.save()
 
 		
 		if Prestamo.balance == 0:

@@ -62,7 +62,7 @@ for line in f:
 f.close()
 
 #CARGA DE CUENTAS CONTROL
-f = open('CuentasControl.csv', 'r')
+f = open('ctactrlOf.csv', 'r')
 for line in f:
 	line = line.split(',')
 	cc = CuentasControl()
@@ -72,15 +72,21 @@ for line in f:
 f.close()
 
 #CARGA DE CUENTAS (CATALOGO)
-f = open('CatalogoCuentas.csv', 'r')
+	# if line[2] != '': cuenta.cuentaControl = CuentasControl.objects.get(codigoControl=line[2].decode('latin-1').strip())
+# f = open('CatalogoCuentas.csv', 'r')
+f = open('cuentasOf.csv', 'r')
 for line in f:
 	line = line.split(',')
 	cuenta = Cuentas()
 	cuenta.codigo = line[0]
 	cuenta.descripcion = line[1].decode('latin-1').strip()
-	if line[2] != '': cuenta.cuentaControl = CuentasControl.objects.get(codigoControl=line[2].decode('latin-1').strip())
-	cuenta.origen = line[3].decode('latin-1').strip()
-	cuenta.tipo = line[4].decode('latin-1').strip()
+	cuenta.origen = line[2].decode('latin-1').strip()
+	cuenta.tipo = line[3].decode('latin-1').strip()
+	cuenta.control = True if line[4].strip() == '1' else False
+	cuenta.tipoSocio = line[5]
+	cuenta.nivel = line[6].strip()
+	cuenta.cuentaControl = None if line[8].strip() == 'x' else CuentasControl.objects.get(id=int(line[8].strip()))
+	# print CuentasControl.objects.get(id=line[8].strip()) if line[8].strip != 'x' else None
 	cuenta.save()
 f.close()
 
@@ -176,5 +182,3 @@ for cc in CuentasControl.objects.all():
 		c.save()
 	except cc.DoesNotExist:
 		pass
-
-		

@@ -8,6 +8,7 @@ class CuentasAdmin(admin.ModelAdmin):
     list_display = ("codigo", "descripcion", "origen", "tipo", "control", 'cuentaControl','tipoSocio')
     search_fields = ("codigo", "descripcion", "origen",'tipo')
     list_editable = ('tipoSocio',)
+    list_filter = ('tipoSocio',)
 
 
 # @admin.register(Auxiliar)

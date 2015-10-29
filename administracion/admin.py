@@ -172,6 +172,7 @@ class TipoDocumentoAdmin(admin.ModelAdmin):
 	list_display = ['codigo','descripcion']
 	list_editable = ('descripcion',)
 	search_fields = ('descripcion',)
+	actions = (export_as_excel,)
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
