@@ -188,4 +188,6 @@ class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
 	search_fields = ('documento__descripcion',)
+	actions = (export_as_excel,)
+	
 
