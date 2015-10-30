@@ -432,11 +432,22 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						maestra.tasaInteresPrestBaseAhorro = oSolicitud.interesBaseAhorroMensual
 						maestra.pagoPrestamoAnterior = 0
 						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
 						maestra.valorGarantizado = oSolicitud.prestacionesLaborales if oSolicitud.prestacionesLaborales > 0 else oSolicitud.valorGarantizado
 						maestra.valorAhorro = oSolicitud.ahorrosCapitalizados
-						maestra.balance = oSolicitud.netoDesembolsar
+						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+
+						if oSolicitud.categoriaPrestamo.descripcion[:6] == 'AVANCE':
+							tipo = oSolicitud.categoriaPrestamo.descripcion.split(' ')[1][:3]
+							tipo = 'RG' if tipo == 'REG' else tipo[:2]
+
+							maestra.balance = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
+							maestra.montoCuotaQ1 = maestra.balance
+
+							maestra.tipoPrestamoNomina = tipo
+						else:
+							maestra.balance = oSolicitud.netoDesembolsar
+							maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+
 						maestra.userLog = request.user
 
 						maestra.save()
@@ -644,9 +655,12 @@ class PostearNotaCreditoView(LoginRequiredMixin, View):
 #	2-valorCapital: es el monto del capital en formato string, pero sin coma
 #	3-valorInteres: es el monto del interes garantizado en formato string, pero sin coma
 #	4-valorInteresAh: es el monto del interes en base ahorrado en formato string, pero sin coma
-#	5-docReferencia: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
-#														ND - Nota de Debito,
-#														NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
+#	5-docReferencia: es el documento de referencia que afecta al prestamo, se especifican las 4 letras del documento de la tabla TipoDocumento.
+#		Por ej: NDCT - Nota de Credito
+#				NOMP - Nomina de Descuentos Prestamos
+#	6-tipoDoc: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
+#													ND - Nota de Debito,
+#													NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
 def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
 	#Obtener el prestamo como tal
@@ -655,54 +669,61 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	# NC = Nota de Credito   ---- RI = Recibo Ingreso
 	# AH = Descontar desde ahorro para pagar capital a prestamo.
 	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
-		validaPagoPrestamo(self, prestamo, decimal.Decimal(cuota.valorCapital))
-
-	# Nota de Debito
-	if tipoDoc == 'ND':
-		prestamo.balance = prestamo.balance + decimal.Decimal(cuota.valorCapital)
-		prestamo.save()
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(valorCapital), docReferencia, tipoDoc)
 
 	# Nomina de descuentos
 	if tipoDoc == 'NM':
-		validaPagoPrestamo(self, prestamo, decimal.Decimal(cuota.valorCapital))
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(valorCapital), docReferencia, tipoDoc)
 
-        prestamo.valorAhorro = prestamo.valorAhorro - cuota.valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - cuota.valorInteresAh >= 0 else 0
-        prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
+        prestamo.valorAhorro = prestamo.valorAhorro - valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - valorInteresAh >= 0 else 0
+        prestamo.valorGarantizado = prestamo.valorGarantizado - valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - valorInteres >= 0 else 0
         
         prestamo.save()
 	
-	#Guardar la cuota
-	cuota = PagoCuotasPrestamo()
-	cuota.noPrestamo = prestamo
-	cuota.valorCapital = valorCapital
-	cuota.valorInteres = valorInteres
-	cuota.valorInteresAh = valorInteresAh
-	cuota.fecha = datetime.datetime.now()
-	cuota.docRef = docReferencia
-	cuota.tipoPago = tipoDoc
-	cuota.save()
+	# Nota de Debito
+	if tipoDoc == 'ND':
+		prestamo.balance = prestamo.balance + decimal.Decimal(valorCapital)
+		prestamo.save()
+		
+		#Guardar la cuota
+		ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipodoc)
+	
 
 # Metodo para validar si el pago del prestamo es completo
 # Tambien es utilizado para rebajar el balance
-def validaPagoPrestamo(self, Prestamo, montoAbono):
+def validaPagoPrestamo(self, Prestamo, montoAbono, docReferencia, tipodoc):
 
 	if Prestamo.balance - montoAbono < 0:
 		raise Exception('El monto del abono al prestamo es mayor que el balance a la fecha.')
 
 	else:
 		while montoAbono > 0:
+
+			#Calcular el interes Garantizado y de Base Ahorro
+			if tipodoc != 'NM':
+				valorInteresG = 0
+				valorInteresA = 0
+			else:
+				valorInteresG = 0#Prestamo.valorInteres
+				valorInteresA = 0#Prestamo.valorInteresAh
+			#Fin calculo interes
+
 			if Prestamo.montoCuotaQ1 >= 0:
-				if montoAbono > Prestamo.montoCuotaQ1:
+				if montoAbono >= Prestamo.montoCuotaQ1:
 					Prestamo.balance -= Prestamo.montoCuotaQ1
 					montoAbono -= Prestamo.montoCuotaQ1
 					Prestamo.save()
+					ejecutaPagoCuota(self, Prestamo, Prestamo.montoCuotaQ1, valorInteresG, valorInteresA, \
+						docReferencia, tipodoc)
+
 
 			if Prestamo.montoCuotaQ2 >= 0:
-				if montoAbono > Prestamo.montoCuotaQ2:
+				if montoAbono >= Prestamo.montoCuotaQ2:
 					Prestamo.balance -= Prestamo.montoCuotaQ2
 					montoAbono -= Prestamo.montoCuotaQ2
 					Prestamo.save()
-
+					ejecutaPagoCuota(self, Prestamo, Prestamo.montoCuotaQ1, Prestamo.valorInteres, Prestamo.valorInteresAh, \
+						docReferencia, tipodoc)
 		
 		if Prestamo.balance == 0:
 			Prestamo.estatus = 'S'
@@ -711,7 +732,7 @@ def validaPagoPrestamo(self, Prestamo, montoAbono):
 
 
 #Guardar una cuota de Prestamo
-def guardarCuotaPrestamo(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
+def ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
 	cuota = PagoCuotasPrestamo()
 	cuota.noPrestamo = prestamo

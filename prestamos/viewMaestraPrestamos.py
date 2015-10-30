@@ -176,7 +176,7 @@ class guardarCambiosPrestamo(View):
 			prestamo.montoCuotaQ2 = decimal.Decimal(cuotaQ2.replace(',','')) if cuotaQ2 != '' else 0
 			
 			#Verificar que los montos quincenales no excedan el balance pendiente
-			if prestamo.montoCuotaQ1 + prestamo.montoCuotaQ2 > prestamo.balance:
+			if prestamo.montoCuotaQ1 + prestamo.montoCuotaQ2 > prestamo.balance and prestamo.tipoPrestamoNomina == 'RE':
 				raise Exception('Los montos quincenas exceden el balance pendiente.')
 			prestamo.save()
 			

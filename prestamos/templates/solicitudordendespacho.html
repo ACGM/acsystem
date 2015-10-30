@@ -48,6 +48,7 @@
 						<td>Fecha</td>
 						<td>Codigo</td>
 						<td>Socio</td>
+						<td>Categoria</td>
 						<td>Solicitado</td>
 						<td>Desembolsar</td>
 						<td>Imprimir</td>
@@ -64,6 +65,7 @@
 						<td>[[solicitud.fechaSolicitud | date : 'dd/MM/yyyy']]</td>
 						<td>[[solicitud.codigoSocio]]</td>
 						<td>[[solicitud.socio]]</td>
+						<td>[[solicitud.categoriaPrestamo]]</td>
 						<td class="align-right">[[solicitud.montoSolicitado | number : 2]]</td>
 						<td class="align-right">[[solicitud.netoDesembolsar | number : 2]]</td>
 						<td class="align-center"><a class="icon-printer icon-imprimir" href="#" ng-click="ImprimirOD(solicitud)"></a></td>
