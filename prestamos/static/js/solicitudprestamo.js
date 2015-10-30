@@ -570,6 +570,12 @@
         if(cp.descripcion.substring(0,6) == 'AVANCE') {
           avance = true;
 
+          console.log($scope.solicitud.netoDesembolsar);
+          if($scope.solicitud.netoDesembolsar  == '' || $scope.solicitud.netoDesembolsar < 0) {
+            $scope.solicitud.netoDesembolsar = $scope.solicitud.montoSolicitado;
+            $scope.errorShow = false;
+          }
+
           $scope.solicitud.categoriaPrestamoId = cp.id;
           $scope.solicitud.categoriaPrestamo = cp.descripcion;
 
@@ -582,10 +588,6 @@
           $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
           $scope.solicitud.tasaInteresMensual = 0; //$filter('number')((cp.interesAnualSocio / 12), 2);
           
-          //Calcular los intereses y la cuota capital+intereses.
-          
-
-          console.log('ESTOS ES UN AVANCE');
 
         } else { //ESTO ES PARA CUALQUIER PRESTAMO QUE NO SE --AVANCE--
           $scope.solicitud.categoriaPrestamoId = cp.id;
@@ -593,9 +595,6 @@
           $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
           $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
 
-          
-          
-          console.log('NO AVANCE');
         }
         
         $scope.showCP = false;
