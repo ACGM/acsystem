@@ -786,6 +786,7 @@
         $scope.registros = [];
         var registro = {};
 
+        //Primero tomamos los montos para el calculo
         var solicitar = $scope.ta.montoSolicitar;
         var ahorrado = $scope.ta.montoAhorrado;
         var garantia = $scope.ta.montoGarantizado;
@@ -811,9 +812,11 @@
           registro.capital = capital;
           registro.ahorrado = ahorrado;
           registro.garantia = garantia;
+          //Calculo complejo de los intereses
           registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/24/100);
           registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/24/100);
           registro.totalInteres = registro.IA + registro.IG;
+
           registro.cuota = capital + registro.totalInteres;
           registro.balance = balance;
           $scope.registros.push(registro);

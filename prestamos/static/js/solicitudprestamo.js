@@ -90,6 +90,9 @@
         $http.get(url)
           .success(function (data) {
             deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
           });
 
         return deferred.promise;
@@ -374,23 +377,31 @@
         $scope.valoresChk = [];
         $scope.estatus = 'T';
 
-        SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
-          $scope.solicitudes = data;
-          $scope.regAll = false;
+        try {
+          SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
+            $scope.solicitudes = data;
+            $scope.regAll = false;
 
-          if(data.length > 0) {
-            $scope.verTodos = 'ver-todos-ei';
-
-            var i = 0;
-            data.forEach(function (data) {
-              $scope.valoresChk[i] = false;
-              i++;
-            });
             $scope.mostrar = 'ocultar';
-          }
-        }, function() {
+
+            if(data.length > 0) {
+              $scope.verTodos = 'ver-todos-ei';
+
+              var i = 0;
+              data.forEach(function (data) {
+                $scope.valoresChk[i] = false;
+                i++;
+              });
+
+            }
+          }, function() {
+            $scope.mostrar = 'ocultar';
+          });
+        } catch (e) {
+          console.log(e);
           $scope.mostrar = 'ocultar';
-        });
+
+        }
       }
 
       $scope.solicitudesprestamosBySocio = function($event, socio) {

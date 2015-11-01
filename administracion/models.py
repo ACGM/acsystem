@@ -224,8 +224,10 @@ class Socio(models.Model):
         super(Socio, self).save(*args, **kwargs)
 
         #Preparar la tabla AhorroSocio con Balance en Cero cuando es la primera vez.
-        if self.id == None:
-            from ahorro.models import AhorroSocio
+        from ahorro.models import AhorroSocio
+        try:
+            a = AhorroSocio.objects.get(socio__codigo=self.codigo)
+        except AhorroSocio.DoesNotExist:
             ah = AhorroSocio()
             ah.socio = self
             ah.balance = 0

@@ -456,7 +456,6 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						oSolicitud.prestamo = maestra.noPrestamo
 						oSolicitud.save()
 
-
 					#Para cuando existe(n) Prestamo(s) Unificado(s)
 					try:
 						prestamosUnif = PrestamoUnificado.objects.filter(solicitudPrestamo__noSolicitud=oSolicitud.noSolicitud)
@@ -465,9 +464,10 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 							if oSolicitud.estatus == 'A':
 
 								prestamo = MaestraPrestamo.objects.get(noPrestamo=p.prestamoUnificado.noPrestamo)
-								prestamo.estatus = 'S'
+								# Estas lineas fueron sustituidas por el metodo de pagoCuota
 								# prestamo.balance = 0
-								prestamo.save()
+								# prestamo.estatus = 'S'
+								# prestamo.save()
 
 								# Aplicar saldo de prestado unificado -- NCPU = Nota de Credito Prestamo Unificado
 								guardarPagoCuotaPrestamo(self, p.prestamoUnificado.noPrestamo, prestamo.balance, 0, 0,'{0}{1}'.format('NCPU', p.prestamoUnificado.id), 'NC')
@@ -704,14 +704,25 @@ def validaPagoPrestamo(self, Prestamo, montoAbono, docReferencia, tipodoc):
 				valorInteresG = 0
 				valorInteresA = 0
 			else:
-				valorInteresG = 0#Prestamo.valorInteres
-				valorInteresA = 0#Prestamo.valorInteresAh
+				monto = Prestamo.balance
+				ahorrado = Prestamo.valorAhorro
+				garantia = Prestamo.valorGarantizado
+				
+				porcentajeCuotaAhorro = ahorrado / monto 
+				porcentajeCuotaGarantizado = garantia / monto
 			#Fin calculo interes
 
 			if Prestamo.montoCuotaQ1 >= 0:
 				if montoAbono >= Prestamo.montoCuotaQ1:
 					Prestamo.balance -= Prestamo.montoCuotaQ1
 					montoAbono -= Prestamo.montoCuotaQ1
+
+					cuotaAh = Prestamo.montoCuotaQ1 * (porcentajeCuotaAhorro/100)
+					cuotaGr = Prestamo.montoCuotaQ1 * (porcentajeCuotaGarantizado/100)
+					
+					valorInteresG = 0#Prestamo.valorInteres
+					valorInteresA = 0#Prestamo.valorInteresAh
+
 					Prestamo.save()
 					ejecutaPagoCuota(self, Prestamo, Prestamo.montoCuotaQ1, valorInteresG, valorInteresA, \
 						docReferencia, tipodoc)
