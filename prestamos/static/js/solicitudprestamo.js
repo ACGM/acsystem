@@ -585,17 +585,13 @@
           $scope.solicitud.interesBaseGarantizado = 0;
           $scope.solicitud.tasaInteresBaseAhorro = 0;
 
-          $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
-          $scope.solicitud.tasaInteresMensual = 0; //$filter('number')((cp.interesAnualSocio / 12), 2);
-          
-
         } else { //ESTO ES PARA CUALQUIER PRESTAMO QUE NO SE --AVANCE--
           $scope.solicitud.categoriaPrestamoId = cp.id;
           $scope.solicitud.categoriaPrestamo = cp.descripcion;
-          $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
-          $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
-
         }
+
+        $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
+        $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
         
         $scope.showCP = false;
 
@@ -1022,6 +1018,7 @@
 
       //Objeto que contiene la informacion de la solicitud de Prestamo
       $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
+      console.log('SOLICITUD');
       console.log($scope.solicitudP);
 
       //Calculo de intereses para sumar al capital
@@ -1031,11 +1028,11 @@
 
       $scope.solicitudP.capitalMasIntereses = intereses + parseFloat($scope.solicitudP.valorCuotasCapital);
       $scope.solicitudP.interesesValor = intereses;
-      console.log($scope.solicitudP.capitalMasIntereses)
 
       //Objeto que contiene la informacion del solicitante
       SolicitudPrestamoService.solicitanteDatos($scope.solicitudP.codigoSocio).then(function (data) {
         $scope.dataSolicitante = data[0];
+        console.log('DATA SOLICITANTE');
         console.log($scope.dataSolicitante);        
 
         //Calculo para cuota quincenal de prestamo
@@ -1043,6 +1040,16 @@
         cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
         cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
         $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
+
+        if($scope.solicitudP.categoriaPrestamo.substring(0,6) == 'AVANCE') {
+          console.log('AVANCE DE PRESTAMO');
+          var monto = (parseInt($scope.solicitudP.tasaInteresMensual * 12)/100) * parseFloat($scope.solicitudP.valorCuotasCapital) +
+                      parseFloat($scope.solicitudP.valorCuotasCapital);
+
+          $scope.solicitudP.valorCuotasCapital = monto;
+          $scope.solicitudP.netoDesembolsar = monto;
+                                                  
+        }
 
         //Totales en Quincenas (ahorro y cuota Prestamo)
         $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);
