@@ -230,7 +230,7 @@ class GenerarArchivoBancoView(View):
 
 			# Preparar cabecera de archivo de Banco
 			aCabecera = ArchivoBancoHeader()
-			aCabecera.idCompania = empresa.bancoAsign
+			aCabecera.idCompania = empresa.rnc
 			aCabecera.nombreCompania = empresa.nombre
 			aCabecera.secuencia = archivoB.secuencia
 			aCabecera.tipoServicio = headerArchivo['tipoServicio']
@@ -279,7 +279,7 @@ class GenerarArchivoBancoView(View):
 				registro.faxTelefonoBenef = linea['faxTelefonoBenef'] if linea.has_key('faxTelefonoBenef') else ''
 				registro.save()
 
-				sysFile.write(registro.lineaFormateadaN) # Escribir registro N en el archivo .TXT
+				sysFile.write(registro.lineaFormateadaN + '\n') # Escribir registro N en el archivo .TXT
 
 				#Estas lineas son exclusiva para desembolso de prestamos (actualizacion en la MaestraPrestamo)
 				if linea.has_key('prestamoNo'):
