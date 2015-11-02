@@ -803,6 +803,9 @@
 
             var prestamo;
             
+            console.log('PRESTAMOS: ');
+            console.log(data);
+
             data.forEach(function (item) {
               prestamo = {};
               prestamo.codigoSocio = item.codigoSocio;
@@ -815,9 +818,16 @@
               prestamo.cuotaInteresAhQ = fecha[0] > 15? item.cuotaInteresAhQ2 : item.cuotaInteresAhQ1;
               prestamo.cuotaMasInteresQ = fecha[0] > 15? item.cuotaMasInteresQ2 : item.cuotaMasInteresQ1;
               prestamo.balance = $filter('number')(item.balance, 2);
+              prestamo.noSolicitudPrestamo = item.noSolicitudPrestamo;
+              prestamo.noSolicitudOD = item.noSolicitudOD;
+              prestamo.tipoSocio = item.tipoSocio;
 
               if(parseFloat(prestamo.montoCuotaQ) > 0 && item.tipoPrestamoNomina == tipoPrestamoNom) {
                 $scope.prestamos.push(prestamo);
+
+                if(prestamo.tipoSocio == 'S' && prestamo.noSolicitudPrestamo > 0) {
+                  $scope.gPrestamosSocios += parseFloat(prestamo.montoCuotaQ)
+                }
               }
               $scope.totalesPrestamos();
             });
