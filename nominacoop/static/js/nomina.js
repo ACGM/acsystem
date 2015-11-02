@@ -713,6 +713,18 @@
       $scope.extiendePrestamos = 'extiende';
       $scope.showPRESTAMOS = true;
 
+      //VARIABLES PARA POSTEOS DE AHORROS
+      $scope.gAhorrosSocios = 0;
+      $scope.gAhorrosEmpleados = 0;
+
+      //VARIABLES PARA POSTEOS DE PRESTAMOS
+      $scope.gPrestamosSocios = 0;
+      $scope.gPrestamosEmpleados = 0;
+      $scope.gOrdenesSocios = 0;
+      $scope.gOrdenesEmpleados = 0;
+      $scope.gInteresPrestSocios = 0;
+      $scope.gInteresPrestEmpleados = 0;
+
       //BOTONES DE SECCION PRESTAMOS
       $scope.GenerarArchivoPrestamosStatus = 'Boton-disabled';
       $window.document.getElementById('GAPS').disabled = true;
@@ -836,6 +848,8 @@
       // Trae el listado de ahorros de todos los socios activos.
       $scope.listadoAhorros = function($event) {
         $scope.ahorros = [];
+        $scope.gAhorrosSocios = 0;
+        $scope.gAhorrosEmpleados = 0;
 
         try {
           if($scope.fechaNomina == undefined) {
@@ -850,8 +864,12 @@
 
             var ahorro;
 
+            console.log('SOCIOS ACTIVOS:');
+            console.log(data);
+
             data.forEach(function (item) {
               ahorro = {};
+              ahorro.estatus = item.estatus;
               ahorro.codigo = item.codigo;
               ahorro.departamento = item.departamento;
               ahorro.nombreCompleto = item.nombreCompleto;
@@ -859,6 +877,15 @@
 
               if(parseFloat(ahorro.cuotaAhorro) > 0) {
                 $scope.ahorros.push(ahorro);
+                
+                //Asignar a cada variable de posteo su total de ahorro.
+                if(ahorro.estatus == 'S') {
+                  $scope.gAhorrosSocios += parseFloat(ahorro.cuotaAhorro);
+                } else {
+                  $scope.gAhorrosEmpleados += parseFloat(ahorro.cuotaAhorro);
+                }
+                //******************************************************
+
               }
               $scope.GenerarArchivoAhorrosStatus = '';
               $window.document.getElementById('GAAS').disabled = false;
@@ -1118,7 +1145,7 @@
       }
 
       //Funcion para postear la nomina. (Postear es llevar al Diario)  //* tipo = 1-prestamo o 2-ahorro.
-      $scope.postearNomina = function(nomina, tipo){
+      $scope.postearNomina = function(nomina, tipoDoc){
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
@@ -1133,8 +1160,12 @@
 
         try {
 
-          appService.getDocumentoCuentas('NOMP').then(function (data) {
+          appService.getDocumentoCuentas(tipoDoc).then(function (data) {
             $scope.documentoCuentas = data;
+
+            //Variables de posteo de ahorro
+            console.log('Ahorros Socio sin formato: ' + $scope.gAhorrosSocios);
+            console.log('Ahorros Empleados sin formato: ' + $scope.gAhorrosEmpleados);
 
             //Prepara cada linea de posteo
             $scope.documentoCuentas.forEach(function (documento) {
@@ -1144,12 +1175,38 @@
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
               desgloseCuenta.ref = documento.getCodigo + fechaFormatted;
               
-              if(tipo == 'NOMP') { //Cuentas para cuando es nomina de Descuentos de Prestamos
+              // console.log('DOCUMENTO CTA: ');
+              // console.log(documento);
+
+              if(tipoDoc == 'NOMP') { //Cuentas para cuando es nomina de Descuentos de Prestamos
                 desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
                 desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.prestamoTotalMontoCuota.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+
               } else { //Cuentas para cuando es nomina de Descuentos de Ahorros
-                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);
-                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2) : $filter('number')(0.00, 2);  
+                
+                var montoAhorro = 0;
+
+                if(documento.getCuentaCodigo == 2201) {
+                  montoAhorro = $scope.gAhorrosSocios;
+                  var tmp = $filter('number')($scope.gAhorrosSocios,2);
+                  console.log('valor SOCIOS: ' + parseFloat(tmp.replaceAll(',','')));
+
+                  montoAhorro = parseFloat(tmp.replaceAll(',',''));
+
+                }
+                if(documento.getCuentaCodigo == 2202) {
+                  var tmp = $filter('number')($scope.gAhorrosEmpleados,2);
+                  console.log('valor EMPLEADOS: ' + parseFloat(tmp.replaceAll(',','')));
+
+                  montoAhorro = parseFloat(tmp.replaceAll(',',''));
+
+                }
+                if(documento.getCuentaCodigo == 1113080101) {
+                  montoAhorro = ($scope.ahorroTotalCuotaAhorro.toString().replace('$',''));//$filter('number')($scope.ahorroTotalCuotaAhorro.toString().replace('$',''), 2);
+                }
+
+                desgloseCuenta.debito = documento.accion == 'D'? $filter('number')(montoAhorro, 2) : $filter('number')(0.00, 2);
+                desgloseCuenta.credito = documento.accion == 'C'? $filter('number')(montoAhorro, 2) : $filter('number')(0.00, 2);  
               }
 
               $scope.desgloseCuentas.push(desgloseCuenta);
@@ -1170,6 +1227,9 @@
 
           //Validar que el CREDITO cuadre con el DEBITO
           if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+            console.log('valor DEBITO: ' + $scope.totalDebito);
+            console.log('valor CREDITO: ' + $scope.totalCredito);
+
             throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
           }
 
@@ -1202,6 +1262,10 @@
         $scope.totalCredito = 0.00;
 
         $scope.desgloseCuentas.forEach(function (documento) {
+          console.log('***************************');
+          console.log(documento.debito.replaceAll(',',''));
+          console.log(documento.credito.replaceAll(',',''));
+
           $scope.totalDebito += parseFloat(documento.debito.replaceAll(',',''));
           $scope.totalCredito += parseFloat(documento.credito.replaceAll(',',''));
         });

@@ -124,7 +124,7 @@
 						<td>Codigo de empleado</td>
 						<td>
 							<div class="codigo-empleado-field"> 
-								<input type="text" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event);" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
+								<input type="text" id="codigoEmp" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event);" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
 
 								<a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event);"></a>
 							</div>

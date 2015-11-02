@@ -692,6 +692,7 @@
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+
       }
 
       // Funcion para mostrar error por pantalla
