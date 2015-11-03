@@ -707,9 +707,9 @@ def validaPagoPrestamo(self, Prestamo, montoAbono, docReferencia, tipodoc):
 				monto = Prestamo.balance
 				ahorrado = Prestamo.valorAhorro
 				garantia = Prestamo.valorGarantizado
-				
-				porcentajeCuotaAhorro = ahorrado / monto 
-				porcentajeCuotaGarantizado = garantia / monto
+
+				porcentajeCuotaAhorro = ahorrado / monto if ahorrado > 0 else 0
+				porcentajeCuotaGarantizado = garantia / monto if garantia > 0 else 0
 			#Fin calculo interes
 
 			if Prestamo.montoCuotaQ1 >= 0:
