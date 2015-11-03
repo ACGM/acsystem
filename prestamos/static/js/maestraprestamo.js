@@ -222,6 +222,18 @@
         return deferred.promise;
       }
 
+      //Estado de Cuenta Socio
+      function EstadoCuentaBySocio(codigo) {
+        var deferred = $q.defer();
+
+        url = '/estadoCuentajson/?codigo={codigo}'.replace('{codigo}', codigo);
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byNoPrestamo                    : byNoPrestamo,
@@ -234,7 +246,8 @@
         prestamosDetalleByCodigoSocio   : prestamosDetalleByCodigoSocio,
         prestamosBalanceByCodigoSocio   : prestamosBalanceByCodigoSocio,
         PagoCuotasPrestamosByNoPrestamo : PagoCuotasPrestamosByNoPrestamo,
-        ReportePrestamos                : ReportePrestamos
+        ReportePrestamos                : ReportePrestamos,
+        EstadoCuentaBySocio             : EstadoCuentaBySocio
       };
 
     }])
@@ -826,6 +839,55 @@
           
         }
         console.log($scope.registros);
+      }
+
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
+
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
+
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
+    }])
+
+
+    //****************************************************
+    //ESTADO DE CUENTA SOCIO                             *
+    //****************************************************
+    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+      
+
+      $scope.getData = function($event) {
+        $event.preventDefault();
+
+        try {
+          MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
+            console.log(data);
+
+          });
+
+
+        } catch(e) {
+          console.log(e);
+        }
+
       }
 
       $scope.totales = function() {
