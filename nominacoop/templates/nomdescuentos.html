@@ -67,7 +67,13 @@
 							<td class="align-center"><a href="#" class="icon-delete icon-eliminar" ng-click="quitarPrestamo(prestamo)"></a></td>
 							<td>[[prestamo.codigoSocio]]</td>
 							<td>[[prestamo.socio]]</td>
-							<td title="[[prestamo.balance]]">[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+							<td title="[[prestamo.balance]]">
+								<span ng-if="prestamo.noSolicitudPrestamo > 0" class="icon-dollar icon-prestamo" title="Solicitud de Prestamo: [[prestamo.noSolicitudPrestamo | numberFixedLen : 8]]"></span>
+
+								<span ng-if="prestamo.noSolicitudOD > 0" class="icon-truck icon-OD" title="Solicitud Orden de Despacho: [[prestamo.noSolicitudOD | numberFixedLen : 8]]"></span>
+
+								[[prestamo.noPrestamo | numberFixedLen : 9]]
+							</td>
 							<td class="align-right">[[prestamo.montoCuotaQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
 							<td class="align-right">[[prestamo.cuotaInteresAhQ | number : 2]]</td>

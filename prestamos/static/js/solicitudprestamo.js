@@ -2,11 +2,12 @@
 
   angular.module('cooperativa.solicitudprestamo', ['ngAnimate'])
 
-    .filter('estatusSolicitud', function() {
+    .filter('estatusSolicitudOD', function() {
       return function (input) {
         if (!input) return "";
 
         input = input
+                .replace('P', false)
                 .replace('A', true)
                 .replace('R', true)
                 .replace('C', true);
@@ -88,6 +89,9 @@
 
         $http.get(url)
           .success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
             deferred.resolve(data);
           });
 
@@ -373,23 +377,31 @@
         $scope.valoresChk = [];
         $scope.estatus = 'T';
 
-        SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
-          $scope.solicitudes = data;
-          $scope.regAll = false;
+        try {
+          SolicitudPrestamoService.solicitudesprestamos(noSolicitud).then(function (data) {
+            $scope.solicitudes = data;
+            $scope.regAll = false;
 
-          if(data.length > 0) {
-            $scope.verTodos = 'ver-todos-ei';
-
-            var i = 0;
-            data.forEach(function (data) {
-              $scope.valoresChk[i] = false;
-              i++;
-            });
             $scope.mostrar = 'ocultar';
-          }
-        }, function() {
+
+            if(data.length > 0) {
+              $scope.verTodos = 'ver-todos-ei';
+
+              var i = 0;
+              data.forEach(function (data) {
+                $scope.valoresChk[i] = false;
+                i++;
+              });
+
+            }
+          }, function() {
+            $scope.mostrar = 'ocultar';
+          });
+        } catch (e) {
+          console.log(e);
           $scope.mostrar = 'ocultar';
-        });
+
+        }
       }
 
       $scope.solicitudesprestamosBySocio = function($event, socio) {
@@ -564,18 +576,40 @@
       //Seleccionar Categoria de Prestamo
       $scope.selCP = function($event, cp) {
         $event.preventDefault();
+        var avance = false;
 
-        $scope.solicitud.categoriaPrestamoId = cp.id;
-        $scope.solicitud.categoriaPrestamo = cp.descripcion;
+        if(cp.descripcion.substring(0,6) == 'AVANCE') {
+          avance = true;
+
+          console.log($scope.solicitud.netoDesembolsar);
+          if($scope.solicitud.netoDesembolsar  == '' || $scope.solicitud.netoDesembolsar < 0) {
+            $scope.solicitud.netoDesembolsar = $scope.solicitud.montoSolicitado;
+            $scope.errorShow = false;
+          }
+
+          $scope.solicitud.categoriaPrestamoId = cp.id;
+          $scope.solicitud.categoriaPrestamo = cp.descripcion;
+
+          $scope.solicitud.cantidadCuotas = 1;
+          $scope.solicitud.valorCuotas = $scope.solicitud.netoDesembolsar;
+          $scope.solicitud.interesBaseAhorro = 0;
+          $scope.solicitud.interesBaseGarantizado = 0;
+          $scope.solicitud.tasaInteresBaseAhorro = 0;
+
+        } else { //ESTO ES PARA CUALQUIER PRESTAMO QUE NO SE --AVANCE--
+          $scope.solicitud.categoriaPrestamoId = cp.id;
+          $scope.solicitud.categoriaPrestamo = cp.descripcion;
+        }
+
         $scope.solicitud.tasaInteresAnual = $filter('number')(cp.interesAnualSocio, 2);
         $scope.solicitud.tasaInteresMensual = $filter('number')((cp.interesAnualSocio / 12), 2);
+        
         $scope.showCP = false;
 
         //Calcular los intereses y la cuota capital+intereses.
-        var valorGarant = $scope.solicitud.valorGarantizado == undefined? $scope.solicitud.prestacionesLaborales : $scope.solicitud.valorGarantizado;
-        calculosCuotaIntereses(valorGarant, $scope.solicitud.ahorrosCapitalizados.replace(',',''), $scope.solicitud.tasaInteresMensual, 
-                                $scope.solicitud.valorCuotas);
-
+          var valorGarant = $scope.solicitud.valorGarantizado == undefined? $scope.solicitud.prestacionesLaborales : $scope.solicitud.valorGarantizado;
+          calculosCuotaIntereses(valorGarant, $scope.solicitud.ahorrosCapitalizados.replace(',',''), $scope.solicitud.tasaInteresMensual, 
+                                $scope.solicitud.valorCuotas, avance);
       }
 
       //Cuando se le de click al checkbox del header.
@@ -658,6 +692,7 @@
 
         $scope.disabledButton = 'Boton';
         $scope.disabledButtonBool = false;
+
       }
 
       // Funcion para mostrar error por pantalla
@@ -881,7 +916,8 @@
 
               //Calcular los intereses y la cuota capital+intereses.
               var valorGarant = data[0]['valorGarantizado'] == '0'? data[0]['prestacionesLaborales'] : data[0]['valorGarantizado'];
-              calculosCuotaIntereses(valorGarant, data[0]['ahorrosCapitalizados'], data[0]['tasaInteresMensual'], data[0]['valorCuotasCapital']);
+              var avance = data[0]['categoriaPrestamoDescrp'].substring(0,6) == 'AVANCE'? true : false;
+              calculosCuotaIntereses(valorGarant, data[0]['ahorrosCapitalizados'], data[0]['tasaInteresMensual'], data[0]['valorCuotasCapital'], avance);
 
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
@@ -907,15 +943,26 @@
         $scope.toggleLSP();
       }
 
-      function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital) {
+      function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital, avance) {
         var interesBaseAhorroMensual = parseFloat($scope.InteresPrestBaseAhorroAnual/12/2/100);
         var IBA = (ahorroCap * interesBaseAhorroMensual);
         var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
 
-        $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
-        $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
-        $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
-        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
+        if(avance == false) {
+
+          $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
+          $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
+          $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
+          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
+        } else {
+
+          $scope.solicitud.tasaInteresBaseAhorro = 0;
+          $scope.solicitud.interesBaseAhorro = 0;
+          $scope.solicitud.interesBaseGarantizado = 0;
+
+          var interesMonto = parseFloat($scope.solicitud.netoDesembolsar.replaceAll(',','')) * ($scope.solicitud.tasaInteresAnual/100); 
+          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat($scope.solicitud.netoDesembolsar.replaceAll(',','')) + interesMonto, 2);
+        }
       }
 
       //Reporte Solicitudes de Prestamos Emitidas
@@ -983,6 +1030,7 @@
 
       //Objeto que contiene la informacion de la solicitud de Prestamo
       $scope.solicitudP = JSON.parse($window.sessionStorage['solicitudP']);
+      console.log('SOLICITUD');
       console.log($scope.solicitudP);
 
       //Calculo de intereses para sumar al capital
@@ -992,11 +1040,11 @@
 
       $scope.solicitudP.capitalMasIntereses = intereses + parseFloat($scope.solicitudP.valorCuotasCapital);
       $scope.solicitudP.interesesValor = intereses;
-      console.log($scope.solicitudP.capitalMasIntereses)
 
       //Objeto que contiene la informacion del solicitante
       SolicitudPrestamoService.solicitanteDatos($scope.solicitudP.codigoSocio).then(function (data) {
         $scope.dataSolicitante = data[0];
+        console.log('DATA SOLICITANTE');
         console.log($scope.dataSolicitante);        
 
         //Calculo para cuota quincenal de prestamo
@@ -1004,6 +1052,16 @@
         cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
         cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
         $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
+
+        if($scope.solicitudP.categoriaPrestamo.substring(0,6) == 'AVANCE') {
+          console.log('AVANCE DE PRESTAMO');
+          var monto = (parseInt($scope.solicitudP.tasaInteresMensual * 12)/100) * parseFloat($scope.solicitudP.valorCuotasCapital) +
+                      parseFloat($scope.solicitudP.valorCuotasCapital);
+
+          $scope.solicitudP.valorCuotasCapital = monto;
+          $scope.solicitudP.netoDesembolsar = monto;
+                                                  
+        }
 
         //Totales en Quincenas (ahorro y cuota Prestamo)
         $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);

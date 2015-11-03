@@ -430,7 +430,7 @@
             if(data.length > 0) {
               $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
 
-              $scope.solicitud.valorCuotas = $filter('number')(monto.replace(',','') / data[0].cantidadQuincenas,2);
+              $scope.solicitud.valorCuotas = $filter('number')(monto.replaceAll(',','') / data[0].cantidadQuincenas,2);
             }
           },
           function() {
@@ -864,7 +864,11 @@
         console.log($scope.solicitud.montoSolicitado)
         console.log(INTERES)
 
-        $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
+        if(INTERES > 0) {
+          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replaceAll(',','')) + (INTERES/$scope.solicitud.cantidadCuotas), 2);
+        } else {
+          $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replaceAll(',','')));
+        }
       }
 
       //Agregar Articulo de Orden Despacho

@@ -29,7 +29,8 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             ImprimirRecibidoConformeView, ImprimirSolicitudPView, MarcarPrestamoComoDCView, \
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
                             rptPrestamos, relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, \
-                            PrestamosAPIViewByRangoFecha, PostearNotaDebitoView, PostearNotaCreditoView, TablaAmortizacionView
+                            PrestamosAPIViewByRangoFecha, PostearNotaDebitoView, PostearNotaCreditoView, TablaAmortizacionView, \
+                            EstadoCuentaView, EstadoCuentaBySocio
 
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
@@ -252,6 +253,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/pago-cuotas/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
     url(r'^prestamos/pago-cuotas/(?P<noPrestamo>[\d]+)/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
     url(r'^prestamos/tabla-amortizacion/$', TablaAmortizacionView.as_view(), name='tabla_amortizacion'),
+    url(r'^prestamos/estado-cuenta/$', EstadoCuentaView.as_view(), name='estado_cuenta'),
 
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),
@@ -278,6 +280,7 @@ urlpatterns = patterns('',
     url(r'^api/prestamos/solicitudes/prestamos/emitidos/(?P<fechaInicio>[\w\-]+)/(?P<fechaFin>[\w\-]+)/$', SolicitudesPrestamosAPIViewByRangoFecha.as_view(), \
                                                                                                             name='solicitud_prestamos_api_ByRangoFecha'),
     url(r'^solicitudPjson/$', SolicitudPrestamoById.as_view(), name='Solicitud_PrestamoById'),
+    url(r'^estadoCuentajson/$', EstadoCuentaBySocio.as_view(), name='Estado_CuentaBySocio'),
  
     #Prestamos -- Solicitudes Orden Despacho
     url(r'^prestamos/solicitudOD/AprobarRechazar/$', AprobarRechazarSolicitudesODView.as_view(), name='Solicitud_de_OD_accion'),

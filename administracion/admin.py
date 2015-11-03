@@ -6,7 +6,7 @@ from administracion.models import Localidad, Departamento, Representante, \
 								 Unidad, Producto, TipoSuplidor, Suplidor, Socio, \
 								 CoBeneficiario, CategoriaPrestamo, CuotaPrestamo, \
 								 CuotaOrdenes, Autorizador, Perfil, Opcion, Banco, \
-								 TipoDocumento, Periodo, Empresa, Cobrador, DocumentoCuentas, \
+								 TipoDocumento, Empresa, Cobrador, DocumentoCuentas, \
 								 CategoriaProducto, ArchivoBancoHeader, ArchivoBancoDetailN, \
 								 UserExtra, ArchivoBanco
 
@@ -172,10 +172,7 @@ class TipoDocumentoAdmin(admin.ModelAdmin):
 	list_display = ['codigo','descripcion']
 	list_editable = ('descripcion',)
 	search_fields = ('descripcion',)
-
-@admin.register(Periodo)
-class PeriodoAdmin(admin.ModelAdmin):
-	list_display = ['id','mes','agno','estatus']
+	actions = (export_as_excel,)
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
@@ -191,4 +188,6 @@ class DocumentoCuentas(admin.ModelAdmin):
 	list_display = ['documento','cuenta','accion']
 	list_editable = ('cuenta','accion')
 	search_fields = ('documento__descripcion',)
+	actions = (export_as_excel,)
+	
 

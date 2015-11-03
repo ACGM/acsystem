@@ -77,7 +77,10 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 			SolOrdenDespacho.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
 
 			SolOrdenDespacho.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0
-			SolOrdenDespacho.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
+			
+			if solicitud['deudasPrestamos'] > 0:
+				SolOrdenDespacho.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] != None else 0
+				
 			SolOrdenDespacho.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
 			SolOrdenDespacho.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado'].replace(',','')) if solicitud['valorGarantizado'] != None else 0
 			SolOrdenDespacho.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))
@@ -94,6 +97,7 @@ class SolicitudOrdenDespachoView(LoginRequiredMixin, TemplateView):
 
 			SolOrdenDespacho.localidad = UserExtra.objects.get(usuario__username=request.user.username).localidad
 			SolOrdenDespacho.userLog = User.objects.get(username=request.user.username)
+			# SolOrdenDespacho.estatus = 'A'
 
 			SolOrdenDespacho.save()
 
@@ -197,6 +201,7 @@ class AprobarRechazarSolicitudesODView(LoginRequiredMixin, View):
 					maestra.valorGarantizado = oSolicitud.valorGarantizado
 					maestra.balance = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
 					maestra.userLog = request.user
+					maestra.factura = Factura.objects.get(noFactura=oSolicitud.factura) if oSolicitud.factura > 0 else None
 
 					maestra.save()
 

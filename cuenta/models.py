@@ -44,15 +44,15 @@ class Cuentas(models.Model):
         verbose_name_plural = 'Cuentas'
         ordering = ['codigo']
 
-    def save(self, *args, **kwargs):
-        if self.control:
-            cuentaControl = CuentasControl()
-            cuentaControl.codigoControl = self.codigo
-            cuentaControl.descripcion = self.descripcion
-            cuentaControl.save()
+  
+  # def save(self, *args, **kwargs):
+    #     if self.control:
+    #         cuentaControl = CuentasControl()
+    #         cuentaControl.codigoControl = self.codigo
+    #         cuentaControl.descripcion = self.descripcion
+    #         cuentaControl.save()
 
-        super(Cuentas, self).save(*args, **kwargs)
-
+    #     super(Cuentas, self).save(*args, **kwargs)
 
 # Auxiliares Contables
 # class Auxiliar(models.Model):
