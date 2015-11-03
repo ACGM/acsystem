@@ -359,7 +359,7 @@
           $scope.prestamos = $scope.prestamosSeleccionados;
           $scope.imprimirAhora = true;  
           $scope.prestamos.forEach(function (item) {
-            $scope.netoTotal += item.netoDesembolsar;
+            $scope.netoTotal += parseFloat(item.netoDesembolsar);
           });
         }
       }
