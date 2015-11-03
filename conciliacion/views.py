@@ -126,7 +126,7 @@ class SolicitudView(TemplateView):
             #         'credito': cta.credito
             #         }
             #     from cta in sol.cuentas.all()]
-            # }
+             }
             )
 
         return JsonResponse(data, safe=False)
