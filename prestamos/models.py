@@ -124,6 +124,10 @@ class SolicitudOrdenDespachoH(models.Model):
 		return self.suplidor.id
 
 	@property
+	def direccionSuplidor(self):
+		return self.suplidor.direccion
+
+	@property
 	def valorInteresOD(self):
 		return self.netoDesembolsar * (self.tasaInteresAnual/100)
 
