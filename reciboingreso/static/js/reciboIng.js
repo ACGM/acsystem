@@ -294,7 +294,7 @@
           			}else{
           				if($scope.reciboData.montoPrestamo != undefined){
           					if($scope.reciboData.montoPrestamo > $scope.totalPrest){
-          						throw "Monto a pagar es mayor a la deuda del prestamo".
+          						throw "Monto a pagar es mayor a la deuda del prestamo";
           					}
           				}else{
           					throw "Monto Prestamo no puede estar vacio";

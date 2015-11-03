@@ -16,6 +16,7 @@ class SolicitudCheque(models.Model):
     cxpOrden = models.PositiveIntegerField(null=True, blank=True)
     superOrden = models.PositiveIntegerField(null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
 
     def __unicode__(self):
         return '%i - %s' % (self.id, str(self.fecha))
@@ -29,7 +30,7 @@ class ConcCheques(models.Model):
     chequeNo = models.PositiveIntegerField(null=False, blank=False, verbose_name='# Cheque')
     fecha = models.DateField(null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
+    
 
     def __unicode__(self):
         return '%i-%s' % (self.chequeNo, self.id)
