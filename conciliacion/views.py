@@ -117,8 +117,17 @@ class SolicitudView(TemplateView):
                 'suplidor': sol.suplidor.nombre if sol.suplidor != None else '',
                 'concepto': sol.concepto,
                 'monto': sol.monto,
-                'estatus': sol.estatus,
-            })
+            #     'estatus': sol.estatus,
+            #     'cuentas': [{
+            #         'id': cta.id,
+            #         'codigoCta': cta.cuenta.codigo,
+            #         'cuenta': cta.cuenta.descripcion,
+            #         'debito': cta.debito,
+            #         'credito': cta.credito
+            #         }
+            #     from cta in sol.cuentas.all()]
+             }
+            )
 
         return JsonResponse(data, safe=False)
 

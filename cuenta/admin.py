@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cuentas, DiarioGeneral, CuentasControl
+from .models import Cuentas, DiarioGeneral, CuentasControl, BalanceCuenta
 
 
 @admin.register(Cuentas)
@@ -9,12 +9,6 @@ class CuentasAdmin(admin.ModelAdmin):
     search_fields = ("codigo", "descripcion", "origen",'tipo')
     list_editable = ('tipoSocio',)
     list_filter = ('tipoSocio',)
-
-
-# @admin.register(Auxiliar)
-# class AuxiliarAdmin(admin.ModelAdmin):
-#     list_display = ("codigo", "socio", "suplidor", "cuenta",)
-#     search_fields = ("codigo", "socio", "suplidor", "cuenta",)
 
 
 @admin.register(DiarioGeneral)
@@ -26,3 +20,8 @@ class DiarioAdmin(admin.ModelAdmin):
 class CuentasControlAdmin(admin.ModelAdmin):
     list_display = ("id", "codigoControl", "descripcion",)
     search_fields = ("codigoControl", "descripcion",)
+
+@admin.register(BalanceCuenta)
+class BalanceAdmin(admin.ModelAdmin):
+	list_display = ("id", "agno", "mes", "cuenta", "Balance")
+	search_fields = ("agno", "mes")
