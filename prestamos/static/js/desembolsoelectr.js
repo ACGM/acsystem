@@ -352,7 +352,12 @@
 
       //Imprimir Listado de Desembolsos
       $scope.imprimirListado = function($event) {
-        $window.print();
+        if($scope.imprimirAhora == true) {
+          $window.print();
+        } else {
+          $scope.prestamos = $scope.prestamosSeleccionados;
+          $scope.imprimirAhora = true;  
+        }
       }
 
       //Imprimir Recibido Conforme

@@ -75,6 +75,12 @@ class TablaAmortizacionView(LoginRequiredMixin, TemplateView):
 	template_name = 'tabla_amortizacion.html'
 
 
+#Vista para Estado de Cuenta
+class EstadoCuentaView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'estado_cuenta.html'
+
+
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
 
@@ -275,19 +281,24 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 
 			SolPrestamo.userLog = User.objects.get(username=request.user.username)
 
+			#Verificar para prestamos unificados
+			montoPrestamosUnificados = 0
+
+			for pu_valida in prestamosUnificados:
+				montoPrestamosUnificados += decimal.Decimal(pu_valida['balance'])
+			
+			if montoPrestamosUnificados > SolPrestamo.netoDesembolsar:
+				raise Exception('El monto de los prestamos a unificar no puede ser mayor al MONTO SOLICITADO.')
+
 			SolPrestamo.save()
 
 			#Guardar los prestamos a Unificar
-			montoPrestamosUnificados = 0
-
 			for pu in prestamosUnificados:
 				prestamoUnif = PrestamoUnificado()
 				prestamoUnif.solicitudPrestamo = SolPrestamo
 				prestamoUnif.prestamoUnificado =  MaestraPrestamo.objects.get(noPrestamo=pu['noPrestamo'])
 				prestamoUnif.capitalUnificado = pu['balance']
 				prestamoUnif.save()
-
-				montoPrestamosUnificados += decimal.Decimal(prestamoUnif.capitalUnificado)
 			#Fin Prestamos a Unificar
 
 			SolPrestamo.netoDesembolsar -= montoPrestamosUnificados
@@ -427,11 +438,22 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						maestra.tasaInteresPrestBaseAhorro = oSolicitud.interesBaseAhorroMensual
 						maestra.pagoPrestamoAnterior = 0
 						maestra.cantidadCuotas = oSolicitud.cantidadCuotas
-						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
-						maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
 						maestra.valorGarantizado = oSolicitud.prestacionesLaborales if oSolicitud.prestacionesLaborales > 0 else oSolicitud.valorGarantizado
 						maestra.valorAhorro = oSolicitud.ahorrosCapitalizados
-						maestra.balance = oSolicitud.netoDesembolsar
+						maestra.montoCuotaQ1 = oSolicitud.valorCuotasCapital
+
+						if oSolicitud.categoriaPrestamo.descripcion[:6] == 'AVANCE':
+							tipo = oSolicitud.categoriaPrestamo.descripcion.split(' ')[1][:3]
+							tipo = 'RG' if tipo == 'REG' else tipo[:2]
+
+							maestra.balance = oSolicitud.netoDesembolsar + (oSolicitud.netoDesembolsar * (oSolicitud.tasaInteresAnual/100))
+							maestra.montoCuotaQ1 = maestra.balance
+
+							maestra.tipoPrestamoNomina = tipo
+						else:
+							maestra.balance = oSolicitud.netoDesembolsar
+							maestra.montoCuotaQ2 = oSolicitud.valorCuotasCapital
+
 						maestra.userLog = request.user
 
 						maestra.save()
@@ -439,7 +461,6 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 						#Guardar No. de Prestamo en la Solicitud
 						oSolicitud.prestamo = maestra.noPrestamo
 						oSolicitud.save()
-
 
 					#Para cuando existe(n) Prestamo(s) Unificado(s)
 					try:
@@ -449,9 +470,10 @@ class AprobarRechazarSolicitudesPrestamosView(LoginRequiredMixin, View):
 							if oSolicitud.estatus == 'A':
 
 								prestamo = MaestraPrestamo.objects.get(noPrestamo=p.prestamoUnificado.noPrestamo)
-								prestamo.estatus = 'S'
+								# Estas lineas fueron sustituidas por el metodo de pagoCuota
 								# prestamo.balance = 0
-								prestamo.save()
+								# prestamo.estatus = 'S'
+								# prestamo.save()
 
 								# Aplicar saldo de prestado unificado -- NCPU = Nota de Credito Prestamo Unificado
 								guardarPagoCuotaPrestamo(self, p.prestamoUnificado.noPrestamo, prestamo.balance, 0, 0,'{0}{1}'.format('NCPU', p.prestamoUnificado.id), 'NC')
@@ -639,13 +661,95 @@ class PostearNotaCreditoView(LoginRequiredMixin, View):
 #	2-valorCapital: es el monto del capital en formato string, pero sin coma
 #	3-valorInteres: es el monto del interes garantizado en formato string, pero sin coma
 #	4-valorInteresAh: es el monto del interes en base ahorrado en formato string, pero sin coma
-#	5-docReferencia: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
-#														ND - Nota de Debito,
-#														NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
+#	5-docReferencia: es el documento de referencia que afecta al prestamo, se especifican las 4 letras del documento de la tabla TipoDocumento.
+#		Por ej: NDCT - Nota de Credito
+#				NOMP - Nomina de Descuentos Prestamos
+#	6-tipoDoc: es el tipo de Documento, por ej: 	NC - Nota de Credito, 
+#													ND - Nota de Debito,
+#													NM - Nomina, RI - Recibo de Ingreso, AH - Ahorros 
 def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
 	#Obtener el prestamo como tal
 	prestamo = MaestraPrestamo.objects.get(noPrestamo=noPrestamo)
+
+	# NC = Nota de Credito   ---- RI = Recibo Ingreso
+	# AH = Descontar desde ahorro para pagar capital a prestamo.
+	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(valorCapital), docReferencia, tipoDoc)
+
+	# Nomina de descuentos
+	if tipoDoc == 'NM':
+		validaPagoPrestamo(self, prestamo, decimal.Decimal(valorCapital), docReferencia, tipoDoc)
+
+        prestamo.valorAhorro = prestamo.valorAhorro - valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - valorInteresAh >= 0 else 0
+        prestamo.valorGarantizado = prestamo.valorGarantizado - valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - valorInteres >= 0 else 0
+        
+        prestamo.save()
+	
+	# Nota de Debito
+	if tipoDoc == 'ND':
+		prestamo.balance = prestamo.balance + decimal.Decimal(valorCapital)
+		prestamo.save()
+		
+		#Guardar la cuota
+		ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipodoc)
+	
+
+# Metodo para validar si el pago del prestamo es completo
+# Tambien es utilizado para rebajar el balance
+def validaPagoPrestamo(self, Prestamo, montoAbono, docReferencia, tipodoc):
+
+	if Prestamo.balance - montoAbono < 0:
+		raise Exception('El monto del abono al prestamo es mayor que el balance a la fecha.')
+
+	else:
+		while montoAbono > 0:
+
+			#Calcular el interes Garantizado y de Base Ahorro
+			if tipodoc != 'NM':
+				valorInteresG = 0
+				valorInteresA = 0
+			else:
+				monto = Prestamo.balance
+				ahorrado = Prestamo.valorAhorro
+				garantia = Prestamo.valorGarantizado
+
+				porcentajeCuotaAhorro = ahorrado / monto if ahorrado > 0 else 0
+				porcentajeCuotaGarantizado = garantia / monto if garantia > 0 else 0
+			#Fin calculo interes
+
+			if Prestamo.montoCuotaQ1 >= 0:
+				if montoAbono >= Prestamo.montoCuotaQ1:
+					Prestamo.balance -= Prestamo.montoCuotaQ1
+					montoAbono -= Prestamo.montoCuotaQ1
+
+					cuotaAh = Prestamo.montoCuotaQ1 * (porcentajeCuotaAhorro/100)
+					cuotaGr = Prestamo.montoCuotaQ1 * (porcentajeCuotaGarantizado/100)
+					
+					valorInteresG = 0#Prestamo.valorInteres
+					valorInteresA = 0#Prestamo.valorInteresAh
+
+					Prestamo.save()
+					ejecutaPagoCuota(self, Prestamo, Prestamo.montoCuotaQ1, valorInteresG, valorInteresA, \
+						docReferencia, tipodoc)
+
+
+			if Prestamo.montoCuotaQ2 >= 0:
+				if montoAbono >= Prestamo.montoCuotaQ2:
+					Prestamo.balance -= Prestamo.montoCuotaQ2
+					montoAbono -= Prestamo.montoCuotaQ2
+					Prestamo.save()
+					ejecutaPagoCuota(self, Prestamo, Prestamo.montoCuotaQ1, Prestamo.valorInteres, Prestamo.valorInteresAh, \
+						docReferencia, tipodoc)
+		
+		if Prestamo.balance == 0:
+			Prestamo.estatus = 'S'
+
+		Prestamo.save()
+
+
+#Guardar una cuota de Prestamo
+def ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipoDoc):
 
 	cuota = PagoCuotasPrestamo()
 	cuota.noPrestamo = prestamo
@@ -657,20 +761,35 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	cuota.tipoPago = tipoDoc
 	cuota.save()
 
-	# NC = Nota de Credito   ---- RI = Recibo Ingreso
-	# AH = Descontar desde ahorro para pagar capital a prestamo.
-	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
-		prestamo.balance = prestamo.balance - decimal.Decimal(cuota.valorCapital)
-		prestamo.save()
 
-	# Nota de Debito
-	if tipoDoc == 'ND':
-		prestamo.balance = prestamo.balance + decimal.Decimal(cuota.valorCapital)
-		prestamo.save()
+# Estado de Cuenta del Socio
+class EstadoCuentaBySocio(LoginRequiredMixin, DetailView):
 
-	# Nomina de descuentos
-	if tipoDoc == 'NM':
-		prestamo.balance = prestamo.balance - cuota.valorCapital
-        prestamo.valorAhorro = prestamo.valorAhorro - cuota.valorInteresAh if prestamo.valorAhorro > 0 and prestamo.valorAhorro - cuota.valorInteresAh >= 0 else 0
-        prestamo.valorGarantizado = prestamo.valorGarantizado - cuota.valorInteres if prestamo.valorGarantizado > 0 and prestamo.valorGarantizado - cuota.valorInteres >= 0 else 0
-        prestamo.save()
+	queryset = Socio.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		codigoSocio = self.request.GET.get('codigo')
+
+		self.object_list = self.get_queryset().filter(codigo=codigoSocio)
+
+		return self.json_to_response()
+
+	def json_to_response(self):
+		data = list()
+
+
+		for registro in self.object_list:
+			data.append({
+				'cuotaAhorroQ1': registro.cuotaAhorroQ1,
+				'cuotaAhorroQ2': registro.cuotaAhorroQ2,
+				'nombreCompleto': registro.nombreCompleto,
+				'departamento': registro.departamento.descripcion,
+				'prestamos': [ 
+					{	'noPrestamo': p.noPrestamo,
+						'balance': p.balance,
+						'estatus': p.estatus,
+					} 
+					for p in MaestraPrestamo.objects.filter(socio__codigo=registro.codigo)],
+				})
+
+		return JsonResponse(data, safe=False)
