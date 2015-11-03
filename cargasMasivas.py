@@ -140,6 +140,35 @@ for line in f:
 	suplidor.save()
 f.close()
 
+import decimal
+f = open('Balanza.csv','r')
+for line in f:
+	line = line.split(',')
+	balance = BalanceCuenta()
+	balance.agno = 2015
+	balance.mes =10
+	balance.cuenta = Cuentas.objects.get(codigo=line[0])
+	balance.Balance = decimal.Decimal(line[1])
+	balance.save()
+f.close()
+
+import decimal
+import datetime
+f = open('diario.csv','r')
+for line in f:
+	line = line.split(',')
+	diario = DiarioGeneral()
+	diario.fecha = datetime.now()
+	diario.cuenta = Cuentas.objects.get(codigo=line[0])
+	diario.referencia = line[1]
+	diario.estatus ='P'
+	diario.debito = decimal.Decimal(line[2])
+	diario.credito = decimal.Decimal(line[3])
+	diario.save()
+
+f.close()
+
+
 #CARGA DE SOCIOS
 f = open('Socios.csv', 'r')
 for line in f:

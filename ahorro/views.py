@@ -40,6 +40,44 @@ def setCuentaMaestra(self, idMaestra, doc, fecha, ref):
     return diario.id
 
 
+def disponibleUpd(self, CodSocio):
+    regSocio = AhorroSocio.objects.get(socio__codigo = CodSocio)
+    prestamo = getBalancesPrestamos(self,str(CodSocio))
+
+    disponible = regSocio.balance - prestamo
+
+    if disponible <= 0:
+        disponible = 0
+
+    regSocio.disponible = disponible
+    regSocio.save()
+    return HttpResponse('Ok')
+
+
+def setCuentaMaestraRetiros(self, idMaestra, doc, fecha, ref):
+    regMaestra = MaestraAhorro.objects.get(id= idMaestra)
+    cuenta = Cuentas.objects.get(codigo=doc.cuenta.codigo)
+
+    diario = DiarioGeneral()
+    diario.fecha = fecha
+    diario.referencia = str(ref)+'-'+ str(idMaestra)
+    diario.cuenta = cuenta
+    diario.estatus = 'P'
+
+    if doc.accion == 'D':
+        diario.debito = regMaestra.monto
+        diario.credito = 0
+    else:
+        diario.debito = 0
+        diario.credito = regMaestra.monto / 2
+
+    diario.save()
+
+
+    regMaestra.cuentas.add(diario)
+    return diario.id
+
+
 def insMaestra(self, CodSocio, Fecha, Monto):
     regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)
     regInteres = InteresesAhorro.objects.get(id=1)
@@ -52,8 +90,14 @@ def insMaestra(self, CodSocio, Fecha, Monto):
     regMaestra.save()
     prestamo = getBalancesPrestamos(self,str(CodSocio))
     ahorro = AhorroSocio.objects.get(codigo=CodSocio)
+
+    disponible = (ahorro.balance + Monto) - prestamo
+
+    if disponible > 0:
+        disponible = 0
+
     ahorro.balance = ahorro.balance + Monto
-    ahorro.disponible = ahorro.disponible + Monto
+    ahorro.disponible = disponible
     ahorro.save()
 
     if regSocio.socio.estatus == 'S':
@@ -196,7 +240,7 @@ class DocumentosAhorro(DetailView):
             regDocumentos = DocumentoCuentas.objects.filter(documento=regtipo)
 
             for doc in regDocumentos:
-                setCuentaMaestra(self, regMaestra.id, doc, regMaestra.fecha, ref)
+                setCuentaMaestraRetiros(self, regMaestra.id, doc, regMaestra.fecha, ref)
 
         else: 
             regMaestra.estatus = 'I'

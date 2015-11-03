@@ -125,14 +125,17 @@
 			}
 
 
-	        $scope.cancelarReg = function($event){
+	        $scope.cancelarReg = function($event){ 
 	        	$scope.reciboData = {}
 				$scope.reciboLista = [];
 				$scope.prestamosS = [];
+				$scope.socioNombre = null;
+				$scope.montoInicial = null;
 				$scope.reciboLst = true;
 				$scope.reciboCr = false;
 				$scope.tableSocio = false;
 				$scope.tablePrest =  false;
+				$scope.totalPrest = null;
 				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 				$scope.getList();
 	        }
@@ -181,7 +184,7 @@
 	            $event.preventDefault();
 
 	            $scope.tableSocio = true;
-	            $scope.tableSuplidor = false;
+	            $scope.tablePrest = false;
 
 	            if($scope.socioNombre !== undefined) {
 	                $scope.socios = $scope.todosLosSocios.filter(function (registro) {
@@ -214,7 +217,8 @@
 	       		$event.preventDefault();
 
 	       		$scope.reciboData.NoPrestamo=x.noPrestamo;
-	            $scope.montoInicial = x.montoInicial;
+	            $scope.montoInicial = x.balance;
+	            $scope.totalPrest = x.balance;
 
 	            $scope.tablePrest = false;
 	          };
@@ -229,14 +233,15 @@
 	          };
 
 	        $scope.getPrestamosSocio = function($event){
-
+	        	$scope.tableSocio = false;
+				$scope.tablePrest =  true;
+	        	
 	        	MaestraPrestamoService.PrestamosbySocio($scope.reciboData.socio).then(function (data){
 	        		$scope.prestamosS = data.filter(function (reg){
 	        			console.log(reg);
 		        			return reg.estatus != "S"
 		        		});
 		        	});
-		        	$scope.tablePrest = true;
 		        	}
 
 	        $rootScope.mostrarError = function(error) {
@@ -270,6 +275,7 @@
 	        $scope.setRecibo = function($event){
 	        	$event.preventDefault();
 	        	
+          		try{
 
 	  	        	var RegFecha = $scope.fecha.split('/');
           			var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
@@ -285,13 +291,21 @@
 
           			if ($scope.reciboData.NoPrestamo == undefined){
           				$scope.reciboData.NoPrestamo = null;
+          			}else{
+          				if($scope.reciboData.montoPrestamo != undefined){
+          					if($scope.reciboData.montoPrestamo > $scope.totalPrest){
+          						throw "Monto a pagar es mayor a la deuda del prestamo".
+          					}
+          				}else{
+          					throw "Monto Prestamo no puede estar vacio";
+          				}
           			};
 
           			if($scope.reciboData.montoAhorro == undefined){
           				$scope.reciboData.montoAhorro = null;
           			};
 
-          		try{
+
           			reciboIngServices.setRecibo($scope.reciboData).then(function (data){
           				$scope.cancelarReg($event);
           			 	$scope.getList();

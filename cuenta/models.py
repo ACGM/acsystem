@@ -29,7 +29,7 @@ class Cuentas(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
     origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
     tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name="Tipo Cuenta")
-    nivel = models.CharField(max_length=1, choices=nivel_choices, verbose_name="Nivel de cuenta")
+    # nivel = models.CharField(max_length=1, choices=nivel_choices, verbose_name="Nivel de cuenta")
     #Para Identificar si es una cuenta Control
     control = models.BooleanField(default=False)
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
@@ -75,7 +75,7 @@ class DiarioGeneral(models.Model):
     estatus_choicer = (('P', 'Posteada'), ('R', 'Registrada'), ('C', 'Cancelada'))
 
     fecha = models.DateField()
-    cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=True, blank=True)
+    cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=False, blank=False)
     referencia = models.CharField("Ref", max_length=30, blank=False, null=False)
     # auxiliar = models.ForeignKey(Auxiliar, verbose_name="Aux", null=True, blank=True)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
@@ -88,4 +88,16 @@ class DiarioGeneral(models.Model):
 
     class Meta:
         ordering = ['fecha']
+
+class BalanceCuenta(models.Model):
+    agno = models.PositiveIntegerField(verbose_name="Año Registro", null=False, blank=False)
+    mes = models.PositiveIntegerField(verbose_name="Mes", null=False, blank=False)
+    cuenta = models.ForeignKey(Cuentas, verbose_name="Cuenta", null=False, blank=False)
+    Balance = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Balance", default=0)
+
+    def __unicode__(self):
+        return '%s-%s-%s' % (str(self.agno), str(self.mes), str(self.cuenta.codigo))
+
+    class Meta:
+        ordering = ['agno','mes']
 
