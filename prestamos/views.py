@@ -75,6 +75,12 @@ class TablaAmortizacionView(LoginRequiredMixin, TemplateView):
 	template_name = 'tabla_amortizacion.html'
 
 
+#Vista para Estado de Cuenta
+class EstadoCuentaView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'estado_cuenta.html'
+
+
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
 
@@ -754,3 +760,36 @@ def ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh,
 	cuota.docRef = docReferencia
 	cuota.tipoPago = tipoDoc
 	cuota.save()
+
+
+# Estado de Cuenta del Socio
+class EstadoCuentaBySocio(LoginRequiredMixin, DetailView):
+
+	queryset = Socio.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		codigoSocio = self.request.GET.get('codigo')
+
+		self.object_list = self.get_queryset().filter(codigo=codigoSocio)
+
+		return self.json_to_response()
+
+	def json_to_response(self):
+		data = list()
+
+
+		for registro in self.object_list:
+			data.append({
+				'cuotaAhorroQ1': registro.cuotaAhorroQ1,
+				'cuotaAhorroQ2': registro.cuotaAhorroQ2,
+				'nombreCompleto': registro.nombreCompleto,
+				'departamento': registro.departamento.descripcion,
+				'prestamos': [ 
+					{	'noPrestamo': p.noPrestamo,
+						'balance': p.balance,
+						'estatus': p.estatus,
+					} 
+					for p in MaestraPrestamo.objects.filter(socio__codigo=registro.codigo)],
+				})
+
+		return JsonResponse(data, safe=False)

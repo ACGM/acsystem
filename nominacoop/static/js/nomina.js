@@ -798,6 +798,13 @@
           $scope.verificarExistenciaNomina('PRESTAMOS');
 
           MaestraPrestamoService.PrestamosPosteados(tipoPrestamoNom).then(function (data) {
+            $scope.gPrestamosSocios = 0;
+            $scope.gPrestamosEmpleados = 0;
+            $scope.gOrdenesSocios = 0;
+            $scope.gOrdenesEmpleados = 0;
+            $scope.gInteresPrestSocios = 0;
+            $scope.gInteresPrestEmpleados = 0;
+            
             var fecha = $scope.fechaNomina.split('/');
             var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
 
@@ -1321,7 +1328,7 @@
         $scope.totalCredito = 0.00;
 
         $scope.desgloseCuentas.forEach(function (documento) {
-          console.log(documento)
+          console.log(documento);
           console.log('***************************');
           // console.log(documento.debito);
           // console.log(documento.credito);

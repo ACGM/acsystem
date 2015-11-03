@@ -1,0 +1,74 @@
+
+{% extends "base.html" %}
+
+{% block title %} Estado de Cuenta {% endblock title %}
+
+{% block content %}
+	<div class="distribucion-intereses" ng-controller="EstadoCuentaCtrl">
+		<h1>ESTADO DE CUENTA</h1>
+
+		<form name="EstadoCuentaForm" novalidate>
+			<div>
+				<table class="table-orden-factura">
+					<tr>
+						<td colspan="4"> <span>DATOS DEL SOCIO</span></td>
+					</tr>
+					<tr>
+						<td>Codigo</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoSolicitar"></td>
+					</tr>
+					<tr>
+						<td>Nombre</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoAhorrado"></td>
+					</tr>
+					<tr>
+						<td>Departamento</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.tasaInteresGarantizado"></td>
+					</tr>
+					<tr>
+						<td>Monto Cuota Capital</td>
+						<td>
+							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
+						</td>
+						<td>Cantidad Cuotas</td>
+						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas"></td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="botones-acciones-distribucion-intereses">
+				<button class="Boton boton-aprobar-sp" ng-click="calcularAmortizacion()">Visualizar</button>
+			</div>
+
+			<section>
+				<table class="listado-table">
+					<tr class="listado-table-header">
+						<td>Fecha</td>
+						<td>Capital</td>
+						<td>Ahorrado</td>
+						<td>Garantizado</td>
+						<td>Interes B. Ahorro</td>
+						<td>Interes Garan.</td>
+						<td>Interes TOTAL</td>
+						<td>Cuota</td>
+						<td>Balance</td>
+					</tr>
+					<tr ng-repeat="reg in registros" class="listado-entrada-inventario-detail">
+						<td>[[reg.fecha | date : 'dd/MM/yyyy']]</td>
+						<td>[[reg.capital | number : 2 ]]</td>
+						<td>[[reg.ahorrado | number : 2]]</td>
+						<td>[[reg.garantia | number : 2]]</td>
+						<td>[[reg.IA | number : 2]]</td>
+						<td>[[reg.IG | number : 2]]</td>
+						<td>[[reg.totalInteres | number : 2]]</td>
+						<td>[[reg.cuota | number : 2]]</td>
+						<td>[[reg.balance | number : 2]]</td>
+					</tr>
+				</table>
+			</section>
+			
+		</form>
+		
+	</div>
+
+{% endblock content %}
