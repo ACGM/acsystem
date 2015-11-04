@@ -37,6 +37,7 @@
 						<tr class="listado-table-header">
 							<!-- <td class="align-center"><input type="checkbox" ng-model="regAll" ng-click="seleccionAll()"></td> -->
 							<td class="align-center">Estatus</td>
+							<td>Fecha</td>
 							<td>Prestamo</td>
 							<td>Sol.</td>
 							<td>Factura</td>
@@ -55,6 +56,7 @@
 							</td> -->
 							
 							<td class="[[prestamo.estatus | OpenCloseMP]] posteo-[[prestamo.estatus]] align-center"></td>
+							<td>[[prestamo.fechaAprobacion | date: 'dd/MM/yyyy']]</td>
 							<td>
 								<a class="prestamo-field-detalle" href="#" ng-click="PrestamoFullById($event, prestamo.noPrestamo)">[[prestamo.noPrestamo | numberFixedLen : 8]]</a>
 							</td>

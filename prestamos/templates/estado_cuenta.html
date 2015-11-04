@@ -9,61 +9,70 @@
 
 		<form name="EstadoCuentaForm" novalidate>
 			<div>
-				<table class="table-orden-factura">
+				<table class="table-estado-cuenta">
 					<tr>
-						<td colspan="4"> <span>DATOS DEL SOCIO</span></td>
+						<td colspan="4"> <span> <h4>DATOS DEL SOCIO</h4></span></td>
 					</tr>
 					<tr>
 						<td>Codigo</td>
-						<td><input type="text" class="resaltar-valor align-right" ng-model="codigoSocio"></td>
-						<td><a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getData($event);"></a></td>
+						<td>
+							<input type="text" class="resaltar-valor align-right" ng-model="codigoSocio">
+							<a class="icon-uniE601 icon-buscar" href="#" ng-click="datos.codigoEmpleado = ''; getData($event);"></a>
+						</td>
 					</tr>
 					<tr>
 						<td>Nombre</td>
-						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.montoAhorrado"></td>
+						<td><input type="text" class="prestamo-categoria-field-t resaltar-valor verde" ng-model="datos.nombreCompleto"></td>
+						<td>Fecha Ingreso Cia.</td>
+						<td><input type="text"></td>
 					</tr>
 					<tr>
 						<td>Departamento</td>
-						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.tasaInteresGarantizado"></td>
+						<td><input type="text" class="prestamo-categoria-field-t resaltar-valor verde" ng-model="datos.departamento"></td>
+						<td>Fecha Ingreso Coop.</td>
+						<td><input type="text"></td>
 					</tr>
 					<tr>
-						<td>Monto Cuota Capital</td>
+						<td>Ahorros</td>
+						<td>
+							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
+							Fecha Ultimo Ahorro
+							<input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas">
+						</td>
+					</tr>
+					<tr>
+						<td>Prestamos</td>
 						<td>
 							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
 						</td>
-						<td>Cantidad Cuotas</td>
-						<td><input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas"></td>
 					</tr>
 				</table>
 			</div>
 
-			<div class="botones-acciones-distribucion-intereses">
+			<!-- <div class="botones-acciones-distribucion-intereses">
 				<button class="Boton boton-aprobar-sp" ng-click="calcularAmortizacion()">Visualizar</button>
-			</div>
+			</div> -->
 
 			<section>
+				<h4>PRESTAMOS</h4>
 				<table class="listado-table">
 					<tr class="listado-table-header">
-						<td>Fecha</td>
-						<td>Capital</td>
-						<td>Ahorrado</td>
-						<td>Garantizado</td>
-						<td>Interes B. Ahorro</td>
-						<td>Interes Garan.</td>
-						<td>Interes TOTAL</td>
-						<td>Cuota</td>
+						<td>Numero</td>
+						<td>Monto</td>
+						<td>Emision</td>
+						<td>Vence</td>
+						<td>Para el 75%</td>
+						<td>Categoria</td>
 						<td>Balance</td>
 					</tr>
-					<tr ng-repeat="reg in registros" class="listado-entrada-inventario-detail">
-						<td>[[reg.fecha | date : 'dd/MM/yyyy']]</td>
-						<td>[[reg.capital | number : 2 ]]</td>
-						<td>[[reg.ahorrado | number : 2]]</td>
-						<td>[[reg.garantia | number : 2]]</td>
-						<td>[[reg.IA | number : 2]]</td>
-						<td>[[reg.IG | number : 2]]</td>
-						<td>[[reg.totalInteres | number : 2]]</td>
-						<td>[[reg.cuota | number : 2]]</td>
-						<td>[[reg.balance | number : 2]]</td>
+					<tr ng-repeat="prestamo in prestamos" class="listado-entrada-inventario-detail">
+						<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
+						<td>[[prestamo.montoInicial | number : 2 ]]</td>
+						<td>[[prestamo.fechaAprobacion | date : 'dd/MM/yyyy']]</td>
+						<td>[[prestamo.fechaVencimiento | date : 'dd/MM/yyyy']]</td>
+						<td>00000</td>
+						<td>[[prestamo.categoriaPrestamo]]</td>
+						<td>[[prestamo.balance | number : 2]]</td>
 					</tr>
 				</table>
 			</section>

@@ -621,7 +621,8 @@
             }
           });
 
-          alert('Los registros fueron posteados con exito!');
+          $scope.toggleInfo();
+          // alert('Los registros fueron posteados con exito!');
 
         } catch (e) {
           alert(e);
@@ -880,7 +881,11 @@
         try {
           MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
             console.log(data);
-
+            $scope.datos = data[0];
+            
+            MaestraPrestamoService.PrestamosbySocio($scope.codigoSocio).then(function (data) {
+              $scope.prestamos = data;
+            })
           });
 
 
