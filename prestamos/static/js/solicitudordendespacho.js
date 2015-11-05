@@ -923,13 +923,18 @@
       //Guardar detalle de solicitud (articulos)
       $scope.guardarDetalleSolicitud = function() {
         if($scope.ArticulosODForm) {
-          SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
-            if(data == 1) {
-              alert('Se guardó perfectamente!');
-            } else {
-              $scope.mostrarError(data);
-            }
-          });
+
+          if($scope.totalGeneralArticulos == $scope.solicitud.montoSolicitado) {
+            SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
+              if(data == 1) {
+                alert('Se guardó perfectamente!');
+              } else {
+                $scope.mostrarError(data);
+              }
+            });
+          } else {
+            alert('El monto total de articulos no puede ser distinto al monto solicitado.');
+          }
         }
       }
 

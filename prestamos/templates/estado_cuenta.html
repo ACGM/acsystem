@@ -16,7 +16,7 @@
 					<tr>
 						<td>Codigo</td>
 						<td>
-							<input type="text" class="resaltar-valor align-right" ng-model="codigoSocio">
+							<input type="text" class="resaltar-valor align-right" ng-model="codigoSocio" autocomplete="on">
 							<a class="icon-uniE601 icon-buscar" href="#" ng-click="datos.codigoEmpleado = ''; getData($event);"></a>
 						</td>
 					</tr>
@@ -24,26 +24,26 @@
 						<td>Nombre</td>
 						<td><input type="text" class="prestamo-categoria-field-t resaltar-valor verde" ng-model="datos.nombreCompleto"></td>
 						<td>Fecha Ingreso Cia.</td>
-						<td><input type="text"></td>
+						<td><input type="text" class="prestamo-prestamo-field-t" ng-model="datos.fechaIngresoEmpresa"></td>
 					</tr>
 					<tr>
 						<td>Departamento</td>
 						<td><input type="text" class="prestamo-categoria-field-t resaltar-valor verde" ng-model="datos.departamento"></td>
 						<td>Fecha Ingreso Coop.</td>
-						<td><input type="text"></td>
+						<td><input type="text" class="prestamo-prestamo-field-t" ng-model="datos.fechaIngresoCoop"></td>
 					</tr>
 					<tr>
 						<td>Ahorros</td>
 						<td>
-							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
+							<input type="text" class="resaltar-valor align-right" ng-model="ahorroTotal" readonly>
 							Fecha Ultimo Ahorro
-							<input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas">
+							<input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas" readonly>
 						</td>
 					</tr>
 					<tr>
 						<td>Prestamos</td>
 						<td>
-							<input type="text" class="resaltar-valor align-right" ng-model="ta.montoCuotaCapital" readonly>
+							<input type="text" class="resaltar-valor align-right" ng-model="prestamosTotal" readonly>
 						</td>
 					</tr>
 				</table>
@@ -67,12 +67,12 @@
 					</tr>
 					<tr ng-repeat="prestamo in prestamos" class="listado-entrada-inventario-detail">
 						<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
-						<td>[[prestamo.montoInicial | number : 2 ]]</td>
+						<td class="align-right">[[prestamo.montoInicial | number : 2 ]]</td>
 						<td>[[prestamo.fechaAprobacion | date : 'dd/MM/yyyy']]</td>
 						<td>[[prestamo.fechaVencimiento | date : 'dd/MM/yyyy']]</td>
-						<td>00000</td>
+						<td class="align-right">[[(prestamo.montoInicial * 75)/100 | number : 2]]</td>
 						<td>[[prestamo.categoriaPrestamo]]</td>
-						<td>[[prestamo.balance | number : 2]]</td>
+						<td class="align-right resaltar-valor">[[prestamo.balance | number : 2]]</td>
 					</tr>
 				</table>
 			</section>
