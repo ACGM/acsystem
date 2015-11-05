@@ -784,6 +784,8 @@ class EstadoCuentaBySocio(LoginRequiredMixin, DetailView):
 				'cuotaAhorroQ2': registro.cuotaAhorroQ2,
 				'nombreCompleto': registro.nombreCompleto,
 				'departamento': registro.departamento.descripcion,
+				'fechaIngresoCoop': registro.fechaIngresoCoop,
+				'fechaIngresoEmpresa': registro.fechaIngresoEmpresa,
 				'prestamos': [ 
 					{	'noPrestamo': p.noPrestamo,
 						'balance': p.balance,

@@ -498,11 +498,11 @@
 
       //Monto Neto a Desembolsar
       $scope.montoNeto = function() {
-        var montoSolicitado = $scope.solicitud.montoSolicitado != undefined && $scope.solicitud.montoSolicitado != ''? parseFloat($scope.solicitud.montoSolicitado.replace(',','')) : 0;
-        var ahorros = $scope.solicitud.ahorrosCapitalizados != undefined && $scope.solicitud.ahorrosCapitalizados != ''? parseFloat($scope.solicitud.ahorrosCapitalizados.replace(',','')) : 0;
-        var deudas = $scope.solicitud.deudasPrestamos != undefined && $scope.solicitud.deudasPrestamos != ''? parseFloat($scope.solicitud.deudasPrestamos.replace(',','')) : 0;
-        var garantizado = $scope.solicitud.valorGarantizado != undefined && $scope.solicitud.valorGarantizado != ''? parseFloat($scope.solicitud.valorGarantizado.replace(',','')) : 0;
-        var prestaciones = $scope.solicitud.prestacionesLaborales != undefined && $scope.solicitud.prestacionesLaborales != ''? parseFloat($scope.solicitud.prestacionesLaborales.replace(',','')) : 0;
+        var montoSolicitado = $scope.solicitud.montoSolicitado != undefined && $scope.solicitud.montoSolicitado != ''? parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')) : 0;
+        var ahorros = $scope.solicitud.ahorrosCapitalizados != undefined && $scope.solicitud.ahorrosCapitalizados != ''? parseFloat($scope.solicitud.ahorrosCapitalizados.replaceAll(',','')) : 0;
+        var deudas = $scope.solicitud.deudasPrestamos != undefined && $scope.solicitud.deudasPrestamos != ''? parseFloat($scope.solicitud.deudasPrestamos.replaceAll(',','')) : 0;
+        var garantizado = $scope.solicitud.valorGarantizado != undefined && $scope.solicitud.valorGarantizado != ''? parseFloat($scope.solicitud.valorGarantizado.replaceAll(',','')) : 0;
+        var prestaciones = $scope.solicitud.prestacionesLaborales != undefined && $scope.solicitud.prestacionesLaborales != ''? parseFloat($scope.solicitud.prestacionesLaborales.replaceAll(',','')) : 0;
 
         var disponible = ahorros + garantizado + prestaciones - deudas;
         $scope.solicitud.montoDisponible = $filter('number')(disponible,2);
@@ -1022,6 +1022,16 @@
       $scope.ImprimirSolicitud = function(solicitud) {
         $window.sessionStorage['solicitudP'] = JSON.stringify(solicitud);
         $window.open('/prestamos/print/solicitudP/', target='_blank'); 
+      }
+
+      //Completar Garantizado de Prestaciones con un click
+      $scope.completarConPrestaciones = function($event) {
+        $event.preventDefault();
+
+        if($scope.solicitud.netoDesembolsar.length == 0) {
+          $scope.solicitud.prestacionesLaborales = $filter('number') (parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')) - parseFloat($scope.solicitud.ahorrosCapitalizados.replaceAll(',','')), 2);
+          $scope.montoNeto();
+        }
       }
 
     }])

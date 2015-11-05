@@ -871,8 +871,8 @@
     //****************************************************
     //ESTADO DE CUENTA SOCIO                             *
     //****************************************************
-    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService',
-                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService) {
+    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'AhorroServices',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, AhorroServices) {
       
 
       $scope.getData = function($event) {
@@ -883,10 +883,32 @@
             console.log(data);
             $scope.datos = data[0];
             
+            //Traer todos los prestamos activos.
             MaestraPrestamoService.PrestamosbySocio($scope.codigoSocio).then(function (data) {
               $scope.prestamos = data;
-            })
+            });
+
+            //Traer el ahorro capitalizado del socio
+            AhorroServices.getAhorroSocio($scope.codigoSocio).then(function (data) {
+              if(data.length > 0) {
+                $scope.ahorroTotal = $filter('number')(data[0]['balance'], 2);
+              } else {
+                $scope.ahorroTotal = 0;
+              }
+            });
+
+            //Traer el balance de deudas (prestamos) del socio
+            MaestraPrestamoService.prestamosBalanceByCodigoSocio($scope.codigoSocio).then(function (data) {
+
+              if(data.length > 0) {
+                $scope.prestamosTotal = $filter('number')(data[0]['balance'], 2);
+              } else {
+                $scope.prestamosTotal = 0;
+              }
+            });
+
           });
+
 
 
         } catch(e) {
