@@ -138,9 +138,11 @@ class generaNominaView(View):
                 cuotaPrestamo = 0
 
                 try:
-                    prestamos = CuotasPrestamosEmpresa.objects.get(socio=empleado.socio, estatus='P')
+                    prestamos = CuotasPrestamosEmpresa.objects.filter(socio=empleado.socio, estatus='P')
 
-                    cuotaPrestamo = prestamos.montoTotal
+                    for p in prestamos:
+                        cuotaPrestamo += p.montoTotal
+
                 except CuotasPrestamosEmpresa.DoesNotExist:
                     cuotaPrestamo = 0
 

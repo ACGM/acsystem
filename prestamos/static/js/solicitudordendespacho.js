@@ -473,9 +473,15 @@
 
         if($scope.solicitante.codigoEmpleado != undefined) {
           
-          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
-            return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-          });
+        if(!isNaN($scope.solicitante.codigoEmpleado)) {
+            $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
+            });  
+          } else {
+            $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+              return registro.nombreCompleto.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado.toUpperCase();
+            });  
+          }
           
           if($scope.socios.length > 0){
             $scope.tableSocio = true;
