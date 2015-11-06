@@ -45,7 +45,7 @@ from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guard
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres, DocumentosAhorro,historicoAHView
 from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
-from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud
+from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud, cxpImpGeneral
 
 from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos, ActDepresiados
 
@@ -344,6 +344,7 @@ urlpatterns = patterns('',
     url(r'^cxp/superOrden/$', cxpSuperView.as_view(), name='cxp_Super'),
     url(r'^cxp/solicitud/supercoop/$', CxpSuperSolicitud.as_view(), name='Solicitud_Cheques_super'),
     url(r'^cxp/solicitud/ordenCompra/$',CxpSolicitud.as_view(), name='solicitud_orden'),
+    url(r'^cxp/imp/$',cxpImpGeneral.as_view(), name='imprimir_registro'),
 
     #ActivoFijo
     url(r'^activos/$', ActivosView.as_view(), name='ActivoFijo'),

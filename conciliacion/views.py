@@ -54,12 +54,14 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
         solicitud.prestamo = prestamo
         solicitud.estatus = 'P'
         solicitud.save()
+
         return 'Ok'
     except Exception, e:
         return e.message
 
 def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
     try:
+        regOrden = OrdenCompra.objects.get(id = orden)
 
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
@@ -70,12 +72,17 @@ def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
         solicitud.cxpOrden = orden
         solicitud.estatus = 'P'
         solicitud.save()
+
+        for oxd in regOrden.detalleCuentas.all():
+            solicitud.cuenta.add(oxd)
+
         return 'Ok'
     except Exception, e:
         return e.message
 
 def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
     try:
+        regSuper = CxpSuperCoop.objects.get(id = regSuper)
 
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
@@ -86,6 +93,10 @@ def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
         solicitud.superOrden = regSuper
         solicitud.estatus = 'P'
         solicitud.save()
+
+        for sup in regSuper.detalleCuentas.all():
+            solicitud.cuentas.add(sup)
+
         return 'Ok'
     except Exception, e:
         return e.message
@@ -118,7 +129,16 @@ class SolicitudView(TemplateView):
                 'concepto': sol.concepto,
                 'monto': sol.monto,
                 'estatus': sol.estatus,
-            })
+                # 'cuentas': [{
+                #     'id': cta.id,
+                #     'codigoCta': cta.cuenta.codigo,
+                #     'cuenta': cta.cuenta.descripcion,
+                #     'debito': cta.debito,
+                #     'credito': cta.credito
+                #     }
+                # from cta in sol.cuentas.all()]
+             }
+            )
 
         return JsonResponse(data, safe=False)
 

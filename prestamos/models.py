@@ -1,3 +1,5 @@
+# Model Prestamos
+
 # -*- coding: utf-8 -*-
 
 from django.db import models
@@ -122,6 +124,10 @@ class SolicitudOrdenDespachoH(models.Model):
 	@property
 	def codigoSuplidor(self):
 		return self.suplidor.id
+
+	@property
+	def direccionSuplidor(self):
+		return self.suplidor.direccion
 
 	@property
 	def valorInteresOD(self):

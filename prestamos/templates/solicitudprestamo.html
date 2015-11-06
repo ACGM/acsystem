@@ -121,7 +121,7 @@
 
 				<table class="sp-header-table-solicitante">
 					<tr>
-						<td>Codigo de empleado</td>
+						<td>Socio</td>
 						<td>
 							<div class="codigo-empleado-field"> 
 								<input type="text" id="codigoEmp" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event);" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
@@ -209,8 +209,8 @@
 								<td><input type="text" class="align-right" ng-model="solicitud.deudasPrestamos" readonly></td>
 							</tr>
 							<tr>
-								<td>Prestaciones Laborales</td>
-								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()" format="number"></td>
+								<td><a href="#" ng-click="completarConPrestaciones($event)" title="Presione aqui para completar con el monto garantizado.">Prestaciones Laborales</a> </td>
+								<td><input type="text" class="align-right" ng-model="solicitud.prestacionesLaborales" ng-change="montoNeto()" ></td>
 							</tr>
 							<tr>
 								<td>Garante</td>

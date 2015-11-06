@@ -45,7 +45,7 @@ class Activos(models.Model):
     agnosVu = models.PositiveIntegerField(null=False, verbose_name='Agnos vida Util')
     costo = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Costo de adquisicion')
     porcentaje = models.PositiveIntegerField(null=False, blank=False ,verbose_name="%. Dep Anual")
-    suplidor = models.ForeignKey(Suplidor, null=False, verbose_name='Suplidor')
+    suplidor = models.ForeignKey(Suplidor, null=True, blank=True, verbose_name='Suplidor')
     factura = models.PositiveIntegerField(null=False, verbose_name='Factura')
     localidad = models.ForeignKey(Localidad, verbose_name='Localidad')
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")

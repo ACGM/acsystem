@@ -473,9 +473,15 @@
 
         if($scope.solicitante.codigoEmpleado != undefined) {
           
-          $scope.socios = $scope.todosLosSocios.filter(function (registro) {
-            return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
-          });
+        if(!isNaN($scope.solicitante.codigoEmpleado)) {
+            $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+              return registro.codigo.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado;
+            });  
+          } else {
+            $scope.socios = $scope.todosLosSocios.filter(function (registro) {
+              return registro.nombreCompleto.toString().substring(0, $scope.solicitante.codigoEmpleado.length) == $scope.solicitante.codigoEmpleado.toUpperCase();
+            });  
+          }
           
           if($scope.socios.length > 0){
             $scope.tableSocio = true;
@@ -923,13 +929,18 @@
       //Guardar detalle de solicitud (articulos)
       $scope.guardarDetalleSolicitud = function() {
         if($scope.ArticulosODForm) {
-          SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
-            if(data == 1) {
-              alert('Se guardó perfectamente!');
-            } else {
-              $scope.mostrarError(data);
-            }
-          });
+
+          if($scope.totalGeneralArticulos == $scope.solicitud.montoSolicitado) {
+            SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
+              if(data == 1) {
+                alert('Se guardó perfectamente!');
+              } else {
+                $scope.mostrarError(data);
+              }
+            });
+          } else {
+            alert('El monto total de articulos no puede ser distinto al monto solicitado.');
+          }
         }
       }
 

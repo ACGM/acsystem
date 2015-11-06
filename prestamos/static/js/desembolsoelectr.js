@@ -355,8 +355,12 @@
         if($scope.imprimirAhora == true) {
           $window.print();
         } else {
+          $scope.netoTotal = 0;
           $scope.prestamos = $scope.prestamosSeleccionados;
           $scope.imprimirAhora = true;  
+          $scope.prestamos.forEach(function (item) {
+            $scope.netoTotal += parseFloat(item.netoDesembolsar);
+          });
         }
       }
 

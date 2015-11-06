@@ -32,7 +32,7 @@ class SolicitudesOrdenesDespachoSerializer(serializers.HyperlinkedModelSerialize
 	class Meta:
 		model = SolicitudOrdenDespachoH
 		fields = ('id', 'noSolicitud', 'fechaSolicitud', 'codigoSocio', 'socio', 'montoSolicitado', 'netoDesembolsar', 'categoriaPrestamo', \
-					'estatus', 'suplidor', 'codigoSuplidor', 'cxp', 'valorInteresOD', 'tasaInteresAnual')
+					'estatus', 'suplidor', 'codigoSuplidor', 'direccionSuplidor', 'cxp', 'valorInteresOD', 'tasaInteresAnual')
 		ordering = ('-noSolicitud',)
 
 

@@ -224,6 +224,41 @@ for line in f:
 f.close()
 
 
+#Carga ACTIVOS
+f = open('activos.csv', 'r')
+for line in f:
+	line = line.split(',')
+	a = Activos()
+	a.descripcion = line[1].decode('latin-1').strip()
+	a.categoria = CategoriaActivo.objects.get(id=line[2].strip())
+	a.fechaAdd = line[3].strip()
+	a.fechaDep = line[4].strip()
+	a.agnosVu = line[5].strip()
+	a.costo = line[6].strip()
+	a.localidad = Localidad.objects.get(id=line[7].strip())
+	a.factura = line[9].strip()
+	a.estatus = line[10].strip()
+	a.porcentaje = line[11].strip()
+	a.save()
+f.close()
+
+
+
+#Carga DEPRESIACION DE ACTIVOS
+f = open('depresiacion.csv', 'r')
+for line in f:
+	line = line.split(',')
+	d = Depresiacion()
+	d.activoId = line[0].strip()
+	d.fecha = line[5].strip()
+	d.dMensual = line[1].strip()
+	d.dAcumulada = line[2].strip()
+	d.dAgno = line[3].strip()
+	d.vLibro = line[4].strip()
+	d.save()
+f.close()
+
+
 #Documentos RELACIONADOS con cuentas
 f = open('doccta.csv', 'r')
 for line in f:

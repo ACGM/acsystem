@@ -1,0 +1,59 @@
+<div class="ahorroPrint">
+	{% extends "base.html" %}
+
+	{% block title %} Imprimir CXP {% endblock title%}
+
+	{% block content %}
+</div>
+
+<section ng-controller="cxpImpController" ng-init='inializar()'>
+	<div class="header-ahorro">
+		<h3 style="text-align:center">[[registro.titulo]]</h3>
+		<span class="printAHorroFecha"><strong>Fecha:</strong> [[fecha]]</span>
+		<table class="header-table-imp">
+			<tr>
+				<td><strong>Registro:</strong> </td>
+				<td>[[registro.id]]</td>
+			</tr>
+			<tr>
+				<td><strong>Fecha:</strong> </td>
+				<td>[[registro.fecha | date: 'dd/MM/yyyy']]</td>
+			</tr>
+			<tr>
+				<td><strong>Concepto: </strong></td>
+				<td>[[registro.concepto]]</td>
+			</tr>
+			<tr>
+				<td><strong>Monto: </strong></td>
+				<td>[[registro.monto |number: 2]]</td>
+			</tr>
+			<tr>
+				<td><strong>Descuento: </strong></td>
+				<td>[[registro.descuento |number: 2]]</td>
+			</tr>
+		</table>
+	</div>
+	<div class="body-ahorro">
+		<table >
+			<tr class="imp-body-cxp">
+				<td>Registro</td>
+				<td>Fecha</td>
+				<td>Monto</td>
+			</tr>
+			<tr ng-repeat="x in registroDetalle" class="imp-detalle-cxp">
+				<td>
+					[[x.id]]
+				</td>
+				<td>
+					[[x.fecha |date : 'dd/MM/yyyy']]
+				</td>
+				<td>
+					[[x.monto | number: 2]]
+				</td>
+			</tr>
+		</table>
+	</div>
+</section>
+
+{% endblock content%}
+
