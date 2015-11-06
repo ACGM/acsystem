@@ -222,6 +222,18 @@
         return deferred.promise;
       }
 
+      //Estado de Cuenta Socio
+      function EstadoCuentaBySocio(codigo) {
+        var deferred = $q.defer();
+
+        url = '/estadoCuentajson/?codigo={codigo}'.replace('{codigo}', codigo);
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
       return {
         all: all,
         byNoPrestamo                    : byNoPrestamo,
@@ -234,7 +246,8 @@
         prestamosDetalleByCodigoSocio   : prestamosDetalleByCodigoSocio,
         prestamosBalanceByCodigoSocio   : prestamosBalanceByCodigoSocio,
         PagoCuotasPrestamosByNoPrestamo : PagoCuotasPrestamosByNoPrestamo,
-        ReportePrestamos                : ReportePrestamos
+        ReportePrestamos                : ReportePrestamos,
+        EstadoCuentaBySocio             : EstadoCuentaBySocio
       };
 
     }])
@@ -608,7 +621,8 @@
             }
           });
 
-          alert('Los registros fueron posteados con exito!');
+          $scope.toggleInfo();
+          // alert('Los registros fueron posteados con exito!');
 
         } catch (e) {
           alert(e);
@@ -826,6 +840,81 @@
           
         }
         console.log($scope.registros);
+      }
+
+      $scope.totales = function() {
+        $scope.totalMontoOriginal = 0.00;
+        $scope.totalBalance = 0.00;
+
+        $scope.totalMontoAgrupado = 0.00;
+        $scope.totalCantidadAgrupado = 0;
+
+        $scope.registros.forEach(function (documento) {
+          if($scope.agrupar != undefined) {
+            $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
+            $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
+
+          } else {
+            $scope.totalMontoOriginal += parseFloat(documento.montoInicial.replaceAll(',',''));
+            $scope.totalBalance += parseFloat(documento.balance.replaceAll(',',''));
+          }
+        });
+
+        if($scope.agrupar == true) {
+          $scope.porcentajesPrestamo();
+        }
+      }
+      
+    }])
+
+
+    //****************************************************
+    //ESTADO DE CUENTA SOCIO                             *
+    //****************************************************
+    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'AhorroServices',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, AhorroServices) {
+      
+
+      $scope.getData = function($event) {
+        $event.preventDefault();
+
+        try {
+          MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
+            console.log(data);
+            $scope.datos = data[0];
+            
+            //Traer todos los prestamos activos.
+            MaestraPrestamoService.PrestamosbySocio($scope.codigoSocio).then(function (data) {
+              $scope.prestamos = data;
+            });
+
+            //Traer el ahorro capitalizado del socio
+            AhorroServices.getAhorroSocio($scope.codigoSocio).then(function (data) {
+              if(data.length > 0) {
+                $scope.ahorroTotal = $filter('number')(data[0]['balance'], 2);
+              } else {
+                $scope.ahorroTotal = 0;
+              }
+            });
+
+            //Traer el balance de deudas (prestamos) del socio
+            MaestraPrestamoService.prestamosBalanceByCodigoSocio($scope.codigoSocio).then(function (data) {
+
+              if(data.length > 0) {
+                $scope.prestamosTotal = $filter('number')(data[0]['balance'], 2);
+              } else {
+                $scope.prestamosTotal = 0;
+              }
+            });
+
+          });
+
+
+
+        } catch(e) {
+          console.log(e);
+        }
+
       }
 
       $scope.totales = function() {

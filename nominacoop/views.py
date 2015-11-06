@@ -138,9 +138,11 @@ class generaNominaView(View):
                 cuotaPrestamo = 0
 
                 try:
-                    prestamos = CuotasPrestamosEmpresa.objects.get(socio=empleado.socio, estatus='P')
+                    prestamos = CuotasPrestamosEmpresa.objects.filter(socio=empleado.socio, estatus='P')
 
-                    cuotaPrestamo = prestamos.montoTotal
+                    for p in prestamos:
+                        cuotaPrestamo += p.montoTotal
+
                 except CuotasPrestamosEmpresa.DoesNotExist:
                     cuotaPrestamo = 0
 
@@ -345,7 +347,10 @@ class GenerarArchivoPrestamosBalance(View):
             # Escribir cada linea de prestamo en el archivo
             for prestamo in prestamos:
                 if prestamo.socio.estatus == 'S':  #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
-                    montoTotal = prestamo.balance
+                    socioPago = CuotasPrestamosEmpresa.objects.raw('SELECT id, \
+                                                                    SUM(valorCapital) + SUM(valorInteres) + SUM(valorInteresAh) TotalG \
+                                                                    FROM prestamos_cuotasprestamosempresa WHERE socio_id = ' + prestamo.socio.id)
+                    montoTotal = prestamo.balance - socioPago.TotalG
 
                     lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP,
                                                                       montoTotal)

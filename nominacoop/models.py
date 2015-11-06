@@ -48,30 +48,36 @@ class EmpleadoCoop(models.Model):
 	socio = models.ForeignKey(Socio)
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
-	cedula = models.CharField(max_length=20)
+	cedula = models.CharField(max_length=20, null=True, blank=True)
 	direccion = models.TextField(null=True, blank=True)
 	sector = models.CharField(max_length=50, null=True, blank=True)
 	ciudad = models.CharField(max_length=40, null=True, blank=True)
 	telefono = models.CharField(max_length=40, null=True, blank=True)
 	fechaNac = models.DateField("Fecha de Nacimiento", null=True, blank=True)
 	lugarNac = models.CharField("Lugar de Nacimiento", max_length=50, null=True, blank=True)
-	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S')
+	estadoCivil = models.CharField("Estado Civil", max_length=1, choices=estado_civil_choices, default='S', null=True, blank=True)
 	sexo = models.CharField(max_length=1, choices=sexo_choices, default='M')
 	dependencias = models.PositiveIntegerField(null=True, blank=True)
 	fechaIngreso = models.DateField("Fecha de Ingreso", auto_now=True)
 	empresa = models.ForeignKey(Empresa)
 	departamento = models.ForeignKey(DepartamentoCoop)
 	tipoContrato = models.CharField("Tipo de Contrato", max_length=1, choices=tipo_empleado_choices, default='F')
-	cargo = models.ForeignKey(CargoCoop)
+	cargo = models.ForeignKey(CargoCoop, null=True, blank=True)
 	tipoCobro = models.CharField("Tipo de Cobro", max_length=1, choices=tipo_empleado_choices, default='Q')
 	tipoPago = models.CharField("Tipo de Pago", max_length=1, choices=tipo_pago_choices, default='B')
-	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=18, decimal_places=2)
+	sueldoActual = models.DecimalField("Sueldo Actual", max_digits=18, decimal_places=2, null=True, blank=True)
 	sueldoAnterior = models.DecimalField("Sueldo Anterior", max_digits=18, decimal_places=2, blank=True, null=True)
 	activo = models.BooleanField(default=True)
 	fechaSalida = models.DateField("Fecha de Salida", null=True, blank=True)
 
 	def __unicode__(self):
 		return '%s %s' % (self.nombres, self.apellidos)
+
+	def save(self, *args, **kwargs):
+		self.nombres = self.nombres.upper()
+		self.apellidos = self.apellidos.upper()
+
+		super(EmpleadoCoop, self).save(*args, **kwargs)
 
 	def codigoSocio(self):
 		return '%s' % (self.socio.codigo)
