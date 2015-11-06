@@ -1110,8 +1110,8 @@
 
             $scope.VerificarArchivoPrestamosStatus = '';
             $window.document.getElementById('VAPS').disabled = false;
-            $scope.AplicarPrestamosStatus = '';
-            $window.document.getElementById('APS').disabled = false;
+            $scope.BalancesPrestamosStatus = '';
+            $window.document.getElementById('BPS').disabled = false;
           }
         });
       }

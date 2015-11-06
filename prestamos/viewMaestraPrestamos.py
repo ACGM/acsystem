@@ -75,9 +75,9 @@ def getBalancesPrestamos(self, socio=None):
 										p.socio_id, \
 										SUM(p.balance) balance \
 									FROM prestamos_maestraprestamo p \
-									INNER JOIN administracion_socio s ON s.id = p.socio_id \
+									INNER JOIN administracion_socio s ON s.id = p.socio_id WHERE p.estatus = \'P\' \
 									GROUP BY p.socio_id \
-									HAVING p.estatus = \'P\' and s.codigo =' + socio \
+									HAVING s.codigo =' + socio \
 									)
 
 # Listado de Prestamos por Socio

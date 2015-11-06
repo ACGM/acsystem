@@ -88,16 +88,11 @@ def insMaestra(self, CodSocio, Fecha, Monto):
     regMaestra.monto = Monto
     regMaestra.ahorro = regSocio
     regMaestra.save()
-
     prestamo = getBalancesPrestamos(self,str(CodSocio))
-    disponible = (ahorro.balance + Monto) - prestamo
-
-    if disponible > 0:
-        disponible = 0
-
-    regSocio.balance = regSocio.balance + Monto
-    regSocio.disponible = regSocio.disponible + Monto
-    regSocio.save()
+    ahorro = AhorroSocio.objects.get(socio__codigo=CodSocio)
+    ahorro.balance = ahorro.balance + Monto
+    ahorro.disponible = ahorro.disponible + Monto
+    ahorro.save()
 
     if regSocio.socio.estatus == 'S':
         ref = 'AHTS'

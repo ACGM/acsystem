@@ -572,6 +572,8 @@
         $scope.getPrestamosBalances(s.codigo); //Buscar prestamos para unificar.
 
         MaestraPrestamoService.prestamosBalanceByCodigoSocio(s.codigo).then(function (data) {
+          console.log('DEUDAS:');
+          console.log(data);
 
           if(data.length > 0) {
             $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['balance'], 2);
@@ -1007,7 +1009,7 @@
 
             if(data.length > 0) {
               $scope.prestamosSocio = data.filter(function (item) {
-                return item.balance > 0;
+                return item.balance > 0 && item.estatus == 'P';
               });
             } else {
               throw data;
@@ -1028,9 +1030,16 @@
       $scope.completarConPrestaciones = function($event) {
         $event.preventDefault();
 
-        if($scope.solicitud.netoDesembolsar.length == 0) {
-          $scope.solicitud.prestacionesLaborales = $filter('number') (parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')) - parseFloat($scope.solicitud.ahorrosCapitalizados.replaceAll(',','')), 2);
+
+        if(!$scope.solicitud.netoDesembolsar > 0) {
+          if($scope.solicitud.netoDesembolsar.length == 0 && $scope.solicitud.montoDisponible > 0) {
+            $scope.solicitud.prestacionesLaborales = $filter('number') (parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')) - parseFloat($scope.solicitud.ahorrosCapitalizados.replaceAll(',','')), 2);
+          } else {
+            $scope.solicitud.prestacionesLaborales = $filter('number') ((parseFloat($scope.solicitud.montoDisponible.replaceAll(',','')) * -1) + parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')), 2);
+          }
+
           $scope.montoNeto();
+          
         }
       }
 
