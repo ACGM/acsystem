@@ -223,12 +223,22 @@ class EliminarNominaView(View):
 
 # ************ NOMINA PRESTAMOS Y AHORROS ***************
 
+# Guardar cambios de estatus para posteo de nomina de descuentos
+class PosteoNominaPrestamosAhorro(LoginRequiredMixin, TemplateView):
+
+    def post(self, request, *args, **kwargs):
+        pass
+        
+
 # Consultar si existe una nomina en especifico
 class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
 
         nomina = self.request.GET.get('nomina')
         tipoPrestamo = self.request.GET.get('tipoPrestamo')
+
+        # Buscar la nomina para verificar si fue procesada (posteada)
+        N = NominaPrestamosAhorros.objects.filter(nomina=nomina, estatus='PO').first()
 
         # PRESTAMOS PARA LA NOMINA ESPECIFICADA
         try:
@@ -282,6 +292,7 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
             'balancesAhorros': balancesAhorros,
             'prestamosAplicados': prestamosAplicados,
             'ahorrosAplicados': ahorrosAplicados,
+            'estatusNomina': N.estatus
         })
 
         return JsonResponse(data, safe=False)
@@ -349,12 +360,14 @@ class GenerarArchivoPrestamosBalance(View):
                 if prestamo.socio.estatus == 'S':  #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
                     socioPago = CuotasPrestamosEmpresa.objects.raw('SELECT id, \
                                                                     SUM(valorCapital) + SUM(valorInteres) + SUM(valorInteresAh) TotalG \
-                                                                    FROM prestamos_cuotasprestamosempresa WHERE socio_id = ' + prestamo.socio.id)
-                    montoTotal = prestamo.balance - socioPago.TotalG
+                                                                    FROM nominacoop_cuotasprestamosempresa WHERE estatus = \'P\' \
+                                                                    and socio_id = ' + str(prestamo.socio.id))
+                    if socioPago[0].TotalG != None:
+                        montoTotal = prestamo.balance - socioPago[0].TotalG
 
-                    lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP,
-                                                                      montoTotal)
-                    sysFile.write(lineaFile)
+                        lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP,
+                                                                          montoTotal)
+                        sysFile.write(lineaFile)
 
             sysFile.close()
 

@@ -1004,6 +1004,7 @@
 
         NominaService.getNomina(fechaFormatted, $scope.tipoPrestamoNomina).then(function (data) {
           if(data.length > 0) {
+            console.log(data);
 
             if(tipo == 'AHORRO') { //SECCION DE AHORROS
               //Existencia de Ahorros Generados.
@@ -1037,6 +1038,16 @@
               }
 
             } else { //SECCION DE PRESTAMOS
+
+              //Se aplicaron los prestamos.
+              if(data[0]['prestamosAplicados'] == 1) {
+                $scope.BalancesPrestamosStatus = '';
+                $window.document.getElementById('BPS').disabled = false;
+              } else {
+                $scope.BalancesPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('BPS').disabled = true;
+              }
+
               //Existencia de Prestamos Generados.
               if(data[0]['prestamos'] == 1) {
                 $scope.VerificarArchivoPrestamosStatus = '';
@@ -1054,21 +1065,20 @@
 
               //Existencia de Balance de Prestamos Generados.
               if(data[0]['balancesPrestamos'] == 1) {
+                $scope.BalancesPrestamosStatus = '';
+                $window.document.getElementById('BPS').disabled = false;
+
                 $scope.verBalancesPrestamosStatus = '';
                 $window.document.getElementById('vBPS').disabled = false;
+
               } else {
+                $scope.BalancesPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('BPS').disabled = true;
+
                 $scope.verBalancesPrestamosStatus = 'Boton-disabled';
                 $window.document.getElementById('vBPS').disabled = true;
               }
 
-              //Se aplicaron los prestamos.
-              if(data[0]['prestamosAplicados'] == 1) {
-                $scope.BalancesPrestamosStatus = '';
-                $window.document.getElementById('BPS').disabled = false;
-              } else {
-                $scope.BalancesPrestamosStatus = 'Boton-disabled';
-                $window.document.getElementById('BPS').disabled = true;
-              }
             }
 
             msgAhorro = data[0]['ahorros'] == 1? 'Ahorros generados.' : '';
@@ -1212,7 +1222,7 @@
                 var monto = 0;
 
                 if(documento.getCuentaCodigo == 1113080102) { //Cuenta general de DESCUENTO DE PRESTAMOS
-                  var tmp = $filter('number')($scope.prestamoTotalMontoCuota,2);
+                  var tmp = $filter('number')($scope.prestamoTotalMontoCuota + $scope.gInteresPrestSocios + $scope.gInteresPrestEmpleados,2);
                   monto = parseFloat(tmp.replaceAll(',',''));
                 }
                 
@@ -1245,7 +1255,7 @@
                   var tmp = $filter('number')($scope.gOrdenesEmpleados,2);
                   monto = parseFloat(tmp.replaceAll(',',''));
                 }
-                console.log(monto);
+
                 desgloseCuenta.debito = documento.accion == 'D'? $filter('number')(monto,2) : $filter('number')(0.00, 2);
                 desgloseCuenta.credito = documento.accion == 'C'? $filter('number')(monto,2) : $filter('number')(0.00, 2);  
 
@@ -1290,6 +1300,9 @@
       $scope.postearContabilidad = function() {
 
         try {
+
+          $scope.totalDebito = $filter('number')($scope.totalDebito, 2);
+          $scope.totalCredito + $filter('number')($scope.totalCredito, 2);
 
           //Validar que el CREDITO cuadre con el DEBITO
           if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
@@ -1419,6 +1432,8 @@
 
             $scope.verBalancesPrestamosStatus = '';
             $window.document.getElementById('vBPS').disabled = false;
+            $scope.AplicarPrestamosStatus = '';
+            $window.document.getElementById('APS').disabled = false;
           }
         });
       }
@@ -1521,6 +1536,8 @@
       $scope.totalCapital = 0;
       $scope.totalDesc = 0;
 
+      $scope.datosReporte = [];
+
       $scope.prestamos = JSON.parse($window.sessionStorage['descPrestamos']);
       $scope.tipoPrestamo = $window.sessionStorage['tipoPrestamo'];
       $scope.fNomina = $window.sessionStorage['nominaPrest'];
@@ -1566,6 +1583,96 @@
         $scope.totalCapital += parseFloat(item.montoCuotaQ);
         $scope.totalDesc += parseFloat(item.cuotaMasInteresQ)
 
+      });
+      console.log($scope.prestamos);
+
+      $scope.pushDefault = function(item) {
+        myItem = {};
+        myItem.balance = item.balance;
+        myItem.centrocosto = item.centrocosto;
+        myItem.codigoSocio = item.codigoSocio;
+        myItem.cuotaInteresAhQ = item.cuotaInteresAhQ;
+        myItem.cuotaInteresQ = item.cuotaInteresQ;
+        myItem.cuotaMasInteresQ = item.cuotaInteresAhQ + item.cuotaInteresQ;
+        myItem.departamento = item.departamento;
+        myItem.montoCuotaQ = item.montoCuotaQ;
+        myItem.noPrestamo = item.noPrestamo;
+        myItem.noSolicitudOD = item.noSolicitudOD;;
+        myItem.noSolicitudPrestamo = item.noSolicitudPrestamo;
+        myItem.socio = item.socio;
+        myItem.tipoSocio = item.tipoSocio;
+
+        $scope.datosReporte.push(myItem);
+      }
+
+      $scope.pushTotal = function(item) {
+        myItem = {};
+        myItem.balance = "0";
+        myItem.centrocosto = item.centrocosto;
+        myItem.codigoSocio = "";
+        myItem.cuotaInteresAhQ = cuotaInteresAhQ;
+        myItem.cuotaInteresQ = cuotaInteresQ;
+        myItem.cuotaMasInteresQ = item.cuotaInteresAhQ + item.cuotaInteresQ;
+        myItem.departamento = item.departamento;
+        myItem.montoCuotaQ = capitalQ;
+        myItem.noPrestamo = item.noPrestamo;
+        myItem.noSolicitudOD = item.noSolicitudOD;;
+        myItem.noSolicitudPrestamo = item.noSolicitudPrestamo;
+        myItem.socio = 'TOTAL';
+        myItem.tipoSocio = item.tipoSocio;
+
+        $scope.datosReporte.push(myItem);
+        cuotaInteresQ = 0;
+        cuotaInteresAhQ = 0;
+        capitalQ = 0;
+      }
+
+      var myItem = {};
+      var myItemTmp = {};
+      var depto = '';
+      var primero = true;
+      var count = 0;
+      var cuotaInteresQ = 0;
+      var cuotaInteresAhQ = 0;
+      var capitalQ = 0;
+      var ultimo = $scope.prestamos.length;
+
+      $scope.prestamos.forEach(function (item) {
+        count +=1;
+
+        if(!primero) {
+          if(depto == item.departamento) {
+            $scope.pushDefault(item);
+
+            cuotaInteresQ += parseFloat(item.cuotaInteresQ);
+            cuotaInteresAhQ += parseFloat(item.cuotaInteresAhQ);
+            capitalQ += parseFloat(item.montoCuotaQ);
+
+          } else { //Entra aqui cuando hay un cambio de departamento
+            $scope.pushTotal(myItemTmp);
+            cuotaInteresQ += parseFloat(item.cuotaInteresQ);
+            cuotaInteresAhQ += parseFloat(item.cuotaInteresAhQ);
+            capitalQ += parseFloat(item.montoCuotaQ);
+
+            $scope.pushDefault(item);
+
+            //Para escribir el ultimo
+            if(count == $scope.prestamos.length) {
+              $scope.pushTotal(item);
+            }
+          }
+        } else { //Entra aqui si es la primera vez
+          $scope.pushDefault(item);
+
+          cuotaInteresQ += parseFloat(item.cuotaInteresQ);
+          cuotaInteresAhQ += parseFloat(item.cuotaInteresAhQ);
+          capitalQ += parseFloat(item.montoCuotaQ);
+        }
+        
+        depto = item.departamento;
+        myItemTmp = item;
+        primero = false;
+        
       });
 
     }]);

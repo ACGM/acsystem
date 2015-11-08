@@ -16,6 +16,7 @@ class CuentasSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Cuentas
         fields = ('codigo', 'descripcion', 'origen', 'control', 'tipo' ,'cuentaControl', 'tipoSocio')
+        ordering = ('origen')
 
 
 class DiarioSerializer(serializers.HyperlinkedModelSerializer):

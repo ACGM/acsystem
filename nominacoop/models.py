@@ -298,6 +298,9 @@ class NominaPrestamosAhorros(models.Model):
 	estatus = models.CharField(max_length=2, default='PE') # PE = PENDIENTE, PO = PROCESADA
 	infoTipo = models.CharField(max_length=4, null=True, blank=True)
 
+	posteadaFecha = models.DateField(null=True, blank=True)
+	posteadaPor = models.ForeignKey(User, null=True, blank=True)
+
 	class Meta:
 		verbose_name = 'Nomina Prestamos Ahorros'
 		verbose_name_plural = 'Nomina Prestamos Ahorros'

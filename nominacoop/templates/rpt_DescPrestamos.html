@@ -26,8 +26,8 @@
 		<section class="detalle-utilidad">
 			<table class="table-producto-factura">
 				<tr>
-					<td>Codigo</td>
 					<td>Departamento</td>
+					<td>Codigo</td>
 					<td>Nombre del Empleado</td>
 					<td class="align-right">Interes</td>
 					<td class="align-right">Interes Ah.</td>
@@ -35,9 +35,9 @@
 					<td class="align-right">Total Desc.</td>
 
 				</tr>
-				<tr ng-repeat="prestamo in prestamos">
-					<td>[[prestamo.codigoSocio]]</td>
+				<tr ng-repeat="prestamo in datosReporte" class="[[prestamo.socio]]">
 					<td>[[prestamo.departamento]]</td>
+					<td>[[prestamo.codigoSocio]]</td>
 					<td>[[prestamo.socio]]</td>
 					<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
 					<td class="align-right">[[prestamo.cuotaInteresAhQ | number : 2]]</td>
@@ -55,7 +55,7 @@
 		</section>
 
 	</div>
-	
+
 </section>
 
 
