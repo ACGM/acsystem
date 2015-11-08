@@ -1,6 +1,17 @@
 (function(_){
     angular.module('cooperativa.cxp',['ngAnimate'])
 
+        .filter('estatusCxp', function() {
+          return function (input) {
+            if (!input) return "";
+
+            input = input
+                    .replace('P', 'Posteada')
+                    .replace('A', 'Activa')
+                    .replace('N', 'Nula');
+                return input;
+             }
+        })
         .factory('cxpService',['$http','$q','$filter', function ($http, $q, $filter) {
             
            function getAll() {
@@ -158,10 +169,10 @@
                 return deferred.promise;
             }
 
-            function setSuper(regSuper){
+            function setSuper(regSuper, Detalle){
                 var deferred = $q.defer();
 
-                $http.post('/cxpSuperJson/', JSON.stringify({'regSuper':regSuper}))
+                $http.post('/cxpSuperJson/', JSON.stringify({'regSuper':regSuper, 'Detalle': Detalle}))
                     .success(function (data){
                         deferred.resolve(data);
                     })
@@ -277,13 +288,14 @@
             };
 
         }])
-        .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout', 'SolicitudOrdenDespachoService',
-            function($scope, $filter, $rootScope, cxpService, $timeout, SolicitudOrdenDespachoService){
+        .controller('cxpController',['$scope', '$filter', '$rootScope', 'cxpService','$timeout', 'SolicitudOrdenDespachoService','$window',
+            function($scope, $filter, $rootScope, cxpService, $timeout, SolicitudOrdenDespachoService, $window){
                 $scope.cxpData = [];
                 $scope.cxpDataDetalle = [];
                 $scope.cxpDiario = [];
                 $scope.cxpFilterData = [];
-                $scope.cxpDataReg = null;
+                $scope.ordenesDetalle = [];
+                $scope.cxpDataReg = {};
                 $scope.fechaI = null;
                 $scope.fechaF = null;
                 $scope.socioId = null;
@@ -306,123 +318,51 @@
                 $scope.detallesOrd={};
                 $scope.ROrden  = [];
                 $scope.flap = false;
+                $scope.crCxp = false;
+                $scope.listCxp = true;
+                $scope.valoresChk = [];
+                $scope.reg = [];
+                $scope.ordenesSeleccionada = [];
+
 
 
                 
             $scope.nuevaOrden = function(){
-                $scope.getdate = $filter('date')(Date.now(),'dd/MM/yyyy');
-                $scope.OrdenList = false;
-                $scope.OrdenCrPanel = true;
-                $scope.panelDetalleArt = true;
-                $scope.OrdenReg = true;
-                $scope.DetallesArt = true;
-                $scope.cxpFilterData = null;
-                $scope.suplidorNombre = null;
-                $scope.socioNombre = null;
-                $scope.cxpDataDetalle = [];
-                $scope.cxpDiario = [];
-                $scope.detallesOrd = {};
-                $scope.ROrden  = [];
-                $scope.cxpDataReg = {};
+                $scope.listCxp = false;
+                $scope.crCxp = true;
+                $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+                $scope.cxpDataReg.descuento = 0;
 
-                
-            };
-
-            $scope.toggleLF= function(){
-             
-               $scope.showLF = !$scope.showLF;
-
-                if($scope.showLF === true) {
-                  $scope.ArrowLF = 'UpArrow';
-                } else {
-                  $scope.ArrowLF = 'DownArrow';
-                }
-
-                if($scope.OrdenList === true){
-                    $scope.OrdenList = false;
-                }else{
-                    $scope.OrdenList = true;
-                }
-            };
-
-            $scope.toggleDt= function(){
-        
-               $scope.showDet = !$scope.showDet;
-
-                if($scope.showDet === true) {
-                  $scope.DetArrow = 'UpArrow';
-                } else {
-                  $scope.DetArrow = 'DownArrow';
-                }
-
-                if($scope.DetallesArt === true){
-                    $scope.DetallesArt = false;
-                }else{
-                    $scope.DetallesArt = true;
-                }
             };
 
             $scope.findOrden = function ($event){
-                $scope.tableOrden = true;
-                
                SolicitudOrdenDespachoService.solicitudesODForCXP().then(function (data) {
                         console.log(data);
-                        $scope.ROrden = data.filter(function (reg){
-                            console.log(reg.codigoSocio== $scope.cxpDataReg.socioId)
-                            return reg.codigoSocio == $scope.cxpDataReg.socioId && reg.codigoSuplidor == $scope.cxpDataReg.suplidorId
+                        $scope.ordenesDetalle = data.filter(function (reg){
+                            
+                            return reg.cxp == "E" && reg.codigoSuplidor == $scope.cxpDataReg.suplidorId
                         });
                         
                  });
             }
 
-            $scope.toggleDat= function(){
-                $scope.showDat = !$scope.showDat;
-
-                if($scope.showDat === true) {
-                    $scope.DatArrow = 'UpArrow';
-                }else{
-                    $scope.DatArrow = 'DownArrow';
-                }
-
-                if( $scope.OrdenReg  === true){
-                     $scope.OrdenReg = false;
-                }else{
-                     $scope.OrdenReg = true;
-                }
-            };
-
             $scope.limpiar = function(){
-                $scope.cxpData = [];
-                $scope.cxpDataDetalle = [];
-                $scope.cxpDiario = [];
-                $scope.cxpFilterData = [];
-                $scope.cxpDataReg =[];
-                $scope.getAllData();
-                $scope.socioId = null;
-                $scope.suplidorId = null;
-                $scope.socioNombre = null;
-                $scope.suplidorNombre = null;
-                $scope.ordenReg = null;
-                $scope.OrdenList = true;
-                $scope.OrdenCrPanel = false;
-                $scope.OrdenReg =false;
+                $scope.listCxp = true;
+                $scope.crCxp = false;
+                $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+                $scope.cxpDataReg = {};
+                $scope.cxpDataReg.descuento = 0;
 
             }
 
             $scope.CxpOrdenEstatus = function($event,estatus){
                 $event.preventDefault();
 
-                var est = ""
-                if(estatus =="postear"){
-                    est = "p";
-                }else{
-                    est = "I"
-                }
                 $scope.flap = false;
-                cxpService.postCxpOrden($scope.orden).then(function (data){
+                cxpService.postCxpOrden(estatus).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("La orden # "+$scope.orden+" Ha sido posteada");
+                        alert("La orden # "+estatus+" Ha sido posteada");
 
                     }else{
                          alert("Ocurrio un error al intentar guardar la orden");
@@ -432,34 +372,83 @@
 
             }
 
+                 //Cuando se le de click a un checkbox de la lista
+              $scope.selectedReg = function(iReg) {
+                index = $scope.ordenesDetalle.indexOf(iReg);
+
+                if ($scope.reg[$scope.ordenesDetalle[index].id] === true){
+                  $scope.ordenesSeleccionada.push($scope.ordenesDetalle[index]);
+                  console.log($scope.ordenesSeleccionada);
+                }
+                else{
+                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {id : iReg.id}));
+                   console.log($scope.ordenesSeleccionada);
+                }
+              }
+
+            $scope.printRegistros = function($event,s){
+                $event.preventDefault();
+                
+                s.titulo = "Cuentas Por Pagar Ordenes";
+                $window.sessionStorage['CxpsH'] = JSON.stringify(s);
+                $window.sessionStorage['CxpsD'] = JSON.stringify(s.detalle);
+
+                $window.open('/cxp/imp', target='_blank'); 
+            }
+
             $scope.guardarOrden = function($event){
 
-                if($scope.cxpDataReg.id === undefined){
-                    $scope.cxpDataReg.id = null;
-                    $scope.cxpDataReg.estatus = 'A';
-                    }
-                else{
-                    console.log($scope.cxpDataDetalle);
+                var total = 0;
+
+                var RegFecha = $scope.fecha.split('/');
+                var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+                var Rfecha = FechaFormat;
+                     
+                $scope.cxpDataReg.fecha = Rfecha;
+                $scope.ordenesSeleccionada.forEach(function (item) {
+                    total = total +  parseFloat(item.netoDesembolsar);  
+                });
+
+                if((total - $scope.cxpDataReg.descuento) == $scope.cxpDataReg.monto){
+                    cxpService.setOrden($scope.cxpDataReg, $scope.ordenesSeleccionada).then(function(data){
+                        if(data =="Ok"){
+                            alert("Cuenta por pagar Registrada")
+                            $scope.limpiar();
+                            $scope.getAllData();
+                        }else{
+                            alert("Ocurrio un error al intentar guardar el registro")
+                        }
+                    });
+                }else{
+                    alert("El monto a pagar es diferente al total de factura");
                 }
 
-                var RegFecha = $scope.cxpDataReg.fecha.split('/');
-                var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
-                $scope.cxpDataReg.fecha = FechaFormat;
-               
-                var result = cxpService.setOrden($scope.cxpDataReg, $scope.cxpDataDetalle);
-                $scope.limpiar();
-                $scope.OrdenList = false;
-                $scope.OrdenCrPanel = true;
-                $scope.panelDetalleArt = true;
-                $scope.DetallesArt = true;
-                $scope.OrdenReg = true;
-                $scope.ArrowLF = 'DownArrow';
+                // if($scope.cxpDataReg.id === undefined){
+                //     $scope.cxpDataReg.id = null;
+                //     $scope.cxpDataReg.estatus = 'A';
+                //     }
+                // else{
+                //     console.log($scope.cxpDataDetalle);
+                // }
 
-                $scope.getAllData();
+                // var RegFecha = $scope.cxpDataReg.fecha.split('/');
+                // var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+                // $scope.cxpDataReg.fecha = FechaFormat;
+               
+                // var result = cxpService.setOrden($scope.cxpDataReg, $scope.cxpDataDetalle);
+                // $scope.limpiar();
+                // $scope.OrdenList = false;
+                // $scope.OrdenCrPanel = true;
+                // $scope.panelDetalleArt = true;
+                // $scope.DetallesArt = true;
+                // $scope.OrdenReg = true;
+                // $scope.ArrowLF = 'DownArrow';
+
+                // $scope.getAllData();
 
             };
 
-            $scope.workflow = function($event,id){
+            $scope.workflow = function($event, id){
                 $event.preventDefault();
                 
                 $scope.orden = id;
@@ -552,14 +541,11 @@
 
             $scope.selSuplidor = function($event, s) {
                 $event.preventDefault();
-
                 $scope.suplidorNombre = s.nombre;
                 $scope.cxpDataReg.suplidorId = s.id;
                 $scope.tableSuplidor= false;
 
-                $scope.cxpDataReg.orden = null ;
-                $scope.ordenReg = null ;
-                $scope.cxpDataReg.monto = 0;
+                $scope.findOrden($event);
               };
 
 
@@ -625,25 +611,29 @@
             };
         }])
 
-        .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout', 
-            function ($scope, $filter, $rootScope, cxpService, $timeout){
+        .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout', 'InventarioService', '$window',
+            function ($scope, $filter, $rootScope, cxpService, $timeout, InventarioService, $window){
 
             $scope.lstCxpOrden = [];
             $scope.tableSuplidor = false;
             $scope.cxSuperData = {};
             $scope.suplidorNombre = null;
+            $scope.inventarios = [];
             $scope.super = null;
             $scope.flap = false;
             $scope.fecha =$filter('date')(Date.now(),'dd/MM/yyyy');
             $scope.vwTablas = true;
             $scope.vwRegistro = false;
+            $scope.ordenesSeleccionada = [];
+            $scope.reg = [];
+
+            // InventarioService.allEntradasForCXP()
 
             $scope.getAllData = function(){
                 try{
                     cxpService.getAllSuper().then(function (data){
                         var datar = data;
                         $scope.lstCxpOrden = datar;
-                        console.log(data);
                     });
                     
                 }  
@@ -652,19 +642,55 @@
                 }
                 };
 
+                //Cuando se le de click a un checkbox de la lista
+            $scope.selectedReg = function(iReg) {
+                index = $scope.inventarios.indexOf(iReg);
+
+                if ($scope.reg[$scope.inventarios[index].id] === true){
+                  $scope.ordenesSeleccionada.push($scope.inventarios[index]);
+                  console.log($scope.ordenesSeleccionada);
+                }
+                else{
+                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {id : iReg.id}));
+                   console.log($scope.ordenesSeleccionada);
+                }
+              }
+
+
+            $scope.getInventario = function($event, suplidor){
+                $event.preventDefault();
+
+                InventarioService.allEntradasForCXP().then(function (data){
+                    console.log(data)
+                    $scope.inventarios = data.filter(function (ret){
+                        return ret.codigoSuplidor == suplidor;
+                     });
+                });
+
+
+
+            }
+
             $scope.nuevoRegistro = function(){
                 $scope.cxSuperData = {};
                 $scope.vwTablas = false;
                 $scope.vwRegistro = true;
+                $scope.cxSuperData.descuento = 0;
                 };
+
 
             $scope.selSuplidor = function($event, s) {
                 $event.preventDefault();
-
+                
                 $scope.suplidorNombre = s.nombre;
-                $scope.cxSuperData.suplidor = s.id;
+                $scope.cxSuperData.suplidorId = s.id;
                 $scope.tableSuplidor= false;
+
+                $scope.getInventario($event, s.id);
+
+
               };
+
 
             $scope.getSuplidor = function($event){
                         $event.preventDefault();
@@ -685,7 +711,6 @@
                               $scope.tableSuplidor = false;
                               $scope.suplidorNoExiste = 'Suplidor no existe';
                             }
-                            console.log($scope.suplidor);
                              
                           });
                         } else {
@@ -696,23 +721,16 @@
                         }
                       };
 
+
             $scope.CxpSuperEstatus = function($event,estatus){
                 $event.preventDefault();
 
-                var est = ""
-                if(estatus =="postear"){
-                    est = "p";
-                }else{
-                    est = "I"
-                }
-
-                $scope.flap = false;
-
-                cxpService.postCxpSuper($scope.super).then(function (data){
+               
+                cxpService.postCxpSuper(estatus).then(function (data){
                     
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("La orden # "+$scope.super+" Ha sido posteada");
+                        alert("La orden # "+estatus+" Ha sido posteada");
                     }
 
                     else{
@@ -720,6 +738,15 @@
                     }
                 });
                 }
+            $scope.printRegistros = function($event,s){
+                $event.preventDefault();
+                
+                s.titulo = "Cuentas Por Pagar SuperCoop";
+                $window.sessionStorage['CxpsH'] = JSON.stringify(s);
+                $window.sessionStorage['CxpsD'] = JSON.stringify(s.detalle);
+
+                $window.open('/cxp/imp', target='_blank'); 
+            }
 
             $scope.workflow = function($event,id){
                 $event.preventDefault();
@@ -727,6 +754,7 @@
                 $scope.super = id;
                 $scope.flap = true;
                 };
+
 
             $scope.limpiar = function($event){
                 $event.preventDefault();
@@ -743,29 +771,36 @@
                 
                 };
 
+
             $scope.guardarCxp = function($event){
                 $event.preventDefault();
-                if($scope.cxSuperData.id === undefined){
-                    $scope.cxSuperData.id = null;
-                    $scope.cxSuperData.estatus = 'A';
-                    }
                 
 
                 var RegFecha = $scope.fecha.split('/');
                 var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
                 $scope.cxSuperData.fecha = FechaFormat;
+                
+                var total = 0;
+
+                $scope.ordenesSeleccionada.forEach(function (data){
+                    data.totalGeneral = data.totalGeneral.replace(',','');
+                    total = total + parseFloat(data.totalGeneral);
+                });
+                console.log($scope.ordenesSeleccionada);
                
-                var result = cxpService.setSuper($scope.cxSuperData).then(function (data){
-                    if(data =="Ok"){
-                        $scope.getAllData();
+                if((total - $scope.cxSuperData.descuento) == $scope.cxSuperData.monto){
+                     var result = cxpService.setSuper($scope.cxSuperData, $scope.ordenesSeleccionada).then(function (data){
+                    if(data == "Ok"){
+                       $scope.limpiar($event);
                         alert("CxP Creada")
-                        $scope.limpiar($event);
                     }else{
                         alert("Ocurrio un error al intentar registrar la CXP")
                         console.log(data);
                     }
                 });
-               
+                }else{
+                    alert("El monto a pagar es diferente al total de factura")
+                }
 
                 };
             
@@ -783,5 +818,20 @@
                 });
             };
 
-            }]);
+            }])
+        
+        .controller('cxpImpController', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout' , '$window',
+                function($scope, $filter, $rootScope, cxpService, $timeout, $window){
+                    $scope.registro = [];
+                    $scope.registroDetalle = [];
+                    $scope.tipo = null;
+                    $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+
+
+                    $scope.inializar = function(){
+                        $scope.registro = JSON.parse($window.sessionStorage['CxpsH']);
+                        $scope.registroDetalle = JSON.parse($window.sessionStorage['CxpsD']);
+                        console.log($scope.registro);
+                    }
+                }]);
 })(_);

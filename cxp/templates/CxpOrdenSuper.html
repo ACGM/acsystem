@@ -5,7 +5,152 @@
 {% block content %}
 
 <section id="main" ng-controller="CxpSuperCtrl" ng-init="getAllData()">
-	<div class="content-suplidor-table">
+		<div class="content-suplidor-table">
+			<table class="suplidor-table-search" ng-show="tableSuplidor">
+				<tr>
+					<td colspan="3" class="cerrar-table">
+						<a href="#" class="icon-delete" ng-click="tableSuplidor=false"></a>
+					</td>
+				</tr>
+				<tr class="socios-table-header">
+					<td>Codigo</td>
+					<td>Nombre</td>
+				</tr>
+				<tr ng-repeat="s in suplidor" class="socios-table-detail-search">
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.id]] </a></td>
+					<td><a href="#" class="select-item" ng-click="selSuplidor($event,s)"> [[s.nombre]] </a></td>
+				</tr>
+			</table>
+
+		</div>
+
+		<div class="cxp-headpanel-super">
+			<h4>
+				Cuentas por Pager SuperCoop
+				<button class="nuevo icon-file" ng-click="nuevoRegistro()" title="Nueva Orden" ></button>
+			</h4>
+			
+		</div>
+
+	<div class="cxp-list" ng-show="vwTablas">
+		<table>
+			<tr class="listado-table-header">
+				<td>Registro</td>
+				<td>Suplidor</td>
+				<td>Fecha</td>
+				<td>Monto</td>
+				<td>Descuento</td>
+				<td>Estatus</td>
+				<td>Imprimir</td>
+				<td>Postear</td>
+			</tr>
+			<tr ng-repeat="cxp in lstCxpOrden" class="listado-entrada-inventario-detail">
+				<td style="text-align:center;">[[cxp.id]]</td>
+				<td style="width: 30em;">[[cxp.suplidor]]</td>
+				<td>[[cxp.fecha |date: 'dd/MM/yyyy']]</td>
+				<td>[[cxp.monto | number: 2]]</td>
+				<td style="text-align:right;">[[cxp.descuento |number :2]]</td>
+				<td style="text-align:center;">[[cxp.estatus | estatusCxp]]</td>
+				<td style="text-align:center;">
+					<a href="#" class="icon-printer util-noDecoration" ng-click="printRegistros($event, cxp)"></a>
+				</td>
+				<td style="text-align:center;">
+					<div ng-if="cxp.estatus =='P'">
+						<span class="icon-cog"></span>
+					</div>
+					<div ng-if="cxp.estatus !='P'">
+						<a href="#" class="icon-cog utils-noDecoration" ng-click="CxpSuperEstatus($event,cxp.id)"></a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="cxp-create" ng-show="vwRegistro">
+		<form name="CxpForm" class="data-entry-section" novalidate>
+		<div class="cxp-create-header">
+			<table>
+				<tr>
+					<td>
+						Suplidor:
+					</td>
+					<td> 
+						<input type="text" ng-model="cxSuperData.suplidorId" ng-disabled="true" class="input-no-editable codigo-socio-field-f">
+						<input type="text" ng-model="suplidorNombre" ng-keyup="getSuplidor($event)" ng-focus="tableSup=false" ng-click="tableSup=false; errorShow=false;" class="producto-field-ei" required>
+
+						<a href="#" class="icon-uniE601 icon-buscar" ng-click="suplidorNombre=''; getSuplidor($event)"></a>
+					
+						<span class="error-ei"> [[suplidorNoExiste]]</span>
+
+					</td>
+				</tr>
+				<tr>
+					<td>Fecha:</td>
+					<td>
+						<input type="text" ng-model="fecha" datepicker required>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Concepto:
+					</td>
+					<td>
+						<textarea name="" id="" cols="45" rows="8" ng-model="cxSuperData.concepto" required></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Monto:
+					</td>
+					<td>
+						<input type="text" ng-model="cxSuperData.monto" required>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Descuento:
+					</td>
+					<td>
+						<input type="text" ng-model="cxSuperData.descuento" required>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="cxp-create-details">
+			<table>
+				<tr class="listado-table-header">
+					<td>
+						
+					</td>
+					<td>
+						Registro
+					</td>
+					<td>
+						Fecha
+					</td>
+					<td>
+						Monto
+					</td>
+				</tr>
+				<tr ng-repeat="det in inventarios" class="listado-entrada-inventario-detail">
+					<td class="align-center">
+						<input type="checkbox" name="c[[det.id]]" ng-checked="valoresChk[det.id]" 
+						ng-model="reg[det.id]" ng-click="selectedReg(det)"> 
+					</td>
+					<td>[[det.id]]</td>
+					<td>[[det.fecha | date : 'dd/MM/yyyy']]</td>
+					<td>[[det.totalGeneral ]]</td>
+				</tr>
+			</table>
+			<div>
+				<button class="smallMargin icon-save Boton"  ng-click="guardarCxp($event)" >Guardar</button>
+				<button class="smallMargin icon-delete Boton danger" ng-click="limpiar($event)">Cancelar</button>
+			</div>
+		</div>
+		</form>
+	</div>
+
+	<!-- <div class="content-suplidor-table">
 				<table class="Super-suplidor-table-search" ng-show="tableSuplidor">
 					<tr>
 						<td colspan="3" class="cerrar-table">
@@ -161,6 +306,7 @@
 	      		    </div>
 			</form>
 		</div>
-	</section>
+	</section> -->
+
 </section>
 {% endblock content %}
