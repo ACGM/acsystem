@@ -24,17 +24,18 @@
 		</div>
 
 		<section class="detalle-utilidad">
-			<table class="table-producto-factura">
+			<table class="table-report">
 				<tr>
 					<td>Codigo</td>
-					<td>Departamento</td>
 					<td>Nombre del Empleado</td>
 					<td class="align-right">Ahorro</td>
 
 				</tr>
-				<tr ng-repeat="ahorro in ahorros">
-					<td>[[ahorro.codigo]]</td>
-					<td>[[ahorro.departamento]]</td>
+				<tr ng-repeat="ahorro in datosReporte" class="[[ahorro.nombreCompleto]]">
+					<td>
+						<span ng-if="ahorro.nombreCompleto == 'TOTAL'">[[ahorro.departamento]]</span>
+						<span ng-if="ahorro.nombreCompleto != 'TOTAL'">[[ahorro.codigo]]</span>
+					</td>
 					<td>[[ahorro.nombreCompleto]]</td>
 					<td class="align-right">[[ahorro.cuotaAhorro | number : 2]]</td>
 				</tr>

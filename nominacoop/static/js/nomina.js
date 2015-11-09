@@ -1486,6 +1486,10 @@
       $scope.ahorros = JSON.parse($window.sessionStorage['descAhorros']);
       $scope.fNomina = $window.sessionStorage['nominaAh'];
 
+      //Inicializar variables
+      $scope.totalAhorro = 0;
+      $scope.datosReporte = [];
+
       var dia = $scope.fNomina.substring(8,10);
       var mes = $scope.fNomina.substring(5,7);
       var agno = $scope.fNomina.substring(0,4)
@@ -1515,8 +1519,73 @@
 
       $scope.ahorros.forEach(function (item) {
         $scope.totalAhorros += parseFloat(item.cuotaAhorro);
-
       });
+      console.log($scope.ahorros);
+
+      // INICIO: MODULO PARA HACER RUPTURA POR CLASIFICACION EN REPORTES
+      $scope.pushDefault = function(item) {
+        myItem = {};
+        myItem.codigo = item.codigo;
+        myItem.cuotaAhorro = item.cuotaAhorro;
+        myItem.departamento = item.departamento;
+        myItem.estatus = item.estatus;
+        myItem.nombreCompleto = item.nombreCompleto;
+
+        $scope.datosReporte.push(myItem);
+      }
+
+      $scope.pushTotal = function(item) {
+        myItem = {};
+        myItem.codigo = "";
+        myItem.cuotaAhorro = totalAhorro;
+        myItem.departamento = item.departamento;
+        myItem.estatus = item.estatus;
+        myItem.nombreCompleto = 'TOTAL';
+
+        $scope.datosReporte.push(myItem);
+        totalAhorro = 0;
+      }
+
+      var myItem = {};
+      var myItemTmp = {};
+      var depto = '';
+      var primero = true;
+      var count = 0;
+      var totalAhorro = 0;
+      var ultimo = $scope.ahorros.length;
+
+      $scope.ahorros.forEach(function (item) {
+        count +=1;
+
+        if(!primero) {
+          if(depto == item.departamento) {
+            $scope.pushDefault(item);
+
+            totalAhorro += parseFloat(item.cuotaAhorro);
+
+          } else { //Entra aqui cuando hay un cambio de departamento
+            $scope.pushTotal(myItemTmp);
+            totalAhorro += parseFloat(item.cuotaAhorro);
+
+            $scope.pushDefault(item);
+
+            //Para escribir el ultimo
+            if(count == $scope.ahorros.length) {
+              $scope.pushTotal(item);
+            }
+          }
+        } else { //Entra aqui si es la primera vez
+          $scope.pushDefault(item);
+
+          totalAhorro += parseFloat(item.cuotaAhorro);
+        }
+        
+        depto = item.departamento;
+        myItemTmp = item;
+        primero = false;
+        
+      });
+      // FIN: MODULOS PARA RUPTURA.
 
     }])
 
@@ -1586,6 +1655,7 @@
       });
       console.log($scope.prestamos);
 
+      // INICIO: MODULO PARA HACER RUPTURA POR CLASIFICACION EN REPORTES
       $scope.pushDefault = function(item) {
         myItem = {};
         myItem.balance = item.balance;
@@ -1674,6 +1744,7 @@
         primero = false;
         
       });
+      // FIN: MODULOS PARA RUPTURA.
 
     }]);
 

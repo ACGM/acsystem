@@ -29,6 +29,8 @@
 			<button class="icon-moneybag Boton boton-postear-inventario boton-nomina" ng-click="listadoAhorros($event)" title="Presionar este boton para ver el listado de Ahorros.">Ahorros</button>
 
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
+
+			<a href="#" class="icon-cog postear-nomdesc1" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP')"></a>
 		</div>
 
 		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendePrestamos]] [[encogePrestamos]]" ng-submit="generarNomina()" novalidate>

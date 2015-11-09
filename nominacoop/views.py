@@ -292,7 +292,7 @@ class NominaPrestamosAhorrosView(LoginRequiredMixin, DetailView):
             'balancesAhorros': balancesAhorros,
             'prestamosAplicados': prestamosAplicados,
             'ahorrosAplicados': ahorrosAplicados,
-            'estatusNomina': N.estatus
+            'estatusNomina': N.estatus if N != None else ''
         })
 
         return JsonResponse(data, safe=False)

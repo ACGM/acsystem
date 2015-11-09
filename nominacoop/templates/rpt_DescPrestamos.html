@@ -24,7 +24,7 @@
 		</div>
 
 		<section class="detalle-utilidad">
-			<table class="table-producto-factura">
+			<table class="table-report">
 				<tr>
 					<td>Departamento</td>
 					<td>Codigo</td>
@@ -36,7 +36,9 @@
 
 				</tr>
 				<tr ng-repeat="prestamo in datosReporte" class="[[prestamo.socio]]">
-					<td>[[prestamo.departamento]]</td>
+					<td>
+						<span ng-if="prestamo.socio == 'TOTAL'">[[prestamo.departamento]]</span>
+					</td>
 					<td>[[prestamo.codigoSocio]]</td>
 					<td>[[prestamo.socio]]</td>
 					<td class="align-right">[[prestamo.cuotaInteresQ | number : 2]]</td>
