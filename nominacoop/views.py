@@ -223,6 +223,33 @@ class EliminarNominaView(View):
 
 # ************ NOMINA PRESTAMOS Y AHORROS ***************
 
+# Para obtener las dos nominas de un mes y asi proceder 
+# con el posteo de cierre de mes.
+class nominasPrestamosCierreMesView(LoginRequiredMixin, TemplateView):
+
+    def get(self, request, *args, **kwargs):
+
+        mes = self.request.GET.get('mes')
+
+        if mes == None:
+            nominas = NominaPrestamosAhorros.objects.all()
+        else:
+            nominas = NominaPrestamosAhorros.objects.filter(nomina__month=mes, tipo='PR', infoTipo='0015', estatus='PO', posteadaFecha=None)
+
+        data = list()
+
+        for nomina in nominas:
+
+            data.append({
+                'nomina': nomina.nomina,
+                'tipo': nomina.tipo,
+                'infoTipo': nomina.infoTipo,
+                'estatus': nomina.estatus
+            })
+
+        return JsonResponse(data, safe=False)
+
+
 # Guardar cambios de estatus para posteo de nomina de descuentos
 class PosteoNominaPrestamosAhorro(LoginRequiredMixin, TemplateView):
 

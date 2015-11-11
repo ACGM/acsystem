@@ -33,6 +33,7 @@
           return deferred.promise;
       }
 
+      //Visualizar el detalle de conceptos de nomina de un empleado.
       function detalleEmpleado(nomina,empleado) {
         var deferred = $q.defer();
         detalleNomina(nomina).then(function (data) {
@@ -62,7 +63,6 @@
           return deferred.promise;
       }
 
-
       //Generar nomina (parametros: Fecha y Tipo de Nomina [y Nota])
       function generaNomina(fecha, tipo, quincena, nota) {
         var deferred = $q.defer();
@@ -78,42 +78,6 @@
         return deferred.promise;
       }
 
-      //Aplicar prestamos (registrar descuento del balance MaestraPrestamo)
-      function AplicarPrestamos(nomina, tipoPrestamo) {
-        var deferred = $q.defer();
-
-        var fecha = nomina.split('/');
-        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
-
-        $http.post('/nomina/descuentos/aplicar/prestamos/', JSON.stringify({'nomina': fechaFormatted, 'tipoPrestamo': tipoPrestamo})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-
-        return deferred.promise;
-      }
-
-      //Aplicar ahorros (registrar suma de cuota de ahorro)
-      function AplicarAhorros(nomina) {
-        var deferred = $q.defer();
-
-        var fecha = nomina.split('/');
-        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
-
-        $http.post('/nomina/descuentos/aplicar/ahorros/', JSON.stringify({'nomina': fechaFormatted})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-
-        return deferred.promise;
-      }
-      
       //Eliminar nomina (parametros: Fecha y Tipo de Nomina)
       function eliminarNomina(fecha, tipo) {
         var deferred = $q.defer();
@@ -159,6 +123,94 @@
         return deferred.promise;
       }
 
+            //Relacionar nomina con el archivo de banco generado.
+      function relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, archivoBanco) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/archivo-banco/set/', JSON.stringify({'fechaNomina': fechaNomina, 'tipoNomina': tipoNomina, 'archivoBanco': archivoBanco})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+      //Postear Nomina de Empleados de la Cooperativa.
+      function posteoNominaCoop(nomina) {
+        var deferred = $q.defer();
+
+        $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+        return deferred.promise;
+      }
+
+
+
+      //************************************************************************
+      //NOMINA PARA EMPRESA SOCIOS *********************************************
+      //************************************************************************
+
+      //Aplicar prestamos (registrar descuento del balance MaestraPrestamo)
+      function AplicarPrestamos(nomina, tipoPrestamo) {
+        var deferred = $q.defer();
+
+        var fecha = nomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+        $http.post('/nomina/descuentos/aplicar/prestamos/', JSON.stringify({'nomina': fechaFormatted, 'tipoPrestamo': tipoPrestamo})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      //Aplicar ahorros (registrar suma de cuota de ahorro)
+      function AplicarAhorros(nomina) {
+        var deferred = $q.defer();
+
+        var fecha = nomina.split('/');
+        var fechaFormatted = fecha[2] + '-' + fecha[1] + '-' + fecha[0];
+
+        $http.post('/nomina/descuentos/aplicar/ahorros/', JSON.stringify({'nomina': fechaFormatted})).
+          success(function (data) {
+            deferred.resolve(data);
+          }).
+          error(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+
+      // RETORNA LAS NOMINAS DE DESCUENTO SOCIOS GENERADAS PARA POSTEO CIERRE
+      function nominasPrestamosAhorros(mes) {
+        var deferred = $q.defer();
+
+        if(mes == undefined) {
+          url = '/nomina/descuentos/nominas/cierre/'
+        } else {
+          url = '/nomina/descuentos/nominas/cierre/?mes={mes}'.replace('{mes}', mes)
+        }
+
+        $http.get(url)
+          .success(function (data) {
+            deferred.resolve(data);
+          });
+
+        return deferred.promise;
+      }
+      
       //Generar Archivo de Nomina para Prestamos
       function generarArchivoPrestamos(prestamos, fechaNomina, tipoPN) {
         var deferred = $q.defer();
@@ -206,34 +258,6 @@
         var deferred = $q.defer();
 
         $http.post('/nomina/archivos/ahorros/balance/', JSON.stringify({'infoTipo': infoTipo, 'fechaNomina': fechaNomina})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
-
-      //Relacionar nomina con el archivo de banco generado.
-      function relacionarNominaConArchivoBanco(fechaNomina, tipoNomina, archivoBanco) {
-        var deferred = $q.defer();
-
-        $http.post('/nomina/archivo-banco/set/', JSON.stringify({'fechaNomina': fechaNomina, 'tipoNomina': tipoNomina, 'archivoBanco': archivoBanco})).
-          success(function (data) {
-            deferred.resolve(data);
-          }).
-          error(function (data) {
-            deferred.resolve(data);
-          });
-        return deferred.promise;
-      }
-
-      //Postear Nomina de Empleados de la Cooperativa.
-      function posteoNominaCoop(nomina) {
-        var deferred = $q.defer();
-
-        $http.post('/nomina/coop/postear/', JSON.stringify({'nomina': nomina})).
           success(function (data) {
             deferred.resolve(data);
           }).

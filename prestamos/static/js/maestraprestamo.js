@@ -553,7 +553,6 @@
 
                 //Para cuando es una PRETAMO
                 if($scope.prestamoOD_SEL.documentoDescrp == 'Prestamo') {
-                  console.log('PASO POR PRESTAMO')
                   valor = $filter('number') ($scope.prestamoOD_SEL.montoInicial, 2);
 
                 } else { //Para las ORDENES DE DESPACHO
@@ -606,7 +605,13 @@
             console.log(item)
 
             ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
-              console.log('Registros guardados en el diario: ' + data);
+              console.log('lo que contiene:::::::');
+              console.log(data);
+              if(data.substring(0,1) == '-') {
+                $scope.mostrarError(data);
+              } else {
+                console.log('Registros guardados en el diario: ' + data);
+              }
             });
           });
 

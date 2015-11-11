@@ -10,7 +10,8 @@ from fondoscajas.views import DesembolsoView, DesembolsoByCheque, ImprimirDesemb
 from nominacoop.views import NominaView, generaNominaView, EliminarNominaView, guardarDetalleEmpleado, NominaDescuentosView, \
                                 GenerarArchivoPrestamos, GenerarArchivoAhorros, NominaPrestamosAhorrosView, AplicarPrestamos, \
                                 AplicarAhorros, GenerarArchivoPrestamosBalance, rptNominaQuincenal, relacionArchivoBancoConNomina, \
-                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos, PostearNominaCoopView
+                                GenerarArchivoAhorrosBalance, rptNominaDescAhorros, rptNominaDescPrestamos, PostearNominaCoopView, \
+                                nominasPrestamosCierreMesView
 
 from inventario.views import InventarioView, InventarioSalidaView, AjusteInvView, TransferenciaInvView, EntradaInventarioById, \
                                 ImprimirEntradaInventarioView, RPTAjusteInventarioView, RPTMovimientoArticuloView, \
@@ -177,15 +178,19 @@ urlpatterns = patterns('',
     url(r'^nomina/descuentos/prestamos/reporte/$', rptNominaDescPrestamos.as_view(), name='Nomina_Descuentos_Prestamos_Reporte'),
     url(r'^nomina/descuentos/aplicar/prestamos/$', AplicarPrestamos.as_view(), name='Aplicar_prestamos'),
     url(r'^nomina/descuentos/aplicar/ahorros/$', AplicarAhorros.as_view(), name='Aplicar_ahorros'),
+    url(r'^nomina/descuentos/nominas/cierre/$', nominasPrestamosCierreMesView.as_view(), name='Nominas_Mes_Para_Cierre'),
+    
     url(r'^nomina/generar/$', generaNominaView.as_view(), name='Generar_Nomina'),
     url(r'^nomina/eliminar/$', EliminarNominaView.as_view(), name='eliminar_nomina'),
     url(r'^nomina/guardarDE/$', guardarDetalleEmpleado.as_view(), name='guardar_detalle_nomina'),
     url(r'^nomina/verificarExistencia/$', NominaPrestamosAhorrosView.as_view(), name='verificar_existencia_nomina'),
+    
     url(r'^nomina/archivos/prestamos/$', GenerarArchivoPrestamos.as_view(), name='nomina_archivo_prestamos'),
     url(r'^nomina/archivos/ahorros/$', GenerarArchivoAhorros.as_view(), name='nomina_archivo_ahorros'),
     url(r'^nomina/archivos/prestamos/balance/$', GenerarArchivoPrestamosBalance.as_view(), name='nomina_archivo_ahorros_balance'),
     url(r'^nomina/archivos/ahorros/balance/$', GenerarArchivoAhorrosBalance.as_view(), name='nomina_archivo_prestamos_balance'),
     url(r'^nomina/archivo-banco/set/$', relacionArchivoBancoConNomina, name='nomina_archivo_banco'),
+    
     url(r'^api/nomina/detalle/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina'),
     url(r'^api/nomina/detalle/(?P<nomina>[\w\-]+)/$', DetalleNominaGeneradaAPIView.as_view(), name='detalle_nomina2'),
     url(r'^nomina/reporte/quincena/$', rptNominaQuincenal.as_view(), name='reporte_nomina_quincena'),

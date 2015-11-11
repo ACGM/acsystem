@@ -62,7 +62,11 @@ class CuentasView(DetailView):
         DataT = json.loads(request.body)
         Data = DataT['cuenta']
 
-        try:    
+        try:
+
+            if DiarioGeneral.objects.filter(referencia=Data['ref'], cuenta__codigo=Data['codCuenta'], credito=Data['credito']).exists():
+                raise Exception('-Este documento fue posteado')
+
             cta = Cuentas.objects.get(codigo=Data['codCuenta'])
             diario = DiarioGeneral()
             diario.cuenta = cta
