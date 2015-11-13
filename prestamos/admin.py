@@ -34,6 +34,7 @@ class SolicitudPrestamoAdmin(admin.ModelAdmin):
 
 	list_display = ['id', 'noSolicitud', 'fechaSolicitud', 'socio', 'salarioSocio', 'representante', 'cobrador', 'autorizadoPor', \
 					'montoSolicitado', 'valorGarantizado', 'netoDesembolsar', 'categoriaPrestamo']
+	search_fields = ('socio__nombreCompleto',)
 
 
 @admin.register(SolicitudOrdenDespachoH)

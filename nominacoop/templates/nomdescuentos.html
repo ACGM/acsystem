@@ -30,7 +30,7 @@
 
 			<span class="mensajePrestamosAhorros"><strong>[[mensaje]]</strong></span>
 
-			<a href="#" class="icon-cog postear-nomdesc1" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP')"></a>
+			<a href="#" class="icon-cog postear-nomdesc1" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP', 'C')"></a>
 		</div>
 
 		<form name="FormPrestamos" class="form-prestamos-regulares [[extiendePrestamos]] [[encogePrestamos]]" ng-submit="generarNomina()" novalidate>
@@ -49,7 +49,7 @@
 					<button id="APS" class="Boton icon-cog boton-aplicar-prestamos [[AplicarPrestamosStatus]]" title="Lleva los prestamos a contabilidad." ng-click="aplicarPrestamos()">Aplicar</button>
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Prestamos" ng-click="reporteDescPrestamos(tipoPrestamoNomina)"></a>
-					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP')"></a>
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Prestamos" ng-click="postearNomina(fechaNomina, 'NOMP', 'N')"></a>
 
 				</section>
 
@@ -113,7 +113,7 @@
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Ahorros" ng-click="reporteDescAhorros($event)"></a>	
 
-					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Ahorros" ng-click="postearNomina(fechaNomina, 'NOMH')"></a>
+					<a href="#" class="icon-cog postear-nomdesc" title="Postear Descuentos de Ahorros" ng-click="postearNomina(fechaNomina, 'NOMH', 'N')"></a>
 				</section>
 
 				<div class="registrosPanel--grande" id="panelAhorros">

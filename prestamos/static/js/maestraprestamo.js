@@ -581,6 +581,7 @@
               
             });
             $scope.totalDebitoCredito();     
+            $scope.postearContabilidad();
 
           });
         } catch (e) {
@@ -605,8 +606,6 @@
             console.log(item)
 
             ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
-              console.log('lo que contiene:::::::');
-              console.log(data);
               if(data.substring(0,1) == '-') {
                 $scope.mostrarError(data);
               } else {
@@ -620,7 +619,7 @@
 
           MaestraPrestamoService.PostearPrestamosOD(p).then(function (data) {
             if(data == 1) {
-              $scope.listadoPrestamos();
+              // $scope.listadoPrestamos();
             } else {
               alert(data);
             }

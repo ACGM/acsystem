@@ -283,7 +283,8 @@
         generarArchivoPrestamosBalance : generarArchivoPrestamosBalance,
         generarArchivoAhorrosBalance : generarArchivoAhorrosBalance,
         relacionarNominaConArchivoBanco : relacionarNominaConArchivoBanco,
-        posteoNominaCoop : posteoNominaCoop
+        posteoNominaCoop : posteoNominaCoop,
+        nominasPrestamosAhorros : nominasPrestamosAhorros
       };
 
     }])
@@ -1213,7 +1214,7 @@
       }
 
       //Funcion para postear la nomina. (Postear es llevar al Diario)  //* tipo = 1-prestamo o 2-ahorro.
-      $scope.postearNomina = function(nomina, tipoDoc){
+      $scope.postearNomina = function(nomina, tipoDoc, cierre){
         var fecha = $scope.fechaNomina.split('/');
         var fechaFormatted = fecha[2] + fecha[1] + fecha[0];
 
@@ -1227,6 +1228,11 @@
         $scope.posteoG = false;
 
         try {
+          if(cierre == 'C') {
+            NominaService.nominasPrestamosAhorros(11).then(function (data) {
+              console.log(data);
+            });
+          }
 
           appService.getDocumentoCuentas(tipoDoc).then(function (data) {
             $scope.documentoCuentas = data;
