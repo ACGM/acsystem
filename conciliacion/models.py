@@ -18,6 +18,7 @@ class SolicitudCheque(models.Model):
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
     cuentas = models.ManyToManyField(DiarioGeneral, related_name='Sol_Cuentas', verbose_name='Cuentas', null=True, blank=True)
 
+
     def __unicode__(self):
         return '%i - %s' % (self.id, str(self.fecha))
 
@@ -31,6 +32,7 @@ class ConcCheques(models.Model):
     fecha = models.DateField(null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
     # cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
+
 
     def __unicode__(self):
         return '%i-%s' % (self.chequeNo, self.id)

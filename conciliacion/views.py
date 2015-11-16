@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento, DocumentoCuentas
-from cxp.models import OrdenCompra, CxpSuperCoop
+from cxp.models import OrdenGeneral, cxpSuperGeneral
 from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
 
 
@@ -61,7 +61,7 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
 
 def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
     try:
-        regOrden = OrdenCompra.objects.get(id = orden)
+        regOrden = OrdenGeneral.objects.get(id = orden)
 
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
@@ -73,8 +73,11 @@ def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
         solicitud.estatus = 'P'
         solicitud.save()
 
-        for oxd in regOrden.detalleCuentas.all():
+        for oxd in regOrden.cuentas.all():
             solicitud.cuenta.add(oxd)
+
+        regOrden.chk = 'D'
+        regOrden.save()
 
         return 'Ok'
     except Exception, e:
@@ -82,7 +85,7 @@ def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
 
 def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
     try:
-        regSuper = CxpSuperCoop.objects.get(id = regSuper)
+        regSuper = cxpSuperGeneral.objects.get(id = regSuper)
 
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
@@ -94,8 +97,11 @@ def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
         solicitud.estatus = 'P'
         solicitud.save()
 
-        for sup in regSuper.detalleCuentas.all():
+        for sup in regSuper.cuentas.all():
             solicitud.cuentas.add(sup)
+
+        regSuper.chk = 'D'
+        regSuper.save()
 
         return 'Ok'
     except Exception, e:
@@ -136,7 +142,7 @@ class SolicitudView(TemplateView):
                 #     'debito': cta.debito,
                 #     'credito': cta.credito
                 #     }
-                # from cta in sol.cuentas.all()]
+                # from cta in sol.cuentas.all()],
              }
             )
 
@@ -247,12 +253,12 @@ class ChequesView(TemplateView):
             cuentas = list()
 
             if solicitud.cxpOrden != None:
-                orden = OrdenCompra.objects.get(id = solicitud.cxpOrden) 
-                for orCuentas in orden.detalleCuentas.all():
+                orden = OrdenGeneral.objects.get(id = solicitud.cxpOrden) 
+                for orCuentas in orden.cuentas.all():
                     cuentas.append(orCuentas.id)
             elif solicitud.superOrden != None:
-                cxSuper = CxpSuperCoop.objects.get(id = solicitud.superOrden)
-                for spCuentas in cxSuper.detalleCuentas.all():
+                cxSuper = cxpSuperGeneral.objects.get(id = solicitud.superOrden)
+                for spCuentas in cxSuper.cuentas.all():
                     cuentas.append(spCuentas.id)
             elif solicitud.prestamo != None:
                 regCuentas = getCuentasByPrestamo(solicitud.prestamo)

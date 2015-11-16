@@ -1,16 +1,6 @@
 from django.contrib import admin
 
-from cxp.models import OrdenCompra, CxpSuperCoop, OrdenGeneral, OrdenDetalleFact, cxpSuperDetalle, cxpSuperGeneral
-
-@admin.register(OrdenCompra)
-class OrdenCompraAdmin(admin.ModelAdmin):
-    list_display = ['id', 'suplidor', 'socio', 'orden', 'fecha', 'monto']
-
-
-@admin.register(CxpSuperCoop)
-class OrdenSuperAdmin(admin.ModelAdmin):
-    list_display = ['id', 'suplidor', 'factura', 'concepto', 'fecha', 'monto', 'descuento']
-
+from cxp.models import OrdenGeneral, OrdenDetalleFact, cxpSuperDetalle, cxpSuperGeneral
 
 @admin.register(OrdenDetalleFact)
 class OrdenDetalleAdmin(admin.ModelAdmin):
