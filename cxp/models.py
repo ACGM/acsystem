@@ -64,7 +64,7 @@ class OrdenDetalleFact(models.Model):
 
 class OrdenGeneral(models.Model):
     estatus_choices = (('A', 'Activas'), ('N', 'Nula'), ('P', 'Posteada'))
-    estatusCh_choices =(('R', 'Registrado'),('N','No Emitida'),('S', 'Disponible Solicitud'))
+    estatusCh_choices =(('N','No Emitida'),('S', 'Disponible Solicitud'))
 
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     fecha = models.DateField(verbose_name="Fecha")
@@ -93,7 +93,7 @@ class cxpSuperDetalle(models.Model):
 
 class cxpSuperGeneral(models.Model):
     estatus_choices = (('A', 'Activas'), ('I', 'Inactivas'), ('P', 'Posteada'))
-    estatusCh_choices =(('R', 'Registrado'),('N','No Emitida'),('S', 'Disponible Solicitud'))
+    estatusCh_choices =(('N','No Emitida'),('S', 'Disponible Solicitud'))
 
     suplidor = models.ForeignKey(Suplidor, null=False, blank=False, default=False, verbose_name="Suplidor")
     fecha = models.DateField(verbose_name='Fecha')

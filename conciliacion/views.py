@@ -83,9 +83,9 @@ def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
     except Exception, e:
         return e.message
 
-def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
+def superSolicitud(self, fecha, suplidor, concepto, monto, Ssup):
     try:
-        regSuper = cxpSuperGeneral.objects.get(id = regSuper)
+        regSuper = cxpSuperGeneral.objects.get(id = Ssup)
 
         solicitud = SolicitudCheque()
         solicitud.fecha = fecha
@@ -93,7 +93,7 @@ def superSolicitud(self, fecha, suplidor, concepto, monto, regSuper):
         solicitud.suplidor = sup
         solicitud.concepto = concepto
         solicitud.monto = monto
-        solicitud.superOrden = regSuper
+        solicitud.superOrden = Ssup
         solicitud.estatus = 'P'
         solicitud.save()
 

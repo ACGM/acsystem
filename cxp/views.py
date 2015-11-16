@@ -306,12 +306,11 @@ class CxpSolicitud(DetailView):
             idOrden = self.request.GET.get('orden')
             orden = OrdenGeneral.objects.get(id=idOrden)
 
+            monto = orden.monto - orden.descuento
 
-            concepto = "Pago Orden #"+str(orden.id)+" del suplidor "+ str(orden.suplidor.nombre)
-
-            reg = ordenSolicitud(self,timezone.now(), orden.suplidor.id,concepto, orden.monto, orden.id)
+            reg = ordenSolicitud(self,timezone.now(), orden.suplidor.id, orden.concepto, monto , orden.id)
             if reg == 'Ok':
-                orden.chk = 'R'
+                orden.chk = 'D'
                 orden.save()
                 return HttpResponse(reg)
             else:
@@ -330,11 +329,11 @@ class CxpSuperSolicitud(DetailView):
 
             monto = cxpSuper.monto - cxpSuper.descuento
 
-            reg = superSolicitud(self,timezone.now(), cxpSuper.suplidor.id, cxpSuper.concepto, monto, idSuper)
+            reg = superSolicitud(self,timezone.now(), cxpSuper.suplidor.id, cxpSuper.concepto, monto, cxpSuper.id)
 
             return HttpResponse(reg)
             if reg =='Ok':
-                cxpSuper.chk = 'R'
+                cxpSuper.chk = 'D'
                 cxpSuper.save()
                 return HttpResponse('Ok')
             else:
