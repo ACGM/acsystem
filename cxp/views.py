@@ -215,7 +215,7 @@ class CxpSuperCoopView(DetailView):
                     'monto': cxpS.monto,
                     'descuento': cxpS.descuento,
                     'estatus': cxpS.estatus,
-                    'chk': cxps.chk,
+                    'chk': cxpS.chk,
                     'detalle': [{
                         'id': det.id,
                         'Registro': det.idRegistro,

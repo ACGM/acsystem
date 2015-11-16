@@ -613,6 +613,7 @@
                     cxpService.getAllSuper().then(function (data){
                         var datar = data;
                         $scope.lstCxpOrden = datar;
+                        console.log(data);
                     });
                     
                 }  
