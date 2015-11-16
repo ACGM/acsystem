@@ -74,7 +74,7 @@ class OrdenGeneral(models.Model):
     descuento = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False,
                                     verbose_name="Desc")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
-    chk = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Chk Solicitado")
+    chk = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Chk Solicitado", default='N')
     detalle = models.ManyToManyField(OrdenDetalleFact, related_name="Orden_Detalle", verbose_name="Detalle", null=False, blank=False)
     cuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_OG_ref",
                                             verbose_name='Cuentas', null=True, blank=True)
@@ -103,7 +103,7 @@ class cxpSuperGeneral(models.Model):
     descuento = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=False,
                                     verbose_name="Desc")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
-    chk = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Chk Solicitado")
+    chk = models.CharField(max_length=1, choices=estatusCh_choices, verbose_name="Chk Solicitado", default='N')
     detalle = models.ManyToManyField(cxpSuperDetalle, related_name="super_Detalle", verbose_name="Detalle", null=False, blank=False)
     cuentas = models.ManyToManyField(DiarioGeneral, related_name="diario_super_cuenta",
                                             verbose_name='Cuentas', null=True, blank=True)
