@@ -423,28 +423,7 @@
                     alert("El monto a pagar es diferente al total de factura");
                 }
 
-                // if($scope.cxpDataReg.id === undefined){
-                //     $scope.cxpDataReg.id = null;
-                //     $scope.cxpDataReg.estatus = 'A';
-                //     }
-                // else{
-                //     console.log($scope.cxpDataDetalle);
-                // }
-
-                // var RegFecha = $scope.cxpDataReg.fecha.split('/');
-                // var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
-                // $scope.cxpDataReg.fecha = FechaFormat;
-               
-                // var result = cxpService.setOrden($scope.cxpDataReg, $scope.cxpDataDetalle);
-                // $scope.limpiar();
-                // $scope.OrdenList = false;
-                // $scope.OrdenCrPanel = true;
-                // $scope.panelDetalleArt = true;
-                // $scope.DetallesArt = true;
-                // $scope.OrdenReg = true;
-                // $scope.ArrowLF = 'DownArrow';
-
-                // $scope.getAllData();
+              
 
             };
 
@@ -810,6 +789,7 @@
 
                 cxpService.solicitudSuperCoop(id).then(function (data){
                     if(data == "Ok"){
+                        $scope.getAllData();
                         alert("Fue creada la solicitud para el registro #"+id);
                     }else{
                         console.log(data);

@@ -7,13 +7,13 @@ from django.views.generic import TemplateView, DetailView
 from rest_framework import viewsets
 from django.utils import timezone
 
-from cxp.models import OrdenCompra, CxpSuperCoop, OrdenGeneral, OrdenDetalleFact, cxpSuperDetalle, cxpSuperGeneral
+from cxp.models import  OrdenGeneral, OrdenDetalleFact, cxpSuperDetalle, cxpSuperGeneral
 from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Suplidor, Socio, TipoDocumento, DocumentoCuentas
 from prestamos.models import SolicitudOrdenDespachoH
 from conciliacion.views import ordenSolicitud, superSolicitud
 from inventario.models import InventarioH
-from .serializers import OrdenSerializer
+# from .serializers import OrdenSerializer
 
 
 
@@ -68,7 +68,7 @@ def SetCuentaSuper(self, superCxp, doc, ref):
 
 
 class CxpOrdenView(DetailView):
-    queryset = OrdenCompra.objects.all()
+    queryset = OrdenGeneral.objects.all()
 
 
     def post(self, request):
@@ -85,6 +85,7 @@ class CxpOrdenView(DetailView):
             regGeneral.monto = dataGeneral['monto']
             regGeneral.descuento = dataGeneral['descuento']
             regGeneral.estatus ='A'
+            regGeneral.chk = 'N'
             regGeneral.save()
 
             for det in dataDetalle:
@@ -100,30 +101,6 @@ class CxpOrdenView(DetailView):
                 regDespacho.cxp ='P'
                 regDespacho.save()
 
-            # data = dataT['Orden']
-
-            # if data['id'] is None:
-            
-            #     regOrden = OrdenCompra()
-            #     regOrden.suplidor = Suplidor.objects.get(id=data['suplidorId'])
-            #     regOrden.socio = Socio.objects.get(codigo=data['socioId'])
-            #     regOrden.orden = int(data['orden'])
-            #     regOrden.fecha = data['fecha']
-            #     regOrden.monto = decimal.Decimal(data['monto'])
-            #     regOrden.estatus = data['estatus']
-            #     regOrden.estatusCh = 'N'
-            #     regOrden.save()
-
-            #     regDespacho = SolicitudOrdenDespachoH.objects.get(id = data['orden'])
-            #     regDespacho.cxp ='P'
-            #     regDespacho.save()
-
-            # else:
-
-            #     OrdenCompra.objects.filter(id=data['id']).update(monto=decimal.Decimal(data['monto']))
-            #     OrdenCompra.objects.filter(id=data['id']).update(cuotas = decimal.Decimal(data['cuotas']))
-            #     OrdenCompra.objects.filter(id=data['id']).update(montocuotas = decimal.Decimal(data['montoCuotas']))
-            
             return HttpResponse('Ok')
         except Exception as ex:
             return HttpResponse(ex)
@@ -151,6 +128,7 @@ class CxpOrdenView(DetailView):
                 'monto': ordenes.monto,
                 'descuento': ordenes.descuento,
                 'estatus': ordenes.estatus,
+                'chk': ordenes.chk,
                 'detalle': [{
                     'id': det.id,
                     'factura': det.factura,
@@ -170,37 +148,12 @@ class CxpOrdenView(DetailView):
                 }
                 for cta in ordenes.cuentas.all()],
                 })
-            # data.append({
-            #     'id': ordenes.id,
-            #     'suplidorId': ordenes.suplidor.id,
-            #     'suplidor': ordenes.suplidor.nombre,
-            #     'socioId': ordenes.socio.id,
-            #     'socio': ordenes.socio.nombreCompleto,
-            #     'orden': ordenes.orden,
-            #     'fecha': ordenes.fecha,
-            #     'monto': ordenes.monto,
-            #     'estatus': ordenes.estatus,
-            #     'estatusCh': ordenes.estatusCh,
-            #     'detalleCuentas': [
-            #         {
-            #             'id': cuentas.id,
-            #             'fecha': cuentas.fecha,
-            #             'cuenta': cuentas.cuenta.codigo,
-            #             'referencia': cuentas.referencia,
-            #             'estatus': cuentas.estatus,
-            #             'debito': cuentas.debito,
-            #             'credito': cuentas.credito,
-
-            #         }
-            #         for cuentas in ordenes.detalleCuentas.all()
-            #     ],
-            
-            # })
+           
         return JsonResponse(data, safe=False)
 
 
 class CxpSuperCoopView(DetailView):
-    queryset = CxpSuperCoop.objects.all()
+    queryset = cxpSuperGeneral.objects.all()
 
     def post(self, request):
         try:
@@ -217,6 +170,7 @@ class CxpSuperCoopView(DetailView):
             superGeneral.monto = data['monto']
             superGeneral.descuento = data['descuento']
             superGeneral.estatus = 'A'
+            superGeneral.chk = 'N'
             superGeneral.save()
 
             for det in dataD:
@@ -230,19 +184,6 @@ class CxpSuperCoopView(DetailView):
                 invent = InventarioH.objects.get(id=det['id'])
                 invent.cxp = 'P'
                 invent.save()
-
-            # cxpSuper = CxpSuperCoop()
-            # cxpSuper.factura = data['factura']
-            # cxpSuper.suplidor = sup
-            # cxpSuper.fecha = data['fecha']
-            # cxpSuper.concepto = data['concepto']
-            # cxpSuper.descuento = data['descuento']
-            # cxpSuper.monto = decimal.Decimal(data['monto'])
-            # cxpSuper.estatusCh = 'N'
-            # cxpSuper.estatus = data['estatus']
-            # cxpSuper.save()
-
-
 
             return HttpResponse('Ok')
         except Exception, e:
@@ -274,6 +215,7 @@ class CxpSuperCoopView(DetailView):
                     'monto': cxpS.monto,
                     'descuento': cxpS.descuento,
                     'estatus': cxpS.estatus,
+                    'chk': cxps.chk,
                     'detalle': [{
                         'id': det.id,
                         'Registro': det.idRegistro,
@@ -292,35 +234,7 @@ class CxpSuperCoopView(DetailView):
                         }
                         for cuentas in cxpS.cuentas.all()]
                     }
-                    )
-            # for cxpSuper in CxpSuperCoop.objects.all():
-            #     data.append({
-            #         'id': cxpSuper.id,
-            #         'suplidorId': cxpSuper.suplidor.id,
-            #         'suplidor': cxpSuper.suplidor.nombre,
-            #         'factura': cxpSuper.factura,
-            #         'fecha': cxpSuper.fecha,
-            #         'concepto': cxpSuper.concepto,
-            #         'estatus': cxpSuper.estatus,
-            #         'estatusCh': cxpSuper.estatusCh,
-            #         'monto': cxpSuper.monto,
-            #         'descuento': cxpSuper.descuento,
-            #         'detalleCuentas': [
-            #             {
-            #                 'id': cuentas.id,
-            #                 'fecha': cuentas.fecha,
-            #                 'cuenta': cuentas.cuenta.codigo,
-            #                 'referencia': cuentas.referencia,
-            #                 'estatus': cuentas.estatus,
-            #                 'debito': cuentas.debito,
-            #                 'credito': cuentas.credito,
-
-            #             }
-            #             for cuentas in cxpSuper.detalleCuentas.all()
-            #         ],
-            #     }
-
-                
+                    )            
             return JsonResponse(data, safe=False)
         except Exception, e:
             return HttpResponse(e)
@@ -350,23 +264,6 @@ class CxpView(TemplateView):
             for document in doc:
                 SetCuentaOrden(self,regOrdenG.id,document,'CXPO')
 
-            # regOrden = OrdenCompra.objects.get(id=orden)
-            # regOrden.estatus = 'P'
-            # regOrden.estatusCh = 'S'
-
-            # if regOrden.socio.estatus == 'S':
-            #     ref = 'CXOS'
-            # else:
-            #     ref = 'CXOE'
-
-            # tipo = TipoDocumento.objects.get(codigo=ref)
-            # doc = DocumentoCuentas.objects.filter(documento = tipo)
-
-            # for document in doc:
-            #     SetCuentaOrden(self,regOrden.id,document,ref)
-
-            # regOrden.save()
-
             return HttpResponse('Ok')
         except Exception, e:
             return HttpResponse(e)
@@ -395,21 +292,6 @@ class cxpSuperView(TemplateView):
                 SetCuentaSuper(self,regSuper.id,document,'CXSS')
 
             regSuper.save()
-
-
-            # regSuper = CxpSuperCoop.objects.get(id=superCxp);
-            # regSuper.estatus = 'P'
-            # regSuper.estatusCh = 'S'
-
-            # ref = 'CXSS'
-
-            # tipo = TipoDocumento.objects.get(codigo=ref)
-            # doc = DocumentoCuentas.objects.filter(documento = tipo)
-
-            # for document in doc:
-            #     SetCuentaSuper(self,regSuper.id,document,ref)
-
-            # regSuper.save()
             
             return HttpResponse('Ok')
         except Exception, e:
@@ -417,19 +299,19 @@ class cxpSuperView(TemplateView):
 
 
 class CxpSolicitud(DetailView):
-    queryset = OrdenCompra.objects.all()
+    queryset = OrdenGeneral.objects.all()
 
     def post(self, request):
         try:
             idOrden = self.request.GET.get('orden')
-            orden = OrdenCompra.objects.get(id=idOrden)
+            orden = OrdenGeneral.objects.get(id=idOrden)
 
 
             concepto = "Pago Orden #"+str(orden.id)+" del suplidor "+ str(orden.suplidor.nombre)
 
-            reg = ordenSolicitud(self,timezone.now(), orden.suplidor.id,concepto, orden.monto, idOrden)
+            reg = ordenSolicitud(self,timezone.now(), orden.suplidor.id,concepto, orden.monto, orden.id)
             if reg == 'Ok':
-                orden.estatusCh = 'R'
+                orden.chk = 'R'
                 orden.save()
                 return HttpResponse(reg)
             else:
@@ -439,19 +321,20 @@ class CxpSolicitud(DetailView):
 
 
 class CxpSuperSolicitud(DetailView):
-    queryset = CxpSuperCoop.objects.all()
+    queryset = cxpSuperGeneral.objects.all()
 
     def post(self, request):
         try:
             idSuper = self.request.GET.get('super')
-            cxpSuper = CxpSuperCoop.objects.get(id=idSuper)
+            cxpSuper = cxpSuperGeneral.objects.get(id=idSuper)
 
             monto = cxpSuper.monto - cxpSuper.descuento
 
             reg = superSolicitud(self,timezone.now(), cxpSuper.suplidor.id, cxpSuper.concepto, monto, idSuper)
 
+            return HttpResponse(reg)
             if reg =='Ok':
-                cxpSuper.estatusCh = 'R'
+                cxpSuper.chk = 'R'
                 cxpSuper.save()
                 return HttpResponse('Ok')
             else:
