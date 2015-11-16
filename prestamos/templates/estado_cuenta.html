@@ -16,8 +16,12 @@
 					<tr>
 						<td>Codigo</td>
 						<td>
-							<input type="text" class="resaltar-valor align-right" ng-model="codigoSocio" autocomplete="on">
+							<input type="text" class="resaltar-valor align-right" ng-model="codigoSocio" autocomplete="on" ng-keypress="keyGetData($event)">
 							<a class="icon-uniE601 icon-buscar" href="#" ng-click="datos.codigoEmpleado = ''; getData($event);"></a>
+							
+							<figure class="fig-load2 [[mostrar]]">
+								<img class="img-load2" src="/static/images/loading.gif" alt="">
+							</figure>
 						</td>
 					</tr>
 					<tr>
@@ -38,6 +42,9 @@
 							<input type="text" class="resaltar-valor align-right" ng-model="ahorroTotal" readonly>
 							Fecha Ultimo Ahorro
 							<input type="text" class="resaltar-valor align-right" ng-model="ta.cantidadCuotas" readonly>
+							<figure class="fig-load2 [[mostrar3]]">
+								<img class="img-load2" src="/static/images/loading.gif" alt="">
+							</figure>
 						</td>
 					</tr>
 					<tr>
@@ -53,8 +60,14 @@
 				<button class="Boton boton-aprobar-sp" ng-click="calcularAmortizacion()">Visualizar</button>
 			</div> -->
 
-			<section>
+			<figure class="fig-load2 [[mostrar2]]">
+				<img class="img-load2" src="/static/images/loading.gif" alt="">
+			</figure>
+
+			<section ng-if="prestamos.length > 0">
 				<h4>PRESTAMOS</h4>
+				
+
 				<table class="listado-table">
 					<tr class="listado-table-header">
 						<td>Numero</td>
@@ -63,7 +76,7 @@
 						<td>Vence</td>
 						<td>Para el 75%</td>
 						<td>Categoria</td>
-						<td>Balance</td>
+						<td>Balance Capital</td>
 					</tr>
 					<tr ng-repeat="prestamo in prestamos" class="listado-entrada-inventario-detail">
 						<td>[[prestamo.noPrestamo | numberFixedLen : 9]]</td>
@@ -74,13 +87,17 @@
 						<td>[[prestamo.categoriaPrestamo]]</td>
 						<td class="align-right resaltar-valor">[[prestamo.balance | number : 2]]</td>
 					</tr>
+					<tr>
+						<td><strong>TOTAL</strong></td>
+						<td colspan="6" class="align-right resaltar-valor verde"><strong>[[prestamosTotal]]</strong></td>
+					</tr>
 				</table>
 			</section>
 
-			<table class="table-datos-prestamo-2">
+			<table class="table-datos-prestamo-2" ng-if="dataSolicitante.codigo > 0">
 				<tr>
-					<td colspan="2" class="align-right">Primera Quincena</td>
-					<td class="align-right">Segunda Quincena</td>
+					<td colspan="2" class="align-right">1ra. Quincena</td>
+					<td class="align-right">&nbsp;&nbsp; 2da. Quincena</td>
 				</tr>
 
 				<tr>
@@ -89,17 +106,31 @@
 
 				<tr>
 					<td>Cuota de Ahorros</td>
-					<td class="align-right">500[[dataSolicitante.cuotaAhorroQ1 | number: 2]]</td>
-					<td class="align-right">600[[dataSolicitante.cuotaAhorroQ2 | number: 2]]</td>
+					<td class="align-right">[[dataSolicitante.cuotaAhorroQ1 | number: 2]]</td>
+					<td class="align-right">[[dataSolicitante.cuotaAhorroQ2 | number: 2]]</td>
+				</tr>
+				<tr>
+					<td>Aportes</td>
+					<td class="align-right">0.00</td>
+					<td class="align-right">0.00</td>
 				</tr>
 				<tr>
 					<td>Cuota de Prestamos</td>
-					<td class="align-right">7000[[varCuotaPrestamo | number: 2]]</td>
-					<td class="align-right">6500[[varCuotaPrestamo | number: 2]]</td>
+					<td class="align-right">[[cuotasQ1Prestamos | number: 2]]</td>
+					<td class="align-right">[[cuotasQ2Prestamos | number: 2]]</td>
 				</tr>
-				
 				<tr>
-					<td>Total</td>
+					<td>Servicios Multiples</td>
+					<td class="align-right">[[cuotasQ1Ordenes | number: 2]]</td>
+					<td class="align-right">[[cuotasQ2Ordenes | number: 2]]</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><hr/></td>
+					<td><hr/></td>
+				</tr>
+				<tr>
+					<td><strong>Total</strong></td>
 					<td class="padding-right-6">[[totalQ1 | number: 2]]</td>
 					<td class="align-right">[[totalQ2 | number: 2]]</td>
 				</tr>

@@ -875,23 +875,74 @@
     //****************************************************
     //ESTADO DE CUENTA SOCIO                             *
     //****************************************************
-    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'AhorroServices',
-                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, AhorroServices) {
+    .controller('EstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'AhorroServices', 'SolicitudPrestamoService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, AhorroServices, SolicitudPrestamoService) {
       
+      //Inicializar variables
+      $scope.mostrar = 'ocultar';
+      $scope.mostrar2 = 'ocultar';
+      $scope.mostrar3 = 'ocultar';
+
+      $scope.cuotasQ1Prestamos = 0;
+      $scope.cuotasQ2Prestamos = 0;
+      $scope.cuotasQ1Ordenes = 0;
+      $scope.cuotasQ2Ordenes = 0;
+
+      $scope.keyGetData = function($event) {
+        if($event.keyCode == 13) {
+          $scope.getData($event);
+        }
+      }
 
       $scope.getData = function($event) {
         $event.preventDefault();
+        $scope.mostrar = 'mostrar';
 
         try {
+
+          //Limpiar Data
+          $scope.prestamos = [];
+          $scope.datos = {};
+          $scope.ahorroTotal = '';
+          $scope.prestamosTotal = '';
+          //Fin Limpiar Data
+
+
           MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
+            $scope.mostrar = 'mostrar';
+            $scope.mostrar2 = 'mostrar';
+
             console.log(data);
             $scope.datos = data[0];
             
             //Traer todos los prestamos activos.
             MaestraPrestamoService.PrestamosbySocio($scope.codigoSocio).then(function (data) {
+              console.log('Prestamos del socio');
+              console.log(data);
+
+
               $scope.prestamos = data;
+
+              $scope.prestamos.forEach(function (item) {
+                if(item.noSolicitudOD > 0) {
+                  $scope.cuotasQ1Ordenes += item.montoCuotaQ1;
+                  $scope.cuotasQ2Ordenes += item.montoCuotaQ2;
+                } else {
+                  $scope.cuotasQ1Prestamos += item.montoCuotaQ1;
+                  $scope.cuotasQ2Prestamos += item.montoCuotaQ2;
+                }
+              });
+
+              $scope.mostrar2 = 'ocultar';
+
+            },
+            function (error) {
+              console.log('ERROR XXXXXX');
+              $scope.mostrar2 = 'ocultar';
+              
             });
 
+            $scope.mostrar3 = 'mostrar';
             //Traer el ahorro capitalizado del socio
             AhorroServices.getAhorroSocio($scope.codigoSocio).then(function (data) {
               if(data.length > 0) {
@@ -899,11 +950,14 @@
               } else {
                 $scope.ahorroTotal = 0;
               }
+
+              $scope.mostrar3 = 'ocultar';
             });
 
+            $scope.mostrar = 'mostrar';
             //Traer el balance de deudas (prestamos) del socio
             MaestraPrestamoService.prestamosBalanceByCodigoSocio($scope.codigoSocio).then(function (data) {
-
+              
               if(data.length > 0) {
                 $scope.prestamosTotal = $filter('number')(data[0]['balance'], 2);
               } else {
@@ -911,12 +965,39 @@
               }
             });
 
+            $scope.mostrar = 'ocultar';
+
+            SolicitudPrestamoService.solicitanteDatos($scope.codigoSocio).then(function (data) {
+              $scope.dataSolicitante = data[0];
+              console.log('dataSolicitante');
+              console.log($scope.dataSolicitante);        
+
+              //Calculo para cuota quincenal de prestamo
+              var cuotaPrestamo;
+              // cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
+              // cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
+              // $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
+
+              //Totales en Quincenas (ahorro y cuota Prestamo)
+              // $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);
+              // $scope.totalQ2 = parseFloat($scope.dataSolicitante.cuotaAhorroQ2) + parseFloat($scope.varCuotaPrestamo);
+
+              
+              //Monto al que aplica
+              // var prestLab = $scope.solicitudP.prestacionesLaborales != undefined? $scope.solicitudP.prestacionesLaborales : 0;
+              // var valorGaran = $scope.solicitudP.valorGarantizado != undefined? $scope.solicitudP.valorGarantizado : 0;
+              // var deudasPrest = $scope.solicitudP.deudasPrestamos != undefined? $scope.solicitudP.deudasPrestamos : 0;
+
+              // $scope.montoAplica = ($scope.solicitudP.ahorrosCapitalizados + 
+              //                       parseFloat(prestLab) +
+              //                       parseFloat(valorGaran)) - deudasPrest;
+            });
+
           });
 
         } catch(e) {
           console.log(e);
         }
-
       }
 
       $scope.totales = function() {
