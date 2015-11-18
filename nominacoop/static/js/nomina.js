@@ -737,6 +737,7 @@
       $scope.encogeAhorros = 'encogeAhorros';
       $scope.extiendePrestamos = 'extiende';
       $scope.showPRESTAMOS = true;
+      $scope.mostrar = 'ocultar';
 
       //VARIABLES PARA POSTEOS DE AHORROS
       $scope.gAhorrosSocios = 0;
@@ -809,6 +810,7 @@
       // Traer listado de prestamos de la Maestra que estan activos.
       $scope.listadoPrestamos = function($event, tipoPrestamoNom) {
         $event.preventDefault();
+        $scope.mostrar = 'mostrar';
 
         panelesSize();
         $scope.mensaje = '';
@@ -898,6 +900,8 @@
 
             $scope.ocultarAhorros($event);
             $scope.errorShow = false;
+
+            $scope.mostrar = 'ocultar';
           });
         } catch (e) {
           $scope.mostrarError(e);
@@ -909,6 +913,8 @@
         $scope.ahorros = [];
         $scope.gAhorrosSocios = 0;
         $scope.gAhorrosEmpleados = 0;
+
+        $scope.mostrar = 'mostrar';
 
         try {
           if($scope.fechaNomina == undefined) {
@@ -964,6 +970,7 @@
 
               return 0;
             });
+            $scope.mostrar = 'ocultar';
           });
         } catch (e) {
           $scope.mostrarError(e);
@@ -1032,77 +1039,77 @@
             console.log(data);
 
             if(tipo == 'AHORRO') { //SECCION DE AHORROS
+              
               //Existencia de Ahorros Generados.
               if(data[0]['ahorros'] == 1) {
                 $scope.VerificarArchivoAhorrosStatus = '';
                 $window.document.getElementById('VAAS').disabled = false;
 
-                $scope.AplicarAhorrosStatus = '';
-                $window.document.getElementById('AAS').disabled = false;
+                $scope.BalancesAhorrosStatus = '';
+                $window.document.getElementById('BAS').disabled = false;
               } else {
                 $scope.VerificarArchivoAhorrosStatus = 'Boton-disabled';
                 $window.document.getElementById('VAAS').disabled = true;
+
+                $scope.BalancesAhorrosStatus = 'Boton-disabled';
+                $window.document.getElementById('BAS').disabled = true;
               }
 
               //Existencia de Balance de Ahorros Generados.
               if(data[0]['balancesAhorros'] == 1) {
                 $scope.verBalancesAhorrosStatus = '';
                 $window.document.getElementById('vBAS').disabled = false;
-              } else {
-                $scope.verBalancesAhorrosStatus = 'Boton-disabled';
-                $window.document.getElementById('vBAS').disabled = true;
-              }
+
+                $scope.BalancesAhorrosStatus = '';
+                $window.document.getElementById('BAS').disabled = false;
+
+                $scope.AplicarAhorrosStatus = '';
+                $window.document.getElementById('AAS').disabled = false;
+              } 
 
               //Se aplico el ahorro.
               if(data[0]['ahorrosAplicados'] == 1) {
-                $scope.BalancesAhorrosStatus = '';
-                $window.document.getElementById('BAS').disabled = false;
-              } else {
-                $scope.BalancesAhorrosStatus = 'Boton-disabled';
-                $window.document.getElementById('BAS').disabled = true;
+                $scope.AplicarAhorrosStatus = 'Boton-disabled';
+                $window.document.getElementById('AAS').disabled = true;
               }
 
             } else { //SECCION DE PRESTAMOS
-
-              //Se aplicaron los prestamos.
-              if(data[0]['prestamosAplicados'] == 1) {
-                $scope.BalancesPrestamosStatus = '';
-                $window.document.getElementById('BPS').disabled = false;
-              } else {
-                $scope.BalancesPrestamosStatus = 'Boton-disabled';
-                $window.document.getElementById('BPS').disabled = true;
-              }
 
               //Existencia de Prestamos Generados.
               if(data[0]['prestamos'] == 1) {
                 $scope.VerificarArchivoPrestamosStatus = '';
                 $window.document.getElementById('VAPS').disabled = false;
 
-                $scope.AplicarPrestamosStatus = '';
-                $window.document.getElementById('APS').disabled = false;
+                $scope.BalancesPrestamosStatus = '';
+                $window.document.getElementById('BPS').disabled = false;
+
               } else {
                 $scope.VerificarArchivoPrestamosStatus = 'Boton-disabled';
                 $window.document.getElementById('VAPS').disabled = true;
 
-                $scope.AplicarPrestamosStatus = 'Boton-disabled';
-                $window.document.getElementById('APS').disabled = true;
+                $scope.BalancesPrestamosStatus = 'Boton-disabled';
+                $window.document.getElementById('BPS').disabled = true;
               }  
 
               //Existencia de Balance de Prestamos Generados.
               if(data[0]['balancesPrestamos'] == 1) {
+
                 $scope.BalancesPrestamosStatus = '';
                 $window.document.getElementById('BPS').disabled = false;
 
                 $scope.verBalancesPrestamosStatus = '';
                 $window.document.getElementById('vBPS').disabled = false;
 
-              } else {
-                $scope.BalancesPrestamosStatus = 'Boton-disabled';
-                $window.document.getElementById('BPS').disabled = true;
+                $scope.AplicarPrestamosStatus = '';
+                $window.document.getElementById('APS').disabled = false;
 
-                $scope.verBalancesPrestamosStatus = 'Boton-disabled';
-                $window.document.getElementById('vBPS').disabled = true;
-              }
+              } 
+
+              //Se aplicaron los prestamos.
+              if(data[0]['prestamosAplicados'] == 1) {
+                $scope.AplicarPrestamos = 'Boton-disabled';
+                $window.document.getElementById('APS').disabled = true;
+              } 
 
             }
 
@@ -1167,8 +1174,8 @@
 
             $scope.VerificarArchivoAhorrosStatus = '';
             $window.document.getElementById('VAAS').disabled = false;
-            $scope.AplicarAhorrosStatus = '';
-            $window.document.getElementById('AAS').disabled = false;
+            $scope.BalancesAhorrosStatus = '';
+            $window.document.getElementById('BAS').disabled = false;
           }
         });
       }
@@ -1440,6 +1447,9 @@
 
             $scope.verBalancesAhorrosStatus = '';
             $window.document.getElementById('vBAS').disabled = false;
+
+            $scope.AplicarAhorrosStatus = '';
+            $window.document.getElementById('AAS').disabled = false;
           }
         });
       }

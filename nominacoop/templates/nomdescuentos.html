@@ -5,7 +5,11 @@
 {% block content %}
 
 	<div class="Nomina" ng-controller="NominaDescuentosCtrl">
-	
+
+		<figure class="fig-load3 [[mostrar]]">
+			<img class="img-load3" src="/static/images/loading.gif" alt="">
+		</figure>
+
 		<mensajeerror> </mensajeerror>
 		<mensajeinfo> </mensajeinfo>
 
@@ -96,6 +100,7 @@
 		</form>
 
 		<!-- FORMULARIO DE AHORROS -->
+		<!-- ***************************************** -->
 		<form name="FormAhorros" class="form-prestamos-regulares [[extiendeAhorros]] [[encogeAhorros]]" ng-submit="generarNomina()" ng-show="showAHORROS" novalidate>
 			<a href="#" class="resaltar-valor verde" ng-click="ocultarPrestamos($event)">AHORROS</a>
 
@@ -105,11 +110,11 @@
 
 					<button id="VAAS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[VerificarArchivoAhorrosStatus]]" title="Ver archivo para nomina." ng-click="verArchivo('AH')">Verificar</button>	
 
-					<button id="AAS" class="Boton icon-cog boton-aplicar-prestamos [[AplicarAhorrosStatus]]" ng-click="aplicarAhorros()">Aplicar</button>
-
 					<button id="BAS" class="Boton-azul icon-document boton-aplicar-prestamos [[BalancesAhorrosStatus]]" title="Generar archivo de balances Ahorros." ng-click="archivoBalancesAhorros($event)">Balances</button>
 
 					<button id="vBAS" class="Boton-azul icon-uniE601 boton-aplicar-prestamos [[verBalancesAhorrosStatus]]" title="Ver archivo de balances de ahorros." ng-click="verBalancesAhorros($event)">ver Balances</button>
+					
+					<button id="AAS" class="Boton icon-cog boton-aplicar-prestamos [[AplicarAhorrosStatus]]" ng-click="aplicarAhorros()">Aplicar</button>
 
 					<a href="#" class="icon-document reporte-nomdesc" title="Ver Reporte Ahorros" ng-click="reporteDescAhorros($event)"></a>	
 

@@ -888,6 +888,9 @@
       $scope.cuotasQ1Ordenes = 0;
       $scope.cuotasQ2Ordenes = 0;
 
+      $scope.totalQ1 = 0;
+      $scope.totalQ2 = 0;
+
       $scope.keyGetData = function($event) {
         if($event.keyCode == 13) {
           $scope.getData($event);
@@ -905,6 +908,8 @@
           $scope.datos = {};
           $scope.ahorroTotal = '';
           $scope.prestamosTotal = '';
+          $scope.totalQ1 = 0;
+          $scope.totalQ2 = 0;
           //Fin Limpiar Data
 
 
@@ -937,9 +942,7 @@
 
             },
             function (error) {
-              console.log('ERROR XXXXXX');
               $scope.mostrar2 = 'ocultar';
-              
             });
 
             $scope.mostrar3 = 'mostrar';
@@ -951,6 +954,9 @@
                 $scope.ahorroTotal = 0;
               }
 
+              $scope.mostrar3 = 'ocultar';
+            },
+            function (error) {
               $scope.mostrar3 = 'ocultar';
             });
 
@@ -970,7 +976,10 @@
             SolicitudPrestamoService.solicitanteDatos($scope.codigoSocio).then(function (data) {
               $scope.dataSolicitante = data[0];
               console.log('dataSolicitante');
-              console.log($scope.dataSolicitante);        
+              console.log($scope.dataSolicitante); 
+
+              $scope.totalQ1 = $scope.dataSolicitante.cuotaAhorroQ1 + $scope.cuotasQ1Prestamos + $scope.cuotasQ1Ordenes;
+              $scope.totalQ2 = $scope.dataSolicitante.cuotaAhorroQ2 + $scope.cuotasQ2Prestamos + $scope.cuotasQ2Ordenes;
 
               //Calculo para cuota quincenal de prestamo
               var cuotaPrestamo;

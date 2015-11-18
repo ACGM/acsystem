@@ -184,7 +184,7 @@ for line in f:
 	socio.codigo = line[0].decode('latin-1')
 	socio.nombres = line[1].decode('latin-1')
 	socio.apellidos = line[2].decode('latin-1')
-	socio.sexo = 'M' if line[3].decode('latin-1') == 1 else 'F'
+	socio.sexo = 'M' if line[3].decode('latin-1') == '1' else 'F'
 	socio.estadoCivil = 'S' if line[4] == 'Soltero' else 'Casado'
 	socio.fechaIngresoCoop = line[5].decode('latin-1').replace('.','-')
 	socio.fechaIngresoEmpresa = line[6].decode('latin-1').replace('.','-')
@@ -196,6 +196,9 @@ for line in f:
 	socio.cuentaBancaria = line[12]
 	socio.tipoCuentaBancaria = line[13]
 	socio.salario = line[14]
+	socio.direccion = line[15].decode('lation-1').strip()
+	socio.telefono = line[16].strip()
+	socio.correo = line[17].strip()
 	socio.userLog = User.objects.get(username='coop')
 	socio.save()
 

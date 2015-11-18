@@ -96,7 +96,8 @@
 
 			<table class="table-datos-prestamo-2" ng-if="dataSolicitante.codigo > 0">
 				<tr>
-					<td colspan="2" class="align-right">1ra. Quincena</td>
+					<td></td>
+					<td class="align-right">1ra. Quincena</td>
 					<td class="align-right">&nbsp;&nbsp; 2da. Quincena</td>
 				</tr>
 
@@ -125,14 +126,14 @@
 					<td class="align-right">[[cuotasQ2Ordenes | number: 2]]</td>
 				</tr>
 				<tr>
-					<td></td>
+					<td class="padding-right-6"></td>
 					<td><hr/></td>
 					<td><hr/></td>
 				</tr>
 				<tr>
 					<td><strong>Total</strong></td>
-					<td class="padding-right-6">[[totalQ1 | number: 2]]</td>
-					<td class="align-right">[[totalQ2 | number: 2]]</td>
+					<td class="align-right"><strong>[[totalQ1 | number: 2]]</strong></td>
+					<td class="align-right"><strong>[[totalQ2 | number: 2]]</strong></td>
 				</tr>
 				
 			</table>
