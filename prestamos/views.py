@@ -261,15 +261,19 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.cobrador = cobrador
 
 			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
-			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0
+			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0			
 			SolPrestamo.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] > 0 else 0
+			
 			SolPrestamo.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
+
 			SolPrestamo.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado'].replace(',','')) if solicitud['valorGarantizado'] != None else 0
 			SolPrestamo.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
 			SolPrestamo.fechaParaDescuento = fechaDescuento
-			SolPrestamo.garante = Socio.objects.get(codigo=solicitud['garante']) if solicitud.has_key('garante') else None
+			
+			if solicitud['garante'] != '':
+				SolPrestamo.garante = Socio.objects.get(codigo=solicitud['garante']) if solicitud.has_key('garante') else None
 
 			SolPrestamo.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual'])
 			SolPrestamo.tasaInteresMensual = decimal.Decimal(solicitud['tasaInteresMensual'])

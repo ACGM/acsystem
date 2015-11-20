@@ -1030,6 +1030,7 @@
       $scope.completarConPrestaciones = function($event) {
         $event.preventDefault();
 
+        console.log($scope.solicitud.netoDesembolsar);
 
         if(!$scope.solicitud.netoDesembolsar > 0) {
           if($scope.solicitud.netoDesembolsar.length == 0 && $scope.solicitud.montoDisponible > 0) {
@@ -1037,9 +1038,7 @@
           } else {
             $scope.solicitud.prestacionesLaborales = $filter('number') ((parseFloat($scope.solicitud.montoDisponible.replaceAll(',','')) * -1) + parseFloat($scope.solicitud.montoSolicitado.replaceAll(',','')), 2);
           }
-
           $scope.montoNeto();
-          
         }
       }
 

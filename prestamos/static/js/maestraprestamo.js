@@ -333,6 +333,32 @@
         });
       }
 
+      //Ordenar por Socio
+      $scope.ordenarPorSocio = function($event) {
+        $scope.prestamos.sort(function(a,b) {
+          if(a.socio > b.socio) {
+            return 1;
+          }
+          if(a.socio < b.socio) {
+            return -1;
+          }
+          return 0;
+        });
+      }
+
+      //Ordenar por Categoria de Prestamo
+      $scope.ordenarPorCategoria = function($event) {
+        $scope.prestamos.sort(function(a,b) {
+          if(a.categoriaPrestamo > b.categoriaPrestamo) {
+            return 1;
+          }
+          if(a.categoriaPrestamo < b.categoriaPrestamo) {
+            return -1;
+          }
+          return 0;
+        });
+      }
+
       //Guardar Cambios en Prestamo Seleccionado.
       $scope.GuardarCambiosPrestamo = function($event) {
         var prestamo = {};

@@ -196,13 +196,12 @@ for line in f:
 	socio.cuentaBancaria = line[12]
 	socio.tipoCuentaBancaria = line[13]
 	socio.salario = line[14]
-	socio.direccion = line[15].decode('lation-1').strip()
+	socio.direccion = line[15].decode('latin-1').strip()
 	socio.telefono = line[16].strip()
 	socio.correo = line[17].strip()
 	socio.userLog = User.objects.get(username='coop')
 	socio.save()
-
-f.close
+f.close()
 
 
 #Asignar atributo para cuentas que son CONTROL
@@ -261,6 +260,14 @@ for line in f:
 	d.save()
 f.close()
 
+#Balances de Socios
+f = open('balancesSocios.csv', 'r')
+for line in f:
+	line = line.split(',')
+	ah = AhorroSocio.objects.get(socio__codigo=line[0].decode('latin-1').strip())
+	ah.balance = line[1].strip()
+	ah.save()
+f.close()
 
 #Documentos RELACIONADOS con cuentas
 f = open('doccta.csv', 'r')
