@@ -565,8 +565,11 @@
         //Traer el ahorro capitalizado del socio
         AhorroServices.getAhorroSocio($scope.solicitante.codigoEmpleado).then(function (data) {
           $scope.ahorroSocio = data;
+          console.log('AHORROS');
           console.log(data); 
+
           $scope.solicitud.ahorrosCapitalizados = $filter('number')(data[0]['balance'], 2);
+
         });
 
         $scope.getPrestamosBalances(s.codigo); //Buscar prestamos para unificar.
@@ -606,7 +609,7 @@
           $scope.solicitud.interesBaseGarantizado = 0;
           $scope.solicitud.tasaInteresBaseAhorro = 0;
 
-        } else { //ESTO ES PARA CUALQUIER PRESTAMO QUE NO SE --AVANCE--
+        } else { //ESTO ES PARA CUALQUIER PRESTAMO QUE NO SEA --AVANCE--
           $scope.solicitud.categoriaPrestamoId = cp.id;
           $scope.solicitud.categoriaPrestamo = cp.descripcion;
         }
@@ -618,7 +621,7 @@
 
         //Calcular los intereses y la cuota capital+intereses.
           var valorGarant = $scope.solicitud.valorGarantizado == undefined? $scope.solicitud.prestacionesLaborales : $scope.solicitud.valorGarantizado;
-          calculosCuotaIntereses(valorGarant, $scope.solicitud.ahorrosCapitalizados.replace(',',''), $scope.solicitud.tasaInteresMensual, 
+          calculosCuotaIntereses(valorGarant, $scope.solicitud.montoDisponible.replace(',',''), $scope.solicitud.tasaInteresMensual, 
                                 $scope.solicitud.valorCuotas, avance);
       }
 
@@ -732,14 +735,20 @@
             // $scope.mostrarError("Verifique que haya digitado un pin de autorizador valido");
             throw "Verifique que haya digitado un pin de autorizador valido."
           }
-          if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
-            $scope.mostrarError("La fecha para descuento no puede ser menor a la fecha de hoy.");
-            throw "La fecha para descuento no puede ser menor a la fecha de hoy.";
-          }
-          if(fechaSolicitudFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
-            $scope.mostrarError("La fecha para solicitud no puede ser menor a la fecha de hoy.");
-            throw "La fecha para solicitud no puede ser menor a la fecha de hoy.";
-          }
+          
+          //*********************************************
+          //ESTA PARTE ESTA COMENTADA POR LA CARGA INICIAL
+          //**********************************************
+          // if(fechaDescuentoFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
+          //   $scope.mostrarError("La fecha para descuento no puede ser menor a la fecha de hoy.");
+          //   throw "La fecha para descuento no puede ser menor a la fecha de hoy.";
+          // }
+
+          // if(fechaSolicitudFormatted < $filter('date')(Date.now(), 'yyyy-MM-dd')) {
+          //   $scope.mostrarError("La fecha para solicitud no puede ser menor a la fecha de hoy.");
+          //   throw "La fecha para solicitud no puede ser menor a la fecha de hoy.";
+          // }
+
           //End Exeptions
 
           if($scope.solicitud.valorGarantizado == undefined) {
@@ -888,6 +897,7 @@
 
               $scope.solicitante.codigoEmpleado = data[0]['socioCodigo'];
               $scope.solicitante.nombreEmpleado = data[0]['socioNombre'];
+              $scope.solicitante.departamento = data[0]['socioDepto'];
               $scope.solicitante.representanteCodigo = data[0]['representanteCodigo'];
               $scope.solicitante.representanteNombre = data[0]['representanteNombre'];
               $scope.solicitante.auxiliar = ''; //data[0]['auxiliar'];
@@ -927,7 +937,10 @@
               //Calcular los intereses y la cuota capital+intereses.
               var valorGarant = data[0]['valorGarantizado'] == '0'? data[0]['prestacionesLaborales'] : data[0]['valorGarantizado'];
               var avance = data[0]['categoriaPrestamoDescrp'].substring(0,6) == 'AVANCE'? true : false;
-              calculosCuotaIntereses(valorGarant, data[0]['ahorrosCapitalizados'], data[0]['tasaInteresMensual'], data[0]['valorCuotasCapital'], avance);
+              
+              var disp = data[0]['ahorrosCapitalizados'] - data[0]['deudasPrestamos'];
+
+              calculosCuotaIntereses(valorGarant, disp, data[0]['tasaInteresMensual'], data[0]['valorCuotasCapital'], avance);
 
               if(data[0]['estatus'] == 'P') {
                 $scope.disabledButton = 'Boton';
@@ -960,6 +973,7 @@
 
         if(avance == false) {
 
+          // if() en esta parte tengo que restar las deudas al ahorro y sumarle las prestaciones para ver si aplica base ahorro.
           $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
           $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
           $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);

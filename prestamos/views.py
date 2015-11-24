@@ -362,6 +362,7 @@ class SolicitudPrestamoById(LoginRequiredMixin, DetailView):
 				'socioCodigo': solicitud.socio.codigo,
 				'socioNombre': solicitud.socio.nombreCompleto,
 				'socioCedula': solicitud.socio.cedula,
+				'socioDepto': solicitud.socio.departamento.descripcion,
 				'socioSalario': solicitud.salarioSocio if solicitud.salarioSocio != None else 0,
 				'representanteCodigo': solicitud.representante.id,
 				'representanteNombre': solicitud.representante.nombre,

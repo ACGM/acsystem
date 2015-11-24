@@ -287,11 +287,39 @@ f = open('prestamoslimpio.csv', 'r')
 for line in f:
 	line = line.split(',')
 	p = SolicitudPrestamo()
-	p.noSolicitud = SolicitudPrestamo.objects.latest('noSolicitud').noSolicitud +1
+	p.noSolicitud = SolicitudPrestamo.objects.latest('noSolicitud').noSolicitud +1 if SolicitudPrestamo != None else 1
+	p.socio = Socio.objects.get(codigo=line[0].strip())
+	p.montoSolicitado = decimal.Decimal(line[1].strip().replace(',',''))
+	p.netoDesembolsar = decimal.Decimal(line[1].strip().replace(',',''))
+	p.valorGarantizado = decimal.Decimal(line[1].strip().replace(',','')) 
+	p.categoriaPrestamo = CategoriaPrestamo.objects.get(descripcion=line[2].decode('latin-1').strip())
+	p.tasaInteresAnual = line[3].strip()
+	p.tasaInteresMensual = line[4].strip()
+	p.cantidadCuotas = line[5].strip()
+	p.valorCuotasCapital = line[6].strip()
+	p.localidad = Localidad.objects.get(descripcion=line[7].strip())
+	p.representante = Representante.objects.get(estatus='A')
+	p.cobrador = Cobrador.objects.get(usuario='coop')
+	p.autorizadoPor = User.objects.get(username='coop')
+	p.userLog = User.objects.get(username='coop')
+	p.fechaParaDescuento = datetime.datetime.now()
+	p.save()
+f.close()
+
+
+import decimal
+import datetime
+#Ordenes a la fecha
+f = open('ordenesLimpias.csv', 'r')
+for line in f:
+	line = line.split(',')
+	p = SolicitudOrdenDespachoH()
+	p.noSolicitud = SolicitudOrdenDespachoH.objects.latest('noSolicitud').noSolicitud +1
 	p.socio = Socio.objects.get(codigo=line[0].strip())
 	p.montoSolicitado = decimal.Decimal(line[1].strip().replace(',',''))
 	p.netoDesembolsar = decimal.Decimal(line[1].strip().replace(',',''))
 	p.categoriaPrestamo = CategoriaPrestamo.objects.get(descripcion=line[2].decode('latin-1').strip())
+	p.suplidor = Suplidor.objects.get(nombre=line[99])
 	p.tasaInteresAnual = line[3].strip()
 	p.tasaInteresMensual = line[4].strip()
 	p.cantidadCuotas = line[5].strip()

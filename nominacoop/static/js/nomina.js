@@ -1703,7 +1703,7 @@
         myItem.codigoSocio = item.codigoSocio;
         myItem.cuotaInteresAhQ = item.cuotaInteresAhQ;
         myItem.cuotaInteresQ = item.cuotaInteresQ;
-        myItem.cuotaMasInteresQ = item.cuotaInteresAhQ + item.cuotaInteresQ;
+        myItem.cuotaMasInteresQ = item.cuotaMasInteresQ;
         myItem.departamento = item.departamento;
         myItem.montoCuotaQ = item.montoCuotaQ;
         myItem.noPrestamo = item.noPrestamo;
@@ -1722,7 +1722,7 @@
         myItem.codigoSocio = "";
         myItem.cuotaInteresAhQ = cuotaInteresAhQ;
         myItem.cuotaInteresQ = cuotaInteresQ;
-        myItem.cuotaMasInteresQ = item.cuotaInteresAhQ + item.cuotaInteresQ;
+        myItem.cuotaMasInteresQ = item.cuotaMasInteresQ;
         myItem.departamento = item.departamento;
         myItem.montoCuotaQ = capitalQ;
         myItem.noPrestamo = item.noPrestamo;

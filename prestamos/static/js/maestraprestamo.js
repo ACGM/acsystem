@@ -670,6 +670,23 @@
         });
       }
 
+      //Para postear todos los prestamos -- Solo una vez (carga inicial)
+      $scope.AllOneTime = function($event) {
+        var allPrestamosPend = $scope.prestamos.filter(function (item) {
+          return item.estatus != 'P';
+        });
+
+        allPrestamosPend.forEach(function (ite, index) {
+          if (ite.estatus != 'P') {
+            var run = setTimeout(function (msg) {
+              console.log(ite);
+              $scope.postear($event, ite);
+            },index * 1000);
+          }
+        });
+      }
+      //Este metodo es para carga inicial.
+
     }])
 
     //****************************************************

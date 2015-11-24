@@ -786,6 +786,7 @@
 
               $scope.solicitante.codigoEmpleado = data[0]['socioCodigo'];
               $scope.solicitante.nombreEmpleado = data[0]['socioNombre'];
+              $scope.solicitante.departamento = data[0]['socioDepto'];
               $scope.solicitante.representanteCodigo = data[0]['representanteCodigo'];
               $scope.solicitante.representanteNombre = data[0]['representanteNombre'];
               $scope.solicitante.auxiliar = ''; //data[0]['auxiliar'];
