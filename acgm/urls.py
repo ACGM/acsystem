@@ -63,7 +63,7 @@ from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsVi
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet
 
-from cxp.views import CxpOrdenView, CxpSuperCoopView
+from cxp.views import CxpOrdenView, CxpSuperCoopView, cxpOrdenEdit, cxpSuperEdit
 
 from reciboingreso.views import reciboTemplateView, reciboPost
 
@@ -345,6 +345,8 @@ urlpatterns = patterns('',
     #CXP
     url(r'^cxp/cxpOrden/$', CxpView.as_view(), name='Cxp_Ordenes'),
     url(r'^cxpOrdenJson/$', CxpOrdenView.as_view(), name='Cxp_Ordenes_api'),
+    url(r'^cxp/edit/$', cxpOrdenEdit.as_view(), name='Cxp_Orden_Edit'),
+    url(r'^cxpSuper/edit/$', cxpSuperEdit.as_view(), name='cxp_Super_edit'),
     url(r'^cxpSuperJson/$', CxpSuperCoopView.as_view(), name='Cxp_SuperCoop_api'),
     url(r'^cxp/superOrden/$', cxpSuperView.as_view(), name='cxp_Super'),
     url(r'^cxp/solicitud/supercoop/$', CxpSuperSolicitud.as_view(), name='Solicitud_Cheques_super'),

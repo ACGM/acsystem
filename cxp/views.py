@@ -90,14 +90,14 @@ class CxpOrdenView(DetailView):
 
             for det in dataDetalle:
                 regDetalle =OrdenDetalleFact()
-                regDetalle.idRegistro = int(det['id'])
+                regDetalle.idRegistro = int(det['idRegistro'])
                 regDetalle.fecha = det['fechaSolicitud']
-                regDetalle.factura = int(det['id'])
-                regDetalle.monto = decimal.Decimal(det['netoDesembolsar'])
+                regDetalle.factura = int(det['noSolicitud'])
+                regDetalle.monto = decimal.Decimal(det['montoSolicitado'])
                 regDetalle.save()
                 regGeneral.detalle.add(regDetalle)
 
-                regDespacho = SolicitudOrdenDespachoH.objects.get(id = det['id'])
+                regDespacho = SolicitudOrdenDespachoH.objects.get(id = det['idRegistro'])
                 regDespacho.cxp ='P'
                 regDespacho.save()
 
@@ -131,6 +131,7 @@ class CxpOrdenView(DetailView):
                 'chk': ordenes.chk,
                 'detalle': [{
                     'id': det.id,
+                    'idRegistro': det.idRegistro,
                     'factura': det.factura,
                     'fecha': det.fecha,
                     'monto': det.monto,
@@ -175,13 +176,13 @@ class CxpSuperCoopView(DetailView):
 
             for det in dataD:
                 superDet = cxpSuperDetalle()
-                superDet.idRegistro = int(det['id'])
+                superDet.idRegistro = int(det['idRegistro'])
                 superDet.fecha = det['fecha']
                 superDet.monto = decimal.Decimal(det['totalGeneral'])
                 superDet.save()
                 superGeneral.detalle.add(superDet)
 
-                invent = InventarioH.objects.get(id=det['id'])
+                invent = InventarioH.objects.get(id=det['idRegistro'])
                 invent.cxp = 'P'
                 invent.save()
 
@@ -342,8 +343,97 @@ class CxpSuperSolicitud(DetailView):
         except Exception, e:
             return HttpResponse(e.message)
 
+
 class cxpImpGeneral(TemplateView):
     template_name = "impCxp.html"
+
+class cxpOrdenEdit(DetailView):
+    queryset = OrdenGeneral.objects.all()
+
+    def post(self, request):
+        try:
+            dataT = json.loads(request.body)
+
+            data = dataT['Orden']
+            dataD = dataT['Detalle']
+            dataDem = dataT['Eliminar']
+
+            orden = OrdenGeneral.objects.get(id=data['id']);
+            orden.monto = data['monto']
+            orden.descuento = data['descuento']
+            orden.save()
+            
+            if len(dataDem) > 0:
+                for rdet in dataDem:
+                    OrdenDetalleFact.objects.get(id=rdet['id']).delete()
+
+                    regDespacho = SolicitudOrdenDespachoH.objects.get(id = rdet['idRegistro'])
+                    regDespacho.cxp ='E'
+                    regDespacho.save()
+            
+            if len(dataD) > 0:
+                for det in dataD:
+                    if not OrdenDetalleFact.objects.filter(id=det['id']).exists():
+                        regDetalle =OrdenDetalleFact()
+                        regDetalle.idRegistro = int(det['idRegistro'])
+                        regDetalle.fecha = det['fechaSolicitud']
+                        regDetalle.factura = int(det['noSolicitud'])
+                        regDetalle.monto = decimal.Decimal(det['montoSolicitado'])
+                        regDetalle.save()
+                        orden.detalle.add(regDetalle)
+
+                        regDespacho = SolicitudOrdenDespachoH.objects.get(id = det['idRegistro'])
+                        regDespacho.cxp ='P'
+                        regDespacho.save()
+
+            return HttpResponse('Ok')
+
+        except Exception, e:
+            raise e
+
+class cxpSuperEdit(DetailView):
+    queryset = cxpSuperGeneral.objects.all()
+
+    def post(self, request):
+        try:
+            
+            dataT = json.loads(request.body)
+
+            data = dataT['Orden']
+            dataD = dataT['Detalle']
+            dataDem = dataT['Eliminar']
+
+            orden = cxpSuperGeneral.objects.get(id = data['id'])
+            orden.monto = decimal.Decimal(data['monto'])
+            orden.descuento = decimal.Decimal(data['descuento'])
+            orden.save()
+
+            if len(dataDem) > 0:
+                for rdet in dataDem:
+                    cxpSuperDetalle.objects.get(id=rdet['id']).delete()
+                    
+                    invent = InventarioH.objects.get(id=det['idRegistro'])
+                    invent.cxp = 'E'
+                    invent.save()
+
+
+            if len(dataD) > 0:
+                for det in dataD:
+                    if not cxpSuperDetalle.objects.filter(id=det['id']).exists():
+                        regDetalle = cxpSuperDetalle()
+                        regDetalle.idRegistro = int(det['idRegistro'])
+                        regDetalle.fecha = det['fecha']
+                        regDetalle.monto = decimal.Decimal(det['totalGeneral'])
+                        regDetalle.save()
+                        orden.detalle.add(regDetalle)
+
+                        invent = InventarioH.objects.get(id=det['idRegistro'])
+                        invent.cxp = 'P'
+                        invent.save()
+            
+        except Exception, e:
+            raise e
+       
        
         
        

@@ -26,7 +26,7 @@
                 return deferred.promise;
             }
 
-             function getAllSuper() {
+            function getAllSuper() {
                 var deferred = $q.defer();
                 $http.get('/cxpSuperJson/?format=json')
                     .success(function (data) {
@@ -169,6 +169,33 @@
                 return deferred.promise;
             }
 
+            function editOrden(Orden, Detalle, Eliminar){
+                var deferred = $q.defer();
+                
+                $http.post('/cxp/edit/', JSON.stringify({'Orden': Orden, 'Detalle': Detalle, 'Eliminar': Eliminar}))
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve(err);
+                    });
+                return deferred.promise;
+            }
+
+
+            function editOrdenSuper(Orden, Detalle, Eliminar){
+                var deferred = $q.defer();
+                debugger;
+                $http.post('/cxpSuper/edit/', JSON.stringify({'Orden': Orden, 'Detalle': Detalle, 'Eliminar': Eliminar}))
+                    .success(function (data){
+                        deferred.resolve(data);
+                    })
+                    .error(function (err){
+                        deferred.resolve(err);
+                    });
+                return deferred.promise;
+            }
+
             function setSuper(regSuper, Detalle){
                 var deferred = $q.defer();
 
@@ -235,7 +262,7 @@
                     });
 
                 return deferred.promise;
-            };//cxp/solicitud/supercoop/
+            };
 
             function solicitudSuperCoop(orden){
                 var deferred = $q.defer();
@@ -249,7 +276,7 @@
                     });
 
                 return deferred.promise;
-            }; //cxp/solicitud/ordenCompra/
+            }; 
 
             function solicitudOrden(orden){
                 var deferred = $q.defer();
@@ -282,7 +309,9 @@
                 postCxpSuper: postCxpSuper, 
                 setSuper    : setSuper,
                 solicitudSuperCoop : solicitudSuperCoop,
-                solicitudOrden     : solicitudOrden
+                solicitudOrden     : solicitudOrden,
+                editOrden        : editOrden,
+                editOrdenSuper   : editOrdenSuper
 
                 
             };
@@ -320,9 +349,14 @@
                 $scope.flap = false;
                 $scope.crCxp = false;
                 $scope.listCxp = true;
+                $scope.btnDisable = false;
                 $scope.valoresChk = [];
                 $scope.reg = [];
+                $scope.ordenSimple = [];
+                $scope.detalleOrdenesEdit = [];
                 $scope.ordenesSeleccionada = [];
+                $scope.numReg =0;
+                $scope.ordenesEliminar = [];
 
 
 
@@ -337,13 +371,76 @@
 
             $scope.findOrden = function ($event){
                SolicitudOrdenDespachoService.solicitudesODForCXP().then(function (data) {
-                        console.log(data);
+                       
                         $scope.ordenesDetalle = data.filter(function (reg){
                             
                             return reg.cxp == "E" && reg.codigoSuplidor == $scope.cxpDataReg.suplidorId
                         });
-                        
+
+                        $scope.ordenesDetalle.forEach(function(reg){
+                            var orden = { };
+                            orden.fechaSolicitud = reg.fechaSolicitud;
+                            orden.id = null;
+                            orden.idRegistro = reg.id;
+                            orden.noSolicitud= reg.noSolicitud;
+                            orden.montoSolicitado = reg.montoSolicitado;
+                            $scope.ordenSimple.push(orden);
+                        });
+
+                        $scope.numReg = $scope.ordenesDetalle.length;
                  });
+            }
+
+            $scope.editarOrden = function($event, cxp){
+                $event.preventDefault();
+
+                var RegFecha = cxp.fecha.split('-');
+                var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
+                var Rfecha = FechaFormat;
+
+                $scope.cxpDataReg.id = cxp.id;
+                $scope.cxpDataReg.fecha = Rfecha;
+                $scope.fecha = Rfecha;
+                $scope.cxpDataReg.suplidorId = cxp.suplidorId;
+                $scope.suplidorNombre = cxp.suplidor;
+                $scope.cxpDataReg.concepto = cxp.concepto;
+                $scope.cxpDataReg.monto = cxp.monto;
+                $scope.cxpDataReg.descuento = cxp.descuento;
+
+                $scope.listCxp = false;
+                $scope.crCxp = true;
+
+                if(cxp.estatus == 'P'){
+                    $scope.btnDisable = true;
+                }
+
+                else{
+                    $scope.btnDisable = false;
+                }
+
+                $scope.findOrden($event);
+
+                $scope.detalleOrdenesEdit = cxp.detalle;
+
+                cxp.detalle.forEach(function (reg){
+                    var orden = {};
+                  
+                    orden.fechaSolicitud = reg.fecha;
+                    orden.id = reg.id;
+                    orden.idRegistro = reg.idRegistro;
+                    orden.noSolicitud= reg.factura;
+                    orden.montoSolicitado = reg.monto;
+                    
+                    $scope.ordenSimple.push(orden);
+
+                    var entero = parseInt(orden.idRegistro.valueOf());
+                    $scope.reg[entero] = true;
+                    $scope.valoresChk[entero] = true;
+
+                    $scope.selectedReg(orden);
+
+                });
+            
             }
 
             $scope.limpiar = function(){
@@ -352,6 +449,14 @@
                 $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
                 $scope.cxpDataReg = {};
                 $scope.cxpDataReg.descuento = 0;
+                $scope.ordenSimple = [];
+                $scope.detalleOrdenesEdit = [];
+                $scope.ordenesSeleccionada = [];
+                $scope.numReg =0;
+                $scope.ordenesEliminar = [];
+                $scope.ordenesDetalle = [];
+                $scope.reg = [];
+                $scope.valoresChk = [];
 
             }
 
@@ -368,23 +473,29 @@
                          alert("Ocurrio un error al intentar guardar la orden");
                     }
                 });
-
-
             }
 
-                 //Cuando se le de click a un checkbox de la lista
-              $scope.selectedReg = function(iReg) {
-                index = $scope.ordenesDetalle.indexOf(iReg);
+            //Cuando se le de click a un checkbox de la lista
+            $scope.selectedReg = function(iReg) {
+                index = $scope.ordenSimple.indexOf(iReg);
 
-                if ($scope.reg[$scope.ordenesDetalle[index].id] === true){
-                  $scope.ordenesSeleccionada.push($scope.ordenesDetalle[index]);
-                  console.log($scope.ordenesSeleccionada);
+                if ($scope.reg[$scope.ordenSimple[index].idRegistro] === true){
+                  if(_.findWhere($scope.ordenesEliminar, {id : iReg.id})){
+                    $scope.ordenesEliminar = _.without($scope.ordenesEliminar, _.findWhere($scope.ordenesEliminar, {id : iReg.id}));
+                  }
+                  $scope.ordenesSeleccionada.push($scope.ordenSimple[index]);
+
                 }
                 else{
-                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {id : iReg.id}));
-                   console.log($scope.ordenesSeleccionada);
+                  if(_.findWhere($scope.detalleOrdenesEdit, {id : iReg.id})){
+                    $scope.ordenesEliminar.push(iReg);
+                  }
+                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {idRegistro : iReg.idRegistro}));
+                
                 }
+                
               }
+
 
             $scope.printRegistros = function($event,s){
                 $event.preventDefault();
@@ -394,36 +505,65 @@
                 $window.sessionStorage['CxpsD'] = JSON.stringify(s.detalle);
 
                 $window.open('/cxp/imp', target='_blank'); 
+            
             }
 
             $scope.guardarOrden = function($event){
-
                 var total = 0;
-
+                
                 var RegFecha = $scope.fecha.split('/');
                 var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
                 var Rfecha = FechaFormat;
-                     
-                $scope.cxpDataReg.fecha = Rfecha;
-                $scope.ordenesSeleccionada.forEach(function (item) {
-                    total = total +  parseFloat(item.netoDesembolsar);  
-                });
 
-                if((total - $scope.cxpDataReg.descuento) == $scope.cxpDataReg.monto){
-                    cxpService.setOrden($scope.cxpDataReg, $scope.ordenesSeleccionada).then(function(data){
+                $scope.cxpDataReg.fecha = Rfecha;
+                    
+                $scope.ordenesSeleccionada.forEach(function (item) {
+                    total = total +  parseFloat(item.montoSolicitado);  
+                    });
+                
+                if($scope.cxpDataReg.id == undefined){
+                    $scope.cxpDataReg.id = null;
+
+                    if((total - $scope.cxpDataReg.descuento) == $scope.cxpDataReg.monto){
+                        cxpService.setOrden($scope.cxpDataReg, $scope.ordenesSeleccionada).then(function(data){
+                        
                         if(data =="Ok"){
                             alert("Cuenta por pagar Registrada")
                             $scope.limpiar();
                             $scope.getAllData();
-                        }else{
-                            alert("Ocurrio un error al intentar guardar el registro")
                         }
-                    });
-                }else{
-                    alert("El monto a pagar es diferente al total de factura");
+                        else{
+                            alert("Ocurrio un error al intentar guardar el registro")
+                            }
+                        });
+                    }
+                    else {
+                            alert("El monto a pagar es diferente al total de factura");
+                        }
                 }
+                else{
 
-              
+                    if((total - $scope.cxpDataReg.descuento) == $scope.cxpDataReg.monto){
+                        cxpService.editOrden($scope.cxpDataReg, $scope.ordenesSeleccionada, $scope.ordenesEliminar)
+                            .then(function (data){
+
+                                if(data =="Ok"){
+                                    alert("Cuenta por pagar Registrada")
+                                    $scope.limpiar();
+                                    $scope.getAllData();
+                                }
+                                else {
+                                    alert("Ocurrio un error al intentar guardar el registro")
+                                    }
+
+                                })
+
+                    }
+                    else {
+                        alert("El monto a pagar es diferente al total de factura");
+                    }
+                }
+                // function editOrden(Orden, Detalle, Eliminar)
 
             };
 
@@ -432,6 +572,7 @@
                 
                 $scope.orden = id;
                 $scope.flap = true;
+            
             };
 
             $scope.getSuplidor = function($event){
@@ -461,7 +602,8 @@
                         $scope.suplidorCodigo = '';
                       });
                     }
-                  };
+            
+            };
              
             
             $scope.getSocio = function($event) {
@@ -491,7 +633,8 @@
                         $scope.socioCodigo = '';
                       });
                     }
-                  };
+            
+            };
 
 
             $scope.selOrden = function($event, s) {
@@ -502,7 +645,7 @@
                 $scope.cxpDataReg.monto = s.netoDesembolsar;
                 $scope.tableOrden = false;
                 
-              };
+            };
 
 
             $scope.selSocio = function($event, s) {
@@ -515,7 +658,7 @@
                 $scope.ordenReg = null ;
                 $scope.cxpDataReg.monto = 0;
                 
-              };
+            };
 
 
             $scope.selSuplidor = function($event, s) {
@@ -525,7 +668,8 @@
                 $scope.tableSuplidor= false;
 
                 $scope.findOrden($event);
-              };
+            
+            };
 
 
             $scope.getAllData = function(){
@@ -533,7 +677,6 @@
                     cxpService.getAll().then(function (data){
                         var datar = data;
                         $scope.cxpData = datar;
-                        console.log(data);
                     });
                     
                 }  
@@ -541,7 +684,7 @@
                     console.log(ex);
                 }
             
-                };
+            };
 
 
             $scope.selOrdenById = function(id){
@@ -558,22 +701,26 @@
                     $scope.OrdenReg = true;
                     $scope.ArrowLF = 'DownArrow';
                                     });
-                };
+            
+            };
 
 
             $scope.getCxpByDate = function(){
                 $scope.cxpFilterData=cxpService.getCxpByDate($scope.fechaI, $scope.fechaF);
-                };
+            
+            };
 
 
             $scope.getCxpSocio = function(){
                 $scope.cxpFilterData=cxpService.getCxpBySocio($scope.socioId);
-                };
+            
+            };
 
 
             $scope.getcxpSup = function(){
                 $scope.cxpFilterData= cxpService.getCxpBySuplidor($scope.idSuplidor);
-                };
+            
+            };
     
             $scope.setSolicitud = function($event,id){
                 $event.preventDefault();
@@ -583,11 +730,13 @@
                         $scope.getAllData();
                         alert("Fue creada la solicitud para la orden #"+id);
                     }else{
-                        console.log(data);
+                        
                         alert("Ha ocurrido un error al intentar generar la solicitud");
                     }
                 });
+            
             };
+
         }])
 
         .controller('CxpSuperCtrl', ['$scope', '$filter', '$rootScope', 'cxpService', '$timeout', 'InventarioService', '$window',
@@ -603,8 +752,15 @@
             $scope.fecha =$filter('date')(Date.now(),'dd/MM/yyyy');
             $scope.vwTablas = true;
             $scope.vwRegistro = false;
+            $scope.btnDisable = false;
             $scope.ordenesSeleccionada = [];
             $scope.reg = [];
+            $scope.valoresChk = [];
+            $scope.ordenSimple = [];
+            $scope.detalleOrdenesEdit = [];
+            $scope.ordenesSeleccionada = [];
+            $scope.numReg =0;
+            $scope.ordenesEliminar = [];
 
             // InventarioService.allEntradasForCXP()
 
@@ -620,43 +776,119 @@
                 catch(ex){
                     console.log(ex);
                 }
-                };
+            
+            };
 
-                //Cuando se le de click a un checkbox de la lista
+            //Cuando se le de click a un checkbox de la lista
+            
             $scope.selectedReg = function(iReg) {
-                index = $scope.inventarios.indexOf(iReg);
+                index = $scope.ordenSimple.indexOf(iReg);
 
-                if ($scope.reg[$scope.inventarios[index].id] === true){
-                  $scope.ordenesSeleccionada.push($scope.inventarios[index]);
-                  console.log($scope.ordenesSeleccionada);
+                if ($scope.reg[$scope.ordenSimple[index].idRegistro] === true){
+                  if(_.findWhere($scope.ordenesEliminar, {id : iReg.id})){
+                    $scope.ordenesEliminar = _.without($scope.ordenesEliminar, _.findWhere($scope.ordenesEliminar, {id : iReg.id}));
+                  }
+                  $scope.ordenesSeleccionada.push($scope.ordenSimple[index]);
+
                 }
                 else{
-                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {id : iReg.id}));
-                   console.log($scope.ordenesSeleccionada);
+                  if(_.findWhere($scope.detalleOrdenesEdit, {id : iReg.id})){
+                    $scope.ordenesEliminar.push(iReg);
+                  }
+                  $scope.ordenesSeleccionada = _.without($scope.ordenesSeleccionada, _.findWhere($scope.ordenesSeleccionada, {idRegistro : iReg.idRegistro}));
+                
                 }
-              }
+                console.log($scope.ordenesEliminar);
+            
+            };
+
+            $scope.editarOrden = function($event, cxp){
+                $event.preventDefault();
+
+                $scope.cxSuperData = [];
+                
+                var RegFecha = cxp.fecha.split('-');
+                var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
+                var Rfecha = FechaFormat;
+
+                $scope.cxSuperData.id = cxp.id;
+                $scope.cxSuperData.fecha = Rfecha;
+                $scope.fecha = Rfecha;
+                $scope.cxSuperData.suplidorId = cxp.suplidorId;
+                $scope.suplidorNombre = cxp.suplidor;
+                $scope.cxSuperData.concepto = cxp.concepto;
+                $scope.cxSuperData.monto = cxp.monto;
+                $scope.cxSuperData.descuento = cxp.descuento;
+
+                $scope.vwTablas = false;
+                $scope.vwRegistro = true;
+
+                if(cxp.estatus == 'P'){
+                    $scope.btnDisable = true;
+                }
+                else{
+                    $scope.btnDisable = false;
+                }
+
+                $scope.detalleOrdenesEdit = cxp.detalle;
+
+                $scope.getInventario($event,cxp.suplidorId);
+
+                cxp.detalle.forEach(function (reg){
+                var orden = {};
+
+                orden.id = reg.id;
+                orden.fecha = reg.fecha;
+                orden.idRegistro= reg.Registro;
+                orden.totalGeneral = reg.monto;
+                
+                $scope.ordenSimple.push(orden);
+
+                var entero = parseInt(orden.idRegistro.valueOf());
+                $scope.reg[entero] = true;
+                $scope.valoresChk[entero] = true;
+
+                $scope.selectedReg(orden);
+
+
+
+                });
+
+            };
 
 
             $scope.getInventario = function($event, suplidor){
                 $event.preventDefault();
 
                 InventarioService.allEntradasForCXP().then(function (data){
-                    console.log(data)
+                    
                     $scope.inventarios = data.filter(function (ret){
+                        console.log(data);
                         return ret.codigoSuplidor == suplidor;
                      });
+
+                    $scope.inventarios.forEach(function(reg){
+                        var orden = { };
+
+                        orden.fecha = reg.fecha;
+                        orden.id = null;
+                        orden.idRegistro = reg.id;
+                        orden.totalGeneral = reg.totalGeneral.replace(',','');
+                        $scope.ordenSimple.push(orden);
+                    });
+
+                        $scope.numReg = $scope.inventarios.length;
                 });
 
-
-
-            }
+            };
 
             $scope.nuevoRegistro = function(){
                 $scope.cxSuperData = {};
                 $scope.vwTablas = false;
                 $scope.vwRegistro = true;
                 $scope.cxSuperData.descuento = 0;
-                };
+            
+            };
 
 
             $scope.selSuplidor = function($event, s) {
@@ -668,8 +900,7 @@
 
                 $scope.getInventario($event, s.id);
 
-
-              };
+            };
 
 
             $scope.getSuplidor = function($event){
@@ -699,7 +930,8 @@
                             $scope.suplidorCodigo = '';
                           });
                         }
-                      };
+            
+            };
 
 
             $scope.CxpSuperEstatus = function($event,estatus){
@@ -717,7 +949,9 @@
                          alert("Ocurrio un error al intentar postear la orden");
                     }
                 });
-                }
+            
+            };
+
             $scope.printRegistros = function($event,s){
                 $event.preventDefault();
                 
@@ -726,14 +960,16 @@
                 $window.sessionStorage['CxpsD'] = JSON.stringify(s.detalle);
 
                 $window.open('/cxp/imp', target='_blank'); 
-            }
+            
+            };
 
             $scope.workflow = function($event,id){
                 $event.preventDefault();
                 
                 $scope.super = id;
                 $scope.flap = true;
-                };
+            
+            };
 
 
             $scope.limpiar = function($event){
@@ -744,21 +980,23 @@
 
                 $scope.getAllData();
                 $scope.tableSuplidor = false;
+                $scope.btnDisable = false;
                 $scope.cxSuperData = {};
                 $scope.super = null;
+                $scope.valoresChk = [];
+                $scope.ordenSimple = [];
+                $scope.detalleOrdenesEdit = [];
+                $scope.ordenesSeleccionada = [];
+                $scope.numReg =0;
+                $scope.ordenesEliminar = [];
                 
                 $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
                 
-                };
+            };
 
 
             $scope.guardarCxp = function($event){
                 $event.preventDefault();
-                
-
-                var RegFecha = $scope.fecha.split('/');
-                var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
-                $scope.cxSuperData.fecha = FechaFormat;
                 
                 var total = 0;
 
@@ -766,23 +1004,48 @@
                     data.totalGeneral = data.totalGeneral.replace(',','');
                     total = total + parseFloat(data.totalGeneral);
                 });
-                console.log($scope.ordenesSeleccionada);
-               
-                if((total - $scope.cxSuperData.descuento) == $scope.cxSuperData.monto){
+
+                if($scope.cxSuperData.id == undefined){
+                    
+                    $scope.cxSuperData.id = null;
+
+                    var RegFecha = $scope.fecha.split('/');
+                    var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+                    $scope.cxSuperData.fecha = FechaFormat;
+
+                    if((total - $scope.cxSuperData.descuento) == $scope.cxSuperData.monto){
                      var result = cxpService.setSuper($scope.cxSuperData, $scope.ordenesSeleccionada).then(function (data){
-                    if(data == "Ok"){
-                       $scope.limpiar($event);
-                        alert("CxP Creada")
+                        
+                        if(data == "Ok"){
+                           $scope.limpiar($event);
+                            alert("CxP Creada")
+                        }else{
+                            alert("Ocurrio un error al intentar registrar la CXP")
+                            console.log(data);
+                        }
+                    });
                     }else{
-                        alert("Ocurrio un error al intentar registrar la CXP")
-                        console.log(data);
-                    }
-                });
-                }else{
-                    alert("El monto a pagar es diferente al total de factura")
+                        alert("El monto a pagar es diferente al total de factura")
+                }
+                }
+                else{
+                      if((total - $scope.cxSuperData.descuento) == $scope.cxSuperData.monto){
+                     var result = cxpService.editOrdenSuper($scope.cxSuperData, $scope.ordenesSeleccionada, $scope.ordenesEliminar).then(function (data){
+                        
+                        if(data == "Ok"){
+                           $scope.limpiar($event);
+                            alert("CxP Creada")
+                        }else{
+                            alert("Ocurrio un error al intentar registrar la CXP")
+                            console.log(data);
+                        }
+                    });
+                    }else{
+                        alert("El monto a pagar es diferente al total de factura")
+                }
                 }
 
-                };
+            };
             
 
             $scope.setSolicitud = function($event,id){
@@ -797,6 +1060,7 @@
                         alert("Ha ocurrido un error al intentar generar la solicitud");
                     }
                 });
+            
             };
 
             }])
@@ -812,7 +1076,7 @@
                     $scope.inializar = function(){
                         $scope.registro = JSON.parse($window.sessionStorage['CxpsH']);
                         $scope.registroDetalle = JSON.parse($window.sessionStorage['CxpsD']);
-                        console.log($scope.registro);
+                        
                     }
                 }]);
 })(_);
