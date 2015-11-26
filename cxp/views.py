@@ -354,7 +354,7 @@ class cxpOrdenEdit(DetailView):
         try:
             dataT = json.loads(request.body)
 
-            data = dataT['Orden']
+            data = dataT['OrdenSuper']
             dataD = dataT['Detalle']
             dataDem = dataT['Eliminar']
 

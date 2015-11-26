@@ -183,10 +183,11 @@
             }
 
 
-            function editOrdenSuper(Orden, Detalle, Eliminar){
+            function editOrdenSuper(OrdenSuper, Detalle, Eliminar){
                 var deferred = $q.defer();
+                var Or = OrdenSuper;
                 debugger;
-                $http.post('/cxpSuper/edit/', JSON.stringify({'Orden': Orden, 'Detalle': Detalle, 'Eliminar': Eliminar}))
+                $http.post('/cxpSuper/edit/', JSON.stringify({'OrdenSuper': Or, 'Detalle': Detalle, 'Eliminar': Eliminar}))
                     .success(function (data){
                         deferred.resolve(data);
                     })
