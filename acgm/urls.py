@@ -31,7 +31,7 @@ from prestamos.views import NotaDeDebitoView, NotaDeCreditoView, validarAutoriza
                             PostearPrestamosODView, rptSolPrestamosEmitidas, SolicitudesPrestamosAPIViewByRangoFecha, \
                             rptPrestamos, relacionArchivoBancoConDesembolsoElectronico, DistribucionInteresesView, \
                             PrestamosAPIViewByRangoFecha, PostearNotaDebitoView, PostearNotaCreditoView, TablaAmortizacionView, \
-                            EstadoCuentaView, EstadoCuentaBySocio
+                            EstadoCuentaView, EstadoCuentaBySocio, ResumenEstadoSociosView
 
 
 from prestamos.viewSolicitudOD import SolicitudOrdenDespachoView, SolicitudesODAPIView, AprobarRechazarSolicitudesODView, \
@@ -259,6 +259,7 @@ urlpatterns = patterns('',
     url(r'^prestamos/pago-cuotas/(?P<noPrestamo>[\d]+)/$', PagoCuotasPrestamoAPIViewByNoPrestamo.as_view(), name='pago_cuotas'),
     url(r'^prestamos/tabla-amortizacion/$', TablaAmortizacionView.as_view(), name='tabla_amortizacion'),
     url(r'^prestamos/estado-cuenta/$', EstadoCuentaView.as_view(), name='estado_cuenta'),
+    url(r'^prestamos/resumen-estado-socios/$', ResumenEstadoSociosView.as_view(), name='resumen_estado_socios'),
 
     #Prestamos#Imprimir
     url(r'^prestamos/print/solicitudP/$', ImprimirSolicitudPView.as_view(), name='Solicitud_de_Prestamo_print'),

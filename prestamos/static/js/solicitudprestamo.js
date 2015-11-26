@@ -336,6 +336,19 @@
       $scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
       $scope.ArrowLD = 'UpArrow';
 
+      //Anclar ENTERs de Textbox con Click Button
+      document.getElementById('codigoEmp').onkeypress=function(e){
+        if(e.keyCode==13){
+          document.getElementById('FindSocio').click();
+        }
+      }
+      
+      document.getElementById('catPrestId').onkeypress=function(e){
+        if(e.keyCode==13){
+          document.getElementById('FindCatPrest').click();
+        }
+      }
+
       //Traer todos los socios a javascript
       FacturacionService.socios().then(function (data) {
         $scope.todosLosSocios = data;
@@ -758,6 +771,8 @@
             $scope.solicitud.prestacionesLaborales = '0';
           }
 
+          $scope.solicitud.ahorrosCapitalizados = $scope.disponibleDB;
+          $scope.solicitud.valorGarantizado = $scope.garantizadoDB;
           SolicitudPrestamoService.guardaSolicitudPrestamo($scope.solicitante, 
                                                             $scope.solicitud, 
                                                             fechaSolicitudFormatted, 
@@ -915,7 +930,7 @@
               $scope.solicitud.fechaSolicitud = $filter('date')(data[0]['fechaSolicitud'], 'dd/MM/yyyy');
               $scope.solicitud.ahorrosCapitalizados = $filter('number')(data[0]['ahorrosCapitalizados']);
               $scope.solicitud.deudasPrestamos = $filter('number')(data[0]['deudasPrestamos'],2);
-              $scope.solicitud.prestacionesLaborales = data[0]['prestacionesLaborales']; //$filter('number')(data[0]['prestacionesLaborales'],2);
+              $scope.solicitud.prestacionesLaborales = $filter('number')(data[0]['prestacionesLaborales'],2); //data[0]['prestacionesLaborales']; //
               $scope.solicitud.valorGarantizado = $filter('number')(data[0]['valorGarantizado'],2);
               $scope.solicitud.netoDesembolsar = $filter('number')(data[0]['netoDesembolsar']);
               $scope.solicitud.nota = data[0]['observacion'];
@@ -968,17 +983,49 @@
 
       function calculosCuotaIntereses(valorGarantizado, ahorroCap, InteresMensual, CuotasCapital, avance) {
         var interesBaseAhorroMensual = parseFloat($scope.InteresPrestBaseAhorroAnual/12/2/100);
-        var IBA = (ahorroCap * interesBaseAhorroMensual);
+        var IBA; //= (ahorroCap * interesBaseAhorroMensual);
         var IBG = valorGarantizado != undefined? valorGarantizado * (InteresMensual/2/100) : 0;
 
         if(avance == false) {
+          if($scope.solicitud.prestacionesLaborales == undefined) {$scope.solicitud.prestacionesLaborales = "0";}
+          if($scope.solicitud.deudasPrestamos == 0) {$scope.solicitud.deudasPrestamos = "0";}
 
-          // if() en esta parte tengo que restar las deudas al ahorro y sumarle las prestaciones para ver si aplica base ahorro.
+          var solicitado = $scope.solicitud.montoSolicitado;
+          var ahorroFull = $scope.solicitud.ahorrosCapitalizados.indexOf(",") == -1? $scope.solicitud.ahorrosCapitalizados : $scope.solicitud.ahorrosCapitalizados.replaceAll(",","");
+          var deudaFull = $scope.solicitud.deudasPrestamos.indexOf(",") == -1? $scope.solicitud.deudasPrestamos : $scope.solicitud.deudasPrestamos.replaceAll(",","");
+          // var prestLab = $scope.solicitud.prestacionesLaborales.indexOf(",") == -1? $scope.solicitud.prestacionesLaborales : $scope.solicitud.prestacionesLaborales.replaceAll(",","");
+
+          var disponible = Number(parseFloat(ahorroFull - deudaFull)).toFixed(2);
+
+          if(disponible >= solicitado) {
+            console.log('APLICA BENEFICIO');
+
+            $scope.solicitud.prestacionesLaborales = 0;
+            IBA = (solicitado * interesBaseAhorroMensual);
+
+          } else {
+            console.log('NEGATIVO - NO APLICA BENEFICIO COMPLETO');
+            valorGarantizado = valorGarantizado.indexOf(",") == -1? valorGarantizado : valorGarantizado.replaceAll(",","");
+
+            IBA = (disponible * interesBaseAhorroMensual);
+            IBG = (valorGarantizado * (InteresMensual/2/100));
+          }
+
+          $scope.disponibleDB = disponible;
+          $scope.garantizadoDB = valorGarantizado;
+          
+          console.log('Solicitado: ' + solicitado);
+          console.log('Ahorros: ' + ahorroFull);
+          console.log('Deudas: ' + deudaFull);
+          console.log('Garantizado: ' + valorGarantizado);
+          console.log('disponible: ' + disponible);
+
           $scope.solicitud.tasaInteresBaseAhorro = $scope.InteresPrestBaseAhorroAnual/12;
           $scope.solicitud.interesBaseAhorro = $filter('number')(IBA, 2);
           $scope.solicitud.interesBaseGarantizado = $filter('number')(IBG, 2);
           $scope.solicitud.cuotaCapitalIntereses = $filter('number') (parseFloat(CuotasCapital.replace(',','')) + IBA + IBG, 2);
-        } else {
+ 
+        } else {//PARA AVANCE
 
           $scope.solicitud.tasaInteresBaseAhorro = 0;
           $scope.solicitud.interesBaseAhorro = 0;

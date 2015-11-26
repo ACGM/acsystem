@@ -385,12 +385,12 @@ class GenerarArchivoPrestamosBalance(View):
             # Escribir cada linea de prestamo en el archivo
             for prestamo in prestamos:
                 if prestamo.socio.estatus == 'S':  #Escribir en el archivo solo los Socios (ni Empleados Cooperativa ni Inactivos)
-                    socioPago = CuotasPrestamosEmpresa.objects.raw('SELECT id, \
+                    socioPago = CuotasPrestamosEmpresa.objects.raw('SELECT id, SUM(valorCapital) soloCapital,\
                                                                     SUM(valorCapital) + SUM(valorInteres) + SUM(valorInteresAh) TotalG \
                                                                     FROM nominacoop_cuotasprestamosempresa WHERE estatus = \'P\' \
                                                                     and socio_id = ' + str(prestamo.socio.id))
                     if socioPago[0].TotalG != None:
-                        montoTotal = prestamo.balance - socioPago[0].TotalG
+                        montoTotal = prestamo.balance - socioPago[0].soloCapital
 
                         lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(prestamo.codigoSocio, InfoTipo, fechanominaSAP,
                                                                           montoTotal)

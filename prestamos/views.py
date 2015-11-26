@@ -81,6 +81,12 @@ class EstadoCuentaView(LoginRequiredMixin, TemplateView):
 	template_name = 'estado_cuenta.html'
 
 
+#Vista para Resumen Estado de Socios
+class ResumenEstadoSociosView(LoginRequiredMixin, TemplateView):
+
+	template_name = 'rpt_resumen_estado_socios.html'
+
+
 #Imprimir Solicitud de Prestamo
 class ImprimirSolicitudPView(LoginRequiredMixin, TemplateView):
 
@@ -271,8 +277,8 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
 			SolPrestamo.fechaParaDescuento = fechaDescuento
-			
-			if solicitud['garante'] != '':
+
+			if solicitud.has_key('garante') and solicitud['garante'] != '':
 				SolPrestamo.garante = Socio.objects.get(codigo=solicitud['garante']) if solicitud.has_key('garante') else None
 
 			SolPrestamo.tasaInteresAnual = decimal.Decimal(solicitud['tasaInteresAnual'])

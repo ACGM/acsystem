@@ -715,9 +715,13 @@
 
           MaestraPrestamoService.ReportePrestamos(fechaI, fechaF, $scope.estatus, $scope.agrupar).then(function (data) {
             console.log(data);
-            $scope.registros = data.filter(function (item) {
-              return item.tipoSocio == $scope.tipoSocio;
-            });
+            if($scope.agrupar == false) {
+              $scope.registros = data.filter(function (item) {
+                  return item.tipoSocio == $scope.tipoSocio;
+              });
+            } else {
+              $scope.registros = data;
+            }
 
             $scope.totales();
           });
@@ -746,6 +750,8 @@
           $scope.totalPorcentaje += registro.porcentaje;
 
         });
+        console.log('LOS AGRUPADOS');
+        console.log($scope.registrosAgrupados);
       }
 
       $scope.totales = function() {
@@ -767,6 +773,7 @@
         });
 
         if($scope.agrupar == true) {
+          console.log('ENTRO A AGRUPAR')
           $scope.porcentajesPrestamo();
         }
       }
@@ -862,28 +869,46 @@
         var IntGr = 0;
         var balance = solicitar;
 
+        if(garantia <=0) {
+            ahorrado = solicitar;
+        }
+
+        var sumarDias = 15;
+
         for(i = 0; i<$scope.ta.cantidadCuotas; i++) {
-          balance = balance - capital
-          
+
           registro = {};
 
-          fecha.setDate(fecha.getDate()+15);
-          
+          var fecha = new Date();
+          fecha.setDate(fecha.getDate()+sumarDias);
+
           registro.fecha = fecha;
           registro.capital = capital;
           registro.ahorrado = ahorrado;
           registro.garantia = garantia;
+
           //Calculo complejo de los intereses
-          registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/24/100);
-          registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/24/100);
+          if(garantia <= 0) {
+            registro.IA = balance * ($scope.ta.tasaInteresAhorrado/24/100);
+            registro.IG = 0;
+
+          } else {
+            registro.IA = ahorrado * ($scope.ta.tasaInteresAhorrado/24/100);
+            
+            registro.IG = garantia * ($scope.ta.tasaInteresGarantizado/24/100);
+            garantia -= registro.IG;
+          }
+
           registro.totalInteres = registro.IA + registro.IG;
 
           registro.cuota = capital + registro.totalInteres;
           registro.balance = balance;
+          
           $scope.registros.push(registro);
 
+          balance = balance - capital
           ahorrado -= registro.IA;
-          garantia -= registro.IG;
+          sumarDias += 15;
           
         }
         console.log($scope.registros);
@@ -955,7 +980,6 @@
           $scope.totalQ2 = 0;
           //Fin Limpiar Data
 
-
           MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
             $scope.mostrar = 'mostrar';
             $scope.mostrar2 = 'mostrar';
@@ -1023,26 +1047,6 @@
 
               $scope.totalQ1 = $scope.dataSolicitante.cuotaAhorroQ1 + $scope.cuotasQ1Prestamos + $scope.cuotasQ1Ordenes;
               $scope.totalQ2 = $scope.dataSolicitante.cuotaAhorroQ2 + $scope.cuotasQ2Prestamos + $scope.cuotasQ2Ordenes;
-
-              //Calculo para cuota quincenal de prestamo
-              var cuotaPrestamo;
-              // cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
-              // cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
-              // $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
-
-              //Totales en Quincenas (ahorro y cuota Prestamo)
-              // $scope.totalQ1 = parseFloat($scope.dataSolicitante.cuotaAhorroQ1) + parseFloat($scope.varCuotaPrestamo);
-              // $scope.totalQ2 = parseFloat($scope.dataSolicitante.cuotaAhorroQ2) + parseFloat($scope.varCuotaPrestamo);
-
-              
-              //Monto al que aplica
-              // var prestLab = $scope.solicitudP.prestacionesLaborales != undefined? $scope.solicitudP.prestacionesLaborales : 0;
-              // var valorGaran = $scope.solicitudP.valorGarantizado != undefined? $scope.solicitudP.valorGarantizado : 0;
-              // var deudasPrest = $scope.solicitudP.deudasPrestamos != undefined? $scope.solicitudP.deudasPrestamos : 0;
-
-              // $scope.montoAplica = ($scope.solicitudP.ahorrosCapitalizados + 
-              //                       parseFloat(prestLab) +
-              //                       parseFloat(valorGaran)) - deudasPrest;
             });
 
           });
@@ -1075,6 +1079,84 @@
         }
       }
       
+    }])
+
+    //****************************************************
+    //RESUMEN ESTADO DE SOCIOS                           *
+    //****************************************************
+    .controller('ResumenEstadoCuentaCtrl', ['$scope', '$filter', '$timeout', '$window', 'MaestraPrestamoService', 'appService', 'AhorroServices', 'SolicitudPrestamoService', 'FacturacionService',
+                                        function ($scope, $filter, $timeout, $window, MaestraPrestamoService, appService, AhorroServices, SolicitudPrestamoService, FacturacionService) {
+      
+      //Inicializar variables
+      $scope.mostrar = 'ocultar';
+      $scope.allData = [];
+
+      $scope.getData = function() {
+        $scope.mostrar = 'mostrar';
+
+        $scope.sociosFull = [];
+        $scope.socioOne = {};
+
+        try {
+
+          //Traer todos los socios a javascript
+          // FacturacionService.socios().then(function (data) {
+
+          //   data.forEach(function (item) {
+          //     $scope.socioOne = {};
+          //     $scope.socioOne.codigo = item.codigo;
+          //     $scope.socioOne.nombre = item.nombreCompleto;
+
+          //     AhorroServices.getAhorroSocio(item.codigo).then(function (data) {
+          //       if(data.length > 0) {
+          //         $scope.ahorroTotal = $filter('number')(data[0]['balance'], 2);                  
+          //       } else {
+          //         $scope.ahorroTotal = 0;
+          //       }
+
+          //       $scope.socioOne.ahorros = $scope.ahorroTotal;
+
+          //       //Traer el balance de deudas (prestamos) del socio
+          //       MaestraPrestamoService.prestamosBalanceByCodigoSocio(item.codigo).then(function (data) {
+                  
+          //         if(data.length > 0) {
+          //           $scope.prestamosTotal = $filter('number')(data[0]['balance'], 2);
+          //         } else {
+          //           $scope.prestamosTotal = 0;
+          //         }
+
+          //         $scope.socioOne.prestamos = $scope.prestamosTotal;
+          //         $scope.sociosFull.push($scope.socioOne);
+
+          //       });
+          //     },
+          //       function (error) {
+          //         $scope.mostrar = 'ocultar';
+          //     });
+
+          //   console.log('TERMINO: ' + item.nombreCompleto);
+
+          //   });
+
+          //   $scope.mostrar = 'ocultar';
+          // });
+
+          AhorroServices.getAllAhorro().then(function (data) {
+            console.log(data);
+          }); 
+
+        } catch(e) {
+          console.log(e);
+        }
+      }
+
+      $scope.cargar = function($event) {
+        $event.preventDefault();
+
+        $scope.allData = $scope.sociosFull;
+
+      }
+
     }]);
       
 })(_);

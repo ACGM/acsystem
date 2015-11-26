@@ -126,7 +126,7 @@
 							<div class="codigo-empleado-field"> 
 								<input type="text" id="codigoEmp" ng-model="solicitante.codigoEmpleado" ng-keyup="getSocio($event);" ng-focus="tableSocio=false" ng-click="tableSocio=false; errorShow=false;" required>
 
-								<a class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event);"></a>
+								<a id="FindSocio" class="icon-uniE601 icon-buscar" href="#" ng-click="solicitante.codigoEmpleado = ''; getSocio($event);"></a>
 							</div>
 						</td>
 					</tr>
@@ -296,11 +296,11 @@
 										<td>Categoria Prestamo</td>
 										<td colspan="2">											
 											<input type="text" class="categoria-prestamo-id cod-repr input-disabled" ng-model="solicitud.categoriaPrestamoId" readonly required>
-											<input type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
+											<input id="catPrestId" type="text" class="categoria-prestamo-field" ng-model="solicitud.categoriaPrestamo" ng-keyup="categoriasPrestamos(undefined,$event)" select-on-click> 
 
 										</td>
 										<td>
-											<a href="#" class="icon-uniE601 icon-buscar buscar-categoria-prestamo" ng-click="categoriasPrestamos(undefined, $event)"></a>										
+											<a id="FindCatPrest" href="#" class="icon-uniE601 icon-buscar buscar-categoria-prestamo" ng-click="categoriasPrestamos(undefined, $event)"></a>										
 										</td>
 									</tr>
 									<tr>
