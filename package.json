@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ACGM/acsystem",
   "dependencies": {
+    "notie": "^2.1.0",
     "underscore": "^1.7.0"
   },
   "devDependencies": {

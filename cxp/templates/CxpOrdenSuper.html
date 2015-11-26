@@ -46,7 +46,7 @@
 				<td>Solicitud Cheque</td>
 			</tr>
 			<tr ng-repeat="cxp in lstCxpOrden" class="listado-entrada-inventario-detail">
-				<td style="text-align:center;">[[cxp.id]]</td>
+				<td style="text-align:center;"><a href="#" ng-click="editarOrden($event, cxp)">[[cxp.id]]</a></td>
 				<td style="width: 30em;">[[cxp.suplidor]]</td>
 				<td>[[cxp.fecha |date: 'dd/MM/yyyy']]</td>
 				<td>[[cxp.monto | number: 2]]</td>
@@ -141,18 +141,18 @@
 						Monto
 					</td>
 				</tr>
-				<tr ng-repeat="det in inventarios" class="listado-entrada-inventario-detail">
+				<tr ng-repeat="det in ordenSimple" class="listado-entrada-inventario-detail">
 					<td class="align-center">
-						<input type="checkbox" name="c[[det.id]]" ng-checked="valoresChk[det.id]" 
-						ng-model="reg[det.id]" ng-click="selectedReg(det)"> 
+						<input type="checkbox" name="c[[det.id]]" ng-checked="valoresChk[det.idRegistro]" 
+						ng-model="reg[det.idRegistro]" ng-click="selectedReg(det)"> 
 					</td>
-					<td>[[det.id]]</td>
+					<td>[[det.idRegistro]]</td>
 					<td>[[det.fecha | date : 'dd/MM/yyyy']]</td>
-					<td>[[det.totalGeneral ]]</td>
+					<td>[[det.totalGeneral | number:2]]</td>
 				</tr>
 			</table>
 			<div>
-				<button class="smallMargin icon-save Boton"  ng-click="guardarCxp($event)" >Guardar</button>
+				<button class="smallMargin icon-save Boton"  ng-click="guardarCxp($event)" ng-disabled="btnDisable">Guardar</button>
 				<button class="smallMargin icon-delete Boton danger" ng-click="limpiar($event)">Cancelar</button>
 			</div>
 		</div>
