@@ -282,7 +282,7 @@ class cxpSuperView(TemplateView):
 
             if regSuper.descuento != 0:
                 tipoD = TipoDocumento.objects.get(codigo = 'CXDE')
-                docD = DocumentoCuentas.objects.filter(documento = tipo)
+                docD = DocumentoCuentas.objects.filter(documento = tipoD)
                 for document in docD:
                     SetCuentaSuper(self,regSuper.id,document, 'CXDE')
 
@@ -354,7 +354,7 @@ class cxpOrdenEdit(DetailView):
         try:
             dataT = json.loads(request.body)
 
-            data = dataT['OrdenSuper']
+            data = dataT['Orden']
             dataD = dataT['Detalle']
             dataDem = dataT['Eliminar']
 
@@ -412,7 +412,7 @@ class cxpSuperEdit(DetailView):
                 for rdet in dataDem:
                     cxpSuperDetalle.objects.get(id=rdet['id']).delete()
                     
-                    invent = InventarioH.objects.get(id=det['idRegistro'])
+                    invent = InventarioH.objects.get(id=rdet['idRegistro'])
                     invent.cxp = 'E'
                     invent.save()
 
@@ -430,6 +430,8 @@ class cxpSuperEdit(DetailView):
                         invent = InventarioH.objects.get(id=det['idRegistro'])
                         invent.cxp = 'P'
                         invent.save()
+
+            return HttpResponse('Ok')
             
         except Exception, e:
             raise e

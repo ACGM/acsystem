@@ -183,11 +183,9 @@
             }
 
 
-            function editOrdenSuper(OrdenSuper, Detalle, Eliminar){
+            function editOrdenSuper(Orden, Detalle, Eliminar){
                 var deferred = $q.defer();
-                var Or = OrdenSuper;
-                debugger;
-                $http.post('/cxpSuper/edit/', JSON.stringify({'OrdenSuper': Or, 'Detalle': Detalle, 'Eliminar': Eliminar}))
+                $http.post('/cxpSuper/edit/', JSON.stringify({'Orden': Orden, 'Detalle': Detalle, 'Eliminar': Eliminar}))
                     .success(function (data){
                         deferred.resolve(data);
                     })
@@ -468,10 +466,10 @@
                 cxpService.postCxpOrden(estatus).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("La orden # "+estatus+" Ha sido posteada");
+                        notie.alert(1, 'El registro # '+estatus+' ha sido posteada', 1.5);
 
                     }else{
-                         alert("Ocurrio un error al intentar guardar la orden");
+                         notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 2.5);
                     }
                 });
             }
@@ -529,17 +527,17 @@
                         cxpService.setOrden($scope.cxpDataReg, $scope.ordenesSeleccionada).then(function(data){
                         
                         if(data =="Ok"){
-                            alert("Cuenta por pagar Registrada")
+                            notie.alert(1, 'Cuenta por pagar registrada', 1.5);
                             $scope.limpiar();
                             $scope.getAllData();
                         }
                         else{
-                            alert("Ocurrio un error al intentar guardar el registro")
+                            notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 2.5);
                             }
                         });
                     }
                     else {
-                            alert("El monto a pagar es diferente al total de factura");
+                            notie.alert(3, 'El monto a pagar es diferente al total de la factura.', 2.5);
                         }
                 }
                 else{
@@ -549,19 +547,21 @@
                             .then(function (data){
 
                                 if(data =="Ok"){
-                                    alert("Cuenta por pagar Registrada")
+                                    notie.alert(1, 'Cuenta por pagar registrada', 1.5);
                                     $scope.limpiar();
                                     $scope.getAllData();
                                 }
                                 else {
-                                    alert("Ocurrio un error al intentar guardar el registro")
+                                    notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 2.5);
+                                   
                                     }
 
                                 })
 
                     }
                     else {
-                        alert("El monto a pagar es diferente al total de factura");
+                        notie.alert(3, 'El monto a pagar es diferente al total de factura', 2.5);
+                        
                     }
                 }
                 // function editOrden(Orden, Detalle, Eliminar)
@@ -729,10 +729,10 @@
                 cxpService.solicitudOrden(id).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("Fue creada la solicitud para la orden #"+id);
+                        notie.alert(1, 'Fue creada la solicitud para el registro # '+id, 1.5);
                     }else{
-                        
-                        alert("Ha ocurrido un error al intentar generar la solicitud");
+                        notie.alert(3, 'Ha ocurrido un error al intentar generarl la solicitud.', 2.5);
+                      
                     }
                 });
             
@@ -806,7 +806,7 @@
             $scope.editarOrden = function($event, cxp){
                 $event.preventDefault();
 
-                $scope.cxSuperData = [];
+                $scope.cxSuperData = {};
                 
                 var RegFecha = cxp.fecha.split('-');
                 var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
@@ -943,11 +943,12 @@
                     
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("La orden # "+estatus+" Ha sido posteada");
+                        
+                        notie.alert(1, 'El registro # '+estatus+' Ha sido posteada', 1.5);
                     }
 
                     else{
-                         alert("Ocurrio un error al intentar postear la orden");
+                        notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 2.5);
                     }
                 });
             
@@ -998,7 +999,7 @@
 
             $scope.guardarCxp = function($event){
                 $event.preventDefault();
-                
+                debugger;
                 var total = 0;
 
                 $scope.ordenesSeleccionada.forEach(function (data){
@@ -1019,30 +1020,35 @@
                         
                         if(data == "Ok"){
                            $scope.limpiar($event);
-                            alert("CxP Creada")
+                            notie.alert(1, 'Cuenta por pagar registrada', 1.5);
                         }else{
-                            alert("Ocurrio un error al intentar registrar la CXP")
+                            notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 2.5);
+
                             console.log(data);
                         }
                     });
                     }else{
-                        alert("El monto a pagar es diferente al total de factura")
+                        notie.alert(3, 'El monto a pagar es diferente al total de las facturas')
+
                 }
                 }
                 else{
                       if((total - $scope.cxSuperData.descuento) == $scope.cxSuperData.monto){
-                     var result = cxpService.editOrdenSuper($scope.cxSuperData, $scope.ordenesSeleccionada, $scope.ordenesEliminar).then(function (data){
-                        
-                        if(data == "Ok"){
-                           $scope.limpiar($event);
-                            alert("CxP Creada")
-                        }else{
-                            alert("Ocurrio un error al intentar registrar la CXP")
-                            console.log(data);
-                        }
+                        var orden = $scope.cxSuperData;
+                        var result = cxpService.editOrdenSuper($scope.cxSuperData, $scope.ordenesSeleccionada, $scope.ordenesEliminar).then(function (data){
+                            
+                            if(data == "Ok"){
+                               $scope.limpiar($event);
+                                notie.alert(1, 'Cuenta por pagar registrada', 1.5);
+                            }else{
+                                notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 2.5);
+
+                                console.log(data);
+                            }
                     });
                     }else{
-                        alert("El monto a pagar es diferente al total de factura")
+                        notie.alert(3, 'El monto a pagar es diferente al total de las facturas.', 2.5);
+                       
                 }
                 }
 
@@ -1055,10 +1061,12 @@
                 cxpService.solicitudSuperCoop(id).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        alert("Fue creada la solicitud para el registro #"+id);
+                        
+                        notie.alert(1, 'Fue creada la solicitud para el registro #'+id, 1.5);
                     }else{
                         console.log(data);
-                        alert("Ha ocurrido un error al intentar generar la solicitud");
+                        notie.alert(3, 'Ha ocurrido un error al intentar generar la solicitud.', 2.5);
+                       
                     }
                 });
             
