@@ -26,7 +26,13 @@
 
 				<span class="error-ei"> [[NoFoundDoc]]</span>
 				<a href="#" class="[[verTodos]] icon-buscar" ng-click="listadoSolicitudes()">Ver todos</a>
-				
+			
+				<span>Tipo</span>
+				<select name="tipo" id="tipo" ng-change="listadoSolicitudes()" ng-model="tipo">
+					<option value="O">Ordenes</option>
+					<option value="S">Supercoop</option>
+				</select>
+
 			<div class="filtro-posteadas">
 				<span>Estatus</span>
 				<select name="estatus" id="estatus" ng-change="solicitudesprestamosEstatus(estatus)" ng-model="estatus" class="field-choices">

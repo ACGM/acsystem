@@ -970,7 +970,7 @@
               //Agregar Detalle a la Orden
               SolicitudOrdenDespachoService.guardaSolicitudODDetalle(data, articulos).then(function (data) {
                 if(data == 1) {
-                  alert('Se guardó perfectamente!');
+                  notie.alert(1, 'Se guardó perfectamente!', 3);
                 } else {
                   $scope.mostrarError(data);
                 }
