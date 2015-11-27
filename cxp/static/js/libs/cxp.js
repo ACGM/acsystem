@@ -466,10 +466,10 @@
                 cxpService.postCxpOrden(estatus).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        notie.alert(1, 'El registro # '+estatus+' ha sido posteada', 1.5);
+                        notie.alert(1, 'El registro # '+estatus+' ha sido posteada', 3);
 
                     }else{
-                         notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 2.5);
+                         notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 3);
                     }
                 });
             }
@@ -527,17 +527,17 @@
                         cxpService.setOrden($scope.cxpDataReg, $scope.ordenesSeleccionada).then(function(data){
                         
                         if(data =="Ok"){
-                            notie.alert(1, 'Cuenta por pagar registrada', 1.5);
+                            notie.alert(1, 'Cuenta por pagar registrada', 3);
                             $scope.limpiar();
                             $scope.getAllData();
                         }
                         else{
-                            notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 2.5);
+                            notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 3);
                             }
                         });
                     }
                     else {
-                            notie.alert(3, 'El monto a pagar es diferente al total de la factura.', 2.5);
+                            notie.alert(3, 'El monto a pagar es diferente al total de la factura.', 3);
                         }
                 }
                 else{
@@ -547,12 +547,12 @@
                             .then(function (data){
 
                                 if(data =="Ok"){
-                                    notie.alert(1, 'Cuenta por pagar registrada', 1.5);
+                                    notie.alert(1, 'Cuenta por pagar registrada', 3);
                                     $scope.limpiar();
                                     $scope.getAllData();
                                 }
                                 else {
-                                    notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 2.5);
+                                    notie.alert(3, 'Ocurrio un error al intentar guardar el registro.', 3);
                                    
                                     }
 
@@ -560,7 +560,7 @@
 
                     }
                     else {
-                        notie.alert(3, 'El monto a pagar es diferente al total de factura', 2.5);
+                        notie.alert(3, 'El monto a pagar es diferente al total de factura', 3);
                         
                     }
                 }
@@ -729,9 +729,9 @@
                 cxpService.solicitudOrden(id).then(function (data){
                     if(data == "Ok"){
                         $scope.getAllData();
-                        notie.alert(1, 'Fue creada la solicitud para el registro # '+id, 1.5);
+                        notie.alert(1, 'Fue creada la solicitud para el registro # '+id, 3);
                     }else{
-                        notie.alert(3, 'Ha ocurrido un error al intentar generarl la solicitud.', 2.5);
+                        notie.alert(3, 'Ha ocurrido un error al intentar generarl la solicitud.', 3);
                       
                     }
                 });
@@ -944,11 +944,11 @@
                     if(data == "Ok"){
                         $scope.getAllData();
                         
-                        notie.alert(1, 'El registro # '+estatus+' Ha sido posteada', 1.5);
+                        notie.alert(1, 'El registro # '+estatus+' Ha sido posteada', 3);
                     }
 
                     else{
-                        notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 2.5);
+                        notie.alert(3, 'Ocurrio un error al intentar postear el registro # '+estatus+'.', 3);
                     }
                 });
             
@@ -1020,9 +1020,9 @@
                         
                         if(data == "Ok"){
                            $scope.limpiar($event);
-                            notie.alert(1, 'Cuenta por pagar registrada', 1.5);
+                            notie.alert(1, 'Cuenta por pagar registrada', 3);
                         }else{
-                            notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 2.5);
+                            notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 3);
 
                             console.log(data);
                         }
@@ -1039,15 +1039,15 @@
                             
                             if(data == "Ok"){
                                $scope.limpiar($event);
-                                notie.alert(1, 'Cuenta por pagar registrada', 1.5);
+                                notie.alert(1, 'Cuenta por pagar registrada', 3);
                             }else{
-                                notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 2.5);
+                                notie.alert(3, 'Ocurrio un error al intentar registrar la CXP.', 3);
 
                                 console.log(data);
                             }
                     });
                     }else{
-                        notie.alert(3, 'El monto a pagar es diferente al total de las facturas.', 2.5);
+                        notie.alert(3, 'El monto a pagar es diferente al total de las facturas.', 3);
                        
                 }
                 }
@@ -1062,10 +1062,10 @@
                     if(data == "Ok"){
                         $scope.getAllData();
                         
-                        notie.alert(1, 'Fue creada la solicitud para el registro #'+id, 1.5);
+                        notie.alert(1, 'Fue creada la solicitud para el registro #'+id, 3);
                     }else{
                         console.log(data);
-                        notie.alert(3, 'Ha ocurrido un error al intentar generar la solicitud.', 2.5);
+                        notie.alert(3, 'Ha ocurrido un error al intentar generar la solicitud.', 3);
                        
                     }
                 });
