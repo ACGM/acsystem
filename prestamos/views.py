@@ -265,14 +265,15 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.representante = representante
 			SolPrestamo.autorizadoPor = User.objects.get(username=solicitante['autorizadoPor'])
 			SolPrestamo.cobrador = cobrador
-
 			SolPrestamo.montoSolicitado = decimal.Decimal(solicitud['montoSolicitado'].replace(',',''))
-			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None else 0			
+			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None \
+				and solicitud['ahorrosCapitalizados'] > 0 else 0			
 			SolPrestamo.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] > 0 else 0
 			
 			SolPrestamo.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
 
-			SolPrestamo.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado'].replace(',','')) if solicitud['valorGarantizado'] != None else 0
+			SolPrestamo.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado']) if solicitud['valorGarantizado'] != None else 0
+
 			SolPrestamo.netoDesembolsar = decimal.Decimal(solicitud['netoDesembolsar'].replace(',',''))
 			SolPrestamo.observacion = solicitud['nota']
 			SolPrestamo.categoriaPrestamo = categoriaPrest
@@ -297,7 +298,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			for pu_valida in prestamosUnificados:
 				montoPrestamosUnificados += decimal.Decimal(pu_valida['balance'])
 			
-			if montoPrestamosUnificados > SolPrestamo.netoDesembolsar:
+			if montoPrestamosUnificados > SolPrestamo.montoSolicitado:
 				raise Exception('El monto de los prestamos a unificar no puede ser mayor al MONTO SOLICITADO.')
 
 			SolPrestamo.save()
@@ -311,7 +312,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 				prestamoUnif.save()
 			#Fin Prestamos a Unificar
 
-			SolPrestamo.netoDesembolsar -= montoPrestamosUnificados
+			# SolPrestamo.netoDesembolsar -= montoPrestamosUnificados
 			SolPrestamo.save() 
 
 			return HttpResponse(SolPrestamo.noSolicitud)

@@ -978,6 +978,7 @@
           $scope.prestamosTotal = '';
           $scope.totalQ1 = 0;
           $scope.totalQ2 = 0;
+          $scope.DISPONIBLE = 0;
           //Fin Limpiar Data
 
           MaestraPrestamoService.EstadoCuentaBySocio($scope.codigoSocio).then(function (data) {
@@ -1006,6 +1007,8 @@
               });
 
               $scope.mostrar2 = 'ocultar';
+              console.log($scope.ahorroTotal);
+              console.log($scope.prestamosTotal);
 
             },
             function (error) {
@@ -1019,9 +1022,16 @@
                 $scope.ahorroTotal = $filter('number')(data[0]['balance'], 2);
               } else {
                 $scope.ahorroTotal = 0;
-              }
+              }              
 
               $scope.mostrar3 = 'ocultar';
+
+              //CALCULAR EL DISPONIBLE
+              var disp = setTimeout(function () {
+                $scope.DISPONIBLE = $filter('number') (parseFloat($scope.ahorroTotal.replaceAll(',','')) - parseFloat($scope.prestamosTotal.replaceAll(',','')), 2);
+                console.log($scope.DISPONIBLE);
+              },5000);
+
             },
             function (error) {
               $scope.mostrar3 = 'ocultar';
@@ -1036,6 +1046,7 @@
               } else {
                 $scope.prestamosTotal = 0;
               }
+
             });
 
             $scope.mostrar = 'ocultar';
