@@ -145,6 +145,8 @@
 		$scope.toggleLs =true;
 		$scope.chk = null;
 		$scope.flap = false;
+		$scope.btnEstatus = false;
+		$scope.montoBlock = false;
 		$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 
@@ -155,6 +157,34 @@
 				$scope.lsSolicitud = data;
 				console.log(data);
 			});
+		};
+
+		$scope.editarSolicitud = function($event, solicitud){
+			$event.preventDefault();
+			if(solicitud.cxpOrden != null || solicitud.superOrden != null || solicitud.prestamo != null){
+				$scope.montoBlock = true;	
+			}
+			
+			if(solicitud.estatus != 'P'){
+				$scope.btnEstatus = true;
+			}
+
+			$scope.toggleCr = true;
+			$scope.toggleLs = false;
+			$scope.solicitud = {};
+
+			$scope.solicitud.id = solicitud.id;
+			$scope.solicitud.socioId = solicitud.socioId;
+			$scope.socioNombre = solicitud.socio;
+			$scope.solicitud.suplidorId = solicitud.suplidorId;
+			$scope.suplidorNombre = solicitud.suplidor;
+			var temp = solicitud.fecha.split('-')
+
+			$scope.fecha = temp[2]+'/'+temp[1]+'/'+temp[0];
+			$scope.solicitud.concepto = solicitud.concepto;
+			$scope.solicitud.monto = solicitud.monto;
+
+
 		};
 
 		$scope.selSocio = function($event, s) {
@@ -222,7 +252,7 @@
 				//});
 			}
 			 catch (e) {
-	          $rootScope.mostrarError(e);
+	          notie.alert(3,e,4);
 	        }
 			};
 
@@ -255,19 +285,39 @@
 					$scope.solicitud.suplidorId = null;
 				};
 
-				SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+				if($scope.solicitud.id == undefined){
+					$scope.solicitud.id = null;
+
+					SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+					
 					if(data=="Ok"){
-						alert("Solicitud Creada");
+						notie.alert(1 , "Solicitud Creada",2.5);
+						 $scope.limpiar();
 						$scope.solicitudList();
 					}else{
-						$rootScope.mostrarError("No fue posible Crear la solicitud");
+						notie.alert(3 ,"Ha ocurrido un error, No fue posible Crear la solicitud", 3);
 						console.log(data);
 					}
-				});
+					});
+				}
+				else{
+					SolicitudServices.setSolicitud($scope.solicitud).then(function (data){
+					
+					if(data=="Ok"){
+						notie.alert(1 , "Fueron realizados los cambios de manera exitosa.",3);
+						 $scope.limpiar();
+						$scope.solicitudList();
+					}else{
+						notie.alert(3 ,"Ha ocurrido un error, No fue posible actualizar la solicitud", 3);
+						console.log(data);
+					}
+				}
+				);
+				}
+			
 			}
 			catch(e){
-				$rootScope.mostrarError(e);
-			}
+				notie.alert(3,e,5);			}
 			};
 
 
@@ -307,18 +357,22 @@
 				SolicitudServices.wFlow(sol).then(function (data){
 					if(data == "Ok"){
 						$scope.flap = false;
-						alert("Se ha completado la solicitud #"+$scope.chk);
+						notie.alert(1,"Se ha completado la solicitud #"+$scope.chk, 2.5);
 						$scope.chk = null;
+						$scope.limpiar();
 					}
 					else{
 						$scope.flap = false;
-						alert("Ocurrio un error al intentar aprobar.");
+						notie.alert(3,"Ocurrio un error al intentar aprobar.", 3);
 						console.log(data);
+						$scope.limpiar();
 					}
 				});
+				$scope.solicitudList();
 
 			};
 			$scope.solicitudList();	
+
 		};
 
 		$scope.printSol = function($event,id){
@@ -341,7 +395,7 @@
 				$scope.limpiar();
 			}
 			 catch (e) {
-	          $rootScope.mostrarError(e);
+	          notie.alert(3,e,4);
 	        }
 			};
 
@@ -396,6 +450,8 @@
 			$scope.toggleLs =true;
 			$scope.chk = null;
 			$scope.flap = false;
+			$scope.btnEstatus = false;
+			$scope.montoBlock = false;
 			$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
 			$scope.solicitudList();

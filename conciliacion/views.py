@@ -132,17 +132,13 @@ class SolicitudView(TemplateView):
                 'socio': sol.socio.nombreCompleto if sol.socio != None else '',
                 'suplidorId': sol.suplidor.id if sol.suplidor != None else '',
                 'suplidor': sol.suplidor.nombre if sol.suplidor != None else '',
+                'prestamo': sol.prestamo,
+                'cxpOrden': sol.cxpOrden,
+                'superOrden': sol.superOrden,
                 'concepto': sol.concepto,
                 'monto': sol.monto,
                 'estatus': sol.estatus,
-                # 'cuentas': [{
-                #     'id': cta.id,
-                #     'codigoCta': cta.cuenta.codigo,
-                #     'cuenta': cta.cuenta.descripcion,
-                #     'debito': cta.debito,
-                #     'credito': cta.credito
-                #     }
-                # from cta in sol.cuentas.all()],
+               
              }
             )
 
@@ -155,22 +151,25 @@ class SolicitudView(TemplateView):
         if Data['id'] is None:
             solicitud = SolicitudCheque()
             solicitud.fecha = Data['fecha']
+
             if Data['socioId'] != None:
                 socio = Socio.objects.get(codigo=Data['socioId'])
                 solicitud.socio = socio
             if Data['suplidorId'] != None:
                 suplidor = Suplidor.objects.get(id=Data['suplidorId'])
                 solicitud.suplidor = suplidor
+
             solicitud.concepto = Data['concepto']
             solicitud.prestamo = 0
             solicitud.monto = Data['monto']
             solicitud.estatus = Data['estatus']
             solicitud.save()
         else:
+            
             solicitud = SolicitudCheque.objects.get(id=Data['id'])
             solicitud.concepto = Data['concepto']
             solicitud.monto = Data['monto']
-            solicitud.estatus = Data['estatus']
+            # solicitud.estatus = Data['estatus']
             solicitud.save()
 
         return HttpResponse('Ok')
