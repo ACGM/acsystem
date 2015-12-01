@@ -379,7 +379,7 @@
 								</tr>
 								<tr ng-repeat="p in prestamosSocio">
 									<td class="align-center">
-										<input type="checkbox" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedRegPU(p)"> 
+										<input type="checkbox" id="idPU[[p.noPrestamo]]" name="c[[p.noPrestamo]]" ng-checked="valoresChk[p.noPrestamo]" ng-model="reg[p.noPrestamo]" ng-click="selectedRegPU(p)"> 
 									</td>
 									<td>[[p.noPrestamo | numberFixedLen : 9]]</td>
 									<td>[[p.balance | number : 2]]</td>

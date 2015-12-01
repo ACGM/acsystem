@@ -1014,6 +1014,13 @@
               }
 
               $scope.prestamosSocio = data[0]['PrestamosUnificados'];
+
+              $scope.prestamosSocio.forEach(function (item) {
+                $scope.valoresChk[item.noPrestamo] = true;
+              });
+
+              console.log('Estos son los prestamos unificados');
+              console.log(data[0]['PrestamosUnificados']);
             }
 
           }, 
