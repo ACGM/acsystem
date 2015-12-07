@@ -35,9 +35,9 @@
 					<td class="align-right">Total Desc.</td>
 
 				</tr>
-				<tr ng-repeat="prestamo in datosReporte" class="[[prestamo.socio]]">
+				<tr ng-repeat="prestamo in datosReporte" class="[[prestamo.codigoSocio]]">
 					<td>
-						<span ng-if="prestamo.socio == 'TOTAL'">[[prestamo.departamento]]</span>
+						<span ng-if="prestamo.codigoSocio == 'TOTAL'">[[prestamo.centrocosto]] - [[prestamo.departamento]]</span>
 					</td>
 					<td>[[prestamo.codigoSocio]]</td>
 					<td>[[prestamo.socio]]</td>
@@ -47,11 +47,18 @@
 					<td class="align-right">[[prestamo.cuotaMasInteresQ | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="3">TOTALES:</td>
-					<td class="align-right">[[totalInteres | number : 2]]</td>
-					<td class="align-right">[[totalInteresAh | number : 2]]</td>
-					<td class="align-right">[[totalCapital | number : 2]]</td>
-					<td class="align-right">[[totalDesc | number : 2]]</td>
+					<td colspan="3" class="formatTOTAL">TOTALES:</td>
+					<td class="align-right formatTOTAL">[[totalInteres | number : 2]]</td>
+					<td class="align-right formatTOTAL">[[totalInteresAh | number : 2]]</td>
+					<td class="align-right formatTOTAL">[[totalCapital | number : 2]]</td>
+					<td class="align-right formatTOTAL">[[totalDesc | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="3">TOTALES (SIN EMPLEADOS COOPERATIVA):</td>
+					<td class="align-right">[[totalInteres - totalInteresCOOP | number : 2]]</td>
+					<td class="align-right">[[totalInteresAh - totalInteresAhCOOP | number : 2]]</td>
+					<td class="align-right">[[totalCapital - totalCapitalCOOP | number : 2]]</td>
+					<td class="align-right">[[totalDesc - totalDescCOOP | number : 2]]</td>
 				</tr>
 			</table>
 		</section>

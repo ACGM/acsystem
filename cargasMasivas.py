@@ -176,7 +176,8 @@ f.close()
 
 
 #CARGA DE SOCIOS
-f = open('Socios.csv', 'r')
+# f = open('Socios.csv', 'r')
+f = open('sociosCoop.csv', 'r')
 for line in f:
 	line = line.split(',')
 	socio = Socio()
