@@ -22,6 +22,9 @@ class SolicitudCheque(models.Model):
     def __unicode__(self):
         return '%i - %s' % (self.id, str(self.fecha))
 
+class NumCheque(models.Model):
+    chequeNo = models.PositiveIntegerField(null=False, blank=False, verbose_name='# Cheque')
+    banco = models.CharField(max_length="50")
 
 class ConcCheques(models.Model):
     estatus_choicer = (
