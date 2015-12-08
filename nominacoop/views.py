@@ -426,12 +426,18 @@ class GenerarArchivoAhorrosBalance(View):
             sysFile.write('PERNR\tSUBTY\tBEGDA\tBETRG\n') # Escribir Cabecera de archivo -- Columnas de header
 
             socios = Socio.objects.filter(estatus='S').values('codigo', 'id')
-
+            
+            so = 0
             # Escribir cada linea de prestamo en el archivo
             for socio in socios:
                 ahorro = getSocioAhorro(self, socio['id'])
-                mQ = CuotasAhorrosEmpresa.objects.get(nomina=fechaNomina, estatus='P', socio__codigo=socio['codigo'])
-                montoTotal = ahorro[0].balance + mQ.valorAhorro
+                so = socio['codigo']
+                
+                try:
+                    mQ = CuotasAhorrosEmpresa.objects.get(nomina=fechaNomina, estatus='P', socio__codigo=socio['codigo'])
+                    montoTotal = ahorro[0].balance + mQ.valorAhorro
+                except:
+                    continue
 
                 lineaFile = '{0}\t{1}\t{2}\t{3:0>13.2f}\n'.format(socio['codigo'], InfoTipo, fechanominaSAP, montoTotal)
                 sysFile.write(lineaFile)
@@ -441,7 +447,7 @@ class GenerarArchivoAhorrosBalance(View):
             return HttpResponse(1)
 
         except Exception as e:
-            return HttpResponse(e)
+            return HttpResponse('{0} -- {1}'.format(e,so) )
 
 
 # Aplicar ahorros -- incrementar el balance de ahorro con la cuota actual
