@@ -121,7 +121,7 @@ class DocumentoCuentasView(APIView):
 
 	def get(self, request, doc=None):
 		
-		docCuentas = DocumentoCuentas.objects.filter(documento__codigo=doc)
+		docCuentas = DocumentoCuentas.objects.filter(documento__codigo=doc).order_by('-accion')
 
 		response = self.serializer_class(docCuentas, many=True)
 		return Response(response.data)

@@ -401,9 +401,10 @@
       }
 
       // Retorna el detalle de una nomina
-      $scope.getDetalleNomina = function(nomina, tipoNomina) {
+      $scope.getDetalleNomina = function(nomina, tipoNomina, estatus) {
         $scope.nomina = nomina;
         $scope.tipoNomina = tipoNomina;
+        $scope.estatusNominaActiva = estatus;        
 
         NominaService.detalleNomina(nomina).then(function (data) {
           $scope.detalle = data;
@@ -589,13 +590,57 @@
 
             //Prepara cada linea de posteo
             $scope.documentoCuentas.forEach(function (documento) {
+
               var desgloseCuenta = new Object();
+
+              var monto = 0;
+
+              if(documento.getCuentaCodigo == 6101) { //Cuenta de Sueldo
+                var tmp = $filter('number')(nomina.valorNomina + nomina.DESCPRESTAMOS + nomina.AFP + nomina.ARS + nomina.DESCAHORROS + nomina.ISR + nomina.CAFETERIA,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+              
+              if(documento.getCuentaCodigo == 1113080102) { //Cuenta de Prestamos a Descontar 
+                var tmp = $filter('number')(nomina.DESCPRESTAMOS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210204) { //Cuenta de AFP
+                var tmp = $filter('number')(nomina.AFP,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210207) { //Cuenta de SFS
+                var tmp = $filter('number')(nomina.ARS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210208) { //Cuenta de Impuesto Sobre La Renta
+                var tmp = $filter('number')(nomina.ISR,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210402) { //Cuenta para Cafeteria
+                var tmp = $filter('number')(nomina.CAFETERIA,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 2202) { //Cuenta para Ahorros Empleados
+                var tmp = $filter('number')(nomina.DESCAHORROS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210501) { //Cuenta Nomina Cooperativa
+                var tmp = $filter('number')(nomina.valorNomina,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number')(monto,2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number')(monto,2) : $filter('number')(0.00, 2);
 
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
               desgloseCuenta.ref = documento.getCodigo + nomina.id;
-              desgloseCuenta.debito = documento.accion == 'D'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });
