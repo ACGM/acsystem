@@ -1164,10 +1164,14 @@
   //****************************************************
   //CONTROLLERS Reporte de Ventas Diarias              *
   //****************************************************
-  .controller('RPTVentasDiariasCtrl', ['$scope', '$filter', 'FacturacionService',
-                                              function ($scope, $filter, FacturacionService) {
+  .controller('RPTVentasDiariasCtrl', ['$scope', '$filter', 'FacturacionService', '$window',
+                                              function ($scope, $filter, FacturacionService, $window) {
 
     // Inicializacion de Variables
+
+    //Variables de Informacion General (EMPRESA)
+      $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+      //Fin variables de Informacion General.
 
 
     // Funcion para mostrar error por pantalla
@@ -1194,7 +1198,7 @@
           $scope.registros = data.filter(function (item) {
             console.log($filter('date')(item.fecha, 'yyyy-MM-dd'))
             console.log(fechaI)
-            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF;
+            return $filter('date')(item.fecha, 'yyyy-MM-dd') >= fechaI && $filter('date')(item.fecha,'yyyy-MM-dd') <= fechaF && item.borrado == false;
           });
 
           $scope.totales();
@@ -1226,11 +1230,14 @@
   //****************************************************
   //CONTROLLERS Reporte de Resumen de Ventas           *
   //****************************************************
-  .controller('RPTVentasResumidoCtrl', ['$scope', '$filter', 'FacturacionService',
-                                              function ($scope, $filter, FacturacionService) {
+  .controller('RPTVentasResumidoCtrl', ['$scope', '$filter', 'FacturacionService', '$window',
+                                              function ($scope, $filter, FacturacionService, $window) {
 
     // Inicializacion de Variables
-
+    
+    //Variables de Informacion General (EMPRESA)
+    $scope.empresa = $window.sessionStorage['empresa'].toUpperCase();
+    //Fin variables de Informacion General.
 
     // Funcion para mostrar error por pantalla
     $scope.mostrarError = function(error) {

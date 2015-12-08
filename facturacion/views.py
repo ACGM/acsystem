@@ -302,9 +302,10 @@ class RPTResumenVentas(LoginRequiredMixin, DetailView):
 											s.nombreCompleto, \
 											SUM((d.cantidad * d.precio) - ((d.porcentajeDescuento/100) * d.precio * d.cantidad)) valor  \
 										FROM facturacion_detalle d \
-										LEFT JOIN facturacion_factura f ON d.factura_id = f.id \
+										LEFT JOIN facturacion_factura f ON d.factura_id = f.id AND f.borrado <> 1\
 										LEFT JOIN administracion_socio s ON s.id = f.socio_id \
 										GROUP BY s.nombreCompleto \
+										HAVING f.borrado <> 1 \
 										ORDER BY s.nombreCompleto \
 										')
 
