@@ -157,7 +157,7 @@
       //Cantidad de Cuotas de Ordenes de Despacho (parametro: monto)
       function cantidadCuotasODByMonto(monto) {
         var deferred = $q.defer();
-        var url = "/api/cantidadCuotasPrestamos/monto/?format=json".replace("monto", monto.toString().replace(',',''));
+        var url = "/api/cantidadCuotasOD/monto/?format=json".replace("monto", monto.toString().replace(',',''));
 
         $http.get(url)
           .success(function (data) {
@@ -440,9 +440,9 @@
       $scope.getCantidadCuotasPrestamo = function(monto) {
         try {
           SolicitudOrdenDespachoService.cantidadCuotasODByMonto(monto).then(function (data) {
+            
             if(data.length > 0) {
               $scope.solicitud.cantidadCuotas = data[0].cantidadQuincenas;
-
               $scope.solicitud.valorCuotas = $filter('number')(monto.replaceAll(',','') / data[0].cantidadQuincenas,2);
             }
           },
