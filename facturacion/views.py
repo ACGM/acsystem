@@ -26,11 +26,14 @@ import decimal
 import datetime
 
 # Eliminar producto de la factura
-def quitar_producto(self, codProd, iAlmacen, noFactura):
+def quitar_producto(self, codProd, iAlmacen, noFactura, tipo):
 	try:
 
 		exist = Existencia.objects.get(producto__codigo=codProd, almacen__id=iAlmacen)
 		factura = Detalle.objects.get(factura__noFactura=noFactura, producto__codigo=codProd, almacen__id=iAlmacen)
+
+		if tipo == 'E':
+			factura.cantidad = factura.cantidad * -1 # La convierto en negativo porque si la factura fue eliminada tengo que regresar a la existencia el valor
 
 		exist.cantidad -= decimal.Decimal(factura.cantidad)
 		exist.save()
@@ -138,7 +141,7 @@ class FacturacionView(LoginRequiredMixin, TemplateView):
 				fact = Factura.objects.get(noFactura = facturaNo)
 				
 				for item in dataD:
-					quitar_producto(self, item['codigo'], almacen, facturaNo)
+					quitar_producto(self, item['codigo'], almacen, facturaNo, 'R') # R = Reponer
 
 				try:
 					detalle = Detalle.objects.filter(factura = fact).delete()
@@ -190,7 +193,7 @@ class FacturaEliminarView(LoginRequiredMixin, View):
 			detalle = Detalle.objects.filter(factura=fact)
 
 			for item in detalle:
-				quitar_producto(self, item.producto.codigo, item.almacen.id, facturaNo)
+				quitar_producto(self, item.producto.codigo, item.almacen.id, facturaNo, 'E') #E = Eliminar
 
 				mov = Movimiento()
 				mov.producto = item.producto
