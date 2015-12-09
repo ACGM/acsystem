@@ -254,7 +254,7 @@ class CxpView(TemplateView):
 
             if regOrdenG.descuento != 0:
                 tipoD = TipoDocumento.objects.get(codigo='CXDE')
-                dodD = DocumentoCuentas.objects.filter(document = tipoD)
+                dodD = DocumentoCuentas.objects.filter(documento = tipoD)
                 
                 for documentD in dodD:
                     SetCuentaOrden(self,regOrdenG.id,documentD,'CXDE')

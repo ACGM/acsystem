@@ -339,12 +339,20 @@
       			var FechaFormatD = RgFechaD[2] + '-' + RgFechaD[1] + '-' + RgFechaD[0];
       			$scope.actData.fechaDep = FechaFormatD;
 
-				ActivoServices.setActivo($scope.actData);
-				//$window.sessionStorage['activoId'] = JSON.stringify($scope.actData);
+				ActivoServices.setActivo($scope.actData).then(function (data){
+					if(data =="Ok"){
+						notie.alert(1,"Activo creado corectamente !",3);
+					}else{
+						notie.alert(3,"Ha ocurrido un error al intentar guardar el activo",3);
+						console.log(data);
+					}
+					$scope.lstActivos();
+					
+				});
+				
 				$scope.cancelarActivo();
-				$scope.lstActivos();
-				//$window.open('/impActivo/', target='_blank'); 
-
+				$scope.tableCat = false;
+				
 				
             	};
 
@@ -379,7 +387,9 @@
 	       		$scope.depList = null;
 	       		$scope.actVs = true;
 	       		$scope.actRg = false;
+	       		$scope.tableCat = false;
 	       		$scope.suplidorNombre = null;
+	       		$scope.localidadD = null;
 				$scope.CategoriaDesc = null;
 	       		$scope.getCategoria();
 	       		};
@@ -437,10 +447,11 @@
 
 				ActivoServices.setDepresiacion($scope.fechaDesp).then(function (data){
 					if (data =="ok"){
-						alert("Activos Depreciados");
+						notie.alert(1,"Fue generada la depresiacion exitosamente",3);
 					}
 					else{
-						alert(data);
+						notie.alert(3,"Ha ocurrido un error en el proceso.",3);
+						console.log(data);
 					}
 				});
 				
@@ -490,6 +501,7 @@
 			$scope.initial = function(){
 				ActivoServices.seeDespreciado().then(function (data){
 					$scope.LsData = data;
+
 				});
 			}
 		}]);

@@ -307,7 +307,7 @@
 						});
 					}
 				}catch(ex){    
-					$rootScope.mostrarError(ex.message);
+					notie.alert(3,"A ocurrido un error en el sistema.",3);
 				}
 		
 			};
@@ -400,7 +400,7 @@
 					
 					AhorroServices.setAhorroRegS($scope.retiro).then(function (data){
 						if(data=="Ok"){
-							alert("Retiro Registrado");
+							notie.alert(1,"Retiro Registrado",3);
 						}
 						return data;
 					});
@@ -449,10 +449,12 @@
 
 				AhorroServices.setDiarioReg(reg).then(function (data){
 					if(data =="Ok"){
-						alert("Registro ha sido posteado")
+						notie.alert(1,"Registro ha sido posteado",3)
+						$scope.getListaAhorro();
+						$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
 					}
 
-				$scope.AhorroById($scope.SocioAhorroId, $scope.Socio);
+				
 
 				});
 			};
@@ -762,7 +764,7 @@
 
 				var result = AhorroServices.setIntereses($scope.GrInteres.fechaI, $scope.GrInteres.fechaF).then(function (data){
 					if (data == "Ok"){
-						alert("Intereses generados")
+						notie.alert(1,"Intereses generados",3);
 					}else{
 						console.log(data);
 					}

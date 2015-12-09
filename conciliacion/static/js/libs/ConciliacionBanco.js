@@ -153,8 +153,6 @@
       				var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
       				reg.fecha = FechaFormat;
 
-      				console.log($scope.fechai);
-
       				return reg.fecha <= $scope.fechai && reg.fecha >= $scope.fechaf; 
 				});
 			});
@@ -163,7 +161,7 @@
 		$scope.setConBanco = function($event){
 			$event.preventDefault();
 			try{
-
+				debugger;
 				if($scope.regBanco.id === undefined){
 					$scope.regBanco.id = null;
 				}
@@ -175,12 +173,19 @@
 				console.log($scope.regBanco);
 				conciliacionServices.setBanco($scope.regBanco).then(function (data){
 					var resp = data;
+					if (resp == "Ok"){
+						notie.alert(1,"Registro almacenado de forma exitosa", 3);
+					}else{
+						notie.alert(3,"Ocurrio un error al realizar el registro",4);
+						console.log(resp);
+					}
 				});
-				debugger;
+				
 				$scope.cancelarReg($event);
 			}
 			catch(e){
-				$rootScope.mostrarError(e);
+				notie.alert(3,"Ocurrio un error interno en la aplicacion", 4);
+				console.log(e);
 			}
 		};
 
