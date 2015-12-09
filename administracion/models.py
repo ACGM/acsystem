@@ -235,6 +235,25 @@ class Socio(models.Model):
             ah.estatus = 'A'
             ah.save()
 
+        if self.estatus == 'E':
+            from nominacoop.models import EmpleadoCoop, DepartamentoCoop
+
+            emp = EmpleadoCoop()
+            emp.socio = self
+            emp.nombres = self.nombres
+            emp.apellidos = self.apellidos
+            emp.cedula = self.cedula
+            emp.direccion = self.direccion
+            emp.telefono = self.telefono
+            emp.estadoCivil = self.estadoCivil
+            emp.sexo = self.sexo
+            emp.fechaIngreso = self.fechaIngresoEmpresa
+            emp.empresa = Empresa.objects.get(estatus='A')
+            emp.departamento = DepartamentoCoop.objects.get(id=1)
+            emp.sueldoActual = self.salario
+            
+            emp.save()
+
     class Meta:
         ordering = ['codigo']
         verbose_name = 'Socio'

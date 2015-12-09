@@ -14,7 +14,7 @@ from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
 
 
 # Local Imports
-from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco
+from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, conChequeTrans
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
 
 
@@ -218,7 +218,6 @@ class ChequesView(TemplateView):
         cheque = ConcCheques.objects.all()
 
         for chk in cheque:
-            # cuentas = DiarioGeneral.objects.filter(id=chk.cuentas)
 
             data.append({
                 'id': chk.id,
@@ -233,11 +232,10 @@ class ChequesView(TemplateView):
                     'id': cta.id,
                     'codigoCta': cta.cuenta.codigo,
                     'cuenta': cta.cuenta.descripcion,
-                    # 'aux': cta.auxiliar.codigo,
                     'debito': cta.debito,
                     'credito': cta.credito
                     }
-                   for cta in chk.cuentas.all()]
+                   for cta in chk.solicitud.cuentas.all()]
             })
         return JsonResponse(data, safe=False)
 
@@ -279,6 +277,9 @@ class ChequesView(TemplateView):
             solicitud.estatus = 'E'
             solicitud.save()
 
+            noChk = NumCheque.objects.get(id=1)
+            noChk.chequeNo = noChk.chequeNo + 1
+            noChk.save()
            
         else:
             cheque = ConcCheques.objects.get(id=Data['id'])
@@ -292,6 +293,26 @@ class ChequesView(TemplateView):
 
 class SChequeView(TemplateView):
     template_name = "impCheque.html"
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        noChk = NumCheque.objects.get(id=1)
+
+        data.append({
+            'id': noChk.id,
+            'noCheque': noChk.chequeNo
+                })
+        return JsonResponse(data, safe=False)
 
 
 class NotasConciliacionView(TemplateView):
@@ -430,7 +451,6 @@ class ConBancoView(TemplateView):
                 'id': banc.pk,
                 'fecha': banc.fecha,
                 'descripcion': banc.descripcion,
-                'tipo': banc.tipo,
                 'monto': banc.monto,
                 'estatus': banc.estatus
             })
@@ -445,7 +465,6 @@ class ConBancoView(TemplateView):
             banco = ConBanco()
             banco.fecha = Data['fecha']
             banco.descripcion = Data['descripcion']
-            banco.tipo = Data['tipo'],
             banco.monto = Data['monto']
             banco.estatus = Data['estatus']
             banco.save()
@@ -456,7 +475,7 @@ class ConBancoView(TemplateView):
             banco.estatus = Data['estatus']
             banco.monto = Data['monto']
             banco.save(())
-        return HttpResponse(Data['tipo'])
+        return HttpResponse('Ok')
 
 
 class ConBancoLs(DetailView):

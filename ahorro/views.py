@@ -80,7 +80,7 @@ def setCuentaMaestraRetiros(self, idMaestra, doc, fecha, ref):
 
 def insMaestra(self, CodSocio, Fecha, Monto):
     regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)
-    regInteres = InteresesAhorro.objects.get(id=1)
+
     regMaestra = MaestraAhorro()
     regMaestra.estatus = "P"
     regMaestra.fecha = Fecha
@@ -215,12 +215,14 @@ class DocumentosAhorro(DetailView):
                 else:
                     ref = 'AHRE'
 
+
             balance = regAhorro.balance
             balance = balance  + regMaestra.monto
-           
-            prestamos = getBalancesPrestamos(regAhorro.socio.codigo)
-            
-            disponible = balance - decimal.Decimal(prestamos[0].balance)
+            try:
+                prestamos = getBalancesPrestamos(regAhorro.socio.codigo)
+                disponible = balance - decimal.Decimal(prestamos[0].balance)
+            except Exception, e:
+                disponible = balance 
             
             if disponible < 0:
                 disponible = 0
@@ -331,12 +333,16 @@ class generarInteres(TemplateView):
             
             inter = InteresesAhorro.objects.get(id=1)
 
-            mensual = MaestraAhorro.objects.raw('select id'
-                                                ',x.ahorro_id'
-                                                ',sum(x.monto) as monto '
-                                                'from ahorro_maestraahorro x '
-                                                'GROUP BY x.ahorro_id '
-                                                'HAVING x.fecha BETWEEN \'' + fechaI + '\' and \'' + fechaF + '\' and x.ahorro_id ='+str(ah.id)
+
+            mensual = MaestraAhorro.objects.raw( "select id \
+                                                    ,x.ahorro_id\
+                                                    ,sum(x.monto) as monto \
+                                                    from ahorro_maestraahorro x \
+                                                    GROUP BY x.ahorro_id, x.tipo  \
+                                                    HAVING  x.tipo = \'I\' \
+                                                    and x.fecha BETWEEN \'"+ fechaI +"\' and \'" + fechaF + "\' and x.ahorro_id ="+str(ah.id) 
+
+                                                
                                                 )
             
             data = list()
@@ -346,21 +352,24 @@ class generarInteres(TemplateView):
                     'monto': mes.monto,
                     })
 
-            reInt = decimal.Decimal(inter.porcentaje / 100)
-            monto = decimal.Decimal(data[0]['monto']) * reInt
+            if len(data)  > 0:
 
-            regMaestra = MaestraAhorro()
-            regMaestra.ahorro = ah
-            regMaestra.fecha = fechaF
-            regMaestra.monto = monto
-            regMaestra.estatus = 'P'
-            regMaestra.save()
+                reInt = decimal.Decimal(inter.porcentaje / 100)
+                monto = decimal.Decimal(data[0]['monto']) * reInt
 
-            for doc in regDocumentos:
-                setCuentaMaestra(self, regMaestra.id, doc, fechaF, ref)
+                regMaestra = MaestraAhorro()
+                regMaestra.ahorro = ah
+                regMaestra.fecha = fechaF
+                regMaestra.monto = monto
+                regMaestra.tipo = 'I'
+                regMaestra.estatus = 'P'
+                regMaestra.save()
 
-            ah.balance = ah.balance + monto
-            ah.save()
+                for doc in regDocumentos:
+                    setCuentaMaestra(self, regMaestra.id, doc, fechaF, ref)
+
+                ah.balance = ah.balance + monto
+                ah.save()
             
         return HttpResponse("Ok")
 

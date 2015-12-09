@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+
+{% block title %} Resumen Estado de Socios {% endblock title %}
+
+{% block content %}
+	<div class="distribucion-intereses" ng-controller="ResumenEstadoCuentaCtrl">
+		<h1>RESUMEN ESTADO DE SOCIOS</h1>
+
+		<form name="ResumenEstadoCuentaForm" novalidate>
+			
+			<figure class="fig-load2 [[mostrar]]">
+				<img class="img-load2" src="/static/images/loading.gif" alt="">
+			</figure>
+			
+			<a href="#" ng-click="cargar($event)">CARGAR TODO</a>
+
+			<section ng-init="getData()">
+
+				<table class="listado-table">
+					<tr class="listado-table-header">
+						<td>Codigo</td>
+						<td>Nombre</td>
+						<td>Ahorros</td>
+						<td>Prestamos</td>
+					</tr>
+
+					<tr ng-repeat="socio in allData" class="listado-entrada-inventario-detail">
+						<td>[[socio.codigo]]</td>
+						<td>[[socio.nombre]]</td>
+						<td>[[socio.ahorros]]</td>
+						<td>[[socio.prestamos]]</td>
+					</tr>
+					<tr>
+						<td><strong>TOTAL</strong></td>
+						<td colspan="6" class="align-right resaltar-valor verde"><strong>[[prestamosTotal]]</strong></td>
+					</tr>
+				</table>
+			
+			</section>
+
+
+		</form>
+		
+	</div>
+
+{% endblock content %}

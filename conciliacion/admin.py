@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ConcCheques, SolicitudCheque, NotaDCConciliacion, ConBanco
+from .models import ConcCheques, SolicitudCheque, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, conChequeTrans
 
 
 @admin.register(ConcCheques)
@@ -20,4 +20,18 @@ class NotaConciliacionAdmin(admin.ModelAdmin):
 
 @admin.register(ConBanco)
 class BancoAdmin(admin.ModelAdmin):
-    list_display = ['id', 'fecha', 'descripcion', 'tipo', 'monto', 'estatus']
+    list_display = ['id', 'fecha', 'descripcion', 'monto', 'estatus']
+
+
+@admin.register(ConDeposito)
+class DepositosAdmin(admin.ModelAdmin):
+    list_display = ['id', 'fecha', 'descripcion', 'monto', 'estatus']
+
+
+@admin.register(conChequeTrans)
+class conChequeTransAdmin(admin.ModelAdmin):
+    list_display = ['id', 'fecha', 'descripcion', 'monto', 'estatus']
+
+@admin.register(NumCheque)
+class NumChequeAdmin(admin.ModelAdmin):
+	list_display = ['id', 'chequeNo', 'banco']

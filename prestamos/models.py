@@ -197,6 +197,19 @@ class MaestraPrestamo(models.Model):
 	def __unicode__(self):
 		return '{0:0>9}'.format(self.noPrestamo)
 
+
+	@property
+	def tieneAUnificar(self):
+		tiene = 'N' #N = No, S = Si
+
+		try:
+			aUnificar = PrestamoUnificado.objects.filter(prestamoUnificado=self.noPrestamo)
+			tiene = 'S'
+		except:
+			tiene = 'N'
+
+		return tiene
+
 	@property
 	def documentoDescrp(self):
 		return 'Orden de Despacho' if self.noSolicitudOD != None else 'Prestamo'

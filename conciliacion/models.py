@@ -23,6 +23,11 @@ class SolicitudCheque(models.Model):
         return '%i - %s' % (self.id, str(self.fecha))
 
 
+class NumCheque(models.Model):
+    chequeNo = models.PositiveIntegerField(null=False, blank=False, verbose_name='# Cheque')
+    banco = models.CharField(max_length="50")
+
+
 class ConcCheques(models.Model):
     estatus_choicer = (
     ('p', 'Posteado'), ('R', 'Registrado'), ('C', 'Cancelado'), ('D', 'Devueltos'), ('T', 'Transito'))
@@ -54,14 +59,43 @@ class NotaDCConciliacion(models.Model):
 
 
 class ConBanco(models.Model):
-    tipo_choicer = (('P', 'Deposito'), ('H', 'Cheques'), ('B', 'Balance Segun Banco'),('C', 'Credito'),('D', 'Debito'))
+    # tipo_choicer = (('P', 'Deposito'), ('H', 'Cheques'), ('B', 'Balance Segun Banco'),('C', 'Credito'),('D', 'Debito'))
     estatus_choicer = (('R', 'Registrado'), ('T', 'Transito'), ('C','Cerrado'))
 
     fecha = models.DateField()
     descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
-    tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name='Tipo Registro')
-    monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=True)
+    # tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name='Tipo Registro')
+    monto = models.DecimalField(max_digits=18, decimal_places=2, null=False, blank=False, default=0)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCBanco', verbose_name='Cuentas', null=True, blank=True)
+
 
     def __unicode__(self):
         return '%i-%s' % (self.id, str(self.fecha))
+
+
+class ConDeposito(models.Model):
+    estatus_choicer = (('R', 'Registrado'),('T', 'Transito'), ('C', 'Cerrado'))
+
+    fecha = models .DateField()
+    descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
+    monto = models.DecimalField(max_digits=18, decimal_places=2, null= False, blank=False, default=0)
+    estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCDepositos')
+
+    def __unicode__(self):
+        return '%i-%s' % (self.id, str(self.fecha))
+
+
+class conChequeTrans(models.Model):
+    estatus_choicer = (('R', 'Registrado'),('T', 'Transito'), ('C', 'Cerrado'))
+
+    fecha = models .DateField()
+    descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
+    monto = models.DecimalField(max_digits=18, decimal_places=2, null= False, blank=False, default=0)
+    estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCCheques')
+
+    def __unicode__(self):
+        return '%i-%s' % (self.id, str(self.fecha))
+

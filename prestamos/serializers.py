@@ -48,7 +48,7 @@ class MaestraPrestamosListadoSerializer(serializers.ModelSerializer):
 					'noSolicitudOD', 'montoCuotaQ1', 'montoCuotaQ2', 'tasaInteresMensual', 'cuotaInteresQ1', 'cuotaInteresQ2', 'cuotaMasInteresQ1', \
 					'cuotaMasInteresQ2', 'tipoPrestamoNomina', 'cuotaInteresAhQ1', 'cuotaInteresAhQ2', 'documentoDescrp', 'fechaAprobacion', \
 					'fechaVencimiento', 'cantidadCuotas', 'departamentoSocio', 'centrocostoSocio', 'tipoSocio', 'getCodigoSuplidor', 'getRNCSuplidor', \
-					'getNombreSuplidor', 'getMontoSinInteres', 'getMontoInteres')
+					'getNombreSuplidor', 'getMontoSinInteres', 'getMontoInteres', 'tieneAUnificar')
 		ordering = ('-noPrestamo',)
 
 

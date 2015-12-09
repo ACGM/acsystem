@@ -251,6 +251,7 @@
       $scope.showCP = false; //Mostrar tabla que contiene las categorias de prestamos
       $scope.tableSocio = false; //Mostrar tabla que contiene los socios
       $scope.showLSP = true; //Mostrar el listado de solicitudes
+      $scope.tipo = 'O';
 
       $scope.disabledButton = 'Boton-disabled';
       $scope.disabledButtonBool = true;
@@ -306,7 +307,19 @@
         $scope.estatus = 'T';
 
         SolicitudOrdenDespachoService.solicitudesOD(noSolicitud).then(function (data) {
-          $scope.solicitudes = data;
+          $scope.solicitudes = data.filter(function (item) {
+            if($scope.tipo == 'S') {
+              if(item.suplidor == 'SUPERCOOP') {
+                return true;
+              }
+            } else {
+              if(item.suplidor == 'SUPERCOOP') {
+                return false;
+              } else {
+                return true;
+              }
+            }
+          });
           $scope.regAll = false;
 
           if(data.length > 0) {
@@ -786,6 +799,7 @@
 
               $scope.solicitante.codigoEmpleado = data[0]['socioCodigo'];
               $scope.solicitante.nombreEmpleado = data[0]['socioNombre'];
+              $scope.solicitante.departamento = data[0]['socioDepto'];
               $scope.solicitante.representanteCodigo = data[0]['representanteCodigo'];
               $scope.solicitante.representanteNombre = data[0]['representanteNombre'];
               $scope.solicitante.auxiliar = ''; //data[0]['auxiliar'];
@@ -933,13 +947,13 @@
           if($scope.totalGeneralArticulos == $scope.solicitud.montoSolicitado) {
             SolicitudOrdenDespachoService.guardaSolicitudODDetalle($scope.solicitud.solicitudNo, $scope.dataD).then(function (data) {
               if(data == 1) {
-                alert('Se guardó perfectamente!');
+                notie.alert(1, 'Se guardó perfectamente!', 3);
               } else {
                 $scope.mostrarError(data);
               }
             });
           } else {
-            alert('El monto total de articulos no puede ser distinto al monto solicitado.');
+            notie.alert(3, 'El monto total de articulos no puede ser distinto al monto solicitado.', 3.5);
           }
         }
       }

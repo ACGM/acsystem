@@ -18,6 +18,19 @@
 			 return deferred.promise;
 		};
 
+		function getNoCheque(){
+			var deferred = $q.defer();
+
+			$http.get('/conciliacion/Cheques/im?format=json')
+				 .success(function (data){
+				 	deferred.resolve(data);
+				 })
+				 .error(function (err){
+				 	deferred.resolve(err);
+				 });
+			return deferred.promise;
+		};
+
 		function setCheques(cheque){
 			var deferred = $q.defer();
 
@@ -106,7 +119,8 @@
 			getSolicitudes : getSolicitudes,
 			getSolicitudByStatus : getSolicitudByStatus,
 			getSolicitudesById : getSolicitudesById,
-			getChequeById : getChequeById
+			getChequeById : getChequeById,
+			getNoCheque  : getNoCheque,
 		};
 	}])
 
@@ -156,14 +170,20 @@
 
 			$scope.reCheque.id = null;
 
-			$scope.reCheque.fecha = fecha[2]+"/"+fecha[1]+"/"+fecha[0];
-			$scope.reCheque.estatus = "R";
-			if(s.socio != ""){
-				$scope.reCheque.beneficiario = s.socio	
-			}
-			else{
-				$scope.reCheque.beneficiario = s.suplidor
-			};
+			ChequesServices.getNoCheque().then(function (data){
+				$scope.reCheque.fecha = fecha[2]+"/"+fecha[1]+"/"+fecha[0];
+				$scope.reCheque.estatus = "R";
+				if(s.socio != ""){
+					$scope.reCheque.beneficiario = s.socio	
+				}
+				else{
+					$scope.reCheque.beneficiario = s.suplidor
+				};
+
+				
+					$scope.reCheque.noCheque = data[0].noCheque
+					console.log(data);
+			});
 
 			$scope.ToggleCh = false;
 			$scope.ToggleSl = false;
@@ -179,6 +199,7 @@
 
 			ChequesServices.getCheques().then(function (data){
 				$scope.LsCheques = data.sort($scope.objectSorteable);
+				console.log(data);
 			});
 
 		};
@@ -201,9 +222,9 @@
 					var resp = data;
 					if(data == "Ok"){
 						
-						alert("Cheque generado")
+						notie.alert(1,"Cheque generado",3.2)
 					}else{
-						alert("Ocurrio un error al intentar generar el cheque");
+						notie.alert(3,"Ocurrio un error al intentar generar el cheque",3.2);
 						console.log(data);
 					}
 						$scope.cancelRegistro ($event);
