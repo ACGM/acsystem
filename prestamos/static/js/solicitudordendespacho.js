@@ -410,7 +410,11 @@
         var suplidor = '';
 
         if($event.type != 'click') {
-          suplidor = $scope.solicitud.suplidorNombre;
+          if($event.currentTarget.baseURI.substr($event.currentTarget.baseURI.length-14,13) == 'solicitudesOD') {
+            suplidor = $scope.reporteSO.suplidorNombre;
+          } else {
+            suplidor = $scope.solicitud.suplidorNombre;
+          }
         }
 
         InventarioService.suplidores(suplidor).then(function (data) {

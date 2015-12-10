@@ -762,7 +762,8 @@
         $scope.totalCantidadAgrupado = 0;
 
         $scope.registros.forEach(function (documento) {
-          if($scope.agrupar != undefined) {
+          console.log($scope.agrupar);
+          if($scope.agrupar != undefined && $scope.agrupar == true) {
             $scope.totalMontoAgrupado += parseFloat(documento.totalMonto);
             $scope.totalCantidadAgrupado += parseFloat(documento.totalCantidad);
 
