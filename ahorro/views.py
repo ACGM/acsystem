@@ -80,11 +80,7 @@ def setCuentaMaestraRetiros(self, idMaestra, doc, fecha, ref):
 
 def insMaestra(self, CodSocio, Fecha, Monto):
     regSocio = AhorroSocio.objects.get(socio__codigo=CodSocio)
-<<<<<<< HEAD
-    # regInteres = InteresesAhorro.objects.get(id=1)
-=======
 
->>>>>>> moduloYei
     regMaestra = MaestraAhorro()
     regMaestra.estatus = "P"
     regMaestra.fecha = Fecha
