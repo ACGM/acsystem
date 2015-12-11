@@ -7,6 +7,6 @@ prestamos/*.pyc
 **/migrations
 .idea/
 db.sqlite3
-acgm/static/media/archivosBanco/*.*
-acgm/static/media/archivosNomina/*.*
+acgm/static/media/archivosBanco/P*.*
+acgm/static/media/archivosNomina/P*.*
 
