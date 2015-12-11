@@ -678,6 +678,7 @@
                     cxpService.getAll().then(function (data){
                         var datar = data;
                         $scope.cxpData = datar;
+                        console.log(data);
                     });
                     
                 }  

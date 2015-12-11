@@ -14,7 +14,7 @@ from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
 
 
 # Local Imports
-from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque
+from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, conChequeTrans
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
 
 
@@ -451,7 +451,6 @@ class ConBancoView(TemplateView):
                 'id': banc.pk,
                 'fecha': banc.fecha,
                 'descripcion': banc.descripcion,
-                'tipo': banc.tipo,
                 'monto': banc.monto,
                 'estatus': banc.estatus
             })
@@ -466,7 +465,6 @@ class ConBancoView(TemplateView):
             banco = ConBanco()
             banco.fecha = Data['fecha']
             banco.descripcion = Data['descripcion']
-            banco.tipo = Data['tipo'],
             banco.monto = Data['monto']
             banco.estatus = Data['estatus']
             banco.save()
@@ -477,7 +475,7 @@ class ConBancoView(TemplateView):
             banco.estatus = Data['estatus']
             banco.monto = Data['monto']
             banco.save(())
-        return HttpResponse(Data['tipo'])
+        return HttpResponse('Ok')
 
 
 class ConBancoLs(DetailView):

@@ -64,11 +64,21 @@
 					</div>
 				</td>
 				<td style="text-align:center;">
-					<div ng-if="cxp.chk == 'D'">
-						<span class="icon-banknote" style="color:gray;"></span>
+					<div ng-if="cxp.estatus =='P'">
+						
+						<div ng-if="cxp.chk == 'D'">
+							<span class="icon-banknote" style="color:gray;" placeholder="Solicitud de cheque"></span>
+						</div>
+
+						<div ng-if="cxp.chk !='D'">
+							<a href="#" class="icon-banknote utils-noDecoration" ng-click="setSolicitud($event,cxp.id)" placeholder="Solicitud de cheque"></a>
+						</div>
+
 					</div>
-					<div ng-if="cxp.chk !='D'">
-						<a href="#" class="icon-banknote utils-noDecoration" ng-click="setSolicitud($event,cxp.id)"></a>
+					<div ng-if="cxp.estatus !='P'">
+
+						<span class="icon-banknote" style="color:gray;" placeholder="Solicitud de cheque"></span>
+
 					</div>
 				</td>
 			</tr>

@@ -75,7 +75,7 @@ class ActivosView(TemplateView):
 
             regActivo = Activos.objects.get(id=idActivo)
             regActivo.cuentas.add(diario)
-            return diario.id
+            return "Ok"
         except Exception, e:
             return e.message    
 
@@ -99,7 +99,7 @@ class ActivosView(TemplateView):
 
             regDesp = Depresiacion.objects.get(id=idDepr)
             regDesp.cuentas.add(diario)
-            return diario.id
+            return "Ok"
         except Exception, e:
             return e.message    
 
@@ -213,7 +213,7 @@ class ActivosView(TemplateView):
                 self.setCuentaDepresiacion(regDepresiacion.id, Data['fechaAdq'], document, despMensual, ddoc)
 
 
-            return HttpResponse(tdoc)
+            return HttpResponse("Ok")
         except Exception, e:
             return HttpResponse(e)
 
@@ -288,7 +288,7 @@ class DepresiacionView(TemplateView):
         for doc in docDep:
             self.setCuenta(idActivo, fecha, doc, monto, activo.categoria.id)
 
-        return activo.id
+        return "Ok"
 
     def setCuenta(self, idActivo, fecha , cta, monto, ref):
         diario = DiarioGeneral()
@@ -307,7 +307,7 @@ class DepresiacionView(TemplateView):
 
         regDesp = Depresiacion.objects.get(id=idActivo)
         regDesp.cuentas.add(diario)
-        return diario.id
+        return "Ok"
 
     def post(self, request, *args, **kwargs):
         Data = json.loads(request.body)
@@ -336,7 +336,7 @@ class DepresiacionView(TemplateView):
                 act.estatus = 'D'
                 act.save()
 
-        return HttpResponse('ok')
+        return HttpResponse('Ok')
 
 
 class HistoricoActivos(TemplateView):
