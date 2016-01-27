@@ -337,17 +337,17 @@
       $scope.ArrowLD = 'UpArrow';
 
       //Anclar ENTERs de Textbox con Click Button
-      document.getElementById('codigoEmp').onkeypress=function(e){
-        if(e.keyCode==13){
-          document.getElementById('FindSocio').click();
-        }
-      }
+      // document.getElementById('codigoEmp').onkeypress=function(e){
+      //   if(e.keyCode==13){
+      //     document.getElementById('FindSocio').click();
+      //   }
+      // }
       
-      document.getElementById('catPrestId').onkeypress=function(e){
-        if(e.keyCode==13){
-          document.getElementById('FindCatPrest').click();
-        }
-      }
+      // document.getElementById('catPrestId').onkeypress=function(e){
+      //   if(e.keyCode==13){
+      //     document.getElementById('FindCatPrest').click();
+      //   }
+      // }
 
       //Traer todos los socios a javascript
       FacturacionService.socios().then(function (data) {
@@ -1192,7 +1192,7 @@
       console.log($scope.solicitudP);
 
       //Calculo de intereses para sumar al capital
-      var intG = ($scope.solicitudP.tasaInteresMensual / 2 / 100) * ($scope.solicitudP.prestacionesLaborales);
+      var intG = ($scope.solicitudP.tasaInteresMensual / 2 / 100) * ($scope.solicitudP.montoSolicitado);
       var intA = ($scope.solicitudP.interesBaseAhorroMensual / 2 / 100) * ($scope.solicitudP.ahorrosCapitalizados);
       var intereses = intG + intA;
 
@@ -1209,7 +1209,7 @@
         var cuotaPrestamo;
         cuotaPrestamo = $scope.solicitudP.montoSolicitado * ($scope.solicitudP.tasaInteresMensual/100);
         cuotaPrestamo = $scope.solicitudP.valorCuotasCapital + cuotaPrestamo;
-        $scope.varCuotaPrestamo = $scope.solicitudP.capitalMasIntereses;
+        $scope.varCuotaPrestamo = $scope.solicitudP.valorCuotasCapital; //$scope.solicitudP.capitalMasIntereses;
 
         if($scope.solicitudP.categoriaPrestamo.substring(0,6) == 'AVANCE') {
           console.log('AVANCE DE PRESTAMO');

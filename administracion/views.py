@@ -121,7 +121,7 @@ class DocumentoCuentasView(APIView):
 
 	def get(self, request, doc=None):
 		
-		docCuentas = DocumentoCuentas.objects.filter(documento__codigo=doc)
+		docCuentas = DocumentoCuentas.objects.filter(documento__codigo=doc).order_by('-accion')
 
 		response = self.serializer_class(docCuentas, many=True)
 		return Response(response.data)
@@ -246,7 +246,7 @@ class GenerarArchivoBancoView(View):
 			aCabecera.cuentaEmpresa = empresa.cuentaBanco
 			aCabecera.save()
 
-			sysFile.write(aCabecera.lineaFormateadaH + '\n') # Escribir la linea de header en el archivo .TXT
+			sysFile.write(aCabecera.lineaFormateadaH + '\n'.encode('utf-8')) # Escribir la linea de header en el archivo .TXT
 
 			# Preparar el detalle del archivo de Banco
 			icount = 0

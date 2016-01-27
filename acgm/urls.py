@@ -156,6 +156,7 @@ urlpatterns = patterns('',
     url(r'^cuentasSearch/$', 'cuenta.views.cuentasSearch', name='cuentas_search'),
 
     url(r'^api/cantidadCuotasPrestamos/(?P<monto>[\d\.]+)/$', CantidadCuotasPrestamosView.as_view(), name='cantidad_cuotas_prestamos'),
+    url(r'^api/cantidadCuotasOD/(?P<monto>[\d\.]+)/$', CantidadCuotasODView.as_view(), name='cantidad_cuotas_OD'),
     url(r'^api/categoriasPrestamos/(?P<descrp>[\w\s]+)/$', CategoriaPrestamoByDescrpView.as_view(), name='categorias_prestamos_descrp'),
     url(r'^api/suplidor/nombre/(?P<nombre>[\w\s]+)/$', SuplidorByNombreView.as_view(), name='suplidor_by_nombre'),
     url(r'^api/producto/descripcion/(?P<descrp>[\w\s]+)/$', ProductoByDescrpView.as_view(), name='producto_by_descrp'),

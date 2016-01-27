@@ -82,7 +82,7 @@
 
 						<tr class="nomina-sel-detail" ng-repeat="item in nominas">
 							<td class="align-center">[[item.estatus]]</td>
-							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina)" title="[[item.nota]]">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
+							<td> <a href="#" class="sp-field" ng-click="getDetalleNomina(item.fechaNomina, item.tipoNomina, item.estatus)" title="[[item.nota]]">[[item.fechaNomina | date: 'dd/MM/yyyy']]</a></td>
 							<td class="align-center">[[item.cntEmpleados]]</td>
 							<td class="align-right">[[item.valorNomina | number: 2]]</td>
 							<td class="align-right">[[item.ISR | number : 2]]</td>
@@ -97,13 +97,21 @@
 							<td class="align-center">[[item.quincena]]</td>
 							<!-- <td>[[item.tipoPago]]</td> -->
 							<td class="align-center">
-								<a href="#" class="icon-cog icon-postear-nomina" title="Postear Nomina" ng-click="postearNominaCoop($event, item)"></a>
+								<a href="#" ng-if="item.estatus == 'E'" class="icon-cog icon-postear-nomina" title="Postear Nomina" ng-click="postearNominaCoop($event, item)"></a>
+
+								<a href="#" ng-if="item.estatus == 'P'" class="icon-cog icon-postear-nomina disabled" title="Postear Nomina"></a>
 								
 								<a href="#" class="icon-document icon-buscar verde" title="Reporte de Nomina" ng-click="reporteNominaQ($event, item.fechaNomina, item.tipoNomina)"></a>
 							</td>
-							<td class="align-center"><a href="#" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a></td>
+
 							<td class="align-center">
-								<a href="#" class="icon-archivo icon-archivo-nomina" ng-click="GeneraArchivoBanco($event, item.valorNomina, item.cntEmpleados, item.fechaNomina, item.tipoNomina)"></a>
+								<a href="#" ng-if="item.estatus == 'E'" class="icon-delete icon-delete-nomina" ng-dblclick="eliminarNominaSel(item.fechaNomina, item.tipoNomina)" title="Doble click para eliminar."></a>
+
+								<a href="#" ng-if="item.estatus == 'P'" class="icon-delete icon-delete-nomina disabled" title="Doble click para eliminar."></a>
+							</td>
+
+							<td class="align-center">
+								<a href="#" class="icon-archivo icon-archivo-nomina" ng-click="GeneraArchivoBanco($event, item.valorNomina, item.cntEmpleados, item.fechaNomina, item.tipoNomina)" title="Generar Archivo para Pago Banco."></a>
 								<a href="#" class="icon-uniE601 icon-buscar" ng-click="verArchivoBanco($event, item.archivoBanco)"></a>
 							</td>
 						</tr>
@@ -150,7 +158,9 @@
 							<tr>
 								<td colspan="2" class="title-ingresos">INGRESOS</td>
 								<td colspan="2" class="title-egresos">EGRESOS</td>
-								<td rowspan="6"> <button class="icon-save Boton boton-desglose-empleado" type="submit">Guardar</button> </td>
+								<td rowspan="6"> 
+									<button ng-if="estatusNominaActiva == 'E'" class="icon-save Boton boton-desglose-empleado" type="submit">Guardar</button> 
+								</td>
 							</tr>
 							<tr>
 								<td class="first-row" title="Salario Quincenal">Salario Q.</td>

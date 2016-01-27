@@ -36,14 +36,22 @@
 						<span ng-if="ahorro.nombreCompleto == 'TOTAL'">[[ahorro.departamento]]</span>
 						<span ng-if="ahorro.nombreCompleto != 'TOTAL'">[[ahorro.codigo]]</span>
 					</td>
-					<td>[[ahorro.nombreCompleto]]</td>
+					<td>
+						<span ng-if="ahorro.nombreCompleto == 'TOTAL'">[[ahorro.codigo]]</span>
+						<span ng-if="ahorro.nombreCompleto != 'TOTAL'">[[ahorro.nombreCompleto]]</span>
+					</td>
 					<td class="align-right">[[ahorro.cuotaAhorro | number : 2]]</td>
 				</tr>
 				<tr>
-					<td colspan="3">TOTALES:</td>
-					<td class="align-right">[[totalAhorros | number : 2]]</td>
+					<td colspan="2" class="formatTOTAL">TOTALES</td>
+					<td class="align-right formatTOTAL">[[totalAhorros | number : 2]]</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="formatTOTAL">TOTALES (SIN EMPLEADOS COOPERATIVA)</td>
+					<td class="align-right formatTOTAL">[[totalAhorros - totalAhorroCOOP | number : 2]]</td>
 				</tr>
 			</table>
+			[[totalAhorrosCOOP]]
 		</section>
 
 	</div>

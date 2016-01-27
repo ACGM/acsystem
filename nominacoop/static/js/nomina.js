@@ -401,9 +401,10 @@
       }
 
       // Retorna el detalle de una nomina
-      $scope.getDetalleNomina = function(nomina, tipoNomina) {
+      $scope.getDetalleNomina = function(nomina, tipoNomina, estatus) {
         $scope.nomina = nomina;
         $scope.tipoNomina = tipoNomina;
+        $scope.estatusNominaActiva = estatus;        
 
         NominaService.detalleNomina(nomina).then(function (data) {
           $scope.detalle = data;
@@ -589,13 +590,57 @@
 
             //Prepara cada linea de posteo
             $scope.documentoCuentas.forEach(function (documento) {
+
               var desgloseCuenta = new Object();
+
+              var monto = 0;
+
+              if(documento.getCuentaCodigo == 6101) { //Cuenta de Sueldo
+                var tmp = $filter('number')(nomina.valorNomina + nomina.DESCPRESTAMOS + nomina.AFP + nomina.ARS + nomina.DESCAHORROS + nomina.ISR + nomina.CAFETERIA,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+              
+              if(documento.getCuentaCodigo == 1113080102) { //Cuenta de Prestamos a Descontar 
+                var tmp = $filter('number')(nomina.DESCPRESTAMOS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210204) { //Cuenta de AFP
+                var tmp = $filter('number')(nomina.AFP,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210207) { //Cuenta de SFS
+                var tmp = $filter('number')(nomina.ARS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210208) { //Cuenta de Impuesto Sobre La Renta
+                var tmp = $filter('number')(nomina.ISR,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210402) { //Cuenta para Cafeteria
+                var tmp = $filter('number')(nomina.CAFETERIA,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 2202) { //Cuenta para Ahorros Empleados
+                var tmp = $filter('number')(nomina.DESCAHORROS,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              if(documento.getCuentaCodigo == 210501) { //Cuenta Nomina Cooperativa
+                var tmp = $filter('number')(nomina.valorNomina,2);
+                monto = tmp != undefined? parseFloat(tmp.replaceAll(',','')) : 0;
+              }
+
+              desgloseCuenta.debito = documento.accion == 'D'? $filter('number')(monto,2) : $filter('number')(0.00, 2);
+              desgloseCuenta.credito = documento.accion == 'C'? $filter('number')(monto,2) : $filter('number')(0.00, 2);
 
               desgloseCuenta.cuenta = documento.getCuentaCodigo;
               desgloseCuenta.descripcion = documento.getCuentaDescrp;
               desgloseCuenta.ref = documento.getCodigo + nomina.id;
-              desgloseCuenta.debito = documento.accion == 'D'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
-              desgloseCuenta.credito = documento.accion == 'C'? nomina.valorNomina.toString().replace('$','') : $filter('number')(0.00, 2);
 
               $scope.desgloseCuentas.push(desgloseCuenta);
             });
@@ -885,10 +930,10 @@
             
             //Organizar por Departamento
             $scope.prestamos.sort(function(a,b) {
-              if(a.departamento > b.departamento) {
+              if(a.centrocosto > b.centrocosto) {
                 return 1;
               }
-              if(a.departamento < b.departamento) {
+              if(a.centrocosto < b.centrocosto) {
                 return -1;
               }
 
@@ -1528,6 +1573,7 @@
 
       //Inicializar variables
       $scope.totalAhorro = 0;
+      $scope.totalAhorroCOOP = 0;
       $scope.datosReporte = [];
 
       var dia = $scope.fNomina.substring(8,10);
@@ -1576,7 +1622,7 @@
 
       $scope.pushTotal = function(item) {
         myItem = {};
-        myItem.codigo = "";
+        myItem.codigo = count;
         myItem.cuotaAhorro = totalAhorro;
         myItem.departamento = item.departamento;
         myItem.estatus = item.estatus;
@@ -1584,6 +1630,7 @@
 
         $scope.datosReporte.push(myItem);
         totalAhorro = 0;
+        count = 0;
       }
 
       var myItem = {};
@@ -1594,7 +1641,7 @@
       var totalAhorro = 0;
       var ultimo = $scope.ahorros.length;
 
-      $scope.ahorros.forEach(function (item) {
+      $scope.ahorros.forEach(function (item, index) {
         count +=1;
 
         if(!primero) {
@@ -1608,16 +1655,21 @@
             totalAhorro += parseFloat(item.cuotaAhorro);
 
             $scope.pushDefault(item);
-
-            //Para escribir el ultimo
-            if(count == $scope.ahorros.length) {
-              $scope.pushTotal(item);
-            }
           }
         } else { //Entra aqui si es la primera vez
           $scope.pushDefault(item);
 
           totalAhorro += parseFloat(item.cuotaAhorro);
+        }
+
+        //Para escribir el ultimo
+        if($scope.ahorros.length-1 == index) {
+          $scope.pushTotal(item);
+        }
+
+        //Para Sumar el Monto de los Empleados de la Cooperativa
+        if(item.departamento.substring(0,10) == '9999999999') { //Centro para identificar los empleados de la cooperativa
+          $scope.totalAhorroCOOP += parseFloat(item.cuotaAhorro);
         }
         
         depto = item.departamento;
@@ -1644,6 +1696,11 @@
       $scope.totalInteresAh = 0;
       $scope.totalCapital = 0;
       $scope.totalDesc = 0;
+
+      $scope.totalInteresCOOP = 0;
+      $scope.totalInteresAhCOOP = 0;
+      $scope.totalCapitalCOOP = 0;
+      $scope.totalDescCOOP = 0;
 
       $scope.datosReporte = [];
 
@@ -1715,11 +1772,11 @@
         $scope.datosReporte.push(myItem);
       }
 
-      $scope.pushTotal = function(item) {
+      $scope.pushTotal = function(item, total) {
         myItem = {};
         myItem.balance = "0";
         myItem.centrocosto = item.centrocosto;
-        myItem.codigoSocio = "";
+        myItem.codigoSocio = 'TOTAL';
         myItem.cuotaInteresAhQ = cuotaInteresAhQ;
         myItem.cuotaInteresQ = cuotaInteresQ;
         myItem.cuotaMasInteresQ = item.cuotaMasInteresQ;
@@ -1728,7 +1785,7 @@
         myItem.noPrestamo = item.noPrestamo;
         myItem.noSolicitudOD = item.noSolicitudOD;;
         myItem.noSolicitudPrestamo = item.noSolicitudPrestamo;
-        myItem.socio = 'TOTAL';
+        myItem.socio = total;
         myItem.tipoSocio = item.tipoSocio;
 
         $scope.datosReporte.push(myItem);
@@ -1747,7 +1804,7 @@
       var capitalQ = 0;
       var ultimo = $scope.prestamos.length;
 
-      $scope.prestamos.forEach(function (item) {
+      $scope.prestamos.forEach(function (item, index) {
         count +=1;
 
         if(!primero) {
@@ -1759,17 +1816,13 @@
             capitalQ += parseFloat(item.montoCuotaQ);
 
           } else { //Entra aqui cuando hay un cambio de departamento
-            $scope.pushTotal(myItemTmp);
+            $scope.pushTotal(myItemTmp, count);
+            count = 0;
             cuotaInteresQ += parseFloat(item.cuotaInteresQ);
             cuotaInteresAhQ += parseFloat(item.cuotaInteresAhQ);
             capitalQ += parseFloat(item.montoCuotaQ);
 
             $scope.pushDefault(item);
-
-            //Para escribir el ultimo
-            if(count == $scope.prestamos.length) {
-              $scope.pushTotal(item);
-            }
           }
         } else { //Entra aqui si es la primera vez
           $scope.pushDefault(item);
@@ -1778,13 +1831,39 @@
           cuotaInteresAhQ += parseFloat(item.cuotaInteresAhQ);
           capitalQ += parseFloat(item.montoCuotaQ);
         }
-        
+
+        //Para escribir el ultimo
+        if($scope.prestamos.length-1 == index) {
+          $scope.pushTotal(item, count);
+        }
+
+        //Para Sumar el Monto de los Empleados de la Cooperativa
+        if(item.centrocosto == '9999999999') { //Centro para identificar los empleados de la cooperativa
+          $scope.totalInteresCOOP += item.cuotaInteresQ;
+          $scope.totalInteresAhCOOP += item.cuotaInteresAhQ;
+          $scope.totalCapitalCOOP += item.montoCuotaQ;
+          $scope.totalDescCOOP += item.cuotaMasInteresQ;
+        }
+
         depto = item.departamento;
         myItemTmp = item;
         primero = false;
         
       });
       // FIN: MODULOS PARA RUPTURA.
+
+      //Ordenar por centro de costo
+      $scope.datosReporte.sort(function(a,b) {
+        if(a.centrocosto > b.centrocosto) {
+          return 1;
+        }
+        if(a.centrocosto < b.centrocosto) {
+          return -1;
+        }
+
+        return 0;
+      });
+
 
     }]);
 
