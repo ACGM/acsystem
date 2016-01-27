@@ -5,7 +5,8 @@ node_modules
 **/*.pyc
 prestamos/*.pyc
 **/migrations
-.idea/
+.idea
+.idea/*
 db.sqlite3
 acgm/static/media/archivosBanco/*.*
 acgm/static/media/archivosNomina/*.*

@@ -35,10 +35,11 @@
 	            return deferred.promise;
 				};
 
+
 		function getDepositoFecha(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get(depositoApi+'?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
+			$http.get('/conciliacion/deposito/rg?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
@@ -81,7 +82,7 @@
 		function getChkTransitoFecha(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get(chkTransApi+'?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
+			$http.get('/conciliacion/chkTrans/rg?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
@@ -185,8 +186,8 @@
 		};
 	}])
 	
-	.controller('ConciliacionCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout',  
-		function ($scope, $filter, $rootScope, conciliacionServices, $timeout) {
+	.controller('ConciliacionCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout', '$window', 
+		function ($scope, $filter, $rootScope, conciliacionServices, $timeout, $window) {
 		
 		$scope.bancoLs = [];
 		$scope.regBanco = {};
@@ -216,6 +217,49 @@
 			$scope.getBancoList();
 		};
 
+		$scope.impBanco = function($event){
+			$event.preventDefault();
+			$scope.datosR = null;
+			$scope.datosT = null;
+			$scope.datosC = null;
+
+			$scope.cabeceraR = {tipo: 'Banco',
+								titulo: 'registrado'};
+
+			$scope.cabeceraT = {tipo: 'Banco',
+								titulo: 'en Transito'};
+
+			$scope.cabeceraC = {tipo: 'Banco',
+								titulo: 'Cerrado'};
+
+			$scope.datosR = $scope.bancoLs.filter(function (data){
+				return data.estatus == 'R'
+				});
+
+			$scope.datosT = $scope.bancoLs.filter(function (data){
+				return data.estatus == 'T'
+				});
+
+			$scope.datosC = $scope.bancoLs.filter(function (data){
+				return  data.estatus == 'C'
+				});
+
+			$scope.imprimirReporte($scope.datosR, $scope.cabeceraR);
+			$scope.imprimirReporte($scope.datosT, $scope.cabeceraT);
+			$scope.imprimirReporte($scope.datosC, $scope.cabeceraC);
+
+		}
+
+
+		$scope.imprimirReporte = function(datos, cabecera){
+				if (datos.length > 0){
+					$window.sessionStorage['concCabecera'] = JSON.stringify(cabecera);
+					$window.sessionStorage['concGenerico'] = JSON.stringify(datos);
+					$window.open('/conciliacion/salida', target='_blank'); 
+				}
+			};
+
+
 		$scope.editReg = function(id){
 			var reg = $scope.bancoLs.filter(function(data){
 				return data.id == id;
@@ -238,21 +282,23 @@
 		}
 
 		$scope.getBancoFecha = function(){
-			conciliacionServices.getBanco().then(function (data){
-				$scope.bancoLs = data.filter(function(reg){
-					var RegFecha = reg.fecha.split('-');
-      				var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
-      				reg.fecha = FechaFormat;
+			
+			var regFechaI = $scope.fechai.split('/');
+			var formt1 = regFechaI[2] + '-' + regFechaI[1] + '-' + regFechaI[0]; 
 
-      				return reg.fecha <= $scope.fechai && reg.fecha >= $scope.fechaf; 
+			var regFechaF = $scope.fechaf.split('/');
+			var formt2 = regFechaF[2] + '-' + regFechaF[1] + '-' + regFechaF[0]; 
+
+			conciliacionServices.getBancoFecha(formt1, formt2).then(function (data){
+				$scope.bancoLs = data;
 				});
-			});
+			
 		};
 
 		$scope.setConBanco = function($event){
 			$event.preventDefault();
 			try{
-				debugger;
+				
 				if($scope.regBanco.id === undefined){
 					$scope.regBanco.id = null;
 				}
@@ -299,8 +345,8 @@
 		    };
 	}])
 
-	.controller('ChkTansitoCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout',  
-		function ($scope, $filter, $rootScope, conciliacionServices, $timeout) {
+	.controller('ChkTansitoCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout', '$window', 
+		function ($scope, $filter, $rootScope, conciliacionServices, $timeout, $window) {
 			$scope.ChkTransitoLs = [];
 			$scope.regChkTrans = {};
 			$scope.fechai = null;
@@ -310,14 +356,15 @@
 
 			$scope.getchkTransitoFecha = function(){
 				
-				conciliacionServices.getChkTrnasito().then(function (data){
-					$scope.ChkTransitoLs = data.filter(function(reg){
-						var RegFecha = reg.fecha.split('-');
-	      				var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
-	      				reg.fecha = FechaFormat;
+				var regFechaI = $scope.fechai.split('/');
+				var formt1 = regFechaI[2] + '-' + regFechaI[1] + '-' + regFechaI[0]; 
 
-	      				return reg.fecha <= $scope.fechai && reg.fecha >= $scope.fechaf; 
-					});
+				var regFechaF = $scope.fechaf.split('/');
+				var formt2 = regFechaF[2] + '-' + regFechaF[1] + '-' + regFechaF[0]; 
+
+				conciliacionServices.getChkTransitoFecha(formt1, formt2).then(function (data){
+						$scope.ChkTransitoLs = data;
+				
 				});
 			};
 
@@ -334,6 +381,49 @@
 				$scope.LschkTransito = false;
 				
 			};
+
+			$scope.impChkTrans = function($event){
+				$event.preventDefault();
+				$scope.datosR = null;
+				$scope.datosT = null;
+				$scope.datosC = null;
+
+				$scope.cabeceraR = {tipo: 'Cheque en transito',
+									titulo: 'registrado'};
+
+				$scope.cabeceraT = {tipo: 'Cheque en transito',
+									titulo: 'en Transito'};
+
+				$scope.cabeceraC = {tipo: 'Cheque en transito',
+									titulo: 'Cerrado'};
+
+				$scope.datosR = $scope.ChkTransitoLs.filter(function (data){
+					return data.estatus == 'R'
+					});
+
+				$scope.datosT = $scope.ChkTransitoLs.filter(function (data){
+					return data.estatus == 'T'
+					});
+
+				$scope.datosC = $scope.ChkTransitoLs.filter(function (data){
+					return  data.estatus == 'C'
+					});
+				
+				$scope.imprimirReporte($scope.datosR, $scope.cabeceraR);
+				$scope.imprimirReporte($scope.datosT, $scope.cabeceraT);
+				$scope.imprimirReporte($scope.datosC, $scope.cabeceraC);
+
+
+			}
+
+
+			$scope.imprimirReporte = function(datos, cabecera){
+					if (datos.length > 0){
+						$window.sessionStorage['concCabecera'] = JSON.stringify(cabecera);
+						$window.sessionStorage['concGenerico'] = JSON.stringify(datos);
+						$window.open('/conciliacion/salida', target='_blank'); 
+					}
+				};
 
 			$scope.editReg = function(id){
 				var reg = $scope.ChkTransitoLs.filter(function(data){
@@ -365,7 +455,6 @@
 
 			$scope.setChkTranito = function($event){
 				$event.preventDefault();
-				debugger;
 				try{
 					if($scope.regChkTrans.id === undefined){
 						$scope.regChkTrans.id = null;
@@ -412,14 +501,11 @@
 			$scope.fechaF = $filter('date')(dateF,'dd/MM/yyyy');
 		};
 		
-
-
-
 		
 	}])
 	
-	.controller('DepositosCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout',  
-		function ($scope, $filter, $rootScope, conciliacionServices, $timeout) {
+	.controller('DepositosCtrl', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout', '$window',  
+		function ($scope, $filter, $rootScope, conciliacionServices, $timeout, $window) {
 			$scope.depositosLs = [];
 			$scope.regDeposito = {};
 			$scope.fechai = null;
@@ -428,14 +514,18 @@
 			$scope.LsDepts = true;
 
 			$scope.getDepFecha = function(){
-				conciliacionServices.getDeposito().then(function (data){
-					$scope.depositosLs = data.filter(function(reg){
-						var RegFecha = reg.fecha.split('-');
-	      				var FechaFormat = RegFecha[2] + '/' + RegFecha[1] + '/' + RegFecha[0];
-	      				reg.fecha = FechaFormat;
+				
+				var regFechaI = $scope.fechai.split('/');
+				var formt1 = regFechaI[2] + '-' + regFechaI[1] + '-' + regFechaI[0]; 
 
-	      				return reg.fecha <= $scope.fechai && reg.fecha >= $scope.fechaf; 
-					});
+				var regFechaF = $scope.fechaf.split('/');
+				var formt2 = regFechaF[2] + '-' + regFechaF[1] + '-' + regFechaF[0]; 
+
+
+				conciliacionServices.getDepositoFecha(formt1, regFechaF).then(function (data){
+					$scope.depositosLs = data;
+
+				
 				});
 			};
 
@@ -478,9 +568,51 @@
 				$scope.getDepositoList();
 			};
 
+			
+			$scope.impDeposito = function($event){
+				$event.preventDefault();
+				$scope.datosR = null;
+				$scope.datosT = null;
+				$scope.datosC = null;
+
+				$scope.cabeceraR = {tipo: 'Deposito',
+									titulo: 'registrado'};
+
+				$scope.cabeceraT = {tipo: 'Deposito',
+									titulo: 'en Transito'};
+
+				$scope.cabeceraC = {tipo: 'Deposito',
+									titulo: 'Cerrado'};
+
+				$scope.datosR = $scope.depositosLs.filter(function (data){
+					return data.estatus == 'R'
+					});
+
+				$scope.datosT = $scope.depositosLs.filter(function (data){
+					return data.estatus == 'T'
+					});
+
+				$scope.datosC = $scope.depositosLs.filter(function (data){
+					return  data.estatus == 'C'
+					});
+
+				$scope.imprimirReporte($scope.datosR, $scope.cabeceraR);
+				$scope.imprimirReporte($scope.datosT, $scope.cabeceraT);
+				$scope.imprimirReporte($scope.datosC, $scope.cabeceraC);
+
+
+			}
+
+			$scope.imprimirReporte = function(datos, cabecera){
+				if (datos.length > 0){
+					$window.sessionStorage['concCabecera'] = JSON.stringify(cabecera);
+					$window.sessionStorage['concGenerico'] = JSON.stringify(datos);
+					$window.open('/conciliacion/salida', target='_blank'); 
+				}
+			};
+
 			$scope.setDeposito = function($event){
 				$event.preventDefault();
-				debugger;
 				try{
 					if($scope.regDeposito.id === undefined){
 						$scope.regDeposito.id = null;
@@ -508,9 +640,20 @@
 					console.log(e);
 				}
 		};
-
-
 		};
+	}])
+
+	.controller('reporteGController', ['$scope', '$filter','$window', function($scope, $filter, $window){
+		$scope.datos = JSON.parse($window.sessionStorage['concGenerico']);
+		$scope.cabecera = JSON.parse($window.sessionStorage['concCabecera']);
+		$scope.total = 0;
+
+		$scope.resultado = function(){
+			
+			for (var dat in $scope.datos){
+				$scope.total += parseInt($scope.datos[dat].monto);
+			}
+		}
 	}]);
 	
 })();

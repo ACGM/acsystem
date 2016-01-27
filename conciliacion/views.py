@@ -587,24 +587,76 @@ class ConBancoLs(DetailView):
 
     def json_to_response(self, fechaI, fechaF):
         Data = list()
-
-        registros = ConBanco.objects.raw('select id, fecha, '
-                                         'descripcion, tipo, '
-                                         'monto, estatus '
-                                         'from conciliacion_conbanco '
-                                         'WHERE fecha BETWEEN ' + fechaI + ' AND ' + fechaF)
+        
+        registros = ConBanco.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
 
         for detalle in registros:
             Data.append({
                 'id': detalle.id,
                 'fecha': detalle.fecha,
                 'descripcion': detalle.descripcion,
-                'tipo': detalle.tipo,
                 'monto': detalle.monto,
                 'estatus': detalle.estatus,
             })
 
         return JsonResponse(Data, safe=False)
+
+
+class DepositoLs(DetailView):
+    queryset = ConDeposito.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        fechaI = request.GET.get('fechaI')
+        fechaF = request.GET.get('fechaF')
+
+        return self.json_to_response(fechaI, fechaF)
+
+
+    def json_to_response(self, fechaI, fechaF):
+        Data = list()
+
+        registros = conDeposito.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+
+        for detalle in registros:
+            Data.append({
+                'id': detalle.id,
+                'fecha': detalle.fecha,
+                'descripcion': detalle.descripcion,
+                'monto': detalle.monto,
+                'estatus': detalle.estatus,
+            })
+
+        return JsonResponse(Data, safe=False)
+
+
+class ChkTransitoLs(DetailView):
+    queryset = conChequeTrans.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        fechaI = request.GET.get('fechaI')
+        fechaF = request.GET.get('fechaF')
+
+        return self.json_to_response(fechaI, fechaF)
+
+    def json_to_response(self, fechaI, fechaF):
+        Data = list()
+
+        registros = conChequeTrans.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+
+        for detalle in registros:
+            Data.append({
+                'id': detalle.id,
+                'fecha': detalle.fecha,
+                'descripcion': detalle.descripcion,
+                'monto': detalle.monto,
+                'estatus': detalle.estatus,
+            })
+
+        return JsonResponse(Data, safe=False)
+
+
+class regGenerico(TemplateView):
+    template_name = "ReporteGenerico.html"
 
 class RepConciliacion(TemplateView):
     template_name = "repConciliacion.html"
@@ -619,5 +671,6 @@ class RepConciliacion(TemplateView):
         return self.render_to_response(context)
 
     def json_to_response(self):
+        data = list()
         
 
