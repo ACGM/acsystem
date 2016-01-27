@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %} Registro de Depositos de Banco{% endblock title %}
+
+{% block content %}
+
+<section ng-controller="DepositosCtrl">
+	
+	<div class="bancoHead" ng-init="getDepositoList()">
+		<div class="bancoList" ng-show="LsDepts">
+			<div class="panelFecha">
+				Desde: <input type="text" class="input-fecha-s" ng-model="fechai" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaf" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getDepFecha($event)"></a>
+				<div >
+					<button class="nuevo notasNW icon-file" ng-click="NwDeposito()" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
+				</div>
+			</div>
+			<table class="listado-table-f" id="table-lf-listado" >
+				<tr class="listado-table-header-f">
+					<td>Registro</td>
+					<td>Fecha</td>
+					<td>Concepto</td>
+					<td>Monto</td>
+					<td>Estatus</td>
+				</tr>
+				<tr class="listado-Bcon-detail" ng-repeat="x in depositosLs ">
+					<td>
+						<div ng-if="x.estatus == 'C' ">
+							[[x.id]]
+						</div>
+						<div ng-if="x.estatus != 'C'">
+							<a href="#" ng-click="editReg(x.id)">[[x.id]]</a></td>	
+						</div>
+						
+					<td>[[x.fecha | date: 'dd/MM/yyyy']]</td>
+					<td>[[x.descripcion]]</td>
+					<td>[[x.monto | number : 2]]</td>
+					<td>
+						<div ng-if="x.estatus == 'T' ">
+							En Transito
+						</div>
+						<div ng-if="x.estatus == 'R' ">
+							Registrado
+						</div>
+						<div ng-if="x.estatus == 'C' ">
+							Cerrado
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="bancoCreate" ng-show="NwDep">
+		<form action="" ng-submit="setDeposito($event)">
+			<table>
+				<tr>
+					<td>Registro:</td>
+					<td>
+						<input type="text" ng-model="regDeposito.id" ng-disable="true" class="disable" readonly=""></td>
+				</tr>
+				<tr>
+					<td>Fecha:</td>
+					<td> <input type="text" ng-model="regDeposito.fecha" datepicker></td>
+				</tr>
+				<tr>
+					<td>Concepto:</td>
+					<td>
+						 <textarea cols="30" rows="6" ng-model="regDeposito.descripcion">
+					
+						 </textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Estatus: </td>
+					<td>
+						<select ng-model="regDeposito.estatus">
+						<option value="R">Registrado</option>
+						<option value="T">Transito</option>
+						<option value="C">Cerrado</option>
+					</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Monto: </td>
+					<td><input type="text" ng-model="regDeposito.monto"></td>
+				</tr>
+			</table>
+			<div class="bancoItem">
+				<button class="Boton  BusquedaBtn icon-save" type="submit">Guardar</button>
+				<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelarReg($event)">Limpiar</button>
+			</div>
+		</form>
+	</div>
+
+	
+</section>
+
+
+{% endblock content %}

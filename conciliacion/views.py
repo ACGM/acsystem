@@ -380,6 +380,104 @@ class NotasConciliacionView(TemplateView):
             return HttpResponse(e.message)
 
 
+class DepositosView(TemplateView):
+    template_name="conDeposito.html"
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        Data = list()
+
+        depositos = ConDeposito.objects.all()
+
+        for banc in depositos:
+            Data.append({
+                'id': banc.pk,
+                'fecha': banc.fecha,
+                'descripcion': banc.descripcion,
+                'monto': banc.monto,
+                'estatus': banc.estatus
+            })
+
+        return JsonResponse(Data, safe=False)
+
+    def post(self, request):
+        DataT = json.loads(request.body)
+        Data = DataT['deposito']
+
+        if Data['id'] is None:
+            depositoReg = ConDeposito()
+            depositoReg.fecha = Data['fecha']
+            depositoReg.descripcion = Data['descripcion']
+            depositoReg.monto = Data['monto']
+            depositoReg.estatus = Data['estatus']
+            depositoReg.save()
+        else:
+            depositoReg = ConDeposito.objects.get(id=Data['id'])
+            depositoReg.fecha = Data['fecha']
+            depositoReg.descripcion = Data['descripcion']
+            depositoReg.estatus = Data['estatus']
+            depositoReg.monto = Data['monto']
+            depositoReg.save(())
+        return HttpResponse('Ok')
+
+
+class ChkTransito(TemplateView):
+    template_name="conChkTransito.html"
+
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        Data = list()
+
+        chktransito = conChequeTrans.objects.all()
+
+        for banc in chktransito:
+            Data.append({
+                'id': banc.pk,
+                'fecha': banc.fecha,
+                'descripcion': banc.descripcion,
+                'monto': banc.monto,
+                'estatus': banc.estatus
+            })
+
+        return JsonResponse(Data, safe=False)
+
+    def post(self, request):
+        DataT = json.loads(request.body)
+        Data = DataT['ChkTransito']
+
+        if Data['id'] is None:
+            ChktransReg = conChequeTrans()
+            ChktransReg.fecha = Data['fecha']
+            ChktransReg.descripcion = Data['descripcion']
+            ChktransReg.monto = Data['monto']
+            ChktransReg.estatus = Data['estatus']
+            ChktransReg.save()
+        else:
+            ChktransReg = conChequeTrans.objects.get(id=Data['id'])
+            ChktransReg.fecha = Data['fecha']
+            ChktransReg.descripcion = Data['descripcion']
+            ChktransReg.estatus = Data['estatus']
+            ChktransReg.monto = Data['monto']
+            ChktransReg.save(())
+        return HttpResponse('Ok')
+
+
 class SSNotasView(DetailView):
     queryset = NotaDCConciliacion.objects.all()
 
@@ -507,3 +605,19 @@ class ConBancoLs(DetailView):
             })
 
         return JsonResponse(Data, safe=False)
+
+class RepConciliacion(TemplateView):
+    template_name = "repConciliacion.html"
+
+    def get(self):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def json_to_response(self):
+        
+

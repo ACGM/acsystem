@@ -1,0 +1,183 @@
+<div class="ahorroPrint">
+{% extends "base.html" %}
+
+{% block title %} Registro de Cheque en transito{% endblock title %}
+
+{% block content %}
+</div>
+
+<section ng-controller="repConciliacion" ng-init="getDate()">
+	<form id="depreForm" ng-submit="setDepresiacion($event)" class="Activo-formulario">
+		<div class="ahorroPrint">
+			<div class="ConciliacionPanel">
+				<table>
+					<tr>
+						<td>
+							Fecha desde:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaI" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Fecha hasta:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaF" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button class="Boton BusquedaBtn icon-save" type="submit">Generar</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="Resultados" class="ConsImpresion">
+			<div class="Titulo">
+				<h3>Cooperativa AceroCoop</h3>
+				Conciliacion Bancaria
+			</div>
+			<div class="ConsDiv-opt1">
+				<label for="DesBanco">BANCO</label>
+				<strong><span id="DesBanco">[[descripcion]] detalle</span></strong>
+			</div>
+
+			<div class="ConsDiv-opt2">
+				<label for="coCuenta">CUENTA No.</label>
+				<strong><span id="coCuenta">[[cuenta]] cuenta</span></strong>
+			</div>
+
+			<div class="ConsDiv-opt3">
+				<span class="conSubTitulo">
+					SEGUN LIBRO
+				</span>
+
+				<div class="sub1">
+					<div>
+						<label for="">Saldo Mes Anterior</label>
+						<span>[[mesAnt |number : 2]]</span>
+					</div>
+					<br>
+					<strong>Mas:</strong>
+					<div>
+						<label for="">Depositos Realizados</label>
+						<span>[[DepRealizados |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Otros Creditos</label>
+						<span>[[Creditos |number : 2]]</span>
+					</div>
+					<div class="subTotal">
+						<strong>
+							<label for="">Disponible</label>
+						</strong>
+						<span class="ln1">______________________</span>
+						<span>[[Disponible |number : 2]]</span>
+						<span class="ln2">______________________</span>
+						<span class="ln3">______________________</span>
+					</div>
+					<br>
+					<br>
+					<strong>Menos:</strong>
+					<div>
+						<label for="">Cheques emitidos</label>
+						<span>[[chkEmitidos |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Depositos Devueltos</label>
+						<span>[[chkDevueltos |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Otros Debitos</label>
+						<span>[[OtrosDebitos |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Comisiones</label>
+						<span>[[Comisiones |number : 2]] </span>
+					</div>
+					<div>
+						<label for="">Prestamos</label>
+						<span>[[Prestamos |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Nomina</label>
+						<span>[[Nomina |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Otros</label>
+						<span>[[Otros |number : 2]]</span>
+					</div>
+
+				</div>
+				<div class="consLibroTotal">
+					<strong>
+						<label for=""> Balance Segun Libros</label>
+						<span>[[total |number : 2]] </span>
+						<span>______________________</span>
+					</strong>
+				</div>
+			</div>
+
+			<div class="ConsDiv-opt4">
+				<span class="conSubtitulo2">
+					SEGUN BANCO
+				</span>
+				<div>
+					<div>
+						<label for="">Balance Segun Banco</label>
+						<span>[[BalanceBanco |number : 2]]</span>	
+					</div>
+					<br>
+					<strong>Mas :</strong>
+					<div>
+						<label for="">Depositos en Transito</label>
+						<span>[[DepTransito |number : 2]] </span>
+					</div>
+					<div>
+						<label for="">Credito en Transito</label>
+						<span>[[CredTransito |number : 2]]</span>
+					</div>
+					<strong>Menos :</strong>
+					<div>
+						<label for="">Cheques en Transito</label>
+						<span>[[ChkTransito |number : 2]]</span>
+					</div>
+					<div>
+						<label for="">Debitos en transito</label>
+						<span>[[DepTransito |number : 2]]</span>
+					</div>
+				</div>
+				<div class="consBancoTotal">
+						<strong>
+							<label for="">Balance Segun Conciliacion</label>
+							<span>[[bancoTotal |number : 2]]</span>
+							<span class="ln1">______________________</span>
+						</strong>
+				</div>
+			</div>
+
+			<div class="ConsDiv-opt5">
+				<div>
+					<span class="lineaA">________________________</span> 
+					<span class="lineaB">________________________</span>
+				</div>
+				<div>
+					<span class="parr1A">Preparado por</span>
+					<span class="parr1B">Aprobado por</span>
+				</div>
+				<div>
+					<span class="parr2A">Contabilidad</span>
+					<span class="parr2B">Gte. Cooperativa</span>
+				</div>
+			</div>
+
+
+		</div>
+
+	</form>
+</section>
+
+{% endblock content %}

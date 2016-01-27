@@ -50,7 +50,7 @@ from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud, cx
 
 from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos, ActDepresiados
 
-from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView
+from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView, DepositosView, ChkTransito
 
 #ViewSets (API)
 
@@ -59,7 +59,7 @@ from cuenta.views import DiarioViewSet
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
 from ahorro.views import MaestraAhorroViewSet, AhorroViewSet, InteresAhorroViewSet, generarAhorro
-from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs,SSolicitud
+from conciliacion.views import SolicitudViewSet, ChequesConsViewSet, NotasConsViewSet, ConBancoLs, SSolicitud, RepConciliacion
 from facturacion.views import ListadoFacturasViewSet
 from cuenta.views import CuentasViewSet
 
@@ -372,6 +372,9 @@ urlpatterns = patterns('',
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     url(r'^conciliacion/banco/rg$', ConBancoLs.as_view(), name='Banco_Fechas'),
     url(r'^conciliacion/Solicitudcheque/rg$',SSolicitud.as_view(), name='ImpSolicitud'),
+    url(r'^conciliacion/depositos$', DepositosView.as_view(), name='Conciliacion_Deposito'),
+    url(r'^conciliacion/chkTrans$', ChkTransito.as_view(), name='Conciliacion_Chk_Transito'),
+    url(r'^conciliacion/registros$', RepConciliacion.as_view(), name='Reporte_Conciliacion'),
 
     url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'),
     url(r'^postearRecibo$',reciboPost.as_view(), name='postear_recibo'), 
