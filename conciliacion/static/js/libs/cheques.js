@@ -124,8 +124,8 @@
 		};
 	}])
 
-	.controller('ChequeCtrl', ['$scope','$filter', '$rootScope', 'ChequesServices','$timeout', '$window',
-		function ($scope, $filter, $rootScope, ChequesServices, $timeout, $window) {
+	.controller('ChequeCtrl', ['$scope','$filter', '$rootScope', 'ChequesServices','$timeout', '$window','ContabilidadService',
+		function ($scope, $filter, $rootScope, ChequesServices, $timeout, $window, ContabilidadService) {
 		$scope.LsSolicitud = [];
 		
 		$scope.Solicitud = {};
@@ -133,9 +133,13 @@
 
 		$scope.reCheque = {};
 
+		$scope.independiente = null;
+		$scope.emitido = true;
+
 		$scope.ToggleCh = false;
 		$scope.ToggleSl = false;
 		$scope.ToggleNCh = false;
+		$scope.fecha = null;
 
 		$scope.listSolicitud = function($event){
 			$event.preventDefault();
@@ -149,18 +153,39 @@
 
 		};
 
-		   $scope.objectSorteable = function(a, b){
-				if(a.id < b.id){
-					return 1;
-				}
-
-				if(a.id > b.id){
-					return -1;
-				}
-
-				return 0;
+		$scope.objectSorteable = function(a, b){
+			if(a.id < b.id){
+				return 1;
 			}
 
+			if(a.id > b.id){
+				return -1;
+			}
+
+			return 0;
+		}
+
+		$scope.emitirCheque = function($event){
+			$event.preventDefault();
+			
+			$scope.independiente = 1;
+			var el = angular.element('#Beneficiario');
+			el.attr('ng-disable','false').removeAttr('disabled');
+
+			ChequesServices.getNoCheque().then(function (data){
+
+				$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
+				$scope.reCheque.estatus = "R";
+				$scope.reCheque.solicitud = null;
+				
+				$scope.reCheque.noCheque = data[0].noCheque
+				console.log(data);
+			});
+
+			$scope.ToggleCh = false;
+			$scope.ToggleSl = false;
+			$scope.ToggleNCh = true;
+		}
 
 		$scope.NewCheque =function($event,s){
 			$event.preventDefault();
@@ -171,6 +196,7 @@
 			$scope.reCheque.id = null;
 
 			ChequesServices.getNoCheque().then(function (data){
+				$scope.fecha = fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 				$scope.reCheque.fecha = fecha[2]+"/"+fecha[1]+"/"+fecha[0];
 				$scope.reCheque.estatus = "R";
 				if(s.socio != ""){
@@ -214,23 +240,28 @@
 		$scope.setConCheque = function($event){
 			$event.preventDefault();
 			try{
-				var RegFecha = $scope.reCheque.fecha.split('/');
+				var RegFecha = $scope.fecha.split('/');
           		var FechaFormat = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
           		$scope.reCheque.fecha = FechaFormat;
 
-				ChequesServices.setCheques($scope.reCheque).then(function (data){
-					var resp = data;
-					if(data == "Ok"){
-						
-						notie.alert(1,"Cheque generado",3.2)
-					}else{
-						notie.alert(3,"Ocurrio un error al intentar generar el cheque",3.2);
-						console.log(data);
-					}
-						$scope.cancelRegistro ($event);
-						$scope.listCheques($event);
-						
-				});
+          		if($scope.independiente != null){
+          			$scope.toggleInfo();
+          		}
+          		else{
+					ChequesServices.setCheques($scope.reCheque).then(function (data){
+						var resp = data;
+						if(data == "Ok"){
+							
+							notie.alert(1,"Cheque generado",3.2)
+						}else{
+							notie.alert(3,"Ocurrio un error al intentar generar el cheque",3.2);
+							console.log(data);
+						}
+							$scope.cancelRegistro ($event);
+							$scope.listCheques($event);
+							
+					});
+				}
 			}
 			catch(e){
 				$rootScope.mostrarError(e);
@@ -275,9 +306,120 @@
 			$scope.ToggleNCh = false;
 			$scope.reCheque = {};
 
-
 		};
+
+		// Mostrar/Ocultar posteo Contabilidad
+		$scope.toggleInfo = function() {
+
+		       $scope.showPostear = !$scope.showPostear;
+		}
+
+		$scope.cuentasBuscar = function($event) {
+
+	        if(!isNaN($scope.Postear.cuentaBuscar)) {
+	          //Para cuando es el numero de la cuenta
+	          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+	            return item.codigo.toString().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar;
+	          });
+	        } else {
+	          //Para cuando es la descripcion de la cuenta
+	          $scope.cuentasContables = $scope.todasLasCuentas.filter(function (item) {
+	            return item.descripcion.toLowerCase().substring(0, $scope.Postear.cuentaBuscar.length) == $scope.Postear.cuentaBuscar.toLowerCase();
+	          });
+	        }
+	        $scope.tableCuenta = true;
+	      }
+
+		     // Agregar una cuenta
 		
+
+		$scope.addCuentaContable = function($event, cuenta) {
+	        $event.preventDefault();
+	        var desgloseCuenta = new Object();
+			
+			console.log($scope.desgloseCuentas)
+			console.log(cuenta)
+	        
+	        desgloseCuenta.cuenta = cuenta.codigo;
+	        desgloseCuenta.descripcion = cuenta.descripcion;
+	        desgloseCuenta.ref = 'TEST-0000';//$scope.desgloseCuentas[$scope.desgloseCuentas.length-1].ref;
+	        desgloseCuenta.debito = 0;
+	        desgloseCuenta.credito = 0;
+
+	        $scope.desgloseCuentas.push(desgloseCuenta);
+	        $scope.tableCuenta = false;
+		}
+
+     	$scope.quitarCC = function(desgloseC) {
+	        if($scope.desgloseCuentas.length == 2) {
+	          $scope.mostrarError("No puede eliminar todas las cuentas. Verifique la configuración de Documentos-Cuentas.")
+	        } else {
+	          $scope.desgloseCuentas = _.without($scope.desgloseCuentas, _.findWhere($scope.desgloseCuentas, {cuenta: desgloseC.cuenta}));
+	          $scope.totalDebitoCredito();
+	        }
+      	}
+
+      	//Sumarizar el total de CREDITO y total de DEBITO antes de postear (llevar a contabilidad).
+      	$scope.totalDebitoCredito = function() {
+	        $scope.totalDebito = 0.00;
+	        $scope.totalCredito = 0.00;
+
+	        $scope.desgloseCuentas.forEach(function (documento) {
+	          console.log(documento)
+
+	          if(documento.debito.length > 0) {
+	            $scope.totalDebito += parseFloat(documento.debito);
+	          }
+
+	          if(documento.credito.length > 0) {
+	            $scope.totalCredito += parseFloat(documento.credito);
+	          }
+	        });
+      	}
+
+	  	//Este metodo escribe en el diario general los registros correspondientes al desglose de cuenta
+      	//para este modulo de Conciliacion.
+	    $scope.postearContabilidad = function() {
+
+	        try {
+	        
+	          //Validar que el CREDITO cuadre con el DEBITO
+	          if($scope.totalDebito != $scope.totalCredito && $scope.totalDebito > 0) {
+	            throw "El valor TOTAL del DEBITO es distinto al valor TOTAL del CREDITO.";
+	          }
+
+	          $scope.posteoG = true;
+	          $scope.regCheque.cuentas = $scope.desgloseCuentas
+	          
+	          ChequesServices.setCheques($scope.reCheque).then(function (data){
+						var resp = data;
+						if(data == "Ok"){
+							
+							notie.alert(1,"Cheque generado",3.2)
+						}else{
+							notie.alert(3,"Ocurrio un error al intentar generar el cheque",3.2);
+							console.log(data);
+						}
+							$scope.cancelRegistro ($event);
+							$scope.listCheques($event);
+							
+					});
+	          // $scope.desgloseCuentas.forEach(function (item) {
+	          //   ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
+	          //     console.log('Registros guardados en el diario');
+	          //     console.log(data);
+	          //   });
+	          // });
+
+	          
+			 $scope.getConcNotas();
+	          notie.alert(1,'Los registros fueron posteados con exito!',3.2);
+
+	        } catch (e) {
+	          notie.alert(3,e,3.2);
+	        }
+	      } 
+
 	}])
 
 	.controller('ImpchequeCtrl', ['$scope','$filter', '$rootScope', 'ChequesServices','$timeout', '$window' ,
@@ -295,7 +437,7 @@
 			$scope.cuentas = [];
 
 		$scope.start = function(){
-			debugger;
+			
 			$scope.regData = JSON.parse($window.sessionStorage['chk']);
 			$scope.cuentas = $scope.regData.cuenta;
 			var formFecha = $scope.regData.fecha.split('-');
