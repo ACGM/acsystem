@@ -1,0 +1,42 @@
+<div class="ahorroPrint">
+{% extends "base.html" %}
+
+{% block title %} Reporte registros {% endblock title %}
+
+{% block content %}
+</div>
+
+<section ng-controller="reporteGController" ng-init="resultado()">
+	<div class="repHeader">
+		<h2 class="RepTitulo">Reporte de Conciliacion [[cabecera.tipo]]</h2>
+		<h3 class="RepSubTitulo">registros de estatus [[cabecera.titulo]]</h3>
+	</div>
+	<br>
+	<div class="repBody">
+		<table class="listado-table-f" id="table-lf-listado" >
+				<tr class="listado-concHeader">
+					<td>Registro</td>
+					<td>Fecha</td>
+					<td>Concepto</td>
+					<td>Monto</td>
+				</tr>
+				<tr class="listado-Bcon-detail-imp" ng-repeat="x in datos">
+					<td>
+						[[x.id]]
+					<td>[[x.fecha | date: 'dd/MM/yyyy']]</td>
+					<td>[[x.descripcion]]</td>
+					<td>[[x.monto | number : 2]]</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="total-Aling"> <strong>[[total |number:2]] </strong></td>
+					
+				</tr>
+			</table>
+	</div>
+</section>
+
+
+{% endblock content %}

@@ -1,18 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %} Registro de Banco{% endblock title %}
+{% block title %} Registro de Cheque en transito{% endblock title %}
 
 {% block content %}
 
-<section ng-controller="ConciliacionCtrl">
-
-<mensajeerror> </mensajeerror>
-<mensajeinfo> </mensajeinfo>
-<div class="BancoBase" ng-init="getBancoList()">
-	<div class="bancoHead">
-		<div class="bancoList" ng-show="LsBanco">
+<section ng-controller="ChkTansitoCtrl">
+	<div class="bancoHead" ng-init="geChkTransitoList()">
+		<div class="bancoList" ng-show="LschkTransito">
 			<div class="panelFecha">
-				Desde: <input type="text" class="input-fecha-s" ng-model="fechai" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaf" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getBancoFecha($event)"></a>
+				Desde: <input type="text" class="input-fecha-s" ng-model="fechai" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaf" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getchkTransitoFecha($event)"></a>
 				<div >
 					<button class="nuevo notasNW icon-file" ng-click="nwRegistro()" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
 				</div>
@@ -25,7 +21,7 @@
 					<td>Monto</td>
 					<td>Estatus</td>
 				</tr>
-				<tr class="listado-Bcon-detail" ng-repeat="x in bancoLs">
+				<tr class="listado-Bcon-detail" ng-repeat="x in ChkTransitoLs">
 					<td>
 						<div ng-if="x.estatus == 'C' ">
 							[[x.id]]
@@ -50,48 +46,34 @@
 					</td>
 				</tr>
 			</table>
-			<div>
-				<button class="Boton  BusquedaBtn icon-printer" ng-click="impBanco($event)"> Imprimir</button>
-			</div>
 		</div>
+		<button class="Boton  BusquedaBtn icon-printer" ng-click="impChkTrans($event)"> Imprimir</button>
 	</div>
-
-	<div class="bancoCreate" ng-show="NwBanco">
-			<form action="" ng-submit="setConBanco($event)">
+	
+	<div class="bancoCreate" ng-show="NwChkTran">
+		<form action="" ng-submit="setChkTranito($event)">
 			<table>
 				<tr>
 					<td>Registro:</td>
 					<td>
-						<input type="text" ng-model="regBanco.id" ng-disable="true" class="disable" readonly=""></td>
+						<input type="text" ng-model="regChkTrans.id" ng-disable="true" class="disable" readonly=""></td>
 				</tr>
 				<tr>
 					<td>Fecha:</td>
-					<td> <input type="text" ng-model="regBanco.fecha" datepicker></td>
+					<td> <input type="text" ng-model="regChkTrans.fecha" datepicker></td>
 				</tr>
 				<tr>
 					<td>Concepto:</td>
 					<td>
-						 <textarea cols="30" rows="6" ng-model="regBanco.descripcion">
+						 <textarea cols="30" rows="6" ng-model="regChkTrans.descripcion">
 					
 						 </textarea>
 					</td>
 				</tr>
 				<tr>
-					<td>Tipo Registro:</td>
-					<td>
-						<select ng-model="regBanco.tipo" >
-							<option value="B">Balance segun Banco</option>
-							<option value="P">Depositos</option>
-							<option value="H">Cheques</option>
-							<option value="C">Credito</option>
-							<option value="D">Debito</option>
-					</select>
-					</td>
-				</tr>
-				<tr>
 					<td>Estatus: </td>
 					<td>
-						<select ng-model="regBanco.estatus">
+						<select ng-model="regChkTrans.estatus">
 						<option value="R">Registrado</option>
 						<option value="T">Transito</option>
 					</select>
@@ -99,20 +81,17 @@
 				</tr>
 				<tr>
 					<td>Monto: </td>
-					<td><input type="text" ng-model="regBanco.monto"></td>
+					<td><input type="text" ng-model="regChkTrans.monto"></td>
 				</tr>
 			</table>
 			<div class="bancoItem">
-				<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+				<button class="Boton  BusquedaBtn icon-save" type="submit">Guardar</button>
 				<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelarReg($event)">Limpiar</button>
 			</div>
-			</form>
-		<div>
-			
-		</div>
+		</form>
 	</div>
-</div>
 
+	
 </section>
 
 {% endblock content %}
