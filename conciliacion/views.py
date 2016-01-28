@@ -107,7 +107,6 @@ def superSolicitud(self, fecha, suplidor, concepto, monto, Ssup):
     except Exception, e:
         return e.message
 
-
 class SolicitudView(TemplateView):
     template_name = 'solicitudCheque.html'
 
@@ -203,6 +202,24 @@ class ChequesView(TemplateView):
         cheque.cuentas.add(regDiario)
         return 'Ok'
 
+    def setCuentaMaestra(self, chk, cuenta, doc , fecha, debito, credito):
+        cheque = ConcCheques.objects.get(id=chk)
+        cuenta = Cuentas.objects.get(codigo=cuenta)
+
+        diario = DiarioGeneral()
+        diario.fecha = fecha
+        diario.referencia = str(doc)+'-'+ str(chk)
+        diario.cuenta = cuenta
+        diario.estatus = 'P'        
+        diario.debito = debito
+        diario.credito = credito
+
+        diario.save()
+
+
+        cheque.cuentas.add(diario)
+        return diario.id
+
     def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
 
@@ -222,9 +239,9 @@ class ChequesView(TemplateView):
             data.append({
                 'id': chk.id,
                 'solicitud': chk.solicitud.id,
-                'beneficiario': chk.solicitud.socio.nombreCompleto if chk.solicitud.socio != None else chk.solicitud.suplidor.nombre,
-                'concepto': chk.solicitud.concepto,
-                'monto': chk.solicitud.monto,
+                'beneficiario': chk.beneficiario if chk.beneficiario != None else chk.solicitud.socio.nombreCompleto if chk.solicitud.socio != None else chk.solicitud.suplidor.nombre,
+                'concepto': chk.concepto if chk.concepto != None else chk.solicitud.concepto,
+                'monto': chk.monto if chk.monto !=null else chk.solicitud.monto,
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
                 'estatus': chk.estatus,
@@ -242,53 +259,70 @@ class ChequesView(TemplateView):
     def post(self, request):
         DataT = json.loads(request.body)
         Data = DataT['cheque']
+        cheque = ConcCheques()
 
-        # try:
-        if Data['id'] is None:
-            solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
-            
-            cuentas = list()
-
-            if solicitud.cxpOrden != None:
-                orden = OrdenGeneral.objects.get(id = solicitud.cxpOrden) 
-                for orCuentas in orden.cuentas.all():
-                    cuentas.append(orCuentas.id)
-            elif solicitud.superOrden != None:
-                cxSuper = cxpSuperGeneral.objects.get(id = solicitud.superOrden)
-                for spCuentas in cxSuper.cuentas.all():
-                    cuentas.append(spCuentas.id)
-            elif solicitud.prestamo != None:
-                regCuentas = getCuentasByPrestamo(solicitud.prestamo)
+        try:
+            if Data['id'] is None:
                 
+                if Data['solicitud'] is not None:
+                    solicitud = SolicitudCheque.objects.get(id=Data['solicitud'])
+                    
+                    cuentas = list()
+
+                    if solicitud.cxpOrden != None:
+                        orden = OrdenGeneral.objects.get(id = solicitud.cxpOrden) 
+                        for orCuentas in orden.cuentas.all():
+                            cuentas.append(orCuentas.id)
+                    elif solicitud.superOrden != None:
+                        cxSuper = cxpSuperGeneral.objects.get(id = solicitud.superOrden)
+                        for spCuentas in cxSuper.cuentas.all():
+                            cuentas.append(spCuentas.id)
+                    elif solicitud.prestamo != None:
+                        regCuentas = getCuentasByPrestamo(solicitud.prestamo)
+                        
+                    else:
+                        raise Exception("Documento Origen no esta Posteado")
+                else:
+                    solicitud = None
+                    cheque.monto = Data['monto']
+                    cheque.concepto = Data['concepto']
+                    cheque.beneficiario = Data['beneficiario']
+                    regCuenta = Data['cuenta']
+
+
+                
+                cheque.solicitud = solicitud
+                cheque.chequeNo = Data['noCheque']
+                cheque.fecha = Data['fecha']
+                cheque.estatus = 'R'
+                cheque.save()
+
+                if Data['solicitud'] is None:
+                    tipo = TipoDocumento.objects.get(codigo='CHKR')
+                    doc = DocumentoCuentas.objects.filter(documento = tipo)
+
+                    for cta in regcuenta:
+                        self.setCuentaMaestra(cheque.id, cta.cuenta , 'CHKR', Data['fecha'], cta.debito, cta.credito) 
+                else:
+                    for cta in cuentas:
+                        self.regCuentasChk(cheque.id, cta)
+                    
+                    
+                    solicitud.estatus = 'E'
+                    solicitud.save()
+
+                noChk = NumCheque.objects.get(id=1)
+                noChk.chequeNo = noChk.chequeNo + 1
+                noChk.save()
+               
             else:
-                raise Exception("Documento Origen no esta Posteado")
+                cheque = ConcCheques.objects.get(id=Data['id'])
+                cheque.estatus = Data['estatus']
+                cheque.save()
 
-
-            cheque = ConcCheques()
-            cheque.solicitud = solicitud
-            cheque.chequeNo = Data['noCheque']
-            cheque.fecha = Data['fecha']
-            cheque.estatus = 'R'
-            cheque.save()
-
-            for cta in cuentas: 
-                self.regCuentasChk(cheque.id, cta)
-
-            solicitud.estatus = 'E'
-            solicitud.save()
-
-            noChk = NumCheque.objects.get(id=1)
-            noChk.chequeNo = noChk.chequeNo + 1
-            noChk.save()
-           
-        else:
-            cheque = ConcCheques.objects.get(id=Data['id'])
-            cheque.estatus = Data['estatus']
-            cheque.save()
-
-        return HttpResponse('Ok')
-        # except Exception, e:
-        #     return HttpResponse(e.message)
+            return HttpResponse('Ok')
+        except Exception, e:
+            return HttpResponse(e.message)
 
 
 class SChequeView(TemplateView):
@@ -653,6 +687,7 @@ class ChkTransitoLs(DetailView):
             })
 
         return JsonResponse(Data, safe=False)
+
 
 
 class regGenerico(TemplateView):

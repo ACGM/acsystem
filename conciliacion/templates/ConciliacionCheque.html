@@ -4,6 +4,8 @@
 
 {% block content %}
 	<div class="cheques" ng-controller="ChequeCtrl">
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
 		<div class="cheque-botons">
 			<button class="Boton BusquedaBtn icon-file" type="submit" ng-click="listSolicitud($event)">Solicitudes</button>
 			<button class="Boton BusquedaBtn icon-banknote" type="submit" ng-click="listCheques($event)">Cheques</button>
@@ -47,6 +49,8 @@
 		</div>
 
 		<div class="cheque-lista-ch" ng-show="ToggleCh">
+		<!-- <button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelRegistro($event)"> -->
+			<button class="Boton BusquedaBtn icon-banknote" ng-click="emitirCheque($event)">Emitir Cheque Directo</button>
 			<table  class="listado-table-f">
 				<tr class="listado-table-header-f">
 					<td>Registro</td>
@@ -83,6 +87,8 @@
 		</div>
 
 		<div class="cheque-nw" ng-show="ToggleNCh">
+			<br>
+			
 			<form action="" id="ChequeForm" ng-submit="setConCheque($event)" class="cheque-formulario">
 				<table>
 					<tr>
@@ -90,17 +96,17 @@
 							Registro
 						</td>
 						<td>
-							<input type="text" ng-model="reCheque.id" disabled>
+							<input type="text"  ng-model="reCheque.id" ng-disabled="true">
 						</td>
 					</tr>
 					<tr>
 						<td>Solicitud</td>
-						<td><input type="text" ng-model="reCheque.solicitud" disabled></td>
+						<td><input type="text"   ng-model="reCheque.solicitud" ng-disabled="true"></td>
 					</tr>
 					<tr>
 						<td>Beneficiario</td>
 						<td>
-							<input type="text" ng-model="reCheque.beneficiario" disabled="">
+							<input type="text" id="Beneficiario"  ng-model="reCheque.beneficiario" ng-disabled="true">
 						</td>
 					</tr>
 					<tr>
@@ -109,7 +115,23 @@
 					</tr>
 					<tr>
 						<td>Fecha</td>
-						<td><input type="text" ng-model="reCheque.fecha" value="[[reCheque.fecha | date: 'dd/MM/yyyy']]" datepicker require></td>
+						<td><input type="text" ng-model="fecha" value="[[reCheque.fecha | date: 'dd/MM/yyyy']]" datepicker require></td>
+					</tr>
+					<tr>
+						<td ng-if="emitido == true">
+							Concepto
+						</td>
+						<td ng-if="emitido == true">
+							<textarea name="" id="" cols="45" rows="8" ng-model="reCheque.concepto" ></textarea>	
+						</td>
+					</tr>
+					<tr>
+						<td ng-if="emitido == true">
+							Monto
+						</td>
+						<td ng-if="emitido == true">
+							<textarea name="" id="" cols="45" rows="8" ng-model="reCheque.monto" ></textarea>	
+						</td>
 					</tr>
 					<tr>
 						<td>

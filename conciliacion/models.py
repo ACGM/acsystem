@@ -32,11 +32,14 @@ class ConcCheques(models.Model):
     estatus_choicer = (
     ('p', 'Posteado'), ('R', 'Registrado'), ('C', 'Cancelado'), ('D', 'Devueltos'), ('T', 'Transito'))
 
-    solicitud = models.ForeignKey(SolicitudCheque)
+    solicitud = models.ForeignKey(SolicitudCheque, null=True, blank=True)
     chequeNo = models.PositiveIntegerField(null=False, blank=False, verbose_name='# Cheque')
     fecha = models.DateField(null=False, blank=False)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, verbose_name='Estatus')
-    # cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
+    beneficiario = models.CharField(null=True, max_length=120, blank=True)
+    concepto = models.CharField(max_length=150, null=True, blank=True)
+    monto = models.DecimalField(max_digits=18, decimal_places=2, verbose_name='Monto', blank=True, null=True)
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='Chk_Cuentas', verbose_name='Cuentas', null=True, blank=True)
 
 
     def __unicode__(self):

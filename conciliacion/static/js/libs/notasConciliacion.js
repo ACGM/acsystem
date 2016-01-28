@@ -179,10 +179,11 @@
 					});
 					$scope.iDocumentos = 0;
 					$scope.toggleInfo();
+					notie.alert(1,"Registro Guardado",3.2);
 				}
 				catch(e){
 					// $rootScope.mostrarError(e);
-					alert(e);
+					notie.alert(3,e,3.2);
 				}
 			}
 			// Mostrar/Ocultar posteo Contabilidad
@@ -275,10 +276,10 @@
 	          //   $scope.listadoEntradas();
 	          // });
 			 $scope.getConcNotas();
-	          alert('Los registros fueron posteados con exito!');
+	          notie.alert(1,'Los registros fueron posteados con exito!',3.2);
 
 	        } catch (e) {
-	          alert(e);
+	          notie.alert(3,e,3.2);
 	        }
 	      } //Linea FIN de posteo Contabilidad.
 
