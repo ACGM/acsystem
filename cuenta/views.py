@@ -150,6 +150,28 @@ class CuentaControlViewSet(viewsets.ModelViewSet):
 class diarioView(TemplateView):
     template_name = 'Diario.html'
 
+    def get(self, request, *args, **kwargs):
+        format = self.request.GET.get('format')
+
+        if format == "json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return  self.render_to_response(context)
+
+    def json_to_response(self):
+        data = list()
+
+        tipo = TipoDocumento.objects.all()
+
+        for x in tipo:
+            data.append({
+                    'codigo' : x.codigo,
+                    'descripcion' : x.descripcion
+                })
+
+        return  JsonResponse(data, safe=False)
+
 
 class mayorView(TemplateView):
     template_name = 'Mayor.html'

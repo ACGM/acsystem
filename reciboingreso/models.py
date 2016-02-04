@@ -33,13 +33,22 @@ class RecibosIngreso(models.Model):
     # identifica si esta posteada o no
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
     # detallePrestamo = models.ForeignKey(DetalleRecibo, null=True)
-    cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="recibo_rel")
+    cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="recibo_rel", null=True, blank=True)
 
     def __unicode__(self):
         return '%i - %s' % (self.id, self.fecha)
 
     class Meta:
         ordering = ['id']
+
+class ReciboIngresoNomina(models.Model):
+    estatus_choices = (('R', 'Registrado'),('I','Inactiva'),('P','Posteada'))
+
+    fecha = models.DateField()
+    concepto = models.CharField(max_length=100, verbose_name="Estatus")
+    estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
+
+    cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="renomina_rel", null=True, blank=True)
 
 
 

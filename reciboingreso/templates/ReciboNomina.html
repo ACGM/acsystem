@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %} Recibos de Ingresos {% endblock title %}
+
+{% block content %}
+	
+	<section ng-controller="ReciboNomCtrl" ng-init="getDate()">
+		<mensajeerror> </mensajeerror>
+		<mensajeinfo> </mensajeinfo>
+		<div ng-show="vistaRecibo" class="headerTitulo" >
+			<div class="panelFecha">
+				<h2><label class="LbaTitulo">Recibo de Ingreso Nomina</label></h2>
+				<span>
+					Desde: <input type="text" class="input-fecha-s" ng-model="fechaI" datepicker> Hasta: <input type="text" class="input-fecha-s" ng-model="fechaF" datepicker> <a href="#" class="icon-uniE601 icon-buscar" ng-click="getReciboFecha($event)"></a>
+					<div >
+						<button class="nuevo icon-file reciboNominaNew" ng-click="nwRegistro($event)" title="Nuevo Registro" tooltip="Nuevo Registro" ></button>
+					</div>
+				</span>
+			</div>
+			<div class="listaReciboNom">
+				<table>
+					<tr class="recibo-table-header">
+						<td>Registro</td>
+						<td>Fecha</td>
+						<td>Concepto</td>
+					</tr>
+					<tr class="recibo-table-body" ng-repeat="recibo in reciboList" >
+						<td><a href="#" ng-click="editRecibo($event,recibo)">[[recibo.id]]</a></td>
+						<td>[[recibo.fecha | date : 'dd/MM/yyyy']]</td>
+						<td>[[recibo.concepto]]</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div ng-show="formRecibo">
+			<form action="" id="reciboNomForm" ng-submit="setReciboNom($event)" class="ReciboNominaForm">
+				<h2>Registro Recibo de ingreso Nomina</h2>
+				<table class="tableRegistroRecibo">
+					<tr>
+						<td>
+							<label for="">Registro</label>
+						</td>
+						<td>
+							<input type="text" ng-disabled="true" ng-model="reciboData.id">
+						</td>
+					</tr>
+					<tr>
+						<td><label for="">Fecha</label></td>
+						<td>
+							<input type="text" ng-model="fecha" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="">Concepto</label></td>
+						<td><textarea name="" id="" cols="45" rows="8" ng-model="reciboData.concepto" required></textarea></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="Boton  BusquedaBtn icon-save" type="submit" >Guardar</button>
+							<button class="Boton  BusquedaBtn  danger icon-delete" type="reset" ng-click="cancelarReg($event)">Limpiar</button>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</section>
+{% endblock content %}

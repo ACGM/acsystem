@@ -164,31 +164,45 @@
 
             }
 
-		        //Guardar Registros en Diario General.
-			      function guardarEnDiario(fecha, cuenta, ref, debito, credito) {
-			        var deferred = $q.defer();
+            function getDocumento(){
+            	var deferred = $q.defer();
 
-			        var doc = new Object();
-			        doc.fecha = $filter('date')(fecha, 'yyyy-MM-dd');
-			        doc.codCuenta = cuenta;
-			        doc.ref = ref;
-			        doc.estatus = 'P';
-			        doc.debito = parseFloat(debito) > 0? debito.replaceAll(',','') : 0;
-			        doc.credito = parseFloat(credito) > 0? credito.replaceAll(',','') : 0;
+            	$http.get('/contabilidad/DiarioGeneral/?format=json')
+            		.success(function (data) {
+            			deferred.resolve(data);
+            		})
+            		.error(function (err) {
+            			deferred.resolve(err);
+            		})
 
-			        console.log('Debito: ' + debito);
-			        console.log('Credito: ' + credito);
-					console.log(doc)
+            	return deferred.promise;
+            }
 
-			        $http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': doc})).
-			          success(function (data) {
-			            deferred.resolve(data);
-			          }).
-			          error(function (data) {
-			            deferred.resolve(data);
-			          });
-			        return deferred.promise;
-			      }
+	        //Guardar Registros en Diario General.
+		    function guardarEnDiario(fecha, cuenta, ref, debito, credito) {
+		        var deferred = $q.defer();
+
+		        var doc = new Object();
+		        doc.fecha = $filter('date')(fecha, 'yyyy-MM-dd');
+		        doc.codCuenta = cuenta;
+		        doc.ref = ref;
+		        doc.estatus = 'P';
+		        doc.debito = parseFloat(debito) > 0? debito.replaceAll(',','') : 0;
+		        doc.credito = parseFloat(credito) > 0? credito.replaceAll(',','') : 0;
+
+		        console.log('Debito: ' + debito);
+		        console.log('Credito: ' + credito);
+				console.log(doc)
+
+		        $http.post('/contabilidad/RegDiario/', JSON.stringify({'cuenta': doc})).
+		          success(function (data) {
+		            deferred.resolve(data);
+		          }).
+		          error(function (data) {
+		            deferred.resolve(data);
+		          });
+		        return deferred.promise;
+		      }
 
             return {
             	getDiario : getDiario,
@@ -200,13 +214,14 @@
             	getMayor : getMayor,
             	getMayorByDate : getMayorByDate,
             	getMayorByCuenta : getMayorByCuenta,
-            	guardarEnDiario : guardarEnDiario
+            	guardarEnDiario : guardarEnDiario,
+            	getDocumento	: getDocumento
 
 				};
             }])
 
-        .controller('ContabilidadController', ['$scope','$filter', '$rootScope', 'ContabilidadService','$timeout', 
-        					function ($scope, $filter, $rootScope, ContabilidadService, $timeout) {
+        .controller('ContabilidadController', ['$scope','$filter', '$rootScope', 'ContabilidadService','$timeout', '$window',
+        					function ($scope, $filter, $rootScope, ContabilidadService, $timeout, $window) {
         						var date = new Date();
 
 						        $scope.diario = [];
@@ -218,10 +233,13 @@
 						        $scope.totalCredito = 0;
 						        $scope.totalDebito = 0;
 						        $scope.panelTotal ="total-compensado"
+						        $scope.tipoDoc= [];
+						        $scope.doc = null;
 
 						        $scope.getAll = function(data){
 						            ContabilidadService.getDiario().then(function (data){
 						                 $scope.diario = data;
+						                 console.log(data);
 						                 $scope.calTotales();
 						            });
 						              
@@ -246,6 +264,24 @@
 						        	}
 
 						        };
+
+						        $scope.getDocs = function(){
+						        	ContabilidadService.getDocumento().then(function (data){
+						        		
+						        		$scope.tipoDoc = data;
+						        		console.log(data);
+						        	});
+						        };
+
+						        $scope.filtDoc = function(){
+
+						        	var codigo = $scope.doc.codigo;
+
+						        	$scope.diario = $scope.diario.filter(function (data){
+						        		return data.ref.match(codigo)
+						        	});
+						        	$scope.calTotales();
+						        }
 
 						        $scope.Clear = function(){
 
@@ -298,6 +334,7 @@
 						        };
 
 						        $scope.FillResult = function(){
+						        	$scope.getDocs();
 						            if($scope.SCuenta != undefined){
 						                 $scope.getByCuenta();
 						             }else if($scope.SAux != undefined){
@@ -354,6 +391,13 @@
 						            }
 						        }
 
+						        $scope.ImprimirRegistro = function($event){
+						        	$event.preventDefault();
+
+								    $window.print();
+						        	
+						        };
+
 						        $scope.getAux = function($event){
 						            $event.preventDefault();
 						            
@@ -397,8 +441,8 @@
 						     	}]
 						    )
 
-		.controller('MayorController', ['$scope', '$filter', '$rootScope', 'ContabilidadService', '$timeout',
-				function($scope, $filter,$rootScope, ContabilidadService, $timeout){
+		.controller('MayorController', ['$scope', '$filter', '$rootScope', 'ContabilidadService', '$timeout', '$window',
+				function($scope, $filter,$rootScope, ContabilidadService, $timeout, $window){
 					var date = new Date();
 
 					$scope.dataMayor =[];
@@ -420,6 +464,12 @@
 						ContabilidadService.getMayorByCuenta($scope.SFechaI, $scope.SFechaF, $scope.SCuenta).then(function (data){
 							$scope.dataMayor = data;
 						});
+					}
+
+					$scope.PrintMayor = function($event){
+						$event.preventDefault();
+
+						$window.print();
 					}
 
 					$scope.result = function(){

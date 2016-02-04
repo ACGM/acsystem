@@ -134,7 +134,7 @@
 		$scope.reCheque = {};
 
 		$scope.independiente = null;
-		$scope.emitido = true;
+		$scope.emitido = false;
 
 		$scope.ToggleCh = false;
 		$scope.ToggleSl = false;
@@ -169,6 +169,7 @@
 			$event.preventDefault();
 			
 			$scope.independiente = 1;
+			$scope.emitido = true;
 			var el = angular.element('#Beneficiario');
 			el.attr('ng-disable','false').removeAttr('disabled');
 
@@ -185,6 +186,7 @@
 			$scope.ToggleCh = false;
 			$scope.ToggleSl = false;
 			$scope.ToggleNCh = true;
+
 		}
 
 		$scope.NewCheque =function($event,s){
@@ -259,6 +261,7 @@
 						}
 							$scope.cancelRegistro ($event);
 							$scope.listCheques($event);
+							$scope.getSolicitudes($event);
 							
 					});
 				}
@@ -273,7 +276,7 @@
 			      $scope.errorMsg = error;
 			      $scope.errorShow = true;
 			      $timeout(function(){$scope.errorShow = false;}, 3000);   
-		    };
+			};
 
 
 		$scope.getSolicitud = function($event, id){
@@ -305,6 +308,8 @@
 			$scope.ToggleSl = true;
 			$scope.ToggleNCh = false;
 			$scope.reCheque = {};
+			$scope.independiente = null;
+			$scope.emitido = false;
 
 		};
 
@@ -402,14 +407,16 @@
 						}
 							$scope.cancelRegistro ($event);
 							$scope.listCheques($event);
+							$scope.getSolicitudes($event);
 							
 					});
-	          // $scope.desgloseCuentas.forEach(function (item) {
-	          //   ContabilidadService.guardarEnDiario(Date.now(), item.cuenta, item.ref, item.debito, item.credito).then(function (data) {
-	          //     console.log('Registros guardados en el diario');
-	          //     console.log(data);
-	          //   });
-	          // });
+	          
+			$scope.independiente = 1;
+			$scope.emitido = true;
+
+			var el = angular.element('#Beneficiario');
+			el.attr('ng-disabled','true').attr('disabled','disabled');
+	
 
 	          
 			 $scope.getConcNotas();

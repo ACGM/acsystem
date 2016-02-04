@@ -51,25 +51,27 @@
 
 
 			<button class="Boton BusquedaBtn danger" ng-click="Clear()">Limpiar <span class="icon-notification"></span></button>
-			<button class="Boton BotonImprimirDiario" ng-click="Clear()">Limpiar <span class="icon-printer"></span></button>
+			<button class="Boton BotonImprimirDiario" ng-click="PrintMayor($event)">Imprimir <span class="icon-printer"></span></button>
 						
 		</div>
 	</section>
 
 	<section class="DiarioPanel">
 		<div>
-			<table class="listado-table-f" id="table-lf-listado" style="width:70%">
+			<h2 class="RepDiarioTitulo">Reporte Mayor General</h2>
+			<h3 class="RepDiarioSubtitulo">Desde: [[SFechaI | date :'dd/MM/yyyy']], Hasta: [[SFechaF | date :'dd/MM/yyyy']]</h3>
+			<table class="listado-table-f printSali" id="table-lf-listado" >
 				<tr class="listado-table-header-f">
-					<td>Fecha</td>
+					<td >Fecha</td>
 					<td>Cuenta</td>
-					<td>Debito</td>
-					<td>Credito</td>
+					<td style="text-align: right">Debito</td>
+					<td style="text-align: right">Credito</td>
 				</tr>
-				<tr ng-repeat="reg in dataMayor" class"listado-Dr-detail" >
-					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
-					<td style="padding-left:.5em;">[[reg.cuenta ]]</td>
-					<td style="text-align:right; padding-right:.5em;">[[reg.debito | number: 2 ]]</td>
-					<td style="text-align:right; padding-right:.5em;">[[reg.credito | number: 2]]</td>
+				<tr ng-repeat="reg in dataMayor" class"listado-mayor-detail" >
+					<td >[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
+					<td >[[reg.cuenta ]]</td>
+					<td style="text-align: right">[[reg.debito | number: 2 ]]</td>
+					<td style="text-align: right">[[reg.credito | number: 2]]</td>
 				</tr>
 				<tr class="[[panelTotal]]">
 					<td colspan="2"></td>

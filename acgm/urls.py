@@ -50,7 +50,7 @@ from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud, cx
 
 from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos, ActDepresiados
 
-from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView, DepositosView, ChkTransito, DepositoLs ,ChkTransitoLs, regGenerico
+from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView, DepositosView,  DepositoLs , regGenerico
 
 #ViewSets (API)
 
@@ -65,7 +65,7 @@ from cuenta.views import CuentasViewSet
 
 from cxp.views import CxpOrdenView, CxpSuperCoopView, cxpOrdenEdit, cxpSuperEdit
 
-from reciboingreso.views import reciboTemplateView, reciboPost
+from reciboingreso.views import reciboTemplateView, reciboPost, reciboNominaTemplateView
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -373,15 +373,14 @@ urlpatterns = patterns('',
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     url(r'^conciliacion/banco/rg$', ConBancoLs.as_view(), name='Banco_Fechas'),
     url(r'^conciliacion/deposito/rg$', DepositoLs.as_view(), name='Deposito_fecha'),
-    url(r'^conciliacion/chkTrans/rg$', ChkTransitoLs.as_view(), name='ChkTrans_fecha'),
     url(r'^conciliacion/Solicitudcheque/rg$',SSolicitud.as_view(), name='ImpSolicitud'),
     url(r'^conciliacion/depositos$', DepositosView.as_view(), name='Conciliacion_Deposito'),
-    url(r'^conciliacion/chkTrans$', ChkTransito.as_view(), name='Conciliacion_Chk_Transito'),
     url(r'^conciliacion/registros$', RepConciliacion.as_view(), name='Reporte_Conciliacion'),
     url(r'^conciliacion/salida$', regGenerico.as_view(), name='Reporte_salida'),
 
     url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'),
     url(r'^postearRecibo$',reciboPost.as_view(), name='postear_recibo'), 
+    url(r'^reciboNom$',reciboNominaTemplateView.as_view(), name="recibo_nomina"),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

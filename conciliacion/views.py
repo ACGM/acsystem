@@ -14,7 +14,7 @@ from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
 
 
 # Local Imports
-from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, conChequeTrans
+from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
 
 
@@ -59,6 +59,7 @@ def prestSolicitud(self, fecha, socio, suplidor, concepto, monto, prestamo):
     except Exception, e:
         return e.message
 
+
 def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
     try:
         regOrden = OrdenGeneral.objects.get(id = orden)
@@ -83,6 +84,7 @@ def ordenSolicitud(self, fecha, suplidor, concepto, monto, orden):
     except Exception, e:
         return e.message
 
+
 def superSolicitud(self, fecha, suplidor, concepto, monto, Ssup):
     try:
         regSuper = cxpSuperGeneral.objects.get(id = Ssup)
@@ -106,6 +108,7 @@ def superSolicitud(self, fecha, suplidor, concepto, monto, Ssup):
         return 'Ok'
     except Exception, e:
         return e.message
+
 
 class SolicitudView(TemplateView):
     template_name = 'solicitudCheque.html'
@@ -241,7 +244,7 @@ class ChequesView(TemplateView):
                 'solicitud': chk.solicitud.id,
                 'beneficiario': chk.beneficiario if chk.beneficiario != None else chk.solicitud.socio.nombreCompleto if chk.solicitud.socio != None else chk.solicitud.suplidor.nombre,
                 'concepto': chk.concepto if chk.concepto != None else chk.solicitud.concepto,
-                'monto': chk.monto if chk.monto !=null else chk.solicitud.monto,
+                'monto': chk.monto if chk.monto !=None else chk.solicitud.monto,
                 'noCheque': chk.chequeNo,
                 'fecha': chk.fecha,
                 'estatus': chk.estatus,
@@ -252,7 +255,16 @@ class ChequesView(TemplateView):
                     'debito': cta.debito,
                     'credito': cta.credito
                     }
-                   for cta in chk.solicitud.cuentas.all()]
+                   for cta in chk.solicitud.cuentas.all()],
+                'cuentasChk':[{
+                    'id': cta.id,
+                    'codigoCta': cta.cuenta.codigo,
+                    'cuenta': cta.cuenta.descripcion,
+                    'debito': cta.debito,
+                    'credito': cta.credito
+                    }
+                   for cta in chk.cuentas.all()
+                ]
             })
         return JsonResponse(data, safe=False)
 
@@ -463,53 +475,53 @@ class DepositosView(TemplateView):
         return HttpResponse('Ok')
 
 
-class ChkTransito(TemplateView):
-    template_name="conChkTransito.html"
+# class ChkTransito(TemplateView):
+#     template_name="conChkTransito.html"
 
-    def get(self, request, *args, **kwargs):
-        format = self.request.GET.get('format')
+#     def get(self, request, *args, **kwargs):
+#         format = self.request.GET.get('format')
 
-        if format == "json":
-            return self.json_to_response()
+#         if format == "json":
+#             return self.json_to_response()
 
-        context = self.get_context_data()
-        return self.render_to_response(context)
+#         context = self.get_context_data()
+#         return self.render_to_response(context)
 
-    def json_to_response(self):
-        Data = list()
+#     def json_to_response(self):
+#         Data = list()
 
-        chktransito = conChequeTrans.objects.all()
+#         chktransito = conChequeTrans.objects.all()
 
-        for banc in chktransito:
-            Data.append({
-                'id': banc.pk,
-                'fecha': banc.fecha,
-                'descripcion': banc.descripcion,
-                'monto': banc.monto,
-                'estatus': banc.estatus
-            })
+#         for banc in chktransito:
+#             Data.append({
+#                 'id': banc.pk,
+#                 'fecha': banc.fecha,
+#                 'descripcion': banc.descripcion,
+#                 'monto': banc.monto,
+#                 'estatus': banc.estatus
+#             })
 
-        return JsonResponse(Data, safe=False)
+#         return JsonResponse(Data, safe=False)
 
-    def post(self, request):
-        DataT = json.loads(request.body)
-        Data = DataT['ChkTransito']
+#     def post(self, request):
+#         DataT = json.loads(request.body)
+#         Data = DataT['ChkTransito']
 
-        if Data['id'] is None:
-            ChktransReg = conChequeTrans()
-            ChktransReg.fecha = Data['fecha']
-            ChktransReg.descripcion = Data['descripcion']
-            ChktransReg.monto = Data['monto']
-            ChktransReg.estatus = Data['estatus']
-            ChktransReg.save()
-        else:
-            ChktransReg = conChequeTrans.objects.get(id=Data['id'])
-            ChktransReg.fecha = Data['fecha']
-            ChktransReg.descripcion = Data['descripcion']
-            ChktransReg.estatus = Data['estatus']
-            ChktransReg.monto = Data['monto']
-            ChktransReg.save(())
-        return HttpResponse('Ok')
+#         if Data['id'] is None:
+#             ChktransReg = conChequeTrans()
+#             ChktransReg.fecha = Data['fecha']
+#             ChktransReg.descripcion = Data['descripcion']
+#             ChktransReg.monto = Data['monto']
+#             ChktransReg.estatus = Data['estatus']
+#             ChktransReg.save()
+#         else:
+#             ChktransReg = conChequeTrans.objects.get(id=Data['id'])
+#             ChktransReg.fecha = Data['fecha']
+#             ChktransReg.descripcion = Data['descripcion']
+#             ChktransReg.estatus = Data['estatus']
+#             ChktransReg.monto = Data['monto']
+#             ChktransReg.save(())
+#         return HttpResponse('Ok')
 
 
 class SSNotasView(DetailView):
@@ -663,31 +675,30 @@ class DepositoLs(DetailView):
         return JsonResponse(Data, safe=False)
 
 
-class ChkTransitoLs(DetailView):
-    queryset = conChequeTrans.objects.all()
+# class ChkTransitoLs(DetailView):
+#     queryset = conChequeTrans.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        fechaI = request.GET.get('fechaI')
-        fechaF = request.GET.get('fechaF')
+#     def get(self, request, *args, **kwargs):
+#         fechaI = request.GET.get('fechaI')
+#         fechaF = request.GET.get('fechaF')
 
-        return self.json_to_response(fechaI, fechaF)
+#         return self.json_to_response(fechaI, fechaF)
 
-    def json_to_response(self, fechaI, fechaF):
-        Data = list()
+#     def json_to_response(self, fechaI, fechaF):
+#         Data = list()
 
-        registros = conChequeTrans.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+#         registros = conChequeTrans.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
 
-        for detalle in registros:
-            Data.append({
-                'id': detalle.id,
-                'fecha': detalle.fecha,
-                'descripcion': detalle.descripcion,
-                'monto': detalle.monto,
-                'estatus': detalle.estatus,
-            })
+#         for detalle in registros:
+#             Data.append({
+#                 'id': detalle.id,
+#                 'fecha': detalle.fecha,
+#                 'descripcion': detalle.descripcion,
+#                 'monto': detalle.monto,
+#                 'estatus': detalle.estatus,
+#             })
 
-        return JsonResponse(Data, safe=False)
-
+#         return JsonResponse(Data, safe=False)
 
 
 class regGenerico(TemplateView):
@@ -698,14 +709,43 @@ class RepConciliacion(TemplateView):
 
     def get(self):
         format = self.request.GET.get('format')
+        fechaI = request.GET.get('fechaI')
+        fechaF = request.GET.get('fechaF')
 
         if format == "json":
-            return self.json_to_response()
+            return self.json_to_response(fechaI, FechaF)
 
         context = self.get_context_data()
         return self.render_to_response(context)
 
-    def json_to_response(self):
+    def json_to_response(self, fechaI, fechaF):
         data = list()
+
+        RegBanco = ConBanco.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+        RegDepsR = ConDeposito.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'R')
+        RegDepsT = ConDeposito.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'T')
+
+        RegChkP = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'P')
+        RegChkT = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'T')
+        RegChkC = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'C')
+        RegChkD = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'D')
+
+        RegDiario = DiarioGeneral.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+
+
+        BancoMonto = decimal.Decimal(0)
+        montoCuentaBanco = decimal.Decimal(0)
+
+        for cuenta in RegDiario:
+            if cuenta.cuenta.codigo == 11010203:
+                montoCuentaBanco += cuenta.credit
+        for x in registros:
+            BancoMonto += RegBanco.monto
+
+
+
+
+
+
         
 
