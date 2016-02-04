@@ -65,7 +65,7 @@ from cuenta.views import CuentasViewSet
 
 from cxp.views import CxpOrdenView, CxpSuperCoopView, cxpOrdenEdit, cxpSuperEdit
 
-from reciboingreso.views import reciboTemplateView, reciboPost, reciboNominaTemplateView
+from reciboingreso.views import reciboTemplateView, reciboPost, reciboNominaTemplateView, reciboPrint
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -381,6 +381,7 @@ urlpatterns = patterns('',
     url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'),
     url(r'^postearRecibo$',reciboPost.as_view(), name='postear_recibo'), 
     url(r'^reciboNom$',reciboNominaTemplateView.as_view(), name="recibo_nomina"),
+    url(r'^ImpRecibo$',reciboPrint.as_view(), name="Imprecibo_nomina"),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

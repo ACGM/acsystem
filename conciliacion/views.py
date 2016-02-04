@@ -11,10 +11,11 @@ from cuenta.models import DiarioGeneral, Cuentas
 from administracion.models import Socio, CoBeneficiario, Suplidor, TipoDocumento, DocumentoCuentas
 from cxp.models import OrdenGeneral, cxpSuperGeneral
 from prestamos.viewMaestraPrestamos import getCuentasByPrestamo
+from reciboingreso.models import ReciboIngresoNomina
 
 
 # Local Imports
-from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito
+from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, ConPeriodo
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
 
 
@@ -707,7 +708,7 @@ class regGenerico(TemplateView):
 class RepConciliacion(TemplateView):
     template_name = "repConciliacion.html"
 
-    def get(self):
+    def get(self, request, *args, **kwargs):
         format = self.request.GET.get('format')
         fechaI = request.GET.get('fechaI')
         fechaF = request.GET.get('fechaF')
@@ -725,23 +726,119 @@ class RepConciliacion(TemplateView):
         RegDepsR = ConDeposito.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'R')
         RegDepsT = ConDeposito.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'T')
 
-        RegChkP = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'P')
+        RegChkP = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
         RegChkT = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'T')
         RegChkC = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'C')
         RegChkD = ConcCheques.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'D')
 
+        RegNotaC = NotaDCConciliacion.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, tipo= 'C')
+        RegNotaD = NotaDCConciliacion.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, tipo= 'D')
+
+        RegNotaCT = NotaDCConciliacion.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, tipo= 'C', estatus='T')
+        RegNotaDT = NotaDCConciliacion.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, tipo= 'D', estatus='T')
+
+        RegConPiodo = ConPeriodo.objects.get(fechaInicio = fechaI, fechaFin = fechaF)
+        RegReciboNom =ReciboIngresoNomina.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF, estatus= 'P')
+
         RegDiario = DiarioGeneral.objects.filter(fecha__gte = fechaI, fecha__lte = fechaF)
+
+        
 
 
         BancoMonto = decimal.Decimal(0)
         montoCuentaBanco = decimal.Decimal(0)
+        MontosChkEmitido = decimal.Decimal(0)
+        MontosChkDevuelto = decimal.Decimal(0)
+        MontosChkTrans = decimal.Decimal(0)
+        montoDepRec = decimal.Decimal(0)
+        montoReciboR = decimal.Decimal(0)
+        BancoMonto = decimal.Decimal(0)
+        montoCredito = decimal.Decimal(0)
+        montoDebito = decimal.Decimal(0)
+        montoCreditoTrans = decimal.Decimal(0)
+        montoDebitoTrans = decimal.Decimal(0)
 
+
+        #Cheques registrados
+        for chkE in RegChkP:
+            if chkE.solicitud != None:
+                MontosChkEmitido += chkE.solicitud.monto
+            else:
+                MontosChkEmitido += chkE.monto
+
+        #Cheques Devueltos
+        for chkD in RegChkD:
+            if chkD.solicitud != None:
+                MontosChkDevuelto += chkD.solicitud.monto
+            else:
+                MontosChkDevuelto += chkD.monto
+
+        #Cheques en Transito
+        for chkT in RegChkT:
+            if chkT.solicitud != None:
+                MontosChkTrans+= chkT.solicitud.monto
+            else:
+                MontosChkTrans += chkT.monto
+        
+        #Cuenta de banco popular
         for cuenta in RegDiario:
             if cuenta.cuenta.codigo == 11010203:
+                bancoDesc = cuenta.cuenta.descripcion
                 montoCuentaBanco += cuenta.credit
-        for x in registros:
-            BancoMonto += RegBanco.monto
 
+        #Depositos recibidos
+        for depR in RegDepsR:
+            montoDepRec += depR.monto
+
+        for depT in RegDepsT:
+            montoDepTr += depT.monto
+
+        #Captura de nomina
+        for nom in RegReciboNom:
+            montoReciboR += nom.monto
+
+        #Registros de banco
+        for x in RegBanco:
+            BancoMonto += x.monto
+
+        #Notas de Creditos Resgitradas
+        for NotaC in RegNotaC:
+            montoCredito += NotaC.monto
+        
+        #Notas de Debitos Registradas
+        for NotaD in RegNotaD:
+            montoDebito += NotaD.monto
+
+        #Notas de Credito en Transito
+        for NotaCT in RegNotaCT:
+            montoCreditoTrans += NotaCT.monto
+        
+        #Notas de Debito en Transito
+        for NotaDT in RegNotaDT:
+            montoDebitoTrans += NotaD.monto
+
+        data.append({
+                'descripcion': bancoDesc,
+                'cuenta' : 11010203,
+                'mesAnt' : RegConPiodo.monto,
+                'DepRealizados' : montoDepRec,
+                'Creditos' : montoCredito,
+                'chkEmitidos': MontosChkEmitido,
+                'chkDevueltos': MontosChkDevuelto,
+                'OtrosDebitos': montoDebito,
+                'Comisiones': 0,
+                'Prestamos': 0,
+                'Nomina': montoReciboR,
+                'Otros': 0 ,
+                'BalanceBanco' : BancoMonto,
+                'DepTransito' : montoDepTr,
+                'CredTransito' : montoCreditoTrans,
+                'DebTransito' : montoDebitoTrans,
+                'ChkTransito' : MontosChkTrans
+
+            })
+
+        return JsonResponse(data, safe=False)
 
 
 

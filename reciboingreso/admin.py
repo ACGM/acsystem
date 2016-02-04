@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ReciboIngresoNomina
+
+
+@admin.register(ReciboIngresoNomina)
+class ReciboIngresoNominaAdmin(admin.ModelAdmin):
+
+	list_display = ['id', 'fecha', 'concepto', 'estatus']

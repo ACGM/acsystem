@@ -45,7 +45,7 @@ class ReciboIngresoNomina(models.Model):
     estatus_choices = (('R', 'Registrado'),('I','Inactiva'),('P','Posteada'))
 
     fecha = models.DateField()
-    concepto = models.CharField(max_length=100, verbose_name="Estatus")
+    concepto = models.CharField(max_length=100, verbose_name="Concepto")
     estatus = models.CharField(max_length=1, choices=estatus_choices, verbose_name="Estatus")
 
     cuentas = models.ManyToManyField(DiarioGeneral, verbose_name="Cuentas", related_name="renomina_rel", null=True, blank=True)
