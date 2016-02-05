@@ -29,7 +29,7 @@ class Cuentas(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name="Descripcion", blank=False, null=False)
     origen = models.CharField(max_length=1, choices=origen_choices, verbose_name="Origen de la cuenta")
     tipo = models.CharField(max_length=1, choices=tipo_choicer, verbose_name="Tipo Cuenta")
-    # nivel = models.CharField(max_length=1, choices=nivel_choices, verbose_name="Nivel de cuenta")
+    nivel = models.CharField(max_length=1, choices=nivel_choices, verbose_name="Nivel de cuenta")
     #Para Identificar si es una cuenta Control
     control = models.BooleanField(default=False)
     cuentaControl = models.ForeignKey(CuentasControl, null=True, blank=True)
@@ -46,13 +46,13 @@ class Cuentas(models.Model):
 
   
   # def save(self, *args, **kwargs):
-    #     if self.control:
-    #         cuentaControl = CuentasControl()
-    #         cuentaControl.codigoControl = self.codigo
-    #         cuentaControl.descripcion = self.descripcion
-    #         cuentaControl.save()
+  #       if self.control:
+  #           cuentaControl = CuentasControl()
+  #           cuentaControl.codigoControl = self.codigo
+  #           cuentaControl.descripcion = self.descripcion
+  #           cuentaControl.save()
 
-    #     super(Cuentas, self).save(*args, **kwargs)
+  #       super(Cuentas, self).save(*args, **kwargs)
 
 # Auxiliares Contables
 # class Auxiliar(models.Model):

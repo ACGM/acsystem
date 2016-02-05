@@ -1,12 +1,12 @@
 
 {% extends "base.html" %}
 
-{% block title %} Reporte de Conciliacion % endblock title %}
+{% block title %} Reporte de Conciliacion {% endblock title %}
 
 {% block content %}
 
 <section ng-controller="repConciliacion" ng-init="getDate()">
-	<form id="depreForm" ng-submit="setDepresiacion($event)" class="Activo-formulario">
+	<form id="depreForm" ng-submit="getData($event)" class="Activo-formulario">
 		<div class="ahorroPrint">
 			<div class="ConciliacionPanel">
 				<table>
@@ -34,19 +34,19 @@
 				</table>
 			</div>
 		</div>
-		<div id="Resultados" class="ConsImpresion">
+		<div id="Resultados" class="ConsImpresion" ng-show="printArea"> 
 			<div class="Titulo">
 				<h3>Cooperativa AceroCoop</h3>
 				Conciliacion Bancaria
 			</div>
 			<div class="ConsDiv-opt1">
 				<label for="DesBanco">BANCO</label>
-				<strong><span id="DesBanco">[[regData.descripcion]] detalle</span></strong>
+				<strong><span id="DesBanco">[[regData.descripcion]]</span></strong>
 			</div>
 
 			<div class="ConsDiv-opt2">
 				<label for="coCuenta">CUENTA No.</label>
-				<strong><span id="coCuenta">[[regData.cuenta]] cuenta</span></strong>
+				<strong><span id="coCuenta">[[regData.cuenta]] </span></strong>
 			</div>
 
 			<div class="ConsDiv-opt3">
@@ -137,7 +137,7 @@
 					</div>
 					<div>
 						<label for="">Credito en Transito</label>
-						<span>[[CregData.redTransito |number : 2]]</span>
+						<span>[[CregData.CredTransito |number : 2]]</span>
 					</div>
 					<strong>Menos :</strong>
 					<div>

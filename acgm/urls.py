@@ -54,7 +54,7 @@ from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView
 
 #ViewSets (API)
 
-from cuenta.views import DiarioViewSet
+from cuenta.views import DiarioViewSet, EstatoResultado
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
@@ -342,6 +342,7 @@ urlpatterns = patterns('',
     url(r'^contabilidad/DiarioGeneral/$', diarioView.as_view(), name='diario_general'),
     url(r'^contabilidad/MayorGeneral/$', mayorView.as_view(), name='mayor_general'),
     url(r'^contabilidad/RegDiario/$', CuentasView.as_view(), name='reg_diario'),
+    url(r'^contabilidad/EstResultado$', EstatoResultado.as_view(), name='estado_resultado'),
 
 
     #CXP

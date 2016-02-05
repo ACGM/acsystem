@@ -182,7 +182,7 @@
 		function getConcRep(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get(repConc+'?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}', fechaI).replace('{fechaF}',fechaF))
+			$http.get('/conciliacion/registros?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}', fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
@@ -517,6 +517,9 @@
 		$scope.fechaF = null; 
 		$scope.printArea = false;
 		$scope.regData = {};
+		$scope.Disponible = 0;
+		$scope.total = 0;
+		$scope.bancoTotal = 0;
 
 		$scope.getDate = function(){
 			var date = new Date();
@@ -527,12 +530,32 @@
 			$scope.fechaF = $filter('date')(dateF,'dd/MM/yyyy');
 		};
 
-		$scope.getData = function(){
-			conciliacionServices.getConcRep($scope.fechaI, $scope.fechaF).then(function (data){
+		$scope.getData = function($event){
+			$event.preventDefault()
+
+			var RegFecha = $scope.fechaI.split('/');
+	      	var fechaI = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+			
+			var RegFecha1 = $scope.fechaF.split('/');
+	      	var fechaF = RegFecha1[2] + '-' + RegFecha1[1] + '-' + RegFecha1[0];
+
+			conciliacionServices.getConcRep(fechaI, fechaF).then(function (data){
 				$scope.printArea = true;
-				$scope.regData = data;
-				$window.print();
+				$scope.regData = data[0];
+				$scope.Disponible = parseInt($scope.regData.mesAnt) +  parseInt($scope.regData.DepRealizados) + parseInt($scope.regData.Creditos);
+				var subt = parseInt($scope.regData.chkEmitidos) + parseInt($scope.regData.chkDevueltos) + parseInt($scope.regData.OtrosDebitos) +
+							parseInt($scope.regData.Comisiones) + parseInt($scope.regData.Prestamos) + parseInt($scope.regData.Nomina)  + 
+							parseInt($scope.regData.Otros)
+
+				$scope.total = $scope.Disponible - subt;
+
+				$scope.bancoTotal = parseInt($scope.regData.BalanceBanco) + parseInt($scope.regData.DepTransito) + parseInt($scope.regData.CredTransito) 
+									- parseInt($scope.regData.ChkTransito) - parseInt($scope.regData.DebTransito) 
 			});
+
+			$timeout(function() {
+        		$window.print();
+   			 }, 2000);
 		}
 		
 		

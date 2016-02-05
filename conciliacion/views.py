@@ -714,7 +714,7 @@ class RepConciliacion(TemplateView):
         fechaF = request.GET.get('fechaF')
 
         if format == "json":
-            return self.json_to_response(fechaI, FechaF)
+            return self.json_to_response(fechaI, fechaF)
 
         context = self.get_context_data()
         return self.render_to_response(context)
@@ -757,7 +757,8 @@ class RepConciliacion(TemplateView):
         montoDebito = decimal.Decimal(0)
         montoCreditoTrans = decimal.Decimal(0)
         montoDebitoTrans = decimal.Decimal(0)
-
+        montoDepTr = decimal.Decimal(0)
+        bancoDesc = None
 
         #Cheques registrados
         for chkE in RegChkP:
