@@ -45,7 +45,7 @@ from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito, NotaDe
 from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guardarNotaCredito, NotaDeCreditoById
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres, DocumentosAhorro,historicoAHView
-from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
+from cuenta.views import CuentasView, diarioView, mayorView, MaestroView, EstadoSituacion, balanceGeneral
 from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud, cxpImpGeneral
 
 from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos, ActDepresiados
@@ -343,6 +343,8 @@ urlpatterns = patterns('',
     url(r'^contabilidad/MayorGeneral/$', mayorView.as_view(), name='mayor_general'),
     url(r'^contabilidad/RegDiario/$', CuentasView.as_view(), name='reg_diario'),
     url(r'^contabilidad/EstResultado$', EstatoResultado.as_view(), name='estado_resultado'),
+    url(r'^contabilidad/BalanceGeneral$', balanceGeneral.as_view(), name='balance-general'),
+    url(r'^contabilidad/EstSituacion$', EstadoSituacion.as_view(), name='estado_situacion'),
 
 
     #CXP

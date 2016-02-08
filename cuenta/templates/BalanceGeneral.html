@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title%} Estados de Resultados {% endblock title %}
+{% block title%} Balance General {% endblock title %}
 
 {% block content%}
-<section ng-controller="EstadoRController" ng-init="getDate()">
+<section ng-controller="BalanceGenCtrl" ng-init="getDate()">
 	<form id="depreForm" ng-submit="getData($event)" class="Activo-formulario">
 	<div class="repTituloPag"> 
-		<h2>Reporte de Estados Financieros</h2>
+		<h2>Balance General de cuentas</h2>
 	</div>
 	<div class="ahorroPrint">
 			<div class="ConciliacionPanel">
@@ -36,13 +36,9 @@
 			</div>
 		</div>
 		<div class="EstadoR-Cuerpo">
-			<span class="fecha">
+			<span class="fecha2">
 					Desde: [[fechaI]] Hasta: [[fechaF]]
 			</span>
-			<div ng-repeat="cab in cabeceras" class="repEstadoCab">
-				<span>
-				 <strong>[[cab.cuenta]] : [[cab.descrip]] </strong>
-				</span>
 				
 				<table class="repEstadoTab">
 					<tr>
@@ -51,15 +47,14 @@
 						<td><strong>Debito</strong></td>
 						<td><strong>Credito</strong></td>
 					</tr>
-					<tr ng-repeat="reg in cab.registros">
+					<tr ng-repeat="reg in cabeceras">
 						<td>[[reg.cuenta]]</td>
 						<td>[[reg.descrip]]</td>
 						<td>[[reg.debito | number : 2]]</td>
 						<td>[[reg.credito |number : 2]]</td>
 					</tr>
 				</table>
-				
-			</div>
+			
 		</div>
 	</form>
 </section>

@@ -178,6 +178,12 @@ class mayorView(TemplateView):
     template_name = 'Mayor.html'
 
 
+class balanceGeneral(TemplateView):
+    template_name = "BalanceGeneral.html"
+
+class EstadoSituacion(TemplateView):
+    template_name = "EstadosFinancieros.html"
+
 class EstatoResultado(TemplateView):
     template_name = 'EstadoResultado.html'
 
@@ -205,6 +211,7 @@ class EstatoResultado(TemplateView):
         nivel5 = Cuentas.objects.filter(nivel=5)
         nivel6 = Cuentas.objects.filter(nivel=6)
 
+        
         for n1 in nivel1:
             try:
                 diario = DiarioGeneral.objects.filter(cuenta = n1, fecha__gte = fechaI, fecha__lte =fechaF)
@@ -216,10 +223,11 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 1,
                     'cuenta' : n1.codigo,
+                    'descrip' : n1.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n1.tipo,
-                    'padre' : n1.cuentaControl.codigoControl
+                    'padre' : n1.cuentaControl.codigoControl if n1.cuentaControl != None else ''
                     })
 
                 diario = None
@@ -227,8 +235,7 @@ class EstatoResultado(TemplateView):
                 credito = decimal.Decimal(0)
             except Exception, e:
                 pass
-        
-        return  JsonResponse(data, safe=False)         
+     
         for n2 in nivel2:
             try:
                 diario = DiarioGeneral.objects.filter(cuenta = n2, fecha__gte = fechaI, fecha__lte =fechaF)
@@ -240,6 +247,7 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 2,
                     'cuenta' : n2.codigo,
+                    'descrip' : n2.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n2.tipo,
@@ -264,6 +272,7 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 3,
                     'cuenta' : n3.codigo,
+                    'descrip' : n3.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n3.tipo,
@@ -287,6 +296,7 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 4,
                     'cuenta' : n4.codigo,
+                    'descrip' : n4.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n4.tipo,
@@ -310,6 +320,7 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 5,
                     'cuenta' : n5.codigo,
+                    'descrip' : n5.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n5.tipo,
@@ -333,6 +344,7 @@ class EstatoResultado(TemplateView):
                 data.append({
                     'nivel' : 6,
                     'cuenta' : n6.codigo,
+                    'descrip' : n6.descripcion,
                     'debito' : debito,
                     'credito' : credito,
                     'tipo' : n6.tipo,

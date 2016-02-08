@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title%} Estados de Resultados {% endblock title %}
+{% block title%} Estados de Financiero {% endblock title %}
 
 {% block content%}
-<section ng-controller="EstadoRController" ng-init="getDate()">
+<section ng-controller="EstadoFinanController" ng-init="getDate()">
 	<form id="depreForm" ng-submit="getData($event)" class="Activo-formulario">
 	<div class="repTituloPag"> 
 		<h2>Reporte de Estados Financieros</h2>
