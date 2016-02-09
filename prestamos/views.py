@@ -269,7 +269,7 @@ class SolicitudPrestamoView(LoginRequiredMixin, TemplateView):
 			SolPrestamo.ahorrosCapitalizados = decimal.Decimal(solicitud['ahorrosCapitalizados'].replace(',','')) if solicitud['ahorrosCapitalizados'] != None \
 				and solicitud['ahorrosCapitalizados'] > 0 else 0			
 			SolPrestamo.deudasPrestamos = decimal.Decimal(solicitud['deudasPrestamos'].replace(',','')) if solicitud['deudasPrestamos'] > 0 else 0
-			
+
 			SolPrestamo.prestacionesLaborales = decimal.Decimal(solicitud['prestacionesLaborales'].replace(',','')) if solicitud['prestacionesLaborales'] != None else 0
 
 			SolPrestamo.valorGarantizado = decimal.Decimal(solicitud['valorGarantizado']) if solicitud['valorGarantizado'] != None else 0
