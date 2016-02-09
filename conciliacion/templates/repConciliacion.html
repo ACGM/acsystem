@@ -1,13 +1,12 @@
-<div class="ahorroPrint">
+
 {% extends "base.html" %}
 
-{% block title %} Reporte de Conciliacion % endblock title %}
+{% block title %} Reporte de Conciliacion {% endblock title %}
 
 {% block content %}
-</div>
 
 <section ng-controller="repConciliacion" ng-init="getDate()">
-	<form id="depreForm" ng-submit="setDepresiacion($event)" class="Activo-formulario">
+	<form id="depreForm" ng-submit="getData($event)" class="Activo-formulario">
 		<div class="ahorroPrint">
 			<div class="ConciliacionPanel">
 				<table>
@@ -35,19 +34,19 @@
 				</table>
 			</div>
 		</div>
-		<div id="Resultados" class="ConsImpresion">
+		<div id="Resultados" class="ConsImpresion" ng-show="printArea"> 
 			<div class="Titulo">
 				<h3>Cooperativa AceroCoop</h3>
 				Conciliacion Bancaria
 			</div>
 			<div class="ConsDiv-opt1">
 				<label for="DesBanco">BANCO</label>
-				<strong><span id="DesBanco">[[descripcion]] detalle</span></strong>
+				<strong><span id="DesBanco">[[regData.descripcion]]</span></strong>
 			</div>
 
 			<div class="ConsDiv-opt2">
 				<label for="coCuenta">CUENTA No.</label>
-				<strong><span id="coCuenta">[[cuenta]] cuenta</span></strong>
+				<strong><span id="coCuenta">[[regData.cuenta]] </span></strong>
 			</div>
 
 			<div class="ConsDiv-opt3">
@@ -58,17 +57,17 @@
 				<div class="sub1">
 					<div>
 						<label for="">Saldo Mes Anterior</label>
-						<span>[[mesAnt |number : 2]]</span>
+						<span>[[regData.mesAnt |number : 2]]</span>
 					</div>
 					<br>
 					<strong>Mas:</strong>
 					<div>
 						<label for="">Depositos Realizados</label>
-						<span>[[DepRealizados |number : 2]]</span>
+						<span>[[regData.DepRealizados |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Otros Creditos</label>
-						<span>[[Creditos |number : 2]]</span>
+						<span>[[regData.Creditos |number : 2]]</span>
 					</div>
 					<div class="subTotal">
 						<strong>
@@ -84,31 +83,31 @@
 					<strong>Menos:</strong>
 					<div>
 						<label for="">Cheques emitidos</label>
-						<span>[[chkEmitidos |number : 2]]</span>
+						<span>[[regData.chkEmitidos |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Depositos Devueltos</label>
-						<span>[[chkDevueltos |number : 2]]</span>
+						<span>[[regData.chkDevueltos |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Otros Debitos</label>
-						<span>[[OtrosDebitos |number : 2]]</span>
+						<span>[[regData.OtrosDebitos |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Comisiones</label>
-						<span>[[Comisiones |number : 2]] </span>
+						<span>[[regData.Comisiones |number : 2]] </span>
 					</div>
 					<div>
 						<label for="">Prestamos</label>
-						<span>[[Prestamos |number : 2]]</span>
+						<span>[[regData.Prestamos |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Nomina</label>
-						<span>[[Nomina |number : 2]]</span>
+						<span>[[regData.Nomina |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Otros</label>
-						<span>[[Otros |number : 2]]</span>
+						<span>[[regData.Otros |number : 2]]</span>
 					</div>
 
 				</div>
@@ -128,26 +127,26 @@
 				<div>
 					<div>
 						<label for="">Balance Segun Banco</label>
-						<span>[[BalanceBanco |number : 2]]</span>	
+						<span>[[regData.BalanceBanco |number : 2]]</span>	
 					</div>
 					<br>
 					<strong>Mas :</strong>
 					<div>
 						<label for="">Depositos en Transito</label>
-						<span>[[DepTransito |number : 2]] </span>
+						<span>[[regData.DepTransito |number : 2]] </span>
 					</div>
 					<div>
 						<label for="">Credito en Transito</label>
-						<span>[[CredTransito |number : 2]]</span>
+						<span>[[CregData.CredTransito |number : 2]]</span>
 					</div>
 					<strong>Menos :</strong>
 					<div>
 						<label for="">Cheques en Transito</label>
-						<span>[[ChkTransito |number : 2]]</span>
+						<span>[[regData.ChkTransito |number : 2]]</span>
 					</div>
 					<div>
 						<label for="">Debitos en transito</label>
-						<span>[[DepTransito |number : 2]]</span>
+						<span>[[regData.DebTransito |number : 2]]</span>
 					</div>
 				</div>
 				<div class="consBancoTotal">
@@ -180,4 +179,4 @@
 	</form>
 </section>
 
-{% endblock content %}
+{% endblock %}

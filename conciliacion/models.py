@@ -84,21 +84,14 @@ class ConDeposito(models.Model):
     descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
     monto = models.DecimalField(max_digits=18, decimal_places=2, null= False, blank=False, default=0)
     estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCDepositos')
+    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCDepositos', null=True, blank=True, verbose_name="Depositos_Cuenta")
 
     def __unicode__(self):
         return '%i-%s' % (self.id, str(self.fecha))
 
+class ConPeriodo(models.Model):
 
-class conChequeTrans(models.Model):
-    estatus_choicer = (('R', 'Registrado'),('T', 'Transito'), ('C', 'Cerrado'))
-
-    fecha = models .DateField()
-    descripcion = models.CharField(max_length=150, null=False, blank=False, verbose_name='Descripcion')
-    monto = models.DecimalField(max_digits=18, decimal_places=2, null= False, blank=False, default=0)
-    estatus = models.CharField(max_length=1, choices=estatus_choicer, default='R')
-    cuentas = models.ManyToManyField(DiarioGeneral, related_name='CCCheques')
-
-    def __unicode__(self):
-        return '%i-%s' % (self.id, str(self.fecha))
-
+    fechaInicio = models.DateField()
+    fechaFin    = models.DateField()
+    cuenta = models.CharField(max_length=15, blank=False, null=False, verbose_name="cuenta") 
+    monto = models.DecimalField(max_digits=18,decimal_places=2 , blank= False, null=False)

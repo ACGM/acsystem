@@ -13,7 +13,7 @@ from administracion.models import Socio, DocumentoCuentas, TipoDocumento
 
 from rest_framework import viewsets
 
-from .models import DetalleRecibo, RecibosIngreso
+from .models import DetalleRecibo, RecibosIngreso, ReciboIngresoNomina
 
 class reciboPost(TemplateView):
     template_name="recigoImp.html"
@@ -155,3 +155,95 @@ class reciboTemplateView(TemplateView):
                 'estatus': recibos.estatus,
             })
         return JsonResponse(data, safe=False)
+
+
+class reciboNominaTemplateView(TemplateView):
+    template_name="ReciboNomina.html"
+
+    def setCuentas(selt, recibo, fecha, ref, cuenta, debito, credito):
+        try:
+            diario = DiarioGeneral()
+
+            diario.fecha = fecha
+            diario.cuenta = Cuentas.objects.get(codigo=cuenta)
+            diario.referencia = ref+str(recibo)
+            diario.estatus = "P"
+            diario.debito = debito
+            diario.credito = credito
+            diario.save()
+
+            reciboNom = ReciboIngresoNomina.objects.get(id=recibo)
+            reciboNom.cuenta.add(diario)
+
+            return "Ok"
+        except Exception, e:
+            raise e
+        
+
+    def get(self, request, *args, **kwargs):
+
+        format = self.request.GET.get('format')
+
+        if format =="json":
+            return self.json_to_response()
+
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+
+    def json_to_response(self):
+        data = list()
+
+        for reciboNom in ReciboIngresoNomina.objects.all():
+            data.append({
+                'id': reciboNom.id,
+                'fecha': reciboNom.fecha,
+                'concepto': reciboNom.concepto,
+                'estatus': reciboNom.estatus,
+                'cuentas':[{
+                    'id': cta.id,
+                    'fecha': cta.fecha,
+                    'ref': cta.referencia,
+                    'cuenta': cta.cuenta.codigo,
+                    'debito': cta.debito,
+                    'credito': cta.credito
+                    }
+                   for cta in reciboNom.cuentas.all()]
+                })
+        return JsonResponse(data, safe=False) 
+
+
+    def post(self, request):
+        try:
+            dataR = json.loads(request.body)
+            data = dataR['reciboN']
+            
+            fecha = data['fecha']
+
+            if data['id'] == None:
+                reciboNom = ReciboIngresoNomina()
+                
+                # tipo = TipoDocumento.objects.get(codigo='RINO')
+                # document = DocumentoCuentas.objects.filter(documento = tipo)
+
+                reciboNom.fecha = data['fecha']
+                reciboNom.concepto = data['concepto']
+                reciboNom.estatus = "R"
+                reciboNom.save()
+
+                # for doc in document:
+                #     setCuentas(reciboNom.id, data['fecha'], "RINO", doc.cuenta.codigo, data['debito'], data['credito'])
+
+            return HttpResponse("Ok")
+        except Exception, e:
+            raise e
+
+
+class reciboPrint(TemplateView):
+    template_name="ImpReciboNomina.html"
+        
+
+
+
+
+

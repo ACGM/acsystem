@@ -61,28 +61,35 @@
 							<input type="text" ng-model="SCuenta" ng-keyup="getCuenta($event)" ng-focus="tableCuentas=false" ng-click="tableCuentas=false; errorShow=false; getCuenta($event);" class="producto-field-ei" style="margin:.5em">
 								
 								<span class="error-ei"> [[cuentaNoExiste]]</span>
-				</td>
-				<!-- <tr>
-					<td colspan="2">
-						<label for="SAux">Auxiliar</label> 
-							<input type="text" ng-model="SAux" ng-keyup="getAux($event)" ng-focus="tableAux=false" ng-click="tableAux=false; errorShow=false; getAux($event);" class="producto-field-ei" style="margin:.5em">
-								
-								<span class="error-ei"> [[auxNoExiste]]</span>
 					</td>
-				</tr> -->
+				</tr>
+				<tr>
+					<td>
+						Tipo de Documento
+					</td>
+					<td>
+						<select ng-options="xs as xs.descripcion for xs in  tipoDoc" 
+  								 ng-model="doc" ng-change="filtDoc()" class="selectOption">
+  						</select>
+					</td>
+				</tr>
+
 			</table>
 			<button class="Boton  BusquedaBtn" ng-click="FillResult()">Buscar <span class="icon-uniE601"></span></button>
 
 
 			<button class="Boton BusquedaBtn danger" ng-click="Clear()">Limpiar <span class="icon-notification"></span></button>
-			<button class="Boton BotonImprimirDiario" ng-click="Clear()">Limpiar <span class="icon-printer"></span></button>
+			<button class="Boton BotonImprimirDiario" ng-click="ImprimirRegistro($event)">Imprimir <span class="icon-printer"></span></button>
 						
 		</div>
 	</section>
 
-	<section class="DiarioPanel">
+	<section class="DiarioPanel" >
+
 		<div>
-			<table class="listado-table-f" id="table-lf-listado" style="width:70%">
+			<h2 class="RepDiarioTitulo">Reporte Diario General</h2>
+			<h3 class="RepDiarioSubtitulo">Desde: [[SFechaI | date :'dd/MM/yyyy']], Hasta: [[SFechaF | date :'dd/MM/yyyy']]</h3>
+			<table class="listado-table-f printSali" id="table-lf-listado" >
 				<tr class="listado-table-header-f">
 					<td>Fecha</td>
 					<td>Cuenta</td>
@@ -91,13 +98,13 @@
 					<td class="align-right">Debito</td>
 					<td class="align-right">Credito</td>
 				</tr>
-				<tr ng-repeat="reg in diario" class="listado-prestamos-detail" > <!-- listado-Dr-detail  -->
-					<td style="padding-left:.5em;">[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
-					<td style="padding-left:.5em;">[[reg.cuenta ]]</td>
-					<td style="padding-left:.5em;">[[reg.cDescripcion ]]</td>
-					<td style="padding-left:.5em;">[[reg.ref]]</td>
-					<td style="text-align:right; padding-right:.5em;">[[reg.debito | number: 2 ]]</td>
-					<td style="text-align:right; padding-right:.5em;">[[reg.credito | number: 2]]</td>
+				<tr ng-repeat="reg in diario" class="listado-diario-detail" > <!-- listado-Dr-detail  -->
+					<td >[[reg.fecha |date: 'dd/MM/yyyy' ]]</td>
+					<td >[[reg.cuenta ]]</td>
+					<td >[[reg.cDescripcion ]]</td>
+					<td >[[reg.ref]]</td>
+					<td >[[reg.debito | number: 2 ]]</td>
+					<td >[[reg.credito | number: 2]]</td>
 				</tr>
 				<tr class="[[panelTotal]]">
 					<td colspan="4"></td>

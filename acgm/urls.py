@@ -45,16 +45,16 @@ from prestamos.viewNotaDebito import ListadoNDViewSet, guardarNotaDebito, NotaDe
 from prestamos.viewNotaCredito import ListadoNCViewSet, ListadoNCEViewSet, guardarNotaCredito, NotaDeCreditoById
 
 from ahorro.views import AhorroView, MaestraAhorroView, impRetiroAHorro, generarInteres, DocumentosAhorro,historicoAHView
-from cuenta.views import CuentasView, diarioView, mayorView, MaestroView
+from cuenta.views import CuentasView, diarioView, mayorView, MaestroView, EstadoSituacion, balanceGeneral
 from cxp.views import CxpView, cxpSuperView, CxpSolicitud, CxpSuperSolicitud, cxpImpGeneral
 
 from activofijo.views import ActivosView, DepresiacionView, CategoriaActivoView, impActivoView, LocActivoView, HistoricoActivos, ActDepresiados
 
-from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView, DepositosView, ChkTransito, DepositoLs ,ChkTransitoLs, regGenerico
+from conciliacion.views import SolicitudView, ChequesView, NotasConciliacionView, ConBancoView, SSNotasView, SChequeView, DepositosView,  DepositoLs , regGenerico
 
 #ViewSets (API)
 
-from cuenta.views import DiarioViewSet
+from cuenta.views import DiarioViewSet, EstatoResultado
 
 from administracion.views import ListadoCategoriasPrestamosViewSet
 
@@ -65,7 +65,7 @@ from cuenta.views import CuentasViewSet
 
 from cxp.views import CxpOrdenView, CxpSuperCoopView, cxpOrdenEdit, cxpSuperEdit
 
-from reciboingreso.views import reciboTemplateView, reciboPost
+from reciboingreso.views import reciboTemplateView, reciboPost, reciboNominaTemplateView, reciboPrint
 
 from administracion.views import SuplidorViewSet, SocioViewSet, DepartamentoViewSet, \
                                 SuplidorTipoViewSet, ProductoViewSet,CoBeneficiarioViewSet, \
@@ -342,6 +342,9 @@ urlpatterns = patterns('',
     url(r'^contabilidad/DiarioGeneral/$', diarioView.as_view(), name='diario_general'),
     url(r'^contabilidad/MayorGeneral/$', mayorView.as_view(), name='mayor_general'),
     url(r'^contabilidad/RegDiario/$', CuentasView.as_view(), name='reg_diario'),
+    url(r'^contabilidad/EstResultado$', EstatoResultado.as_view(), name='estado_resultado'),
+    url(r'^contabilidad/BalanceGeneral$', balanceGeneral.as_view(), name='balance-general'),
+    url(r'^contabilidad/EstSituacion$', EstadoSituacion.as_view(), name='estado_situacion'),
 
 
     #CXP
@@ -373,15 +376,15 @@ urlpatterns = patterns('',
     url(r'^conciliacion/banco$', ConBancoView.as_view(), name='Banco'),
     url(r'^conciliacion/banco/rg$', ConBancoLs.as_view(), name='Banco_Fechas'),
     url(r'^conciliacion/deposito/rg$', DepositoLs.as_view(), name='Deposito_fecha'),
-    url(r'^conciliacion/chkTrans/rg$', ChkTransitoLs.as_view(), name='ChkTrans_fecha'),
     url(r'^conciliacion/Solicitudcheque/rg$',SSolicitud.as_view(), name='ImpSolicitud'),
     url(r'^conciliacion/depositos$', DepositosView.as_view(), name='Conciliacion_Deposito'),
-    url(r'^conciliacion/chkTrans$', ChkTransito.as_view(), name='Conciliacion_Chk_Transito'),
     url(r'^conciliacion/registros$', RepConciliacion.as_view(), name='Reporte_Conciliacion'),
     url(r'^conciliacion/salida$', regGenerico.as_view(), name='Reporte_salida'),
 
     url(r'^reciboIngreso$',reciboTemplateView.as_view(), name='recibo_ingreso'),
     url(r'^postearRecibo$',reciboPost.as_view(), name='postear_recibo'), 
+    url(r'^reciboNom$',reciboNominaTemplateView.as_view(), name="recibo_nomina"),
+    url(r'^ImpRecibo$',reciboPrint.as_view(), name="Imprecibo_nomina"),
     
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(router.urls)),

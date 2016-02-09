@@ -130,7 +130,7 @@
 							Monto
 						</td>
 						<td ng-if="emitido == true">
-							<textarea name="" id="" cols="45" rows="8" ng-model="reCheque.monto" ></textarea>	
+							<input type="text" ng-model="reCheque.monto" value='[[reCheque.monto | number:2]]'>
 						</td>
 					</tr>
 					<tr>

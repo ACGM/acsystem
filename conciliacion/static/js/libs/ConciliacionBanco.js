@@ -6,6 +6,7 @@
 		var apiUrl2='/conciliacion/banco/rg';
 		var depositoApi='/conciliacion/depositos';
 		var chkTransApi ='/conciliacion/chkTrans';
+		var repConc = -'/conciliacion/registros';
 
 		function getDeposito(){
 			var deferred = $q.defer();
@@ -21,6 +22,7 @@
 
 			 return deferred.promise;
 			};
+
 
 		function setDeposito(deposito){
 				var deferred = $q.defer();
@@ -39,7 +41,7 @@
 		function getDepositoFecha(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get('/conciliacion/deposito/rg?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
+			$http.get('/conciliacion/deposito/rg?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
@@ -66,6 +68,7 @@
 			 return deferred.promise;
 			};
 
+
 		function setChkTransito(ChkTransito){
 				var deferred = $q.defer();
 			
@@ -79,10 +82,11 @@
 	            return deferred.promise;
 				};
 
+
 		function getChkTransitoFecha(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get('/conciliacion/chkTrans/rg?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
+			$http.get('/conciliacion/chkTrans/rg?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
@@ -92,6 +96,7 @@
 
 			return deferred.promise;
 		};
+
 
 		function getBanco(){
 			var deferred = $q.defer();
@@ -106,6 +111,7 @@
 			 return deferred.promise;
 			};		
 
+
 		function setBanco(banco){
 				var deferred = $q.defer();
 			
@@ -118,6 +124,7 @@
 	                });
 	            return deferred.promise;
 				};
+
 
 		function getBancoById(id){
 			var deferred = $q.defer();
@@ -136,6 +143,7 @@
 
 			return deferred.response;
 		};
+
 
 		function getBancoByType(tipo){
 			var deferred = $q.defer();
@@ -156,15 +164,30 @@
 			return deferred.response;
 		}
 
+
 		function getBancoFecha(fechaI, fechaF){
 			var deferred = $q.defer();
 
-			$http.get(apiUrl2+'?fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
+			$http.get(apiUrl2+'?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}',fechaI).replace('{fechaF}',fechaF))
 				.success(function (data){
 					deferred.resolve(data);
 				})
 				.error(function (error){
 					deferred.resolve(error);
+				});
+
+			return deferred.promise;
+		};
+
+		function getConcRep(fechaI, fechaF){
+			var deferred = $q.defer();
+
+			$http.get('/conciliacion/registros?format=json&fechaI={fechaI}&fechaF={fechaF}'.replace('{fechaI}', fechaI).replace('{fechaF}',fechaF))
+				.success(function (data){
+					deferred.resolve(data);
+				})
+				.error(function (err){
+					deferred.resolve(err);
 				});
 
 			return deferred.promise;
@@ -181,7 +204,8 @@
 			getChkTransitoFecha : getChkTransitoFecha,
 			getBancoById : getBancoById,
 			getBancoByType : getBancoByType,
-			getBancoFecha : getBancoFecha
+			getBancoFecha : getBancoFecha,
+			getConcRep	: getConcRep
 
 		};
 	}])
@@ -487,10 +511,15 @@
 		};
 	}])
 
-	.controller('repConciliacion', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout',  
-		function ($scope, $filter, $rootScope, conciliacionServices, $timeout) {
+	.controller('repConciliacion', ['$scope','$filter', '$rootScope', 'conciliacionServices','$timeout', '$window', 
+		function ($scope, $filter, $rootScope, conciliacionServices, $timeout, $window) {
 		$scope.fechaI = null;
 		$scope.fechaF = null; 
+		$scope.printArea = false;
+		$scope.regData = {};
+		$scope.Disponible = 0;
+		$scope.total = 0;
+		$scope.bancoTotal = 0;
 
 		$scope.getDate = function(){
 			var date = new Date();
@@ -500,6 +529,34 @@
 			$scope.fechaI = $filter('date')(dateI,'dd/MM/yyyy');
 			$scope.fechaF = $filter('date')(dateF,'dd/MM/yyyy');
 		};
+
+		$scope.getData = function($event){
+			$event.preventDefault()
+
+			var RegFecha = $scope.fechaI.split('/');
+	      	var fechaI = RegFecha[2] + '-' + RegFecha[1] + '-' + RegFecha[0];
+			
+			var RegFecha1 = $scope.fechaF.split('/');
+	      	var fechaF = RegFecha1[2] + '-' + RegFecha1[1] + '-' + RegFecha1[0];
+
+			conciliacionServices.getConcRep(fechaI, fechaF).then(function (data){
+				$scope.printArea = true;
+				$scope.regData = data[0];
+				$scope.Disponible = parseInt($scope.regData.mesAnt) +  parseInt($scope.regData.DepRealizados) + parseInt($scope.regData.Creditos);
+				var subt = parseInt($scope.regData.chkEmitidos) + parseInt($scope.regData.chkDevueltos) + parseInt($scope.regData.OtrosDebitos) +
+							parseInt($scope.regData.Comisiones) + parseInt($scope.regData.Prestamos) + parseInt($scope.regData.Nomina)  + 
+							parseInt($scope.regData.Otros)
+
+				$scope.total = $scope.Disponible - subt;
+
+				$scope.bancoTotal = parseInt($scope.regData.BalanceBanco) + parseInt($scope.regData.DepTransito) + parseInt($scope.regData.CredTransito) 
+									- parseInt($scope.regData.ChkTransito) - parseInt($scope.regData.DebTransito) 
+			});
+
+			$timeout(function() {
+        		$window.print();
+   			 }, 2000);
+		}
 		
 		
 	}])

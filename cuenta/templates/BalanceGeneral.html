@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title%} Balance General {% endblock title %}
+
+{% block content%}
+<section ng-controller="BalanceGenCtrl" ng-init="getDate()">
+	<form id="depreForm" ng-submit="getData($event)" class="Activo-formulario">
+	<div class="repTituloPag"> 
+		<h2>Balance General de cuentas</h2>
+	</div>
+	<div class="ahorroPrint">
+			<div class="ConciliacionPanel">
+				<table>
+					<tr>
+						<td>
+							Fecha desde:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaI" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Fecha hasta:
+						</td>
+						<td>
+							<input type="text" ng-model="fechaF" datepicker>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button class="Boton BusquedaBtn icon-save" type="submit">Generar</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="EstadoR-Cuerpo">
+			<span class="fecha2">
+					Desde: [[fechaI]] Hasta: [[fechaF]]
+			</span>
+				
+				<table class="repEstadoTab">
+					<tr>
+						<td><strong>Cuenta</strong></td>
+						<td><strong>Descripcion</strong></td>
+						<td><strong>Mes Anterior</strong></td>
+						<td><strong>Balance</strong></td>
+					</tr>
+					<tr ng-repeat="reg in cabeceras">
+						<td>[[reg.cuenta]]</td>
+						<td>[[reg.descrip]]</td>
+						<td>[[reg.debito | number : 2]]</td>
+						<td>[[reg.credito |number : 2]]</td>
+					</tr>
+				</table>
+			
+		</div>
+	</form>
+</section>
+
+{% endblock content%}

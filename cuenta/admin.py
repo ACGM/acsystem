@@ -5,7 +5,7 @@ from .models import Cuentas, DiarioGeneral, CuentasControl, BalanceCuenta
 
 @admin.register(Cuentas)
 class CuentasAdmin(admin.ModelAdmin):
-    list_display = ("codigo", "descripcion", "origen", "tipo", "control", 'cuentaControl','tipoSocio')
+    list_display = ("codigo", "descripcion", "origen", "tipo", "control", 'cuentaControl','tipoSocio', 'nivel')
     search_fields = ("codigo", "descripcion", "origen",'tipo')
     list_editable = ('tipoSocio',)
     list_filter = ('tipoSocio',)

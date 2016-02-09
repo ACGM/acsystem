@@ -76,7 +76,7 @@ f.close()
 # f = open('CatalogoCuentas.csv', 'r')
 f = open('cuentasOf.csv', 'r')
 for line in f:
-	line = line.split(',')
+	line = line.split('|')
 	cuenta = Cuentas()
 	cuenta.codigo = line[0]
 	cuenta.descripcion = line[1].decode('latin-1').strip()
