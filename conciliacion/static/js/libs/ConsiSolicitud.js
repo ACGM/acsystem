@@ -149,6 +149,10 @@
 		$scope.montoBlock = false;
 		$scope.fecha = $filter('date')(Date.now(),'dd/MM/yyyy');
 
+		SolicitudServices.socios().then(function (data) {
+			$scope.todosLosSocios = data;
+		});
+
 
 		//Lista las solicitudes realizadas.
 		$scope.solicitudList = function(){
@@ -400,24 +404,24 @@
 			};
 
 
-		$scope.getSocio = function($event) {
+			$scope.getSocio = function($event) {
 	            $event.preventDefault();
 
 	            $scope.tableSocio = true;
+	            $scope.tableSuplidor = false;
 
-	            if($scope.socioNombre) {
-	              SolicitudServices.socios().then(function (data) {
-	                $scope.socios = data.filter(function (registro) {
-	                	console.log(registro);
+	            if($scope.socioNombre !== undefined) {
+
+	                $scope.socios = $scope.todosLosSocios.filter(function (registro) {
 	                  return $filter('lowercase')(registro.codigo.toString()
 	                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-	                });
+	                 });
 
 	                if($scope.socios.length == 0){
-	                	$scope.socios = data.filter(function (registro) {
-	                  return $filter('lowercase')(registro.nombreCompleto
-	                  		.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
-	                });
+	                	$scope.socios = $scope.todosLosSocios.filter(function (registro) {
+	                  		return $filter('lowercase')(registro.nombreCompleto
+	                  			.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	                	});
 	                }
 
 	                if($scope.socios.length > 0){
@@ -428,14 +432,47 @@
 	                  $scope.socioNoExiste = 'No existe el socio';
 	                }
 
-	              });
 	            } else {
-	              SolicitudServices.socios().then(function (data) {
-	                $scope.socios = data;
-	                $scope.socioCodigo = '';
-	              });
+	            	$scope.socios = $scope.todosLosSocios;
 	            }
 	          };
+
+		// $scope.getSocio = function($event) {
+	 //            $event.preventDefault();
+
+	 //            $scope.tableSocio = true;
+
+	 //            if($scope.socioNombre) {
+	 //              SolicitudServices.socios().then(function (data) {
+	 //                $scope.socios = data.filter(function (registro) {
+	 //                	console.log(registro);
+	 //                  return $filter('lowercase')(registro.codigo.toString()
+	 //                                      .substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	 //                });
+
+	 //                if($scope.socios.length == 0){
+	 //                	$scope.socios = data.filter(function (registro) {
+	 //                  return $filter('lowercase')(registro.nombreCompleto
+	 //                  		.substring(0,$scope.socioNombre.length)) == $filter('lowercase')($scope.socioNombre);
+	 //                });
+	 //                }
+
+	 //                if($scope.socios.length > 0){
+	 //                  $scope.tableSocio = true;
+	 //                  $scope.socioNoExiste = '';
+	 //                } else {
+	 //                  $scope.tableSocio = false;
+	 //                  $scope.socioNoExiste = 'No existe el socio';
+	 //                }
+
+	 //              });
+	 //            } else {
+	 //              SolicitudServices.socios().then(function (data) {
+	 //                $scope.socios = data;
+	 //                $scope.socioCodigo = '';
+	 //              });
+	 //            }
+	 //          };
 
 
 	    $scope.limpiar = function($event){
