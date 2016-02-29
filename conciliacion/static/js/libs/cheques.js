@@ -247,6 +247,7 @@
           		$scope.reCheque.fecha = FechaFormat;
 
           		if($scope.independiente != null){
+          			$scope.iDocumentos = 0;
           			$scope.toggleInfo();
           		}
           		else{
