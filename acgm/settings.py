@@ -115,9 +115,13 @@ STATIC_ROOT = './acgm/static/'
 MEDIA_ROOT = './acgm/static/media/'
 
 
-ARCHIVOS_NOMINA = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosNomina/'
-ARCHIVOS_BANCO = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosBanco/'
-ARCHIVOS_BANCO_NOMINA = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosBanco/nomina/'
+# ARCHIVOS_NOMINA = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosNomina/'
+# ARCHIVOS_BANCO = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosBanco/'
+# ARCHIVOS_BANCO_NOMINA = '/Users/ysegura/Projects/pythonProjects/ACGM/acsystem/acgm/static/media/archivosBanco/nomina/'
+
+ARCHIVOS_NOMINA = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosNomina/'
+ARCHIVOS_BANCO = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosBanco/'
+ARCHIVOS_BANCO_NOMINA = '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/media/archivosBanco/nomina/'
 
 # STATICFILES_DIRS = (
 #         '/Users/rafaelmersant/Documents/PythonApps/cooperativa/acgm/acgm/static/',

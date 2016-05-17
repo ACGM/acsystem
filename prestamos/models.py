@@ -34,7 +34,7 @@ class SolicitudPrestamo(models.Model):
 	ahorrosCapitalizados = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar los ahorros capitalizados al momento de realizar esta solicitud
 	deudasPrestamos = models.DecimalField(max_digits=12, decimal_places=2, default=0) #Guardar las deudas de prestamos al momento de realizar esta solicitud
 	prestacionesLaborales = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+	valorGarantizado = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
 	netoDesembolsar = models.DecimalField(max_digits=12, decimal_places=2)
 	
 	garante = models.ForeignKey(Socio, related_name='+', null=True, blank=True)

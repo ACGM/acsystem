@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import ConcCheques, SolicitudCheque, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, ConPeriodo
+from .models import SolicitudCheque, NotaDCConciliacion, NumCheque, ConDeposito, ConPeriodo, ConBanco #ConcCheques
 
 
-@admin.register(ConcCheques)
-class ConcChequeAdmin(admin.ModelAdmin):
-    list_display = ['id','fecha', 'solicitud', 'chequeNo',  'estatus']
+# @admin.register(ConcCheques)
+# class ConcChequeAdmin(admin.ModelAdmin):
+#     list_display = ['id','fecha', 'solicitud', 'chequeNo',  'estatus']
 
 
 @admin.register(SolicitudCheque)

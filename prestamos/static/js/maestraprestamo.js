@@ -607,7 +607,7 @@
               
             });
             $scope.totalDebitoCredito();     
-            // $scope.postearContabilidad();
+            $scope.postearContabilidad();
 
           });
         } catch (e) {
@@ -681,7 +681,8 @@
             var run = setTimeout(function (msg) {
               console.log(ite);
               $scope.postear($event, ite);
-            },index * 1000);
+              console.log(msg);
+            },index * 2000);
           }
         });
       }

@@ -15,7 +15,7 @@ from reciboingreso.models import ReciboIngresoNomina
 
 
 # Local Imports
-from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, ConBanco, NumCheque, ConDeposito, ConPeriodo
+from .models import SolicitudCheque, ConcCheques, NotaDCConciliacion, NumCheque, ConDeposito, ConPeriodo, ConBanco
 from .serializers import solicitudSerializer, chequesSerializer, NotasSerializer, ConBancoSerializer
 
 

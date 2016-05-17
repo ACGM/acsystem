@@ -175,8 +175,37 @@ for line in f:
 f.close()
 
 
-#CARGA DE SOCIOS
-# f = open('Socios.csv', 'r')
+#CARGA DE SOCIOS -- EMPRESA GM
+f = open('Socios.csv', 'r')
+for line in f:
+	line = line.split('|')
+	socio = Socio()
+	depto = Departamento.objects.get(centroCosto=line[7].strip()) 
+	socio.codigo = line[0].decode('latin-1')
+	socio.nombres = line[1].decode('latin-1')
+	socio.apellidos = line[2].decode('latin-1')
+	socio.sexo = 'M' if line[3].decode('latin-1') == '1' else 'F'
+	socio.estadoCivil = 'S' if line[4] == 'Soltero' else 'Casado'
+	socio.fechaIngresoCoop = line[5].decode('latin-1').replace('.','-')
+	socio.fechaIngresoEmpresa = line[6].decode('latin-1').replace('.','-')
+	socio.departamento = depto
+	socio.localidad = Localidad.objects.get(descripcion=line[8].strip())
+	socio.estatus = 'S' if line[9] == 'Socio' else 'E'
+	socio.cuotaAhorroQ1 = line[10]
+	socio.cuotaAhorroQ2 = line[11]
+	socio.cuentaBancaria = line[12]
+	socio.tipoCuentaBancaria = line[13]
+	socio.salario = line[14]
+	socio.direccion = line[15].decode('latin-1').strip()
+	socio.telefono = line[16].strip()
+	socio.correo = line[17].strip()
+	socio.cedula = line[18].strip()
+	socio.userSAP = line[19].strip()
+	socio.userLog = User.objects.get(username='coop')
+	socio.save()
+f.close()
+
+#CARGA DE EMPLEADOS COOP
 f = open('sociosCoop.csv', 'r')
 for line in f:
 	line = line.split(',')
@@ -200,10 +229,10 @@ for line in f:
 	socio.direccion = line[15].decode('latin-1').strip()
 	socio.telefono = line[16].strip()
 	socio.correo = line[17].strip()
+	socio.cedula = line[18].strip()
 	socio.userLog = User.objects.get(username='coop')
 	socio.save()
 f.close()
-
 
 #Asignar atributo para cuentas que son CONTROL
 for cc in CuentasControl.objects.all():
@@ -299,6 +328,7 @@ for line in f:
 	p.cantidadCuotas = line[5].strip()
 	p.valorCuotasCapital = line[6].strip()
 	p.localidad = Localidad.objects.get(descripcion=line[7].strip())
+	p.ahorrosCapitalizados = decimal.Decimal(line[8].strip().replace(',',''))
 	p.representante = Representante.objects.get(estatus='A')
 	p.cobrador = Cobrador.objects.get(usuario='coop')
 	p.autorizadoPor = User.objects.get(username='coop')
@@ -332,4 +362,13 @@ for line in f:
 	p.userLog = User.objects.get(username='coop')
 	p.fechaParaDescuento = datetime.datetime.now()
 	p.save()
+f.close()
+
+
+#Poner cuota quincenal a cada prestamo en la maestra.
+#Actualizar cuotas quincenales de pagos de prestamos.
+f = open('pagocuotasprestamos.csv', 'r')
+for line in f:
+	line = line.split(',')
+	p = MaestraPrestamo.objects.filter(socio__codigo=line[0]).update(montoCuotaQ1=line[1], montoCuotaQ2=line[1])
 f.close()

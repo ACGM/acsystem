@@ -205,6 +205,7 @@ class Socio(models.Model):
     tipoCuentaBancaria = models.CharField("Tipo Cuenta Bancaria", max_length=1, default='1', blank=True, null=True)
     foto = models.FileField(upload_to='administracion', blank=True, null=True)
     nombreCompleto = models.CharField("Nombre Completo", max_length=80, editable=False)
+    userSAP = models.CharField("Usuario SAP", max_length=30, editable=False, default='')
 
     cuotaAhorroQ1 = models.DecimalField("Cuota Ahorro Q1", max_digits=12, decimal_places=2, default=0)
     cuotaAhorroQ2 = models.DecimalField("Cuota Ahorro Q2", max_digits=12, decimal_places=2, default=0)

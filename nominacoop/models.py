@@ -302,8 +302,8 @@ class NominaPrestamosAhorros(models.Model):
 	posteadaPor = models.ForeignKey(User, null=True, blank=True)
 
 	class Meta:
-		verbose_name = '*Nomina Socios 1-) Nomina Prestamos Ahorros'
-		verbose_name_plural = '*Nomina Socios 1-) Nomina Prestamos Ahorros'
+		verbose_name = '*N.S. 1-) Nomina Prestamos Ahorros'
+		verbose_name_plural = '*N.S. 1-) Nomina Prestamos Ahorros'
 		unique_together = ('nomina', 'infoTipo')
 
 
@@ -345,8 +345,8 @@ class CuotasPrestamosEmpresa(models.Model):
 		return self.valorCapital + self.valorInteres + self.valorInteresAh
 
 	class Meta:
-		verbose_name = '*Nomina Socios 2-) Cuota Prestamo Empresa'
-		verbose_name_plural = '*Nomina Socios 2-) Cuotas Prestamos Empresa'
+		verbose_name = '*N.S. 2-) Cuota Prestamo Empresa'
+		verbose_name_plural = '*N.S. 2-) Cuotas Prestamos Empresa'
 		unique_together = ('noPrestamo', 'nomina')
 
 # Cuotas Ahorros para Nomina Empresa
@@ -363,5 +363,5 @@ class CuotasAhorrosEmpresa(models.Model):
 	userLog = models.ForeignKey(User)
 
 	class Meta:
-		verbose_name = '*Nomina Socios 3-) Cuota Ahorro Empresa'
-		verbose_name_plural = '*Nomina Socios 3-) Cuotas Ahorros Empresa'
+		verbose_name = '*N.S. 3-) Cuota Ahorro Empresa'
+		verbose_name_plural = '*N.S. 3-) Cuotas Ahorros Empresa'
