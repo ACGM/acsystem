@@ -690,6 +690,13 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 	# AH = Descontar desde ahorro para pagar capital a prestamo.
 	if tipoDoc == 'NC' or tipoDoc == 'RI' or tipoDoc == 'AH':
 		validaPagoPrestamo(self, prestamo, decimal.Decimal(valorCapital), docReferencia, tipoDoc)
+		
+		#Se guardar el prestamo en el diario, dependiendo si es Socio o Empleado
+		if prestamo.socio.estatus == 'S':
+			guardarEnDiario(self, docReferencia, '11010203', '11130101', valorCapital, valorInteresAh)
+		else:
+			guardarEnDiario(self, docReferencia, '11010203', '11130102', valorCapital, valorInteresAh)
+
 
 	# Nomina de descuentos
 	if tipoDoc == 'NM':
@@ -707,6 +714,12 @@ def guardarPagoCuotaPrestamo(self, noPrestamo, valorCapital, valorInteres, valor
 		
 		#Guardar la cuota
 		ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh, docReferencia, tipodoc)
+
+		#Se guardar el prestamo en el diario, dependiendo si es Socio o Empleado
+		if prestamo.socio.estatus == 'S':
+			guardarEnDiario(self, docReferencia, '11010203', '11130101', valorCapital, valorInteresAh)
+		else:
+			guardarEnDiario(self, docReferencia, '11010203', '11130102', valorCapital, valorInteresAh)
 	
 
 # Metodo para validar si el pago del prestamo es completo
@@ -774,6 +787,29 @@ def ejecutaPagoCuota(self, prestamo, valorCapital, valorInteres, valorInteresAh,
 	cuota.docRef = docReferencia
 	cuota.tipoPago = tipoDoc
 	cuota.save()
+
+#Guardar registro en Diario General
+def guardarEnDiario(self, ref, cuentaOrigen, cuentaDestino, montoCapital, montoInteres):
+
+	cta = Cuentas.objects.get(codigo=cuentaOrigen)
+	diario = DiarioGeneral()
+	diario.cuenta = cta
+	diario.fecha = datetime.datetime.now()
+	diario.referencia = ref
+	diario.estatus = "P"
+	diario.debito = monto
+	diario.credito = 0
+	diario.save()
+
+	cta = Cuentas.objects.get(codigo=cuentaDestino)
+	diario = DiarioGeneral()
+	diario.cuenta = cta
+	diario.fecha = datetime.datetime.now()
+	diario.referencia = ref
+	diario.estatus = "P"
+	diario.debito = monto
+	diario.credito = 0
+	diario.save()
 
 
 # Estado de Cuenta del Socio
